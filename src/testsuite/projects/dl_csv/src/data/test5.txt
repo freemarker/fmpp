@@ -1,0 +1,7 @@
+ Name (English)	protected:b	price net (blah: x, y, z) : n 	entered:dt	  x, y :; , z:d	y:t
+arctic-tern	yes	10000	2003.01.25 03-10-06	2001.01.20	12-05-00
+					
+ house-sparrow 	no	 50 	 2003.02.15 01-20-30		 
+mooo
+
+mooo2

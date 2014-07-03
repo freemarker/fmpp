@@ -1,0 +1,20 @@
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+<public
+    publicId="-//W3C//DTD XHTML 1.0 Transitional//EN"
+    uri="xhtml1-transitional.dtd"
+/>
+
+<public
+    publicId="-//DD//test"
+    uri="test.dtd"
+/>
+
+<public
+    publicId="-//DD//test2"
+    uri="test2.dtd"
+/>
+
+<!-- You can add more <public...>-s here... -->
+
+</catalog>

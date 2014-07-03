@@ -1,0 +1,4 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+data: {backgroundColor:#C0C0FF, textColor:blue}

@@ -1,0 +1,7 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+data: {
+  props: eval('System.getProperties()')
+  exampleDir: eval('engine.getSourceRoot().getParentFile().getParentFile().list()')
+}

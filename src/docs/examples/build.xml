@@ -1,0 +1,38 @@
+<project name="FMPP Ant test" default="build">
+    <taskdef name="fmpp" classname="fmpp.tools.AntTask" />
+    
+    <target name="build" description="Executes all examples.">
+        <ant dir="ant" />
+        <ant dir="ant2" />
+        <ant dir="ant3" />
+        <!-- Note: configuration="anything" is a shorthand for configuration="anything/config.fmpp" -->
+        <fmpp configuration="border" />
+        <fmpp configuration="capture" />
+        <fmpp configuration="check_links" />
+        <fmpp configuration="csv" />
+        <fmpp configuration="eval" />
+        <fmpp configuration="img_dims" />
+        <fmpp configuration="inherit_config" />
+        <fmpp configuration="local_data" />
+        <fmpp configuration="multipage_list" />
+        <fmpp configuration="qtour_step1" />
+        <fmpp configuration="qtour_step2" />
+        <fmpp configuration="qtour_step3" />
+        <fmpp configuration="qtour_step4" />
+        <fmpp configuration="session" />
+        <fmpp configuration="tdd" />
+        <fmpp configuration="xml" />
+        <fmpp configuration="xml2" />
+        <fmpp configuration="xml_try" />
+        <fmpp configuration="xml_validating" />
+        <fmpp configuration="xml_rendering" />
+    </target>
+    
+    <target name="clean" description="Deletes the output of examples.">
+        <delete includeEmptyDirs="yes">
+            <fileset dir="." includes="*/out/"/>
+            <fileset dir="." includes="*/fmpp.log"/>
+            <fileset dir="." includes="*/log.fmpp"/>
+        </delete>
+    </target>
+</project>

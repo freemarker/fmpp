@@ -1,0 +1,4 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+data: tdd(data/test.tdd)

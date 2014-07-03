@@ -1,0 +1,16 @@
+<#ftl ns_prefixes={'D':'http://www.w3.org/1999/xhtml'}>
+<#-- Note: Prefix D is a reserver in FreeMarker, and stands for Default -->
+
+Title:
+${doc.html.head.title}
+
+Paragraphs:
+<#list doc.**.p as p>
+- ${p}
+</#list>
+
+Paragraphs where class is "foo":
+<#-- Note that in XPath expressions you must use explicit prefix -->
+<#list doc['//D:p[@class="foo"]'] as p>
+- ${p}
+</#list>

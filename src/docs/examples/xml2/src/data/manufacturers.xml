@@ -1,0 +1,21 @@
+<manufacturers>
+  <manufacturer>
+    <name>Foo Incorporated</name>
+    <address>3 Traktor Road, Budapest, 1234, Hungary</address>
+    <phone>45-456-7461</phone>
+    <homepage>http://www.foo.hu/</homepage>
+  </manufacturer>
+  <manufacturer>
+    <name>Acmee Incorporated</name>
+    <address>5 Kili Street, Tarawa, Kiribati</address>
+    <homepage>http://www.acmee.com/</homepage>
+    <email>bounche@acmee.com</email>
+  </manufacturer>
+  <manufacturer>
+    <name>Batman International</name>
+    <address>77 Cash Square, Palo Alto, California 94531, U.S.A</address>
+    <phone>07-798-456-985</phone>
+    <homepage>http://www.batmaninternational.com/</homepage>
+    <email>devnul@batmaninternational.com</email>
+  </manufacturer>
+</manufacturers>

@@ -1,0 +1,17 @@
+<#escape x as x?html>
+
+<p>System properties:
+<ul>
+<#list props?keys?sort as k>
+  <li>${k} = ${props[k]}
+</#list>
+</ul>
+
+<p>Example dir:
+<ul>
+<#list exampleDir?sort as f>
+  <li>${f}
+</#list>
+</ul>
+
+</#escape>

@@ -1,0 +1,8 @@
+<#setting number_format=",##0.00">
+<#setting datetime_format="MMM dd, yyyy hh:mm:ss a">
+<table border=1>
+  <tr><#list csv.headers as h><th>${h}</#list>
+<#list csv as row>
+  <tr><#list csv.headers as h><td>${(row[h]!"N/A")?string}</#list>
+</#list>
+</table>

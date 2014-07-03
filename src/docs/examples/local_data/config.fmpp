@@ -1,0 +1,29 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+
+modes: ignore(**/*.bsh)
+
+data: {
+    bgColor: green
+    author: Anonymous
+}
+
+localData: [
+    # Run the attached BeanShell script for HTML-s, if there is one available.
+    case(**/*.htm, **/*.html, bsh({ignoreMissing}))
+    
+    # Independently of the above,
+    # set "bgColor" to "yellow" when processing the files of the "sub" folder:
+    # except for the files in "sun/sky/**", where use "blue".
+    # But, never override the "bgColor" if the file name starts with "foo"
+    layer()
+    case(**/foo*, {})
+    case(sub/sky/**, {bgColor: blue})
+    case(sub/**, sub2/**, {bgColor: yellow})
+    
+    # Independently of all above, set the "author"...
+    layer()
+    case(**/*_j.*, {author: Joe})
+    case(**/*_a.*, {author: Amy})
+]

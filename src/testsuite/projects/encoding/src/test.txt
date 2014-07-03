@@ -1,0 +1,19 @@
+<#-- $Id: test.txt,v 1.1 2003/10/26 23:52:01 ddekany Exp $ -->
+UTF-8 áõ
+
+<#flush>
+<@pp.changeOutputFile name="text_utf-16.txt" />
+<@pp.setOutputEncoding encoding="UTF-16" />
+UTF-16 áõ<#t>
+<#t>
+<@pp.changeOutputFile name="text_iso-8859-2.txt" />
+ISO-8859-2 áõ
+<@pp.setOutputEncoding encoding="ISO-8859-2" />
+
+<@pp.changeOutputFile name="text_UTF-8_2.txt" />
+UTF-8 áõ
+<@pp.setOutputEncoding encoding="ISO-8859-1" />
+áõ
+<@pp.setOutputEncoding encoding="ISO-8859-2" />
+áõ
+<@pp.setOutputEncoding encoding="UTF-8" />

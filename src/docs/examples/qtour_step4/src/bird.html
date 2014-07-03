@@ -1,0 +1,16 @@
+<@pp.dropOutputFile />
+<#list birds as bird>
+<@pp.changeOutputFile name=bird.name+".html" />
+<html>
+<head>  
+  <title>${bird.name?cap_first}</title>
+</head>  
+<body bgcolor="${bgColor}" text="${textColor}">
+  <h1>${bird.name?cap_first}</h1>
+  
+  <p>${bird.description}</p>
+
+  <p><b>Favorite food:</b> ${bird.favoriteFood}</p>
+</body>
+</html>
+</#list>

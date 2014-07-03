@@ -1,0 +1,11 @@
+<#-- $Id: comments.txt,v 1.1 2003/10/30 09:32:08 ddekany Exp $ -->
+<#include '/include/common.ftl'>
+
+<#assign c1 = pp.loadData('tdd', 'data/comment1.tdd')>
+<#assign c2 = pp.loadData('tdd', 'data/comment2.tdd')>
+
+<@pp.restartOutputFile />
+c1:
+<@dumpTopLevel c1 />
+c2:
+<@dumpTopLevel c2 />

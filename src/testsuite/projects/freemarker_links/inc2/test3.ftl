@@ -1,0 +1,1 @@
+EXTERNAL inc2/test3.ftl

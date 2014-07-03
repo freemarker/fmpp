@@ -1,0 +1,19 @@
+INTERNAL @inc/test1.ftl == INTERNAL @inc/test1.ftl
+EXTERNAL inc1/test2.ftl == EXTERNAL inc1/test2.ftl
+EXTERNAL inc2/test3.ftl == EXTERNAL inc2/test3.ftl
+
+INTERNAL @inc/test1.ftl == INTERNAL @inc/test1.ftl
+EXTERNAL inc1/test2.ftl == EXTERNAL inc1/test2.ftl
+EXTERNAL inc2/test3.ftl == EXTERNAL inc2/test3.ftl
+
+INTERNAL @test4 == INTERNAL @test4
+EXTERNAL inc1/test5.ftl == EXTERNAL inc1/test5.ftl
+EXTERNAL inc2/test6.ftl == EXTERNAL inc2/test6.ftl
+
+INTERNAL @test4 == INTERNAL @test4
+EXTERNAL inc1/test5.ftl == EXTERNAL inc1/test5.ftl
+EXTERNAL inc2/test6.ftl == EXTERNAL inc2/test6.ftl
+
+GODZILLA == GODZILLA
+
+GODZILLA == GODZILLA

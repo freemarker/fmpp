@@ -1,0 +1,7 @@
+logFile: fmpp.log
+sourceRoot: src
+outputRoot: out
+data: {
+    doc:xml(data/test.xhtml)
+}
+xmlCatalogFiles: [dtds/catalog2, dtds/catalog]

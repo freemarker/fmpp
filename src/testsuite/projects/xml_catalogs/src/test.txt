@@ -1,0 +1,4 @@
+<#ftl ns_prefixes={"D":"http://www.w3.org/1999/xhtml"}>
+<#list doc['//D:p'] as p>
+- ${p}
+</#list>

@@ -1,0 +1,2 @@
+inheritConfiguration: config.fmpp
+data: {backgroundColor:black}

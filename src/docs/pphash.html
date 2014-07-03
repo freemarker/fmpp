@@ -1,0 +1,549 @@
+<@page title="The pp Hash" keywords="pp hash">
+
+<p>The pp hash is a variable that is always present in the data model. This contains the built-in, standard variables of FMPP.</p>
+
+<@note>For more information about variable types, directives, etc. in general, please read the <@fma href="index.html">FreeMarker Manual</@fma>.</@note>
+
+<@sect title="Information about the source">
+
+<@variable name="sourceFile" type="string">
+<p>The path of the current source file (includes the file name), relatively to the source root directory. It does not start with slash. Uses UN*X path format.</p>
+</@variable>
+
+
+<@variable name="sourceDirectory" type="string">
+<p>The path of the directory of the current source file, relatively to the source root directory. It is finished with a slash, except if the directory is the source root directory itself, in which case the result is an empty (0 length) string. The result never starts with slash. Uses UN*X path format.</p>
+</@variable>
+
+<@variable name="sourceFileName" type="string">
+<p>The filename of the current source file.</p>
+</@variable>
+
+<@variable name="sourceEncoding" type="string">
+<p>The encoding (charset) of the source file, e.g. <@c>ISO-8859-1</@c>. It is always a concrete charset name, never <@c>host</@>.</p>
+</@variable>
+
+<@variable name="sourceRoot" type="string">
+<p>The absolute real path of the source root directory, finished with a "native slash" (i.e. maybe a backslash). As it is a real path, it uses the native path format.</p>
+</@variable>
+
+<@variable name="realSource" type="string">
+<p>The absolute real path of the current source file. As it is a real path, it uses the native path format.</p>
+</@variable>
+
+<@variable name="realSourceDirectory" type="string">
+<p>The absolute real path of the directory of the current source file, finished with a "native slash" (i.e. maybe a backslash). As it is a real path, it uses the native path format.</p>
+</@variable>
+
+</@sect>
+
+
+<@sect title="Information about the output">
+
+<p>Note that as the output file name and directory, and the output encoding can be changed during the execution of template, the value of these variables can change during the execution of the template, to reflect the current situation.</p>
+
+<@variable name="outputFile" type="string">
+<p>The path of the current output file (includes the file name), relatively to the output root directory. It does not start with slash. Uses UN*X path format.</p>
+</@variable>
+
+<@variable name="outputDirectory" type="string">
+<p>The path of the directory of the current output file, relatively to the output root directory. It is finished with a slash, except if the directory is the output root directory itself, in which case the result is an empty (0 length) string. The result never starts with slash. Uses UN*X path format.</p>
+</@variable>
+
+<@variable name="outputFileName" type="string">
+<p>The filename of the current output file.</p>
+</@variable>
+
+<@variable name="outputEncoding" type="string">
+<p>The encoding (charset) of the output file, e.g. <@c>ISO-8859-1</@c>. It is always a concrete charset name, never <@c>host</@> or <@c>source</@>.</p>
+</@variable>
+
+<@variable name="outputRoot" type="string">
+<p>The absolute real path of the output root directory, finished with a "native slash" (i.e. maybe a backslash). As it is a real path, it uses the native path format.</p>
+</@variable>
+
+<@variable name="realOutput" type="string">
+<p>The absolute real path of the current output file. As it is a real path, it uses the native path format.</p>
+</@variable>
+
+<@variable name="realOutputDirectory" type="string">
+<p>The absolute real path of the directory of the current output file, finished with a "native slash" (i.e. maybe a backslash). As it is a real path, it uses the native path format.</p>
+</@variable>
+
+</@sect>
+
+
+<@sect title="Changing the output file">
+
+<@variable name="changeOutputFile" type="directive">
+  <@param name="name" type="string">
+    The new <@a href="overview.html#virtualPath">virtual path</@a> of the output file. The path can point into a different directory than the directory of the current output file.    
+  </@param>
+  <@param name="append" type="boolean" default="false">
+    If this is true, then if a file with the same name as the name of the new output file already exists, it will be continued, rather then overwritten.  If the file does not already exist, then this parameter has no effect.
+  </@param>
+  
+  <p>Closes the current output file, and starts a new output file with the new name. All further output goes into the new file. If the name of the new output file is the same as the current output file, then nothing happens.</p>
+  
+  <p>A word of warning: Don't forget that the path that you specifiy is interpreted relatively to the <@e>current</@e> output file. So using a relative path like <@c>products/${'$'}{productName}.html</@c> ( instead of an absolute path like <@c>/shop/products/${'$'}{productName}.html</@c>) inside a loop is most certainly not what you want, because then 2nd product will go into the <@c>/shop/products/products/${'$'}{productName}.html</@c> directory, the 3rd into <@c>/shop/products/products/products/${'$'}{productName}.html</@c>, and so on. Of course this problem doesn't occur if the relative path is just a file name, like <@c>${'$'}{productName}.html</@c>.</p>
+</@variable>
+
+<@variable name="renameOutputFile" type="directive">
+  <@param name="name" type="string" optional=true>
+    The new <@a href="overview.html#virtualPath">virtual path</@a> of the output file. The path can point into a different directory than the directory of the current output file.
+  </@param>
+  <@param name="extension" type="string" optional=true>
+    Replaces the extension (the part after the last dot in the file name) of the current output file, with the value of this parameter. If the file name has no extension (there is no dot in it), then a dot and the new extension is added to the end of the file name. (The parameter value should never contain the starting dot.)
+  </@param>
+  
+  <p>Changes the name of the current output file, or moves the output file if neccessary. If a file with the same name already exists, this will overwrite that file without warning. If the new name is the same as the name of the current output file, then nothing happens.</p>
+  
+  <p>Either the <@c>name</@c> or the <@c>extension</@c> parameter must be specified. You can't use both together.
+</@variable>
+
+<@variable name="dropOutputFile" type="directive">
+  <p>Deletes the current output file, and drops all further output that would go into this file. Call this directive at the beginning of templates that need to be processed, but you don't want any output files from them. (Of course, you can call this directive even at the end of the template, just that's slower...)</p>
+  <p>Note that this directive can be neutralized with directive <@c>pp.restartOutputFile</@c>.</p>
+</@variable>
+
+<@variable name="restartOutputFile" type="directive">
+  <p>Empties the current output file (but doesn't delete the file). The next character sent to the output will be the first character of the output file. Also, the charset of the output file can be safely set, exactly like if you were at the beginning of the output file creation.</p>
+  <p>Note that this directive neutralizes the effect of directive <@c>pp.dropOutputFile</@c>.</p>
+</@variable>
+
+<@variable name="nestOutputFile" type="directive" nestedContent=true>
+  <@param name="name" type="string">
+    The new <@a href="overview.html#virtualPath">virtual path</@a> (includes the file name) of the output file. The path can point into a different directory than the directory of the current output file.    
+  </@param>
+  <@param name="append" type="boolean" default="false">
+    If this is true, then if a file with the same name as the name of the new output file already exists, it will be continued, rather then overwritten. If the file does not already exist, then this parameter has no effect.
+  </@param>
+
+  <p>This is similar to <@c>changeOutputFile</@>, but it writes only the content generated in its nested content into the new file, and then it restores things, so the output will go into the same output file as before the calling of the directive. For example:</p>
+
+  <@prg><#noparse>
+The 1st line of the original file.
+<@pp.nestOutputFile name="new.txt">
+  The 1st line of new.txt.
+</@pp.nestOutputFile>
+The 2nd line of the original file.
+<@pp.nestOutputFile name="new.txt" append=true>
+  The 2nd line of new.txt.
+</@pp.nestOutputFile>
+The 3rd line of the original file.
+  </#noparse></@prg>
+
+<p>A file can be nested into itself. For example:</p>
+  
+  <@prg><#noparse>
+<@pp.nestOutputFile name='1.txt'>
+  The 1st line of 1.txt
+  <@pp.nestOutputFile name='2.txt'>
+    The 1st line of 2.txt
+    <@pp.nestOutputFile name='1.txt'>
+      The 2nd line of 1.txt
+    </@pp.nestOutputFile>
+    The 2nd line of 2.txt
+  </@pp.nestOutputFile>
+  The 3rd line of 1.txt
+</@pp.nestOutputFile>  
+  </#noparse></@prg>
+
+<p>Note that <@c>append=true</@c> was not needed for adding the 2nd line to the <@c>1.txt</@c>, since the directive just switched back to the already opened <@c>1.txt</@c>.</p>
+  
+</@variable>
+
+<@variable name="setOutputEncoding" type="directive">
+  <@param name="encoding" type="string">
+    The name of the charset, e.g. <@c>ISO-8859-2</@c>. It understands the special values <@c>source</@c> and <@c>host</@c>.     
+  </@param>
+  
+  <p>Sets the encoding of the output. This will die with error if the output file is already partially written to the disk. Thus, if you want to change the output encoding, do it as early as possible. FMPP buffers the output for the output file in the memory until the buffer size reaches 160 characters, but after that it starts to flush the buffer to the disk. Also, directives that change the current output file may flush the buffer. When you start a new file (say, with <@c>changeOutputFile</@c>), it starts a new buffer in the memory, so you can set the encoding of the new file.</p>
+</@variable>
+
+</@sect>
+
+
+<@sect title="Utilities for paths">
+
+<@variable name="pathTo" type="method" result="string">
+  <@param name="destination" type="string">
+    The <@a href="overview.html#virtualPath">virtual path</@a> in the output file system to the destination file or directory. The destination file or directory need not exist. 
+  </@param>
+  
+  <p>This method returns the relative virtual path that leads from the directory of the current output file, to the destination file or directory. For example, if you want to create a link that points to <@c><@r>&lt;outputroot></@>/products/index.html</@>, then you can write:</p>
+
+  <@prg><#noparse>
+<a href="${pp.pathTo('/products/index.html')}">Product index</a>
+  </#noparse></@prg>
+
+  <p>and the link will always point to that file, does not mater where the file that contains the above link is.</p>
+
+  <p>The returned path never starts with <@c>/</@c>; it is always a relative path.</p>
+  
+  <p>If the destination path is finished with slash, then, and only then, the resulting path will be also finished with slash, except if the only character in the result would be that slash, in which case the result will be an empty (0 length) string instead.</p>
+
+</@variable>
+
+<@variable name="home" type="string">
+  <p>Same as what <@c>pp.pathTo('/')</@c> would return. That is, the virtual path to the output root directory, from the current output file. It is finished with a slash, except if the current output file is directly in the output root directory, in which case the result is an empty (0 length) string. The result never starts with slash. So the possible values are something like: <@c>../../</@></p>
+  
+  <p>Example: The <@c>src</@c> will always point to the file in the <@c>img</@c> directory of the output root, does not mater if you move the HTML file in the directory hierarchy:</p>
+  
+  <@prg><#noparse>
+<img src="${pp.home}img/logo.jpg" alt="Logo">
+  </#noparse></@prg>
+</@variable>
+
+<@variable name="outputRootRelativePath" type="method" result="string">
+  <@param name="file path" type="string">
+     The <@a href="overview.html#virtualPath">virtual output path</@a> to convert. The output file pointed by the path need not exist.
+  </@param>
+  <p>Converts a virtual output path to a virtual output path that is relative to the output root directory. The resulting path will not start with slash.</p>
+</@variable>
+
+<@variable name="sourceRootRelativePath" type="method" result="string">
+  <@param name="file path" type="string">
+    Same as the parameter of <@a href="#key_outputRootRelativePath">outputRootRelativePath</@a>, but it uses the the source file system.
+  </@param>
+  <p>Same as <@a href="#key_outputRootRelativePath">outputRootRelativePath</@a>, but it uses the source root directory and the current source file respectively.</p>
+</@variable>
+
+<@variable name="sourcePathTo" type="method" result="string">
+  <@param name="destination" type="string">
+    Same as the parameter of <@a href="#key_pathTo">pathTo</@a>, but it uses the source file system.
+  </@param>
+  <p>Same as <@a href="#key_pathTo">pathTo</@a>, but it uses the source root directory and the current source file respectively.</p>
+</@variable>
+
+<@variable name="slash" type="string">
+  <p>The platform dependent slash character used in native paths. This will be backslash (<@c>\</@>) on Windows.</p>
+</@variable>
+
+<@variable name="urlEnc" type="method" result="string">
+  <@param name="string to encode" type="string">
+    The string to encode.
+  </@param>
+  
+  <p><@e>Deprecated:</@e> use the <@c>url</@c> built-in of FreeMarker instead. For example: <@c><#noparse>${"a+b/c"?url}</#noparse></@c>.</p>
+  
+  <p>Encodes a string with URL encoding. For example the result of <@c>pp.urlEnc("a+b/c")</@> will be <@c>a%2Bb%2Fc</@>, if the output charset is an US-ASCII based charset.</p>
+</@variable>
+
+<@variable name="urlPathEnc" type="method" result="string">
+  <@param name="string to encode" type="string">
+    The string to encode.
+  </@param>
+
+  <p>Same as FreeMarker's <@c>url</@c> built-in (<@c>?url</@c>), except that it does not encode slash characters. For example the result of <@c>pp.urlPathEnc("new&nbsp;products/bálna.html")</@> will be <@c>new%20products/b%E1lna.html</@>, if the output charset is ISO-8859-1.</p>
+</@variable>
+
+</@sect>
+
+
+<@sect title="Utilities for files">
+
+<@variable name="sourceFileSize" type="method" result="number">
+<@param name="file path" type="string">
+  The <@a href="overview.html#virtualPath">virtual path</@a> of the file in the source file system.
+</@param>
+
+<p>Returns the size of the file in bytes. If the file does not exist, it returns 0.</p>
+</@variable>
+
+<@variable name="sourceFileLastModified" type="method" result="date (date+time)">
+<@param name="file path" type="string">
+  The <@a href="overview.html#virtualPath">virtual path</@a> of the file in the source file system.
+</@param>
+
+<p>Tells the last modification date+time of file. If the file does not exist, it raises an error.</p>
+</@variable>
+
+<@variable name="sourceFileExists" type="method" result="boolean">
+<@param name="file path" type="string">
+  The <@a href="overview.html#virtualPath">virtual path</@a> of the file in the source file system.
+</@param>
+
+<p>Tells if the file exists or not.</p>
+</@variable>
+
+<@variable name="outputFileSize" type="method" result="number">
+<@param name="file path" type="string">
+  The <@a href="overview.html#virtualPath">virtual path</@a> of the file in the output file system.
+</@param>
+
+<p>Returns the size of the file in bytes. If the file does not exist, it returns 0.</p>
+</@variable>
+
+<@variable name="outputFileLastModified" type="method" result="date (date+time)">
+<@param name="file path" type="string">
+  The <@a href="overview.html#virtualPath">virtual path</@a> of the file in the output file system.
+</@param>
+
+<p>Tells the last modification date+time of file. If the file does not exist, it raises an error.</p>
+</@variable>
+
+<@variable name="outputFileExists" type="method" result="boolean">
+<@param name="file path" type="string">
+  The <@a href="overview.html#virtualPath">virtual path</@a> of the file in the output file system.
+</@param>
+
+<p>Tells if the file exists or not.</p>
+</@variable>
+
+<@variable name="realFileSize" type="method" result="number">
+<@param name="file path" type="string">
+  The real path (native path) of the file. The file can be outside all root directories. FMPP passes the resolving of relative paths to the host OS, so it is not defined by FMPP what the end result will be. In general, it is better to use absolute paths here.<br>
+  <@e>Windows users:</@e> According to the syntactical rules of FTL, you must use double backslashes in string literals: <@c>"C:\\work\\foo\\bar.txt"</@c>, or use raw strings: <@c>r"C:\work\foo\bar.txt"</@c>. Also, according to the Windows API rules, you can simply use slash: <@c>"C:/work/foo/bar.txt"</@c>, which is probably the best solution.
+</@param>
+
+<p>Returns the size of the file in bytes. If the file does not exist, it returns 0.</p>
+</@variable>
+
+<@variable name="realFileLastModified" type="method" result="date (date+time)">
+<@param name="file path" type="string">
+  The real path (native path) of the file.  The rules are the same as with <@a href="#key_realFileSize">realFileSize</@a>. 
+</@param>
+
+<p>Tells the last modification date+time of file. If the file does not exist, it raises an error.</p>
+</@variable>
+
+<@variable name="realFileExists" type="method" result="boolean">
+<@param name="file path" type="string">
+  The real path (native path) of the file.  The rules are the same as with <@a href="#key_realFileSize">realFileSize</@a>. 
+</@param>
+
+<p>Tells if the file exists or not.</p>
+
+</@variable>
+
+</@sect>
+
+
+<@sect title="Writable hashes and sequences">
+
+<p>Writable sequences and hashes are an FMPP specific extension to FreeMarker, as FreeMarker does not support the modification of sequences and hashes. (This has good reasons in the on-the-fly dynamic page generation segment that FreeMarker mostly targets, but it can be a problem in extreme FreeMarker applications as FMPP.) To read the variables of these sequences and hashes, you can use the same expressions as with plain sequences and hashes. But, to modify the contents of them, you have to use the directives described below, since predefined directives as <@c>&lt;#assign <@r>...</@>></@> can't modify subvariables. Unfortunately, sequence addition, sub-sequence operator (like <@c>seq[5..10]</@c>) and <@c>?reverse</@c> do not copy the original sequence, just wraps it (for efficiency), so the resulting sequence will change if the original sequence is changed later (this is basically an abnormal aliasing effect). The same problem exists with the result of hash addition; it just wraps the two hashes, so the resulting hash will magically change if you modify the hashes you have added earlier. As a work-around, after you did the above problematic operations, either be sure you will not modify the objects that were used as input, or create a copy of the result like: <@c>&lt;#assign b = pp.newWritableSequence(a[5..10])></@c> and <@c>&lt;#assign c = pp.newWritableHash(hashA + hashB)></@c>). Of course this is easy to miss... so rather try to build the data model so you will not need to modify collections. Keeping templates simple and moving complex calculations out to custom <@a href='dataloader.html'>data loaders</@a> or BeanShell scripts (see the <@c>bsh</@c> function of <@s>localData</@> <@a href='settings.html#data'>here...</@a>) is advisable anyway.</p>
+
+<p>Note that only the sequences that were made with the <a href="#key_newWritableSequence"><@c>newWritableSequence</@c> method</a> are writable. Also, only the hashes that were made with the <a href="#key_newWritableHash"><@c>newWritableHash</@c> method</a> are writable. You can't modify plain sequences or hashes with the below directives.</p>
+
+<p>Also note that writable sequences and hashes suffer from the effect called aliasing (that most programmers will find natural). This effect, explained with an example, looks like this:</p>
+
+<@prg><#noparse>
+<#assign a = pp.newWritableSequence()>
+<@pp.add seq=a value="red" />
+<#assign b = a>
+<@pp.add seq=b value="green" />
+a: <#list a as i>${i} </#list>
+b: <#list b as i>${i} </#list>
+</#noparse></@prg>
+
+<p>Here the output will be:</p>
+
+<@prg>
+a: red green
+b: red green
+</@prg>
+
+<p>That is, FreeMarker variables just store a reference (pointer) to the sequence or hash, not the sequence or hash itself. So both <@c>a</@c> and <@c>b</@c> points to the same single sequence object, which floats somewhere in the memory. This fact becomes significant because you modify that object, otherwise you wouldn't notice it. To create individual copies, use <@a href="#key_newWritableSequence"><@c>newWritableSequence</@c></@a> or <@a href="#key_newWritableHash"><@c>newWritableHash</@c></@a>, for example:.</p>
+
+<@prg><#noparse>
+<#assign a = pp.newWritableSequence()>
+<@pp.add seq=a value="red" />
+<#assign b = pp.newWritableSequence(a)>
+<@pp.add seq=b value="green" />
+a: <#list a as i>${i} </#list>
+b: <#list b as i>${i} </#list>
+</#noparse></@prg>
+
+<p>Here <@c>b</@c> is a new sequence whose initial content is the same as the content of <@c>a</@c>. Thus, the output will be:</p>
+
+<@prg>
+a: red
+b: red green
+</@prg>
+
+<@variable name="newWritableSequence" type="method" result="writable sequence">
+<@param name="initial content" optional=true type="sequence" />
+<p>Creates a new empty writable sequence. However, if called with parameter then adds the items in the parameter sequence to this new sequence (known as "shallow copy" among programmers). Example:</p>
+
+<@prg><#noparse>
+<#assign a = pp.newWritableSequence()>
+<#assign b = pp.newWritableSequence(['red', 'green', 'blue'])>
+${a?size}
+${b?size}
+</#noparse></@prg>
+
+<p>The output will be:</p>
+
+<@prg><#noparse>
+0
+3
+</#noparse></@prg>
+
+</@variable>
+
+<@variable name="newWritableHash" type="method" result="writable hash">
+<@param name="initial content" optional=true type="hash" />
+<p>Creates a new empty writable hash. However, if called with parameter then adds the items in the parameter hash to this new hash (known as "shallow copy" among programmers). Example:</p>
+
+<@prg><#noparse>
+<#assign a = pp.newWritableHash()>
+<#assign b = pp.newWritableHash({'red':'FE0000', 'green':'10F000', 'blue':'0007FF'})>
+${a?size}
+${b?size}
+</#noparse></@prg>
+
+<p>The output will be:</p>
+
+<@prg><#noparse>
+0
+3
+</#noparse></@prg>
+</@variable>
+
+<@variable name="copyWritable" type="method" result="writable hash or writable sequence" deprecated='Use <@a href="#key_newWritableSequence"><@c>newWritableSequence</@c></@a> and <@a href="#key_newWritableHash"><@c>newWritableHash</@c></@a> instead.'>
+<p>Copies a writable hash or sequence. (It is used to prevent aliasing effect. The result is a "shallow copy" of the original hash or sequence.)</p>
+</@variable>
+
+<@variable name="add" type="directive">
+  <@param name="seq" type="writable sequence">The sequence to modify.</@param>
+  <@param name="index" type="number" default="seq?size">The index where you want to insert the subvariable into the sequence.  The index of the first subvariable is 0.</@param>
+  <@param name="value" type="any">The new value of the subvariable.</@param>
+
+  <p>Inserts a new subvariable into the sequence, at the specified index. Shifts the subvariable currently at that position (if any) and any subsequent subvariables to the right (adds one to their indices). If you do not use the <@c>index</@c> parameter, or if its value is 1 higher than the index of the last subvariable, then it appends the new subvariable at the end of the sequence.</p>
+</@variable>
+
+<@variable name="set" type="directive">
+  <@param name="seq" type="writable sequence">The sequence to modify.</@param>
+  <@param name="index" type="number">The index of subvariable to set. The index of the first subvariable is 0.</@param>
+  <@param name="hash" type="writable hash">The hash to modify.</@param>
+  <@param name="key" type="string">The name of the subvariable that you want to add to the hash, or that you want to replace.</@param>
+  <@param name="value" type="any">The value of the new subvariable.</@param>
+  
+  <p>This can be used for two purposes, depending on if you use the <@c>seq</@> or the <@c>hash</@> parameter:</p>
+  <ul>
+    <li>For sequences: Sets an already existing subvariable of the sequence or hash. The index must be the index of an existing subvariable, or an error will occur.
+    
+    <li>For hashes: Adds a new subvariable to the hash with the name specified with the <@c>key</@> parameter, or replaces the subvariable with the same name if that already exists.
+  </ul>
+
+</@variable>
+
+<@variable name="remove" type="directive">
+  <@param name="seq" type="writable sequence">The sequence to modify.</@param>
+  <@param name="index" type="number">The index of the subvariable to remove.</@param>
+  <@param name="hash" type="writable hash">The hash to modify.</@param>
+  <@param name="key" type="string">The name of the subvariable that you want to remove from the hash.</@param>
+  
+  <p>This can be used for two purposes, depending on if you use the <@c>seq</@> or the <@c>hash</@> parameter:</p>
+  <ul>
+    <li>For sequences: Removes the subvariable on the specified index, and shifts any subsequent subvariables to the left (subtracts one from their indices). The <@c>index</@c> must denote an existing subvariable, or an error will be raised.
+    
+    <li>For hashes: Removes the subvariable with the name specified with the <@c>key</@> parameter, or does nothing if no such subvariable exists.
+  </ul>
+</@variable>
+
+<@variable name="clear" type="directive">
+  <@param name="seq" type="writable sequence">The sequence to clear.</@param>
+  <@param name="hash" type="writable hash">The hash to clear.</@param>
+  
+  <p>Removes all subvariables of the sequence or hash.</p>
+</@variable>
+
+</@sect>
+
+
+<@sect title="Miscellaneous">
+
+<@variable name="warning" type="directive">
+  <@param name="message" type="string">The warning message.</@param>
+  
+  <p>Issues a warning message. It depends on the concrete front-end in use and the settings, but usually the message will be displayed on the screen and/or will be added to the log file. The processing will not stop if you issue a warning. To stop processing with error message you should use <@c>&lt;#stop "<@r>message</@r>"></@c>.</p>
+</@variable>
+
+<@variable name="ignoreOutput" type="directive" nestedContent=true>
+  <p>All text generated inside the nested content of this directive will be thrown away.</p>
+</@variable>
+
+<@variable name="locale" type="string">
+  <p>The currently used locale in the usual format. For example: <@c>ar_SA</@c>, <@c>ar_IQ</@c>, <@c>en_US</@c>, <@c>en_UK</@c>, <@c>es_ES</@c>, ...etc.
+</@variable>
+
+<@variable name="loadData" type="method" result="any" anchor="loadData">
+  <@param name="loader name" type="string">
+    The name of the data loader.
+  </@param>
+  <@param name="arguments..." type="any">
+    The arguments to the data loader. These are 0 or more arguments.
+  </@param>
+  
+  <p>Loads data using <@a href="dataloader.html">data loaders</@a>, and returns the loaded data as the result of the method call. For example this:</p>
+
+  <@prg><#noparse>
+<#assign foo = pp.loadData('csv', 'foo.txt', {'separator':',', 'encoding':'UTF-8'})>
+  </#noparse></@prg>
+
+  <p>does something similar as when you use the below in an FMPP configuration file:</p>
+
+  <@prg>
+data: {foo:csv(foo.txt, {separator:',', encoding:UTF-8})}
+  </@prg>
+
+  <p>The difference is that with the <@c>pp.loadData</@c>, you load the data on demand, and into a temporary variable that will be available only for a single template processing.</p>
+  
+  <p>The <@c>get</@c> data loader can't be invoked with this method.
+</@variable>
+
+<@variable name="now" type="date (date+time)">
+  <p>Returns the current date and time.</p>
+  
+  <p>For example this:</p>
+  
+  <@prg><#noparse>
+Current date and time: ${pp.now}
+Current time: ${pp.now?time}
+Current date: ${pp.now?date}
+Current day of week: ${pp.now?string("EEEE")}
+<#setting datetime_format="yyyy-MM-dd HH:mm:ss zzzz">
+Current date and time: ${pp.now}
+  </#noparse></@prg>
+  
+  <p>will output something like this:</p>
+  
+  <@prg>
+Current date and time: Apr 12, 2003 5:28:50 PM
+Current time: 5:28:50 PM
+Current date: Apr 12, 2003
+Current day of week: Saturday  
+Current date and time: 2003-04-12 17:28:50 Central European Summer Time
+  </@prg>
+  
+  <p>For more information about using date/time values, please read the <@fma>FreeMarker Manual</@fma>.</p> 
+</@variable>
+
+<@variable name="sessionStart" type="date (date+time)">
+  <p>Returns the date and time of the processing session starting.</p>
+</@variable>
+
+<@variable name="s" type="writable hash">
+  <p>Stands for "shared". This is a writable hash that keeps its content during the whole processing session. That is, if you add a subvariable to it during the execution of a template, then that subvariable will be visible for all templates processed later in the same session. An example of the usage of <@c>pp.s</@> can be found in <@example 'session' /></p>
+</@variable>
+
+<@variable name="doc" type="node">
+  <p>This variable exists only while an XML file is processed in <@c>renderXml</@c> processing mode (see the documentation of the <@s>modes</@s> setting). This variable stores the source file (the XML file) as a node variable that corresponds to the W3C DOM document object.</p>
+  
+  <p>An example that uses <@c>renderXml</@c> processing mode and <@c>pp.doc</@> is <@example 'xml_rendering' /></p>
+</@variable>
+
+<@variable name="version" type="string">
+  <p>This is the version number of the FMPP engine.</p>
+</@variable>
+
+<@variable name="freemarkerVersion" type="string">
+  <p>This is the version number of the FreeMarker the FMPP engine currently uses.</p>
+</@variable>
+
+</@sect>
+
+
+</@page>

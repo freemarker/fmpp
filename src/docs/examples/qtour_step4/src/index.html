@@ -1,0 +1,16 @@
+<html>
+<head>  
+  <title>Index</title>
+</head>  
+<body bgcolor="${bgColor}" text="${textColor}">
+  <h1>Index</h1>
+  <p>Birds:
+  <ul>
+  <#list birds as bird>
+    <li><a href="${bird.name}.html">${bird.name?cap_first}</a>
+  </#list>
+  </ul>
+  <br>
+  <p><img src="falcon.png">
+</body>
+</html>

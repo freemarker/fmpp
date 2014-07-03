@@ -1,0 +1,10 @@
+inheritConfiguration: inheritedcfg.fmpp
+logFile: fmpp.log
+sourceRoot: src
+outputRoot: out
+data: {twoX: 'XX'}
+localData: [
+    case(sub/**/*.html, sub/**/*.htm, {id:SUB_HTML, id3:SUB_HTMLSUB_HTMLSUB_HTML})
+    case(**/*.html, **/*.htm, {id:HTML, id3:HTMLHTMLHTML})
+    layer()
+]

@@ -1,0 +1,7 @@
+<#-- $Id: seqmode.txt,v 1.1 2007/04/27 12:45:28 ddekany Exp $ -->
+<#include '/include/common.ftl'>
+<#assign tdd = pp.loadData('tddSequence', 'data/seqmode.tdd')>
+<#list tdd as i>
+<@dump i />
+
+</#list>

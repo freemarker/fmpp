@@ -1,0 +1,174 @@
+
+[a ]
+[ b]
+[  c ]
+==
+[a]
+[ b]
+[ c ]
+
+---------
+
+[a ]
+[ b]
+[  c ]
+[]
+==
+[a]
+[ b]
+[ c ]
+[]
+
+[a]
+[b]
+[c]
+==
+[a]
+[b]
+[c]
+
+---------
+
+[a]
+[b]
+[c]
+==
+[a]
+[b]
+[c]
+
+---------
+
+[---
+ a
+ A ]
+[b --- B ]
+[ c 
+---]
+==
+[---
+ a
+ A ]
+[ b --- B ]
+[ c 
+---]
+
+[---
+ a
+ A ]
+[b --- B ]
+[ c ]
+[]
+==
+[---
+ a
+ A ]
+[ b --- B ]
+[ c ]
+[]
+
+[---
+ a
+ A ]
+[b --- B ]
+[ c 
+---x]
+==
+[---
+ a
+ A ]
+[ b --- B ]
+[ c 
+---x]
+
+[a]
+[ b]
+[  c]
+[ d ]
+[e  ]
+==
+[a]
+[ b]
+[  c]
+[ d ]
+[e  ]
+==
+[a]
+[ b]
+[  c]
+[ d ]
+[e  ]
+==
+[a]
+[ b]
+[  c]
+[ d ]
+[e  ]
+
+[reg]
+[green]
+[blue]
+==
+[red]
+[green]
+[blue]
+
+[A a a
+aaa
+a]
+[Separate items like this:
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+--8<--
+
+But don't forget to put empty lines around it!]
+[C c c
+ccc
+c]
+==
+[A a a
+aaa
+a]
+[Separate items like this:
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+--8<--
+
+But don't forget to put empty lines around it!]
+[C c c
+ccc
+c]
+
+[a]
+[b]
+[]
+[]
+[]
+[c]
+==
+[a]
+[b]
+[]
+[]
+[]
+[c]
+
+==
+
+[]
+==
+[]

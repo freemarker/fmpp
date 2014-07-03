@@ -1,0 +1,4 @@
+# $Id: config.fmpp,v 1.1 2003/10/26 23:52:02 ddekany Exp $
+sourceRoot: src
+outputRoot: out
+locale: fr_FR

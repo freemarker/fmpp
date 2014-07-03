@@ -1,0 +1,2 @@
+X = X
+java.util.HashMap = java.util.HashMap

@@ -1,0 +1,26 @@
+<products>
+  <product>
+    <name>K8 Widget</name>
+    <price>500</price>
+    <manufacturer>Foo Incorporated</manufacturer>
+    <description>This is a standard widget with highly durable thingamy.</description>
+  </product>
+  <product>
+    <name>Giant/S2 Widget</name>
+    <price>2500</price>
+    <manufacturer>Acmee Incorporated</manufacturer>
+    <description>This is an extra-large widget.</description>
+  </product>
+  <product>
+    <name>Micro Widget</name>
+    <price>800</price>
+    <manufacturer>Acmee Incorporated</manufacturer>
+    <description>This widget can even fit into your suitcase.</description>
+  </product>
+  <product>
+    <name>CXC Widget</name>
+    <price>350</price>
+    <manufacturer>Batman International</manufacturer>
+    <description>I have no idea... this is just a stupid example, OK?</description>
+  </product>
+</products>

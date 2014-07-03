@@ -1,0 +1,18 @@
+
+output_encoding: ISO-8859-2 = ISO-8859-2
+url_escaping_charset: - = -
+%2Fa%20n%F5%FCgy%2Faz
+%2Fa%20n%F5%FCgy%2Faz
+/a%20n%F5%FCgy/az
+
+output_encoding: utf-8 = utf-8
+url_escaping_charset: - = -
+%2Fa%20n%C5%91%C3%BCgy%2Faz
+%2Fa%20n%C5%91%C3%BCgy%2Faz
+/a%20n%C5%91%C3%BCgy/az
+
+output_encoding: utf-8 = utf-8
+url_escaping_charset: utf-16 = utf-16
+%FE%FF%00%2Fa%FE%FF%00%20n%FE%FF%01%51%00%FCgy%FE%FF%00%2Faz
+%FE%FF%00%2Fa%FE%FF%00%20n%FE%FF%01%51%00%FCgy%FE%FF%00%2Faz
+/a%FE%FF%00%20n%FE%FF%01%51%00%FCgy/az

@@ -1,0 +1,4 @@
+2
+<#flush>
+<@pp.renameOutputFile name="r2.txt" />
+.

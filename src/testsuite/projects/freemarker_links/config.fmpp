@@ -1,0 +1,10 @@
+inheritConfiguration: inherited.fmpp
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+freemarkerLinks: {
+    inc: [inc1, inc2]
+    test4: inc1/test3.ftl
+    test6: inc1/test6.ftl
+    monster: inc2/godzilla.ftl
+}

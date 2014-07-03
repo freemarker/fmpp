@@ -1,0 +1,7 @@
+<@pp.setOutputEncoding encoding="source" />
+ISO-8859-2 áõ
+<@pp.nestOutputFile name="test2_iso-8859-1.txt">
+<@pp.setOutputEncoding encoding="ISO-8859-1" />
+ISO-8859-1 áõ
+</@>
+ISO-8859-2 áõ

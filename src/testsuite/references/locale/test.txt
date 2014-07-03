@@ -1,0 +1,5 @@
+Locale: fr_FR
+Day: dimanche
+
+Locale: en_US
+Day: Sunday

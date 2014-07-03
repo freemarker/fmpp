@@ -1,0 +1,21 @@
+<#visit doc>
+
+<#macro @element>
+  ELEM: I'm the ${.node?node_name} element.
+        I'm belonging the ${.node?node_namespace} namespace.
+  <@recurseAttributes />
+  <#recurse>
+</#macro>
+
+<#macro recurseAttributes>
+  <#list .node["@*"] as att>
+    <@@attribute att />
+  </#list>
+</#macro>
+
+<#macro @attribute att>
+  ATT: I'm the ${att?node_name} attribute
+       of an ${.node?node_name} element.
+       I'm belonging to the ${att?node_namespace!'void'} namespace.
+       My value is: ${att}
+</#macro>

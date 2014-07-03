@@ -1,0 +1,10 @@
+p1: ${p1!"not found"}
+p2: ${p2!"not found"}
+p3: ${p3!"not found"}
+wombat1: ${wombat1!"not found"}
+wombat2: ${wombat2!"not found"}
+wombat3: ${wombat3!"not found"}
+
+x + 1: ${x + 1}
+<#if test>It's a test.<#else>It's not a test.</#if>
+time: ${time}

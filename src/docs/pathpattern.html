@@ -1,0 +1,18 @@
+<@page title="Path Patterns" keywords="Path Pattern">
+
+<p>Probably you have already used commands like <@c>dir *.txt</@> (or <@c>ls *.txt</@> on UN*X). This lists all files in the current directory where the name of the file ends with <@c>.txt</@>. The <@c>*.txt</@> stuff is called a path pattern.</p>
+
+<p>With FMPP you also use path patterns to select certain files, say, in the <@s>modes</@s> setting, to tell FMPP which files to copy as is, and which files to execute as template. A path pattern looks like a path, but it can contain some special parts:</p>
+<ul>
+  <li><@c>*</@c>: matches zero or more characers, except slash (<@c>/</@>). For example <@c>a*c</@> matches to <@c>abc</@>, <@c>axyzc</@> and <@c>ac</@>, but not <@c>a/c</@>.
+  <li><@c>?</@c>: matches exactly one characer, except slash (<@c>/</@>). For example <@c>a?c</@> matches to <@c>abc</@>, but not <@c>axyzc</@> or <@c>ac</@> or <@c>a/c</@>.
+  <li><@c>**</@c>: This matches zero or more directories of the path. For example <@c>a/**/c</@> matches to <@c>a/b/c</@>, <@c>a/b/xyz/c</@> and <@c>a/c</@>. Another example: <@c>**/*.gif</@> matches to <@c>foo.gif</@>, <@c>a/foo.gif</@> and , <@c>a/b/foo.gif</@>. Also, if you use <@c>**</@c> at the end of the pattern, then it match with all file names as well. Thus, <@c>foo/**</@c> will match all files inside <@c>foo</@c>, such as <@c>foo/bar.txt</@c> or <@c>foo/sub/bar.txt</@c>. Furthermore, if the pattern ends with <@c>/</@c>, then it is considered as shorthand for <@c>/**</@c>, so <@c>foo/</@c> is the same as <@c>foo/**</@c>. 
+</ul>
+
+<p>If your operating system use something else instead of <@c>/</@> (as <@c>\</@> on Windows), FMPP will internally convert the native paths to UN*X format, so do not worry about this.  Just use slash in the patterns. (Or, in fact, you can even use the native "slash" in patterns, just it is not a good practice in general.)</p>
+
+<p>Note that pattern as <@c>*.gif</@> will match only the GIF files in the current directory. If you want to match all GIF files of the subdirectories (and sub-subdirectories, etc.) as well, use <@c>**/*.gif</@>.
+
+<p>The meaning of "current directory" in FMPP depends on the concrete situation where you use the path. In most cases where you will use path patterns (as with the <@s>modes</@s> setting) it will be the source root directory. Also, the meaning of "root directory" is depends on where you use the path. That is, absolute path <@c>/foo.txt</@c> maybe means <@c>foo.txt</@c> in the source root directory (this is the typical), or in the output root directory, or in the real root directory of the file system, etc.</p>
+
+</@page>

@@ -1,0 +1,7 @@
+<h1>${doc.book.@title}</h1>
+<#list doc.book.chapter as ch>
+<h2>${ch.@title}</h2>
+  <#list ch.para as p>
+  <p>${p}</p>
+  </#list>
+</#list>

@@ -1,0 +1,56 @@
+<#escape x as x?html>
+<@pp.dropOutputFile />
+<#assign pages = foos?chunk(5)>
+<#assign entryIndex = 0>
+<#list pages as page>
+  <@pp.changeOutputFile name="result${page_index+1}.html" />
+  <html>
+  <head>
+     <title>Results - page ${page_index+1} of ${pages?size}</title>
+  </head>
+  <body>
+    <h1>Results</h1>
+
+    <#list page as entry>
+      <#assign entryIndex = entryIndex + 1>
+      <p>${entryIndex}. <b>${entry.name?cap_first}</b>: <a href="${entry.url}">${entry.url}</a>
+    </#list>
+
+    <hr>
+    Pages:&nbsp;&nbsp;
+    <#if page_index != 0>
+      <a href="result${page_index}.html">&lt;&lt;</a>&nbsp;
+    <#else>
+      <font color="#808080">&lt;&lt;</font>&nbsp;
+    </#if>
+    <#list 0..pages?size-1 as i>
+      <#if i != page_index>
+        <a href="result${i+1}.html">${i+1}</a>
+      <#else>
+        <b>${i+1}</b>
+      </#if>
+      <#if i_has_next>|</#if>
+    </#list>
+    <#if page_index != pages?size-1>
+      &nbsp;<a href="result${page_index+2}.html">>></a>
+    <#else>
+      &nbsp;<font color="#808080">>></font>
+    </#if>
+  </body>
+  </html>
+</#list>
+
+<#if pages?size == 0>
+  <@pp.changeOutputFile name="result1.html" />
+  <html>
+  <head>
+    <title>Results - No foos</title>
+  </head>
+  <body>
+    <h1>Results</h1>
+    <p>Sorry, no foos available.</p>
+  </body>
+  </html>
+</#if>
+
+</#escape>

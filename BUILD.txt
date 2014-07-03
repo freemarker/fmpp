@@ -1,0 +1,88 @@
+This text describes how to (re)build FMPP and related files.
+
+
+To (re)build lib/fmpp.jar (incremental building):
+
+* Run "ant jar" from the FMPP root directory.
+
+
+To (re)build the docs (incremental building):
+
+* Run "ant docs" from the FMPP root directory.
+
+NOTE: If you simply check out the SVN repositroy, you should add
+FreeMarker documentation manually (or you get a warning). That is, copy
+the pre-built FreeMarker documentation into the src/docs/freemarker
+directory. Theoretically you should build the FreeMarker documentation
+with the docgen module of FreeMarker SVN, but it is not trivial, so for
+most users the best solution is to simply copy the docs/freemarker
+directory of the latest FMPP distribution into src/docs/freemarker.
+
+
+To (re)build the lib/fmpp.jar and the docs (incremental building):
+
+* Run "ant" from the FMPP root directory.
+
+NOTE: see the note above about docs building.
+
+
+To really rebuild all (not incremental building):
+
+* Run "ant all" from the FMPP root directory.
+
+
+To build a distribution (dist/fmpp_<version>.tar.gz and zip):
+
+* Set the correct version number in src/java/fmpp/version.propertyes.
+  Releases use majorVersion.minorVersion.maintenanceVersion format, e.g.
+  "0.8.15". Nightly releases has an additional ".5" at the end of the
+  version number, such as "0.8.15.5", which is a nightly release *after*
+  "0.8.15". Note that the version number can't contain letters because
+  of the limitations of jar manifest format; this is why I use this
+  strange convention to mark nightly releases.
+
+* Make sure you use the classes of Java2 platfrom 1.2 for the
+  compilation. Certainly you need to create build.properties for this;
+  see build.properties.sample.
+
+* Make sure of the proper version of freemarker.jar, oro.jar,
+  bsh.jar, and resolver.jar is in the lib directory.
+
+* Check if the dependency version ranges are up-to-date in the
+  Maven POM (it's embedded into the build.xml), especially the
+  FreeMarker version number.
+
+* The test suite must be passed successfully. Run "ant test".
+
+* Make sure of the proper version of FreeMarker documentation, which is
+  Manual + API javadoc, is in the src/docs/freemarker directory.
+
+* Make sure of you didn't polluted the FMPP directories with some
+  temporary files (your ad-hoc tests, backups, etc.). If you left such
+  files, they will be included in the distribution... Note that typical
+  trash like *.bak, *.~*, SVN files, etc. should be filtered out
+  automatically by Ant.
+
+* Run "ant dist"
+
+To build the WWW site (dist/site_<version>):
+
+* First build the distribution. Don't run clean after that, because
+  the size of the fmpp_x.x.x.tar.gz and zip must be known for the
+  generation of the WWW pages.
+
+* Run "ant site"
+
+NOTE: The download link will use the download system of SourceForge. That
+is, you do not upload the tar.gz and zip to the WWW site, but do an FMPP
+release on SourceForge with the correct version number, or else the
+download link will be broken.
+
+Release the project on Ibiblio Maven:
+
+* Run "maven-upload"
+
+Releases should be announced on the following places:
+- Sourceforge.net email notification for subscribers
+- FMPP mailing list (fmpp-open@lists.sourceforge.net)
+- Freshmeat.net

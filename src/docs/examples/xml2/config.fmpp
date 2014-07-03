@@ -1,0 +1,7 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+data: {
+    prodXml: xml(data/products.xml, {index: {element: product, value: '%n'}})
+    manuXml: xml(data/manufacturers.xml)
+}

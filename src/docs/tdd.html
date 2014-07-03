@@ -1,0 +1,294 @@
+<@page title="TDD - Textual Data Definition" keywords="TDD">
+
+<@sect title="Basics">
+
+<p> TDD is a very simple expression language created for defining hierarchical data (hashes, sequences) with plain text. It is mostly used for configuring FMPP. For example, <@a href="configfile.html">configuration files</@a> use TDD syntax.</p>
+
+<p>TDD syntax is identical to the syntax of literals in FTL (FreeMarker Template Language). For example, this data structure:</p>
+
+<pre>
+(root)
+ |
+ +- user = "Big Joe"
+ |
+ +- tall = true
+ |
+ +- animals
+     |
+     +- (1st)
+     |   |
+     |   +- name = "white mouse"
+     |   |
+     |   +- price = 30
+     |
+     +- (2nd)
+     |   |
+     |   +- name = "black mouse"
+     |   |
+     |   +- price = 25
+     |
+     +- (3rd)
+         |
+         +- name = "green mouse"
+         |
+         +- price = 150
+</pre>
+
+<p>could be described with this TDD expression:</p>
+
+<@prg>
+{
+    "user": "Big Joe",
+    "tall": true,
+    "animals": [
+        {"name": "white mouse", "price": 30},
+        {"name": "black mouse", "price": 25},
+        {"name": "green mouse", "price": 150}
+    ]
+}
+</@prg>
+
+<p>which is also a legal FTL expression. Please read <@fma href="dgui_template_exp.html#dgui_template_exp_direct" >the FreeMarker Manual about "Specify values directly"</@fma> if you are not familiar with them. TDD doesn't support any other FTL operators (as variables, built-ins, interpolations, etc.), only the "Specify values directly" part of FTL.</p>
+
+<p>TDD syntax allows terser expressions than FTL because of these additional syntactical rules:</p>
+<ul>
+  <li>Strings need not be quoted if they doesn't look like a legal boolean or number value, and they don't contain:
+     <ul>
+       <li>white-space: space, tab, line-break, etc.</li>
+       <li>Quotation marks or apostrophe-quote: <@c>"</@c>, <@c>'</@c></li>
+       <li>Separator-like chars: comma (<@c>,</@c>), semicolon (<@c>;</@c>). Colon (<@c>:</@c>) is allowed without quoting the string if the string is not a key in a hash.</li>
+       <li>Bracket-like chars: <@c>(</@c>, <@c>)</@c>, <@c>[</@c>, <@c>]</@c>, <@c>{</@c>, <@c>}</@c>, <@c>&lt;</@c>, <@c>></@c></li>
+       <li>Equals sign (<@c>=</@c>)</li>
+       <li>Plus sign (<@c>+</@c>)</li>
+     </ul>
+  </li>
+  <li>Line-break can be used instead of comma (<@c>,</@c>). That is, in practice, you can omit commas that would be at the end of the lines.</li>
+  <li>If in a hash the value is missing from a key:value pair, then the value defaults to boolean <@c>true</@c>.
+</ul>
+
+<p>Utilizing these rules, the example TDD expression can be written as:</p>
+
+<@prg>
+{
+    user: "Big Joe"
+    tall
+    animals: [
+        {name: "white mouse", price: 30}
+        {name: "black mouse", price: 25}
+        {name: "green mouse", price: 150}
+    ]
+}
+</@prg>
+
+<p>Back to the strings... Examples of legal unquoted strings:</p>
+<ul>
+  <li><@c>**/foo-bar/baz.txt</@c></li>
+  <li><@c>C:\windows\system32</@c></li>
+  <li><@c>25%</@c></li>
+  <li><@c>#FF80FF</@c></li>
+  <li><@c>?!</@c></li>
+  <li><@c>7.txt</@c></li>
+  <li><@c>1-2</@c></li>
+  <li><@c>True</@c></li>
+</ul>
+<p>Examples of strings where quotation had to be used:</p>
+<ul>
+  <li><@c>"contains space"</@c></li>
+  <li><@c>"a'b"</@c></li>
+  <li><@c>"(c)"</@c></li>
+  <li><@c>"&lt;head>"</@c></li>
+  <li><@c>"7"</@c></li>
+  <li><@c>"true"</@c></li>
+</ul>
+
+<p>TDD supports an escape sequence that FTL doesn't: backslash at the end of the line. It is used to break strings into multiple lines in the TDD, without actually introducing line-breaks and indentation in the value of the string. For example here:</p>
+
+<@prg>
+{
+    text: 'This is \
+           a single \
+           line.'
+}
+</@prg>
+
+<p>the value of <@c>text</@c> will be the same as with:
+
+<@prg>
+{
+    text: 'This is a single line.'
+}
+</@prg>
+
+<p>The exact rule is that if backslash is followed by a line-break (extra horizontal white-space is allowed between the backslash and the line-break), then all characters after the backslash will be removed until the first non-white-space character is reached, or a 2nd line-break is reached.</p>
+
+</@sect>
+
+
+<@sect title="Interpretation modes" anchor="modes">
+
+<p>A text can be interpreted as TDD either in:</p>
+<ul>
+  <li>Single expression mode: this is the basic case.</li>
+  <li>Hash mode: The text is assumed to describe the name:value pair list of a hash.</li>
+  <li>Sequence mode: The text is assumed to describe the value list of a sequence.</li>
+</ul>
+
+<p>An example of hash mode are <@a href="configfile.html">configuration files</@a>. There you enter the settings as if you were already between <@c>{</@c> and <@c>}</@c>:</p>
+
+<@prg>
+sourceRoot: src
+outputRoot: out
+</@prg>
+
+<p>and this will evaluate to a hash. In single expression mode, you could describe the same value with this:</p>
+
+<@prg>
+{
+    sourceRoot: src
+    outputRoot: out
+}
+</@prg>
+
+<p>An example of sequence mode is when you specify the <@s>removeExtensions</@s> setting with command-line argument to the <@a href="commandline.html">command-line tool</@a> or as Ant task parameter. For example, when you enter this in the command-line:</p>
+
+<@prg>
+fmpp -S src -O out --removeExtensions "foo, bar, baaz"
+</@prg>
+
+<p>Don't be confused on the quotation marks here, those are required by the command-line parser of the OS shell, it has nothing to do with TDD. What FMPP gets don't contain the quotation marks, only the text between them. So the TDD expression we are talking about is:</p>
+
+<@prg>
+foo, bar, baaz
+</@prg>
+
+<p>The same value could be described in single expression mode as:</p>
+
+<@prg>
+[foo, bar, baaz]
+</@prg>
+
+<p>When to use single expression mode, and when hash mode, and when sequence mode? Hash mode or sequence mode is used when you specify the value of something as discrete text (that is, not as the part of a larger, enclosing TDD expression), and it is known that the value must be hash or sequence respectively. For example, in the <@c>--removeExtensions</@c> example above, the TDD expression is given in an independent text fragment, and it is known that the <@s>removeExtensions</@s> setting is a sequence. Compare it with the case, when you specify the same setting value in a configuration file:</p>
+
+<@prg>
+removeExtensions: [foo, bar, baaz]
+</@prg>
+
+<p>Here, the value is not a discrete text, because it is a fragment of a larger TDD expression (which is, by the way, a hash mode expression). Thus, the value must be specified in single expression mode, regardless that we know that it should be a sequence. Because, if you were allowed to write:</p>
+
+<@prg>
+removeExtensions: foo, bar, baaz
+</@prg>
+
+<p>then there would be an ambiguity, as it could be also interpreted as:</p>
+
+<@prg>
+removeExtensions: foo
+bar: true
+baaz: true
+</@prg>
+
+<p>(Since, if the value is missing from a key:value pair, then the value defaults to boolean <@c>true</@c>, and comma can be replaced with line-break) So be sure you don't forget the brackets in configuration files.</p>
+
+</@sect>
+
+
+<@sect title="Hash addition" anchor="hashAddition">
+
+<p>TDD allows you to put hash value directly into another hash value, without specifying key for it. For example:</p>
+
+<@prg>
+{a: A, b: B,  {c: C, d: D}}
+</@prg>
+
+<p>In this case, when the TDD interpretation passes the <@c>{c: C, d: D}</@c>, it will add all key:value pairs of it to the enclosing hash. So the final result hash will contain these key:value pairs: <@c>a: A</@c>, <@c>b: B</@c>, <@c>c: C</@c>, <@c>d: D</@c>.</p>
+
+<p>When the hash is added to its parent, it may overwrite keys in that. For example:</p>
+
+<@prg>
+{a: A1, b: B1, c:C1, {b: B2, c: C2}, {c: C3}}
+</@prg>
+
+<p>will result in a hash that contains these key:value pairs: <@c>a:A1</@c>, <@c>b:B2</@c>, <@c>c:C3</@c>.</p>
+
+<p>You may wonder what is this all good for. Hash additions are useful with data loaders that return hashes. Read on...</p>
+
+</@sect>
+
+
+<@sect title="TDD functions">
+
+<p>TDD has a construct called TDD function that is identical to FTL method calls. The meaning of TDD functions depends on which <@a href="overview.html#settings">setting</@a> do you use them in. For example, when you use TDD with the <@s>data</@s> setting, then they are used to invoke data loaders, and their return value is the loaded data. A part form the configuration used in the <@a href="qtour.html">Quick Tour</@a>:</p>
+
+<@prg>
+data: {
+    tdd(data/style.tdd)
+    birds: csv(data/birds.csv)
+}
+</@prg>
+
+<p>The first function call (<@c>tdd(<@r>...</@r>)</@c>) returns the a hash that was built by interpreting the <@c>data/style.tdd</@c> file. There is no key given for it (like <@c>someKey:&nbsp;tdd(<@r>...</@r>)</@c>), so its key:value pairs will be added directly to the <@s>data</@s> hash (<@a href="#hashAddition">hash addition</@a>). The second call (<@c>csv(<@r>...</@r>)</@c>) returns a sequence, which will be stored with key <@c>birds</@c> in the <@s>data</@s> hash.</p>
+
+<p>Another example of the usage TDD functions is when method calls are used with the <@s>modes</@s> setting. A fragment from a possible configuration file:</p>
+
+<@prg>
+modes: [copy(**/*.html, **/*.htm), ignore(tmp/)]
+</@prg>
+
+<p>In this use case, you are not interested what kind of values do the function calls return. You just use the function calls for describing groups. It's the internal business of the FMPP core what the function calls return to solve this task.</p>
+
+<p>There is no restriction regarding the type of the value a TDD function returns. You may thought that TDD knows only these types: string, number, boolean, hash, sequence. These are the types for which you can specify values directly, but a sequence or a hash can store any type of Java objects as values, not only these. So any type of object can get into hashes or sequences as the return value of TDD function.</p>
+
+</@sect>
+
+
+<@sect title="Comments">
+
+<p>TDD knows 2 types of comments:</p>
+<ul>
+  <li>FTL comment: These are delimited with <@c>&lt;#--</@c> and <@c>--></@c>, and can span multiple lines. They can be inserted everywhere where optional white-space could be inserted. FTL comments can't be nested into another FTL comment.</li>
+  
+  <li>Shell-script/"properties" style comment: These are lines starting with <@c>#</@c>, optionally preceded with white-space. The comment spreads until the end of the line. This comment can be inserted everywhere where optional line-break could be inserted.</li>
+</ul>
+
+<p>Comments will not work inside quoted strings, nor nested inside comments. That is, they will count as normal text in these places.</p> 
+
+<p>Example:</p>
+
+<@prg><#noparse>
+# This is a test.
+# Now "a" will be 1
+a: 1 <#-- now "a" is 1 -->
+b <#-- this was the key --> : <#-- now comes the value --> 2
+  # Comments can be indented.
+<#--
+  FTL-style comment
+  can span over multiple lines.
+-->
+</#noparse></@prg>
+
+</@sect>
+
+<@sect title="Character encoding issues" anchor="encoding">
+
+<p>If you load TDD from a file, then FMPP have to use an encoding (charset) to interpret the bytes as text. The default of this encoding depends on how do you load the TDD file:</p>
+<ul>
+  <li>If it is a configuration file: <@c>ISO-8859-1</@c> is used.</li>
+  <li>If it is loaded with <@c>tdd</@c> data loader as <@c>tdd(<@r>fileName</@r>)</@c>: <@s>sourceEncoding</@s> is used.</li>
+  <li>If it is loaded with data loader <@c>tdd</@c> as <@c>tdd(<@r>fileName</@r>, <@r>encoding</@r>)</@c>: the encoding suggested by the 2nd parameter is used.</li>
+</ul>
+
+<p>A TDD file can specify its own encoding with a special comment, in which case the default of the encoding (see above) is ignored. For example this TDD file will be always interpreted with UTF-8 encoding, doesn't mater how you load it:</p>
+
+<@prg>
+# encoding: UTF-8
+some: tdd
+comes: here
+</@prg>
+
+<p>The encoding comment must be the very first line of the TDD file. FTL-style comment can't be used for this purpose. Extra white-space, or no white-space is OK between the <@c>#</@c> and <@c>encoding</@c>, also extra white-space can be present around the colon. Word <@c>charset</@c> can be used instead of <@c>encoding</@c>. The words are not case sensitive.</p>
+
+<p>The encoding comment works only if the file can be correctly interpreted as US-ASCII until the end of the encoding name. So it will not work for UTF-16, UCS-2, UCS-4, and with EBCDIC based charsets. Note that an UTF-8 BOM at the begining of the file is automatically ignored.</p>
+
+</@sect>
+
+</@page>

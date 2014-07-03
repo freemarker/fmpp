@@ -1,0 +1,153 @@
+﻿TODO
+====
+
+*************************************************************************
+
+  Unlike most open source projects, I will be honest about the state of
+  the project: I (Dániel Dékány) have stopped the active development of
+  the FMPP project with FMPP 0.9.7. This means that I do bugfixes and
+  other maintenance work (check the version history to see if I really
+  do), so the project is not abandoned. Just, I don't plan to develop
+  new features or do serious reworking. However, contributions of proper
+  quality are welcome and will be integrated.
+
+  I believe that the project will serve the FreeMarker community well
+  even if it remains in its current state forever.
+
+*************************************************************************
+
+Misc:
+ . [!!] Create contribs page, publish the schema reader and the Elipse stuff
+   there.
+ . [!] Native Windows exe instead of fmpp.bat+lcp.bat.
+   Bat-s has idiot limitations.
+ . Add a GUI front-end
+
+Data loaders:
+ . [!] Add sql(...) data-loader. See below in the Drafts section...
+   Also somehow integrate the database *schema* loader that was contributed.
+ . [!] Post-DTD era validation: W3C XML Schema and Relax NG validation, pre-loaded schema validation
+ . [!] Add xmlDir data-loader (loads all XML files in a directory)
+ . ? Add add(...) data-loader for string and sequence concatenation, and arithmetical addition.
+ . Add bsh(...) data loader: Evaluates a BSH file.
+
+Core:
+ . [!!] freemarkerLinks should be able to load with class-loader.
+ . [!] Improve pp directive error messages so that they write out if the parameter was null
+   (instead of complaining that it was missing or not of the proper type)
+ . [!] Deep merging
+   - Idea for the solution: "merger hash" type should be introduced. In TDD
+     a merger hash should be constructed with ~ prefix: ~exp, where exp must evalute
+     to a hash. When a value has to be replaced with merger hash during hash merging,
+     the merger hash should copy the items of the replaced value into itself that
+     were not present in the merger hash. During this copying, items that are
+     merger hashes should be considered (and so on recursively).
+   - Where are the places where this should be handled:
+     - Merging of setting layers:
+       data: {someConfig:~{a:1}} <-inherit- data: {someConfig:{a:2, b:3}}
+       => data: {someConfig~{a:1, b:3}}
+     - Local data layers with each-other
+     - Local data merging with sesson level data.
+     - TDD hash additions: {{a:{x:1}}, {a:~{y:2}}} => {{a:{x:1, y:2}}}
+     - The "freemarkerLinks" uses something like merger hashes, just it
+       with sequences. Actually, merger sequences should be introduced as
+       well ({x:~[1, 2]} merged with {x:~[3, 4]} would result in
+       {x:[3, 4, 1, 2]}). Then the merging of "freemarkerLinks" need not be
+       exceptional anymore, and user had to use ~ if (s)he wants to continute
+       the inherited link-list, rather than replace it.
+ . ? Inheriting multiple config files
+ . Add "customSettings" setting, which sets Engine attributes.
+   It should be of type HASH_WITH_MERGED_SUBVARIABLES.
+ . Add new processing mode that processes the file with an user written class.
+ . Add real logging. Maybe the current ProgressListener based logger should be
+   replaced then? Or rather a new setting, "debugLog" should be added, that would
+   turn on a Jakarata-commons-logging based logging.
+ . [!] @pp.warning and @pp.debug should print the location too (file name, line)
+ . [!] UN*X integration
+   - "copy-permissions" setting (i.e. copy rwxrwxrwx + owners, as cp would do)
+   - Symlink handling (follow symlinks without confusing source paths(?), copy symlinks)
+   - Allow UN*X tools to be invoked as FreeMarker transforms
+ . pre-parse filter (pre-processes FreeMarker templates)
+ . [!] pp.compressHtml
+ . Dependency tracking! At least detect if an #include-d file has been changed.
+   Maybe the src->output tracking machinrey is needed for the copy-permissions
+   feature anyway...
+
+Cmdline:
+ .
+
+Ant task:
+ . The "logger" setting is missing (it should be like objectWrapper).
+
+
+====================================================================================
+DRAFTS
+====================================================================================
+
+The SQL data loader (JDBC data loader)
+--------------------------------------
+
+Maybe the best would be to introduce a new setting, "sqlDataSources":
+
+  sqlDataSources: {
+      default: {driver: com.exampe.jdbc.Driver, url: jdbc://someurl, user: joe, password: secret}
+      foo: {driver: com.exampe.jdbc.Driver, url: jdbc://someurl2, user: fred, password: blah}
+  }
+
+Then, the sql data loader would look as:
+
+  sql(sqlSentence, substitutions...)
+  
+It should use the "default" data source, unless the SQL sentence starts
+with dataLoaderName+':', for example 'foo: select * from foo'
+
+As pp.loadData('sql', 'select * from foo') is too verbose, a shorthand
+form could be introduced: pp.sql('select * from foo')
+
+The return value should be a list-of-maps for SELECT-s. This list-of-map
+should be a copy of the ResultSet content, so the ResultSet can be
+released imediatelly. Thus, FMPP user doesn't have to deal with fetching
+and releasing ResultSet-s. Also, it's curcial in the "data" setting, since
+there is no way to do explicit fetching/releasing there.
+
+The map in the list-of-maps should also functon as a list-of-lists,
+where the 2nd index is the index of the column.
+
+If the result set contains only a single cell, then the list-of-maps
+should also serve as a scalar, so things as
+${pp.loadData('sql', 'select max(price) from products)'} should work.
+
+If the result set contains only a single row, then it should also
+function as a map, that reads the columns of the 1st row. The ?size
+buit-in for these vars must return the size of the list.
+(Unfortunately, because of the ambiguities, for reading columns by
+column index, the result[0][index] form must be used. Also, if the
+column name happens to be "headers", then the result[0].headers form
+must be used.)
+
+As the SQL data loading is certainly frequently used, a short-cut should be
+added to the pp hash: pp.sql(...).
+
+The result set should function as a map that stores the "headers" key.
+As with the CSV reader, it returns the sequence of column names.
+
+The values of binary data should be wrapped as a string reading "(binary
+data)". However, by using the special column called
+'fmpp_file_for_<columnName>', the binary data can be saved into the file
+indicated by the column value. Saving into the files happens when
+the result set object is wrapped. Example:
+
+<#assign photos = pp.sql(
+   'select id, title, data, 'img/'|id|'.jpg' as fmpp_file_for_data from photos')
+>
+<#list photos as photo>
+  <p align=center>
+    <img src="img/${photo.id}.jpg" alt="${title}">
+    <br>${title}
+  </p>
+</#list>
+
+
+Add these to the TemplateEnvironment:
+java.sql.Connection getSqlConnection()
+java.sql.Connection getSqlConnection(String dataSourceName)

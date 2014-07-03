@@ -1,0 +1,11 @@
+localData: [
+    case(**/*.htmlx, {id3:HX})
+    layer()
+    layer()
+    layer()
+    layer()
+    case(**/*_x.*, {id:X, id2:get(twoX), id3:XXX})
+    case(**/*_y.*, {properties(data/y.properties)})
+    case(**/*_z.*, 'new fmpp.testsuite.TestLocalDataBuilder()')
+    layer()
+]

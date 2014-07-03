@@ -1,0 +1,331 @@
+<@page title="The Command-line Tool" keywords="command-line tool">
+
+<@sect title="Using the command-line" anchor="using_cmdln">
+
+<p>This section is for users who are not too familiar with using the command-line. No FMPP specific information can be found here, so you may <@a href="#fmpp_cmdline">skip to the next section</@a>.</p>
+
+<p>The exact command-line syntax depends on what shell do you use (sh, csh, DOS shell, etc.), because the shell is responsible to split the command-line to an executable name and a list of arguments. FMPP just gets the list from the shell.</p>
+
+<p>Most shells will parse this command-line:</p>
+
+<@prg>test -f t 1.txt 2.txt</@prg>
+
+<p>as the executable name is <@c>test</@>, and the list of arguments is:</p>
+
+<ol>
+  <li><@c>-f</@>
+  <li><@c>t</@>
+  <li><@c>1.txt</@>
+  <li><@c>2.txt</@>
+</ol>
+
+<p>As you may guess, the arguments are delimited by the spaces. If you want to put spaces into the value of arguments, in most shells you should use quotation marks:</p>
+
+<@prg>test -f t -D "x:1, y:2"</@prg>
+
+<p>Here, the list of arguments will be:</p>
+
+<ol>
+  <li><@c>-f</@>
+  <li><@c>t</@>
+  <li><@c>-D</@>
+  <li><@c>x:1, y:2</@>
+</ol>
+
+<p>The shell has removed the quotation marks. Thus, command-line tools like FMPP will not know that there were quotation marks, as they just gets the above list from the shell.</p>
+
+<p>With shells as sh, you can use apostrophe-quotes (<@c>'</@c>) instead of quotation marks. In Windows/DOS shell you can use quotation marks (<@c>"</@c>) only.</p>
+
+<p>You have to quote the argument if you use characters that are reserved by the shell for other purposes. For example <@c>></@> and <@c>|</@> is reserved in most shells. <@c>&amp;</@>, <@c>;</@> and <@c>(</@> is reserved in sh. Also, if you use an UN*X shell, sometimes you need to quote arguments that contain <@c>*</@c>, <@c>?</@c> or <@c>~</@c>, because otherwise the shell interprets the argument as a path, and replaces that with the list of matching files.</p>
+
+<p>Most shells understand partially quoted arguments. For example:</p>
+
+<@prg>test -D"x:1, y:2"</@prg>
+
+<p>will be interpreted as:</p>
+
+<ol>
+  <li><@c>-Dx:1, y:2</@c>
+</ol>
+
+<p>A tricky situation is when you want to use quotation marks in an argument value. To prevent this situations use apostrophe-quotes instead of plain quotes and vice versa. For example:</p>
+
+<@prg>test -D"x:'red led', y:2"</@prg>
+
+<p>or (will not work in Windows/DOS shell!):</p>
+
+<@prg>test -D'x:"red led", y:2'</@prg>
+
+</@sect>
+
+
+<@sect title="FMPP command-line argument syntax" anchor="fmpp_cmdline">
+
+<p>The FMPP command-line tool uses similar argument syntax to usual UN*X command-line tools, such as <@c>ls</@>. UN*X users should be able to use the tool even without reading this section.</p>
+
+<p>This is a possible FMPP command-line:</p>
+
+<@prg>fmpp -C mycfg.fmpp -q --case-sensitive products index.html</@prg>
+
+<p>The FMPP command-line tool interprets command-line arguments as either:</p>
+<ul>
+  <li>Option, as <@c>-q</@c>, <@c>--case-sensitive</@c> and <@c>-C mycfg.fmpp</@c>
+  <li>Non-option, as <@c>products</@c> and <@c>index.html</@c>
+</ul>
+
+<p>An option always starts with dash (<@c>-</@c>), or with double dash.  (<@c>--</@c>), followed by the name of the option (e.g. <@c>q</@c>, <@c>C</@c>, <@c>case-sensitive</@c>). If the option requires parameter, then it is followed by the parameter to the option (as <@c>mycfg.fmpp</@c> in <@c>-C mycfg.fmpp</@>), which counts as the part of the option, not as non-option.</p>
+
+<p>If the option uses single dash, then the name of the option is exactly 1 character long; this is called short form. If the option uses double dash, then the name can be arbitrary long; this is called long form. All options have long form, and many options have both long and short form versions, which are equivalent (for example <@c>-q</@c> and <@c>--quiet</@c>). Short form options can be grouped together, for example you can write<br><@c>-qxs</@c><br>instead of <br><@c>-q -x -s</@c></p>
+
+<p>Some options require a parameter. To demonstrate the syntactical rules with examples, here are the valid ways to give  <@c>cp852</@c> as parameter to option <@c>-E</@c> alias <@c>--source-encoding</@c>:</p>
+
+<ul>
+  <li><@c>-E cp852</@c>: here the parameter was the next argument after the option
+  <li><@c>-Ecp852</@c>: here I have utilized that a short option name is always 1 character long, and thus, since <@c>-E</@> require parameter, the rest of this argument will be interpreted as the parameter of the option. (Note, that because if this, grouping (as <@c>-qxs</@c>) will not work if an option in the group, other than the very last option, requires parameter.) The next argument of the command-line will not be interpreted as parameter to <@c>-E</@>.
+  <li><@c>-E=cp852</@c>: This is similar to the latest, but the option name and parameter value is separated with <@c>=</@>
+  <li><@c>--source-encoding cp852</@c>
+  <li><@c>--source-encoding=cp852</@c>
+</ul>
+
+<p>I didn't show the combinations like <@c>-E="cp852"</@c>, as the usage of quotation marks is shell dependent. See <@a href="#using_cmdln">the section about using the command-line</@a> for more information.</p>
+
+<p>The order in which options occur in the command-line argument list is not significant.</p>
+
+<p>Options are case sensitive. This means that <@c>-c</@c> and <@c>-C</@c> are not the same.</p> 
+
+<p>Any argument that does not start with dash and is not directly after an option that needs parameter, is a non-option. In FMPP, non-options are used to list the name of the files or directories that you want to process; see more about this later. The position of a non-option in the argument list relatively to the options is not significant. That is, these command-line argument lists are equivalent:</p>
+
+<ul>
+  <li><@c>-C mycfg.fmpp -q products index.html</@c>
+  <li><@c>products index.html -C mycfg.fmpp -q</@c>
+  <li><@c>products -C mycfg.fmpp index.html -q</@c>
+</ul>
+
+<p>Sometimes it happens that a non-option should start with dash (for example, because the name of the file you want to refer to starts with dash). In this case you can use a special character sequence, <@c>--</@> followed by no option name, to indicate that all subsequent arguments are non-options:</p>
+
+<@prg>
+fmpp -Cmycfg.fmpp -- -this-is-a-non-option
+</@prg>
+
+</@sect>
+
+
+<@sect title="Invoking the command-line tool">
+
+<p>The command-line tool can be invoked with the <@c>fmpp</@c> shell script (<@fmppPath path="bin/fmpp" /> or <@fmppPath path="bin/fmpp.bat" />), assuming you have <@a href="installing.html#commandLineTool">installed it</@a> properly.</p>
+
+<p>When you invoke this tool, it will immediately run a processing session, with the settings you have set with its arguments (see later how), and then terminates. (With some command-line options, however, it will do something else, as with <@c>-h</@c> it just prints help.)</p>
+
+</@sect>
+
+
+<@sect title="Specifying settings in the command-line">
+
+<p>Most command-line options specify <@a href="settings.html">FMPP settings</@a>. The option name is the name of the setting, but with lower case dashed form (as <@c>source-root</@c>) instead of the usual mixed case form (as <@c>sourceRoot</@c>). The value of the setting is given as the parameter of the option. The <@a href="configfile.html#configurationBase">configuration base</@a> for the values is the current working directory (i.e. the directory you are in).</p>
+
+<p>Example: Runs a processing session with <@s>sourceRoot</@s> set to <@c>src</@c> and <@s>outputRoot</@s> set to <@c>out</@c> (so this will process all files in the <@c>src</@c> directory, and store the output in the <@c>out</@c> directory):</p>
+
+<@prg>fmpp --source-root src --output-root out</@prg>
+
+<p>For the most frequently used settings there is short option name too. For example, this is equivalent with the previous example:</p>
+
+<@prg>fmpp -S src -O out</@prg>
+
+<p>If the setting value is of scalar type (as string, boolean, number) then just enter the value simply as is, not with TDD syntax. If the setting value is of more tricky type, as hash or sequence, then you use TDD syntax for it. For hash settings the value is a <@a href="tdd.html#modes">hash mode TDD</@a>, and for sequence setting it is sequence mode TDD, so the brackets should be omitted. For example:</p>
+
+<@prg>fmpp -S src -O out -D "online:false, tdd(data/style.tdd)" --replaceExtensions "ftl, html"</@prg>
+
+<p>Note that the quotation marks were needed only for the command-line parser of the shell (see earlier on this page), so they are not visible for FMPP.</p>
+
+<p>Boolean settings (and <@s>quiet</@s>) are specified with parameterless options:</p>
+
+<table border=1 cellspacing=1 cellpadding=4>
+  <tr>
+    <th rowspan=2>Command-line option
+    <th colspan=2>Meaning
+  <tr>
+    <th>Setting name
+    <th>Value
+  <tr>
+    <td><@c>-s</@c>, <@c>--stop-on-error</@c>
+    <td><@s>stopOnError</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>-c</@c>, <@c>--continue-on-error</@c>
+    <td><@s>stopOnError</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>--case-sensitive</@c>
+    <td><@s>caseSensitive</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--ignore-case</@c>
+    <td><@s>caseSensitive</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>--ignore-cvs-files</@c>
+    <td><@s>ignoreCvsFiles</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--dont-ignore-cvs-files</@c>
+    <td><@s>ignoreCvsFiles</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>--ignore-svn-files</@c>
+    <td><@s>ignoreSvnFiles</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--dont-ignore-svn-files</@c>
+    <td><@s>ignoreSvnFiles</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>--ignore-temporary-files</@c>
+    <td><@s>ignoreTemporaryFiles</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--dont-ignore-temporary-files</@c>
+    <td><@s>ignoreTemporaryFiles</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>--snip</@c>
+    <td><@s>snip</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--dont-snip</@c>
+    <td><@s>snip</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>-x</@c>, <@c>--expert</@c>
+    <td><@s>expert</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--not-expert</@c>
+    <td><@s>expert</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>--append-log-file</@c>
+    <td><@s>appendLogFile</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>--dont-append-log-file</@c>
+    <td><@s>appendLogFile</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>-q</@c>, <@c>--quiet</@c>
+    <td><@s>quiet</@s>
+    <td><@c>true</@c>
+  <tr>
+    <td><@c>-v</@c>, <@c>--verbose</@c>
+    <td><@s>quiet</@s>
+    <td><@c>false</@c>
+  <tr>
+    <td><@c>-Q</@c>, <@c>--really-quiet</@c>
+    <td><@s>quiet</@s>
+    <td><@c>reallyQuiet</@c>
+</table>
+
+<p>Example:</p>
+
+<@prg>fmpp -S src -O out --dont-ignore-cvs-files -cqx</@prg>
+
+<p>where the last few options mean: <@s>ignoreCvsFiles</@s> is <@c>false</@c>, <@s>stopOnError</@s> is <@c>false</@c>, <@s>quiet</@s> is <@c>true</@c>, <@s>expert</@s> is <@c>true</@c>.</p>
+
+<p>The value of the <@s>sources</@s> setting can be given as the non-option arguments to the tool. For example, to process only files <@c>index.html</@c> and directory <@c>products</@c> of the source root:</p>
+
+<@prg>fmpp -S src -O out index.html products</@prg>
+
+<p>Notes for Windows users:</p>
+<ul>
+  <li>In paths you can optionally use slash (<@c>/</@c>) instead of backslash (<@c>\</@c>) anywhere.</li>
+  <li>You can't use <@c>*</@c> and <@c>?</@c> in paths (except in settings that explicitly want <@a href="pathpattern.html">path patterns</@a>, e.g. <@s>modes</@s>)</li>
+</ul>
+
+</@sect>
+
+
+<@sect title="Using configuration files">
+
+<p>With option <@c>--configuration</@c> or <@c>-C</@c> you can load a configuration file. As you may know it <@a href="configfile.html">from the chapter about configuration files</@a>, it is enough to give the directory of the configuration file, if the file uses one of the standard names. Example:</p>
+
+<@prg>fmpp -C works/project1</@prg>
+
+<p>If you don't use option <@c>--configuration</@c>/<@c>-C</@c>, <@c>fmpp</@c> will look for a configuration file in the current working directory, and if it finds one with standard name, it will load that automatically. To prevent this, use <@c>--configuration</@c>/<@c>-C</@c> with <@c>none</@c> parameter (as <@c>-C&nbsp;none</@c>).</p>
+
+
+<p>Settings loaded from the configuration file have lower priority than settings given as command-line arguments. For example, here you add an extra variable to the <@s>data</@s> specified in the configuration file, or if variable <@c>online</@c> was already created there then replace its value:</p>
+
+<@prg>fmpp -C works/project1 -D online:true</@prg>
+
+<p>Options <@c>configurationBase</@c> and <@c>inheritConfiguration</@c> can be used to emulate that settings <@s>configurationBase</@s> and <@s>inheritConfiguration</@s> are present with the given value in the configuration file.</p>
+
+</@sect>
+
+
+<@sect title="Global options" anchor="fmpprc">
+
+<p>The default of some settings that can't influence the output files can be set in a configuration file called <@c>.fmpprc</@c>. This file is searched in these directories, in this order:</p>
+<ol>
+  <li>In your home directory.</li>
+  <li>On Windows, in the directory pointed by the <@c>HOME</@c> environment variable.</li>
+  <li>In the directory pointed by the <@c>FMPP_HOME</@c> environment variable. This is usually automatically set to the directory where you have installed FMPP.</li>
+</ol>
+
+<p>Only the first <@c>.fmpprc</@c> found will be loaded.</p>
+
+<p>The settings you can set in the <@c>.fmpprc</@c> are:</p>
+<ul>
+  <li><@s>appendLogFile</@s></li>
+  <li><@s>columns</@s></li>
+  <li><@s>echoFormat</@s></li>
+  <li><@s>snip</@s></li>
+  <li><@s>quiet</@s></li>
+</ul>
+
+</@sect>
+
+
+<@sect title="Supported front-end dependent settings">
+
+<p>All <@a href="settings.html#logging">logging related settings</@a> are supported.</p>
+
+<p>All recommended <@s>echoFormat</@s>-s are supported, but <@c>verbose</@c> is the same as <@c>normal</@c>. It depends on the terminal implementation you use, but <@c>terse</@c> echo format can substantially speed up the processing session if you have many files.</p>
+
+<p>All <@s>quiet</@s> values are supported.</p>
+
+</@sect>
+
+
+<@sect title="All options">
+
+<p>These are the settings that are not (directly) for specifying FMPP settings:</p>
+<ul> 
+  <li><@c>-C</@c>, <@c>--configuration</@c></li>
+  <li><@c>-h</@c>, <@c>--help</@c></li>
+  <li><@c>--long-help</@c></li>
+  <li><@c>--version</@c></li>
+  <li><@c>--print-locales</@c></li>
+</ul>
+
+<p>This is what FMPP prints with <@c>-h</@c>:</p>
+
+<pre>
+${pp.loadData('eval', '
+    StringWriter sw = new StringWriter();
+    PrintWriter pw = new PrintWriter(sw);
+    
+    r = fmpp.tools.CommandLine.execute(
+        new String[]{"-h", "--columns", "80"},
+        pw,
+        new PrintWriter(fmpp.util.NullWriter.INSTANCE));
+    if (r != 0) {
+        throw new Exception("CommandLine.execute exited with code " + r);
+    }
+    
+    pw.close();
+    return sw.toString();
+')}
+</pre>
+
+</@sect>
+
+</@page>

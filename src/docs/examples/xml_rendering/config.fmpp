@@ -1,0 +1,19 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+xmlRenderings: [
+    {
+        ifDocumentElementIs: product
+        template: renderer/product.html
+    }
+    {
+        ifDocumentElementIs: book
+        template: renderer/book.html
+        index: {
+            element: [part, chapter]
+            attribute: ppFile
+            numbering: hierarchical
+            value: '%e_%n.html'
+        }
+    }
+]

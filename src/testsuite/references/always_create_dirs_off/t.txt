@@ -1,0 +1,38 @@
+  ELEM: I'm the PARAMS element.
+        I'm belonging the http://example.com/1 namespace.
+  ATT: I'm the xmlns attribute
+       of an PARAMS element.
+       I'm belonging to the http://www.w3.org/2000/xmlns/ namespace.
+       My value is: http://example.com/1
+  ATT: I'm the x attribute
+       of an PARAMS element.
+       I'm belonging to the http://www.w3.org/2000/xmlns/ namespace.
+       My value is: http://example.com/2
+ 
+    ELEM: I'm the PARAM element.
+        I'm belonging the http://example.com/1 namespace.
+  ATT: I'm the name attribute
+       of an PARAM element.
+       I'm belonging to the void namespace.
+       My value is: Color
+  ATT: I'm the value attribute
+       of an PARAM element.
+       I'm belonging to the void namespace.
+       My value is: Red
+ 
+    ELEM: I'm the PARAM element.
+        I'm belonging the http://example.com/2 namespace.
+  ATT: I'm the name attribute
+       of an PARAM element.
+       I'm belonging to the void namespace.
+       My value is: Height
+  ATT: I'm the value attribute
+       of an PARAM element.
+       I'm belonging to the void namespace.
+       My value is: 34 inches
+  ATT: I'm the foo attribute
+       of an PARAM element.
+       I'm belonging to the http://example.com/2 namespace.
+       My value is: bar
+ 
+

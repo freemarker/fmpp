@@ -1,0 +1,4 @@
+<PARAMS xmlns="http://example.com/1" xmlns:x="http://example.com/2"> 
+  <PARAM name="Color" value="Red"/> 
+  <x:PARAM name="Height" value="34 inches" x:foo="bar" /> 
+</PARAMS>

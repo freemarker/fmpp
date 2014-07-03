@@ -1,0 +1,19 @@
+<#include "../@inc/test1.ftl"> == INTERNAL @inc/test1.ftl
+<#include "../@inc/test2.ftl"> == EXTERNAL inc1/test2.ftl
+<#include "../@inc/test3.ftl"> == EXTERNAL inc2/test3.ftl
+
+<#include "/@inc/test1.ftl"> == INTERNAL @inc/test1.ftl
+<#include "/@inc/test2.ftl"> == EXTERNAL inc1/test2.ftl
+<#include "/@inc/test3.ftl"> == EXTERNAL inc2/test3.ftl
+
+<#include "../@test4"> == INTERNAL @test4
+<#include "../@test5"> == EXTERNAL inc1/test5.ftl
+<#include "../@test6"> == EXTERNAL inc2/test6.ftl
+
+<#include "/@test4"> == INTERNAL @test4
+<#include "/@test5"> == EXTERNAL inc1/test5.ftl
+<#include "/@test6"> == EXTERNAL inc2/test6.ftl
+
+<#include "../@monster"> == GODZILLA
+
+<#include "/@monster"> == GODZILLA

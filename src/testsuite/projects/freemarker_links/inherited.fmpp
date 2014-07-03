@@ -1,0 +1,4 @@
+freemarkerLinks: {
+    test5: [inc1/test5.ftl, inc2/test5.ftl]
+    test6: inc2/test6.ftl
+}

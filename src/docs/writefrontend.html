@@ -1,0 +1,71 @@
+<@page title="Writing New Front-ends" keywords="front-end, front-ends, custom, write, embed">
+
+<@note>I'm talking about writing front-ends here, but of course the same technique can be used to embed FMPP into your application that you couldn't call a front-end.</@note>
+
+<p>The low-level method is to create an <@c>fmpp.Engine</@c> object, and then set it up with its methods, and then call its <@c>process(<@r>...</@r>)</@c> method to execute a processing session. The API of this object reflects the internal architecture of FMPP. Higher-level concepts as <@a href="settings.html">settings</@a> or <@a href="configfile.html">configuration files</@a> doesn't exist on this level. So I don't recommend you to work with <@c>fmpp.Engine</@c> objects directly.</p>
+
+<p>The high-level method is to create an <@c>fmpp.setting.Settings</@c> object, and fill it with the setting values. This object can load configuration files, and its API uses a higher level approach in general. This is the object where <@a href="settings.html">FMPP settings</@a> are implemented. After you set the setting values (and also you have added progress listeners and engine attributes you wanted), invoke <@c>Settings.execute()</@c> to execute a processing session.</p>
+
+<@img src="fmpparch.png" alt="FMPP architecture">
+  The components involved in typical FMPP usage. Red arrow shows direct method invocation (or constructor invocation, or static field access) between the components. The arrow points from the caller towards the called. Dashed lines indicate unimportant or occasional access.
+</@img>
+
+<p>Note that some settings are not implemented by <@c>Settings</@c> (as <@s>echoFormat</@s>, <@s>logFile</@s>, ...etc.), and should be implemented by the front-end.</p>
+
+<p>For more information, please see <@a href="api/index.html">the API documentation</@a>. Also, you can look into the source code of <@c>fmpp.tools.CommandLine</@c> and <@c>fmpp.tools.AntTask</@c>.</p>
+
+<p>Example: Below is the source code of a very simple command-line front-end. It accepts one argument, the name of the configuration file to use. If that's omitted, it tries to load a configuration file from the current directory.</p>
+
+<@prg>
+package fmpp.testsuite;
+
+import java.io.File;
+
+import fmpp.ProcessingException;
+import fmpp.progresslisteners.ConsoleProgressListener;
+import fmpp.setting.SettingException;
+import fmpp.setting.Settings;
+import fmpp.util.MiscUtil;
+import freemarker.log.Logger;
+
+public class AdhocFrontEnd {
+    public static void main(String[] args) {
+        // Parse command-line args
+        File cfgFile = null;
+        if (args.length == 0) {
+            cfgFile = new File("."); // load the cfg. of the the current dir.
+        } else if (args.length == 1) {
+            cfgFile = new File(args[0]);
+        } else {
+            System.err.println(
+                    "Usage: java AdhocFrontEnd [configuration-file]");
+            System.exit(-1);
+        }
+
+        // Shut FreeMarker logger up
+        try {
+            Logger.selectLoggerLibrary(Logger.LIBRARY_NONE);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(
+                    "Failed to disable FreeMarker logging.");
+        }
+
+        // Now comes the meat...
+        try {
+            Settings ss = new Settings(new File("."));
+            ss.load(cfgFile);
+            ss.addProgressListener(new ConsoleProgressListener());
+            ss.execute();
+            System.out.println("Done.");
+        } catch (SettingException e) {
+            System.err.println(MiscUtil.causeMessages(e));
+            System.exit(-2);
+        } catch (ProcessingException e) {
+            System.err.println(MiscUtil.causeMessages(e));
+            System.exit(-3);
+        }
+    }
+}
+</@prg>
+
+</@page>

@@ -1,0 +1,23 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+borders: [
+    footer('\n---X---', **/*.x)
+    footer('\n---Y---', **/*.y)
+    layer()
+    border('H', '0')
+    layer()
+    border('0', 'F')
+    layer()
+    border('{', '}')
+    layer()
+    header('H1{')
+    footer('}F1')
+    layer()
+    layer()
+    header('ROOTH2{', /*)
+    footer('}SUBF2', sub/)
+    layer()
+    header('SUBH3{', sub/)
+    footer('}ROOTF3', /*)
+]

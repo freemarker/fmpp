@@ -1,0 +1,881 @@
+<@page title="Settings" keywords="settings, options, engine">
+
+<@sect title="Things you must know about settings">
+
+<p>The basic definition of the "setting" term is <@a href="overview.html#settings">here...</@a>
+
+  <@sect title="The common characteristics of settings">
+  
+  <p>The characteristics of a setting can be described with these attributes:
+  <ul>
+    <li><@e>Name</@e>: The name of the setting. This name is used in configuration files. Also, front-ends used to use this or similar name for the setting in their user interface.</li>
+  
+    <li><@e>Type</@e>: The type of the value, such as string, integer, boolean, sequence or hash. If you specify the values in a configuration file, then the TDD syntax clearly specifies what syntax to use for which types. For the front-end specific user interface, it depends on the concrete front-end how you face with types. But, if the front-end wants you to enter the value for a single setting as simple text, then you have to enter scalar values (string, integer and boolean) as is (without any TDD quotation), but you have to use TDD syntax for non-scalar types as sequences and hashes. For setting that are sequences, <@a href="tdd.html#modes">sequence mode TDD</@a> is used (i.e. no <@c>[</@c> and <@c>]</@c> needed), and for setting that are hashes hash mode TDD is used (i.e. no <@c>{</@c> and <@c>}</@c> needed).</li>
+    
+    <li><@e>Default</@e>: If the value of the setting was not set, the processing session will use this value. If the setting has no default value that doesn't mean that you are required to specify a value for it.</li>
+  </ul>
+  
+  <p>Notes:</p>
+  <ul>
+    <li>Settings of type "string (path)" are <@a href="overview.html#realPath">real paths.</@a></li>
+    <li>All settings are optional, unless explicitly noted otherwise.</li>
+  </ul>
+  
+  </@sect>
+
+  <@sect title="The merging of setting values">
+  
+  <p>Setting values can be specified in multiple layers. For example, it is possible that a setting is specified in the configuration file, and then again with a command-line argument of the command-line tool.</p>
+
+  <p>Setting layers has a priority order, for example, the setting layer defined by the command-line arguments has higher priority than the setting layer defined by the configuration file. When the value of the same setting is specified in two layers, then the value that comes from the layer with higher priority overrides the setting value comes from the lower layer. If the type of the setting is not map or sequence, then this simply means that the value from the higher layer will be used, and the other value will be totally hidden. But if the setting type is sequence or hash, then the sequence values will be merged:</p>
+  <ul>
+    <li><p>When sequences are merged, the two sequences are concatenated, and the sequence with the higher priority will start the new concatenated sequence.</p></li>
+  
+    <li><p>When hashes are merged, the union of the two hashes is constructed, and for clashing keys the values in the hash with higher priority will be used. The type of the value of the hash items is not considered when the merging happens, simply the item from the higher priority hash will be used in the resulting hash. Thus, hash merging is not "deep", becasue the value of clashing items with hash values are not merged. For example, if you merge <@c>{x:{v:1}, y:2}</@c> with <@c>{x:{w:2}}</@c>, then the result will be <@c>{x:{w:2}, y:2}</@c>, and not <@c>{x:{v:1, w:2}, y:2}</@c>.</p></li>
+  </ul>
+
+  <p>Logically, the rules described in this section can be applied for more than two layers of settings as well.</p>
+  
+  </@sect>
+
+</@sect>
+
+<@sect title="Directories">
+<@setting name="sourceRoot" type="string (path)" default="" merging=false clShort="S" antAltAtt="srcdir" />
+<@setting name="outputRoot" type="string (path)" default="" merging=false clShort="O" antAltAtt="destdir" />
+<@setting name="dataRoot" type="string (path)" default="ex:the value of <@s\gsourceRoot</@s\g" merging=false />
+<@setting name="alwaysCreateDirectories" type="boolean" default="false" merging=false antAltAtt="alwaysCreateDirs" />
+
+<p>In the typical use case FMPP processes all files in the directory specified by <@s>sourceRoot</@s>, and writes the result into the directory specified by the <@s>outputRoot</@s> directory. These two root directories serve as the root directory of two virtual file systems that store the source files and the output files respectively. This means that all files that FMPP processes must be inside the source root directory (except data files - see later), and it is guaranteed that all output files will be inside the output root directory (as far as you do not by-pass FMPP intentionally with custom extensions). You can't leave the roots by moving upward with <@c>..</@>-s. Also, when you refer to files or directories in the templates as the parameters of predefined directives, absolute paths like <@c>/example.html</@c> are interpreted relatively to the source or output root directories (except if the parameter deals with data files - see later).</p>
+
+<p>Note that both the source root and the output root must be defined before starting a processing session (but a front-end may assings a default value to them). Also, if you use the <@s>outputFile</@s> setting these two settings always have a default value.</p>
+
+<p>The directory specified by <@s>dataRoot</@s> is interesting for <@a href="dataloader.html">data loaders</@a> only. If a data loader gets a relative path, then it should interpret that relatively to the data root directory. If it gets an absolute path, it should interpret that as is. As you can see from this, data root directory does not try to mimic a file system root as the other two root directories. Data loaders can reach files outside the data root directory.</p>
+
+<p>By default, the data root is the same as the source root. This encourages the practice where you store the data files in the, say, <@c>data</@> subdirectory of the source root, and then mark that directory with a <@c>ignoredir.fmpp</@> file (file content is irrelevant), so FMPP will not process the content of the directory. Thus, you keep all input together: data sources, templates and static files (as images).</p>
+
+<p>By default, no empty subdirectories will be created in the output root directory. More precisely, directories are created only on demand, when actual output files have to be created in them, hence normally you don't have empty directories in the output. However, this behavior can be changed with <@c>alwaysCreateDirectories</@c>; with that setting set to <@c>true</@c>, each source directory will produce a corresponding output directory (unless it contains an <@c>ignoredir.fmpp</@> file). Also, if a source directory contains a file named <@c>createdir.fmpp</@c> (file content is irrelevant) then the corresponding output directory will be created, regardless of the <@c>alwaysCreateDirectories</@c> setting (unless, again, <@c>ignoredir.fmpp</@> is also present)</p>
+
+<p>It is possible to tell FMPP to process only certain files and directories of the source root, not all of them; see the <@s>sources</@s> setting.<p>
+
+</@sect>
+
+<@sect title="Source and output files">
+<@setting name="sources" type="sequence (of paths)" default="" merging=true />
+<@setting name="outputFile" type="string (path)" default="" clShort="o" merging=false />
+
+<p>Be default FMPP processes all files in the source root directory. But if you use the <@s>sources</@s> setting, FMPP will process only the files and/or directories listed there. Relative paths in this setting are resolved relatively to the source root directory, not to the configuration base (unless you use <@s>outputFile</@s> setting).</p>
+
+<p>If you use the <@s>outputFile</@s> setting, then FMPP switches to single file mode. In this mode, it will process only 1 files, and store its output in the file specified by the <@s>outputFile</@s> setting. You must use <@s>sources</@s>, and it must list exactly 1 file. If a relative path is given in the <@s>sources</@s>, it is resolved relatively to configuration base, not to the source root. If you didn't specified <@s>outputRoot</@s> or <@s>sourceRoot</@s>, it will default to the parent directory of the output file or source file respectively.</p>
+
+<p>The user interface of front-ends tend to require you to use some special way to specify the value <@s>sources</@s> setting. Please read the <@a href="frontends.html">documentation of the front-end</@a> you use about this. Note that configuration files are front-end independent, so there you always simply set <@s>sources</@s> be assigning value to the <@c>sources</@c> key.</p>
+
+</@sect>
+
+<@sect title="Text encoding issues">
+<@setting name="sourceEncoding" type="string" default="ISO-8859-1" clShort="E" merging=false />
+<@setting name="outputEncoding" type="string" default="source" merging=false />
+<@setting name="urlEscapingCharset" type="string" default="output" merging=false />
+
+<p>People use different encodings to store text in binary form, often referred as charsets. Examples of charsets are: <@c>ISO-8859-1</@c>, <@c>ISO-8859-2</@c>, <@c>CP852</@c>, <@c>CP1250</@c>, <@c>Shift_JIS</@c>, <@c>UTF-8</@c>. FMPP internally uses UNICODE everywhere, but when it has to read a text file or write a text file, it must deal with charsets to correctly decode/encode the text.
+To read text files, FMPP uses the source encoding. This is be default ISO-8859-1. Also, a FreeMarker template has the ability to tell its own encoding with <@c>&lt;#ftl encoding="<@r>something</@>"></@>, and this overrides the source encoding for the individual template file.</p>
+
+<p>To write text files, FMPP uses the output encoding. This is be default holds the special value <@c>source</@>, which means that FMPP will use the encoding of the source text file (template file). If you change the value of the setting to a concrete charset, such as UTF-8, then text files will be always written with that encoding. However, templates can set the encoding of the output file with <@c>&lt;@pp.setOutputEncoding encoding="<@r>something</@>"/></@>, and this overrides the encoding dictated by the settings.</p>
+
+<p>The <@s>urlEscapingCharset</@s> specifes the name of the charset (encoding) used for URL escaping. It defaults to <@c>output</@c>, which means that the output encoding will be used for URL escaping. URL escaping happens for example when you use FreeMarker's <@c>url</@c> built-in (e.g. <@c>&lt;a href="foo.cgi?id=<#noparse>${id?url}</#noparse>"></@c>) or the <@a href="pphash.html#key_urlPathEnc"><@c>pp.urlPathEnc</@c> method</@a>.</p>
+
+<p>All of these settings understands the special charset <@c>host</@c>, which means the default encoding of the host operating system.</p>
+
+<p>The set of supported charsets (and their preciese names) depends on the Java platfrom implementation you run FMPP on.</p>
+
+</@sect>
+
+
+<@sect title="Processing mode choosing" anchor="processingMode">
+<@setting name="modes" type="sequence (of function calls)" default="ex:empty" clShort="M" merging=true />
+<@setting name="ignoreCvsFiles" type="boolean" default="true" merging=false />
+<@setting name="ignoreSvnFiles" type="boolean" default="true" merging=false />
+<@setting name="ignoreTemporaryFiles" type="boolean" default="true" merging=false />
+
+<p>When FMPP has to process a file, it has to decide how to process that. That is, it has to choose a "processing mode" for the file. The processing mode can be one of:</p>
+<ul>
+  <li>execute: Execute the file as FreeMarker template (FTL)
+  <li>copy: Copy the file as is. Uses binary copy; charset does not mater here.
+  <li>renderXml: Parse the file as XML, and then render the XML document to output file(s) using a FreeMarker template. The template file is choosen for the XML file based on the <@s>xmlRenderings</@s> setting. For more information <@a href="settings.html#xmlRendering">read about XML rendering...</@a>
+  <li>ignore: Skip the file.
+</ul>
+
+<p>First, if the <@s>ignoreCvsFiles</@s> setting is true, and the file name is <@c>.cvsignore</@c> or matches <@c>.#?*</@c>, or the file is inside a sub-directory of the source root that is called <@c>CVS</@c>, then it chooses the "ignore" processing mode. Also, if the <@s>ignoreSvnFiles</@s> setting is true, and the file is inside a sub-directory of the source root that is called <@c>.svn</@c>, then it chooses the "ignore" processing mode (note that it doesn't ignore conflict files, i.e., <@c>*.mine</@c> and <@c>*.r<@r>number</@r></@c>). Also, if <@s>ignoreTemporaryFiles</@s> setting is true, and the file name matches <@c>?*~</@c> or <@c>~?*</@c> or <@c>#?*#</@c> or <@c>%?*%</@c> or <@c>_.?*</@c>, or the extension (the part after the last dot in the file name) after converting to lowercase matches <@c>bak</@c> or <@c>~*</@c> or <@c>*~</@c> then it chooses the "ignore" processing mode. Note that the FMPP Ant task always sets these settings to <@c>false</@c>, so it does not interfere with the <@c>defaultExcludes</@c> parameter of Ant.</p>
+
+<p>Then, the processing mode is chosen with a sequence of <@a href="pathpattern.html">path patterns</@>, which is defined by the <@s>modes</@s> setting. The first path pattern in the sequence that matches the <@a href="overview.html#virtualPath">virtual path</@a> of the file, chooses the processing mode. If no matching path were found, then FMPP chooses the processing mode automatically:</p>
+<ul>
+  <li>If the file extension after converting to lowercase is <@c>xml</@c> and the <@s>xmlRenderings</@s> is not an empty sequence, then it chooses the "renderXml" mode.
+  <li>If the file extension after converting to lowercase is one of: <#list [
+                "jpg", "jpeg", "gif", "png", "swf", "bmp", "pcx", "tga", "tiff",
+                "ico",
+                "zip", "gz", "tgz", "jar", "ace", "bz", "bz2", "tar", "arj",
+                "rar", "lha", "cab", "lzh", "taz", "tz", "arc",
+                "exe", "com", "msi", "class", "dll",
+                "doc", "xls", "pdf", "ps", "chm",
+                "avi", "wav", "mp3", "mpeg", "mpg", "wma", "mov", "fli"]?sort as ext
+      ><@c>${ext}</@><#if ext_has_next>, </#if></#list>, then it chooses the "copy" processing mode.
+  <li>Otherwise it chooses the "execute" processing mode.
+</ul>
+<p>The <@s>modes</@s> setting is a list of TDD functions, where the function name is either <@c>execute</@>, <@c>copy</@>, <@c>renderXml</@c>, or <@c>ignore</@>. The arguments to the functions are one or more path patterns of virtual paths in the source file system. For example this (in a configuration file):</p>
+<@prg>
+modes: [
+    ignore(**/tmp/)
+    copy(foo/**/*.html, foo/**/*.htm)
+    execute(**/*.html, **/*.htm, **/*.xhtml)
+    copy(**/*)
+]
+</@prg>
+<p>will produce this processing mode chooser sequence:</p>
+<table border=1 cellspacing=0 cellpadding=4>
+  <tr><th>Path pattern<th>Processing mode
+  <tr><td><@c>**/tmp/</@><td>ignore
+  <tr><td><@c>foo/**/*.html</@><td>copy
+  <tr><td><@c>foo/**/*.htm</@><td>copy
+  <tr><td><@c>**/*.html</@><td>execute
+  <tr><td><@c>**/*.htm</@><td>execute
+  <tr><td><@c>**/*.xhtml</@><td>execute
+  <tr><td><@c>**/*</@><td>copy
+</table>
+
+<p>Note that processing modes are only applicable to files, not to directories. Say, you can't tell FMPP to ignore a directory, but to ignore all files in the directory (as <@c>**/tmp/</@c> above). The end result will be that the directory will not be created, as it contains no output file.</p>
+
+</@sect>
+
+
+<@sect title="Header and footer choosing">
+<@setting name="borders" type="sequence (of function calls)" default="ex:empty" merging=true />
+
+<p>With these settings you can insert a header before templates, and insert a footer after templates (templates = files processed in "execute" processing mode). The insertion of header and footer happens only in the memory of the computer, and does not modify the source files. This can be used to add common headers and footers to the templates without actually typing them again and again. Also, you can change the header/footer of many templates at once.</p>
+
+<p>The intent of headers and footers is not to show something at the top and bottom of pages. Rather it is to insert FTL directives that import or include commonly used macros, or to place the page inside a directive block, as <@c>&lt;#escape <@r>...</@r>><@r>...</@r>&lt;/#escape></@c>. For concrete examples please see <@example 'border' />.</p>
+
+<@note>Unfortunately the inserted header displace the error locations (column, row) in the error messages (I can't fix it in FMPP; FreeMarker improvements are needed to address this). However, if the header doesn't contain line-break, then this unwanted effect is limited to the first line of the template. So it's strongly recommended to not use line-break in headers.</@note>
+
+<p>Footers and headers are chosen with similar mechanism to processing modes (see <@s>modes</@s>). There are two independent sequence of path-pattern to text entry mappings (so called "choosers"), one for choosing headers, and one for choosing footers. When FMPP loads a template file, it checks if the <@a href="overview.html#virtualPath">virtual path</@a> of the file matches to an entry in the header chooser sequence, and if so, it uses the header specified in the first such entry. Also, it does the same with the sequence of footers choosers, to choose a footer.</p>
+
+<p>There is a single setting to build both sequences at once: <@s>borders</@s>. You give a sequence of <@c>header</@>, <@c> footer</@> and <@c>border</@> functions in it. The first argument to <@c>header</@> and <@c> footer</@> functions is the text of header and footer respectively, and the further arguments are the path patterns of virtual paths in the source file system. If you omit the path patterns, that's the same as if you give <@c>**</@c> (i.e. match all files). <@c>border</@> is convenience function: <@c>border(<@r>a</@>, <@r>b</@>, <@r>paths...</@>)</@> is equivalent with <@c>header(<@r>a</@>, <@r>paths...</@>), footer(<@r>b</@>, <@r>paths...</@>)</@>. Example:</p>
+<@prg><#noparse>
+header("<#import '/lib/css.ftl' as css>", **/*.css)
+border("<#escape x as x?html>", "</#escape>", **/*.html, **/*.htm)
+</#noparse></@prg>
+<p>This build these sequences:</p>
+<ul>
+  <li>Header chooser sequence:
+  <table border=1 cellspacing=0 cellpadding=4>
+    <tr><th>Path pattern<th>Header
+    <tr><td><@c>**/*.css</@><td><@c>&lt;#import '/lib/css.ftl' as c></@>
+    <tr><td><@c>**/*.html</@><td><@c>&lt;#escape x as x?html></@>
+    <tr><td><@c>**/*.htm</@><td><@c>&lt;#escape x as x?html></@>
+  </table>
+  </li>
+  <li>Footer chooser sequence:
+  <table border=1 cellspacing=0 cellpadding=4>
+    <tr><th>Path pattern<th>Footer
+    <tr><td><@c>**/*.html</@><td><@c>&lt;/#escape></@>
+    <tr><td><@c>**/*.htm</@><td><@c>&lt;/#escape></@>
+  </table>
+  </li>
+</ul>
+
+<p>Only the first matching entry of the sequence is used for a file, the later entries are ignored. But sometimes you want to choose multiple headers/footers for the same file. In that case, you can define multiple independent sequences, so said, layers. Layers are separated with <@c>layer()</@c>. For example, modify the above example, so it imports <@c>/lib/common.ftl</@c> at the top for all files, without disabling the other headers/footers:</p>
+
+<@prg><#noparse>
+# The 1st (implicit) layer starts here
+header("<#import '/lib/common.ftl' as c>", **/*.css, **/*.html, **/*.htm),
+layer()
+# The 2nd layer starts here
+header("<#import '/lib/css.ftl' as css>", **/*.css),
+border("<#escape x as x?html>", "</#escape>", **/*.html, **/*.htm)
+</#noparse></@prg>
+
+<p>Here we have two independent header chooser sequences, so both CSS and HTLM files will import <@c>lib/common.ftl</@c>, and in additional CSS files will import <@c>lib/css.ftl</@c>, and HTML files will use an escape block. You can have any number of layers.</p>
+
+<p>A header chosen from an earlier layer will be used earlier in the template file than headers chosen from later layers. A footer chosen from an earlier layer will be used later in the template file than footers chosen  from later layers. For example:</p>
+
+<@prg>
+borders: [
+  border('L1(', ')L1')
+  layer()
+  border('L2{', '}L2')
+  layer()
+  border('L3[', ']L3')
+]
+</@prg>
+
+<p>If the content of a template file is <@c>content</@c>, its output will be:</p>
+
+<@prg>
+L1(L2{L3[content]L3}L2)L1
+</@prg>
+
+</@sect>
+
+
+<@sect title="Output file name deduction">
+<@setting name="removeExtensions" type="sequence (of strings)" default="ex:empty"  clShort="R" merging=true />
+<@setting name="removePostfixes" type="sequence (of strings)" default="ex:empty" merging=true />
+<@setting name="replaceExtensions" type="sequence (of strings)" default="ex:empty" merging=true />
+
+<p>Initially the name of the output file is the same as the name of the source file. These two settings allow you to change the output filename somewhat, be removing parts of source file name.
+
+<p>The precise meaning of the settings:</p>
+<ul>
+  <li><@s>removeExtensions</@s>: If the source file name ends with an exension in this sequence, then it will be removed from the output file name. For example, if <@c>t</@> is in the sequence (note that there is no dot before the <@c>t</@c>), then the output file for <@c>example.html.t</@> will be <@c>example.html</@>. The extension to remove can contain dots (as <@c>tar.gz</@>).</li>
+  
+  <li><@s>removePostfixes</@s>: If the source file name before the first dot ends with a string in this sequence, then it will be removed from the output file name. For example, if <@c>_t</@> is in the sequence, then the output file for <@c>example_t.html</@> will be <@c>example.html</@>. If the file name does not contains dot, then it still works: <@c>example_t</@> will become to <@c>example</@c>.</li>
+  
+  <li><@s>replaceExtensions</@s>: This sequence is used to replace the file extensions with another extensions. For example, if the sequence is this:<br>
+  <@c>ftl, html, xftl, xml</@><br>
+  then the <@c>ftl</@> extension will be replaced with <@c>html</@> (i.e. the output file name for source file <@c>foo.ftl</@> will be <@c>foo.html</@>), and the <@c>xftl</@> extension will be replaced with <@c>xml</@>. The 1st, 3rd, 5th, etc. sequence elements are the old extensions, and the 2nd, 4th, 6th, etc. sequence elements are the new extensions, so <@c>html</@> extension will not be replaced with <@c>xftl</@>. Also, only one extension replacement will occur for the same file name, so in the case of<br>
+  <@c>x, y, y, z</@><br>
+  <@c>x</@> will not become to <@c>z</@>.</li>
+
+</ul>
+<p>The settings are applied in the order as they appear above. Each setting is applied only once on the same file name.
+
+<p>Note that output file name deduction is only apply to files, not to directories.</p>
+
+</@sect>
+
+
+<@sect title="Skipping unchanged files">
+<@setting name="skipUnchanged" type='string' default="none" clShort="-U" merging=false />
+
+<p>This setting specifies that the processing of which source files can be skipped, if the source file was not modified after the last modification time of the output file. The value of setting can be one of:</p>
+<ul>
+  <li><@c>none</@>: Don't skip unchanged files.
+  <li><@c>all</@>: Skip all unmodified files. <@e>Warning!</@e> It has the problem that if the data that the template displays was changed, or a file that is <@c>&lt;#include <@r>...</@r>></@c>-d or <@c>&lt;#import <@r>...</@r>></@c>-d by the template was changed, it will not re-generate the output, since the template file itself was not changed.
+  <li><@c>static</@>: Skip only unmodified files that will be simply copied anyway (the files where the <@s>modes</@s> chooses "copy" processing mode). Process all other files. This is the recommended setting for most projects.
+</ul>
+<p>If the output does not exist, the source file will be always processed.<p>
+
+<p>This feature will not work for templates that rename or drop the original output file during the template execution, since FMPP will believe in the next processing session that the output file for those files is missing, and thus it will process them again.</p>
+
+</@sect>
+
+
+<@sect title="Turn choosing">
+<@setting name="turns" type="sequence (of function calls)" default="ex:empty sequence" merging=true />
+
+<p>When FMPP has to process multiple files in the same processing session (for example, when you process a whole directory), then the order in which the files will be processed, is undefined. This is a problem in certain use cases, where it must be ensured that certain files will be processed later than others. For example, if a page contains the alphabetic index of keywords occur in other pages, then that page must be processed for the last, because the information is collected during the processing of the other pages. This is what turns are about: to guarantee the order of the processing of files.</p>
+
+<p>The processing session is divided up into, so called, turns. Turns are identified with the turn number, which is simply the order of the turn. The session starts with turn 1, then comes turn 2, and then comes turn 3, ...etc. FMPP puts all files that will be processed into exactly one of the turns, based on the turn chooser sequence.</p>
+
+<p>The turn chooser sequence is a sequence of path-pattern -> turn-number pairs. For each source file, the <@a href="overview.html#virtualPath">virtual path</@a> of the source file is compared with these <@a href="pathpattern.html">path patterns</@a>, and the first pattern of the sequence that matches determines the turn in which the file will be processed. If there is no matching pattern in the sequence for the file, then the file will be processed in turn 1.</p>
+
+<p>For example, if <@c>config.fmpp</@c> contains this line:
+
+<@prg>
+turns: [turn(3, main_idx.html), turn(2, **/*_idx.html)]
+</@prg>
+
+<p>then all files where the file name ends with <@c>_idx.html</@c> will be processed in turn 2, except <@c>main_idx.html</@c>, which will be processed in turn 3. All other files will be processed in turn 1.</p>
+
+<p>There is no upper limit of the turn number (except a technically limit, somewhere near 2 thousand million). Simply, the last turn will be the turn with the highest number, which is mentioned in the turn chooser sequence, or 1, if the sequence is empty. The first turn is always the turn 1. It is not a problem if a turn contains no file processing.</p>
+
+<p>See <@example 'session' /> for a working example, or the FMPP task call in the <@c>build.xml</@c>.</p>
+
+</@sect>
+
+
+<@sect title="Data model building" anchor="data">
+<@setting name="data" type="hash" default="" clShort="D" merging=true />
+<@setting name="localData" type="sequence" default=""merging=true />
+<@setting name="templateData" type="string (Java class name)" default="" merging=false deprecated="Use <@s\glocalData</@s\g instead." />
+
+<p>As you may <@fma href="dgui_quickstart_basics.html">know from the FreeMarker manual</@fma>, FreeMarker generates the output by merging a template with a data model, and the data model is a hash variable, the root hash. With FMPP terminology, it is usually just referred as "the data". In FMPP, the population of the root hash happens in two places:</p>
+<ol>
+  <li>Session level data: Once per processing session, at the very beginning of it (before any file processing is stared), the root hash is filled with variables based on the <@s>data</@s> setting. This is what happened in the <@a href="qtour.html">Quick Tour</@a>, when we have loaded the colors and the table of birds. These variables will be constant during the whole session, and visible for all templates. They must not be modified while the processing session is executing, even if you find a technical way to do that. Note that <@fma href='dgui_misc_var.html'>FreeMarker uses multiple variable layers</@fma>, so you doesn't modify these variables with <@c>&lt;#assign <@r>...</@r>></@c> or <@c>&lt;#global <@r>...</@r>></@c>, just hide them for the time of the template execution, which is OK (the effect will not be visible for the files processed later).
+  
+  <li>Local data (file processing level data): For each processed file, just before FMPP starts to proccess the file, some extra variables are put into the root hash that are specific for that file. These variables will be present in the root hash only while that file is being processed (hence "local data"), so the next file processing will start with the original session level data in the root hash again. The local data is built in three steps, in this order:
+    <ol>
+      <li>Variables created based on the <@s>localData</@s> setting. (See details <@a href="#localData">later...</@a>)
+      <li>Deprecated: User written Java object of class specified by <@s>templateData</@s> adds an arbitrary set of variables. This feature is deprecated and will be removed later.
+      <li>The FMPP core adds the <@a href="pphash.html"><@c>pp</@c> hash</@a>.
+    </ol>
+  Variable added later will overwrite the variable of similar name added earlier. Also, variable that is local data will hide (seemingly overwrite) the variable of similar name that is session level data.
+  </li>
+</ol>
+
+<p>From the view point of FreeMarker templates, variables that are part of the session level data and the part of the local data are not different. They are equal parts of the data model.</p>
+
+<@sect title="ex:More about the <@s\gdata</@s\g setting">
+
+<p>When you use <@a href="tdd.html">TDD syntax</@a> for defining the hash for <@s>data</@s>, TDD function calls are interpreted as <@a href="dataloader.html">data loader</@a> invocations. For reminder, here is the relevant part of <@c>config.fmpp</@c> from <@example path="qtour_step4" />:</p>
+
+<@prg>
+data: {
+    tdd(data/style.tdd)
+    birds: csv(data/birds.csv)
+}
+</@prg>
+
+<p>TDD syntax makes it possible to enter values directly as well, without using data loaders. For example, you could directly enter the "birds" table with TDD (altoguh it is not too convenient):
+
+<@prg>
+data: {
+    tdd(data/style.tdd)
+    birds: [
+        {
+            name: arctic-tern
+            description: "Flies very long distances all years."
+            favoriteFood: sardine
+        }
+        {
+            name: house-sparrow
+            description: "Don't you say you don't know it..."
+            favoriteFood: sunflower
+        }
+        {
+            name: sakeret
+            description: "Great hunter of the sky."
+            favoriteFood: pigeon
+        }
+    ]
+}</@prg>
+
+</@sect> <#-- more about data -->
+
+<@sect title="ex:More about the <@s\glocalData</@s\g setting" anchor="localData">
+
+<p>Let's start with a simple example. We have a variable <@c>bgColor</@c> in the session level data with value <@c>green</@c>. We want to override this with value <@c>yellow</@c> for the source files that are in directory <@c>sub</@c> (or in its subdirectories, ...etc.):</p>
+
+<@prg>
+data: {
+    bgColor: green
+}
+
+localData: [
+    case(sub/**, {bgColor: yellow})
+]
+</@prg>
+
+<p>Complicate it a bit... now set the <@c>bgColor</@c> if the file is in directory <@c>sub</@c> or <@c>sub2</@c>:</p>
+
+<@prg>
+localData: [
+    case(sub/**, sub2/**, {bgColor: yellow})
+]
+</@prg>
+
+<p>Now do the same as earlier, except for files that are in directory <@c>sub/sky</@c>, where the <@c>bgColor</@c> is always <@c>blue</@c>:</p>
+
+<@prg>
+localData: [
+    case(sub/sky/**, {bgColor: blue})
+    case(sub/**, sub2/**, {bgColor: yellow})
+]
+</@prg>
+
+<p>The rule is that the first <@c>case(<@r>...</@r>)</@c> where one of the path patterns matches the source file path, will specify the local data (given as the last parameter), and the further <@c>case(<@r>...</@r>)</@c>-s are ignored. There can be any number of <@c>case(<@r>...</@r>)</@c>-s listed (note that <@c>localData</@c> is a sequence), and a <@c>case(<@r>...</@r>)</@c> can have any number of path patterns (but 0).</p> 
+
+<p>Tricky example: do the same as earlier, but don't override the color if the file name starts with <@c>foo</@c>:</p>
+
+<@prg>
+localData: [
+    case(**/foo*, {})
+    case(sub/sky/**, {bgColor: blue})
+    case(sub/**, sub2/**, {bgColor: yellow})
+]
+</@prg>
+
+<p>Assume you want to set variable <@c>author</@c> to <@c>Joe</@c> for all files where the file name contains <@c>_j.</@c>, and to <@c>Amy</@c> for all files contains <@c>_a.</@c>. But, you want to do this independently of the <@c>bgColor</@c> business. In this case you have to use layers:</p>
+
+<@prg>
+localData: [
+    # The 1st (implicit) layer starts here
+    case(**/foo*, {})
+    case(sub/sky/**, {bgColor: blue})
+    case(sub/**, sub2/**, {bgColor: yellow})
+    layer()
+    # The 2nd layer starts here
+    case(**/*_j.*, {author: Joe})
+    case(**/*_a.*, {author: Amy})
+]
+</@prg>
+
+<p>The rule is that layers are separated with a <@c>layer()</@c> function call. You can have any number of layers. The <@c>case(<@r>...</@r>)</@c>-list of each layer will be searched for the first match independently. If more layers put the same variable into the data model, the higher layer (earlier layer) wins (hence "layers"). Layers are calculated starting with the lowest layer. Note that to ease setting merging, layers that doesn't contain any <@c>case(<@r>...</@r>)</@c>-s are removed automatically.</p>
+
+<p>The last parameter of the case can be:</p>
+<ul>
+  <li>Arbitrary TDD hash (as in the examples above). This behaves as the value of the <@s>data</@s> setting, so you can use any number of key-value pairs, and invoke data loaders. The value of hash is calculated at most once per processing session, when it is first needed. For the subsequent file processings where the same <@c>case(<@r>...</@r>)</@c> is choosen, the calculated value is reused, so the data loaders don't re-load the external resources. If the <@c>case(<@r>...</@r>)</@c> is never chosen during the session, the value of the TDD hash is not calculated at all.</li>
+  
+  <li>A TDD function call. The supported functions are:
+    <ul>
+      <li><@c>bsh</@c>: Deduces the path of a BeanShell script file from the source file path, and executes that script to create local data. The path of the script file will be the same as the path of the source file, except that the file name part is modified according the options described later. The script must return a <@c>java.util.Map</@c>, which stores the variables (keys are the names of the variables, associated values are the values of the variables) that will be added to the local data. The following variables are accessible for the scripts: <@c>engine</@c>, the <@c>fmpp.Engine</@c> instance, and <@c>templateEnvironment</@c>, the <@c>fmpp.TemplateEnvironment</@c> instance. There is 1 parameter to this function (optional), a hash that can store the following options (each is optional):
+        <ul>
+          <li><@c>ending</@c>: The string appended at the end of the source file name. Can't be 0 length string. It defaults to <@c>.bsh</@c>.</li>
+          <li><@c>removeExtension</@c>: Sets if the extension from the source file name should be removed before appending the <@c>ending</@c>. The extension is the part after the last dot of the file name. The dot itself is also removed. Defaults to <@c>false</@c>.</li>
+          <li><@c>ignoreMissing</@c>: Set if it will be ignored if no script file found for the source file (and the source file will be processed normally), rather than aborting the processing of the file with error. Defaults to <@c>false</@c>.</li>
+          <li><@c>encoding</@c>: The encoding of the script files. If it is not set then the value of the <@s>sourceEncoding</@s> setting will be used.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  
+  <li>A string. In this case the string will be interpreted as BeanShell script that must evaluate to an object that implements <@c>fmpp.LocalDataBuilder</@c>. This let Java programmers to implement custom local data strategies. See <@a href="api/index.html">the API documentation</@a> for more information. (The predefined strategies above are also implemented with this interface internally.)</li>
+</ul>
+
+<p>Finally, let see an example of the usage of the <@c>bsh</@c> function: It will execute a BeanShell script file for each HTML to add local data. For example, the script file for source file <@c>foo/bar.html</@c> should be <@c>foo/bar.html.bsh</@c>. If there is no script for the HTML file, it will not consider that as an error.</p>
+
+<@prg>
+modes: ignore(**/*.bsh)
+localData: [
+    case(**/*.htm, **/*.html, bsh({ignoreMissing}))
+]
+</@prg>
+
+<p>A possible <@c>.bsh</@c> file, that adds local variables <@c>x</@c> and <@c>y</@c>:</p>
+
+<@prg>
+res = new HashMap();
+res.put("x", "Just for test: " + templateEnvironment.getData("author"));
+res.put("y", "Blah...");
+return res;
+</@prg>
+
+<p>For a working example see <@example 'local_data' />.</p>
+
+</@sect> <#-- more about localData -->
+
+</@sect>
+
+
+<@sect title="Locale">
+<@setting name="locale" type="string (locale)" default="en_US" clShort="A" merging=false />
+
+<p>Set the locale (language, country) used in templates. It has significance because different countries write numbers differently, sort text differently, etc.</p>
+
+<p>The value is a string which consist of a language code (lowercase two-letter ISO-639 code) plus optional county code (uppercase two-letter ISO-3166 code) separated from the language code with underscore, and if we have specified the country then an optional variant code (not standardized) separated from the country with underscore. Examples of valid values: <@c>en</@>, <@c>en_US</@>, <@c>en_US_MAC</@>. FreeMarker will try to use the most specific available locale, so if you specify <@c>en_US_MAC</@> but that is not known, then it will try <@c>en_US</@>, and then <@c>en</@>, and then the default locale of the computer.</p>
+
+<p>Also, the special value <@c>host</@> can be used to ask FMPP to use the default locale of the host operating system. However, for most applications it is not recommended to depend on the host locale, since then the output will depend on where you run the generation (and not on what people will use the output).</p>
+
+<p>If you don't know what your locale string would be, use the <@c>--print-locales</@> option of the command-line tool. Note that unfortunately, the codes printed here are far the superset of locales that Sun's Java platform implementation actually correctly handles.</p>
+
+<p>Note that the initial value of the setting is <@c>en_US</@>, because it is the locale that formats things similarly as a programmer would expect.</p>
+
+</@sect>
+
+
+<@sect title="Number format">
+<@setting name="numberFormat" type="string" default="0.############" merging=false />
+
+<p>This specifies the default format of numbers when FreeMarker has to convert numbers to strings.  For example, if you change this setting to <@c>0.00</@> then:</p>
+
+<@prg><#noparse>${1}, ${1.1}, ${1.245}</#noparse></@prg>
+
+<p>will print (if the locale setting is <@c>en_US</@>):</p>
+
+<@prg>1.00, 1.10, 1.25</@prg>
+
+<p>Note that you can override the effect of this setting in the templates with <@c>&lt;#setting number_format="<@r>something</@>"></@>, also you can override this for each interpolations with <@c>?string("<@r>something</@>")</@c>.</p>
+
+<p>The syntax and semantic of the format string is as <@c>java.text.DecimalFormat</@c> defines it. For convenience I quote a part from the documentation of <@c>java.text.DecimalFormat</@c>:</p> 
+
+<!--[BEGIN]-->
+ <p><strong>Pattern Syntax</strong>
+ <pre>
+ pattern     := pos_pattern{';' neg_pattern}
+ pos_pattern := {prefix}number{suffix}
+ neg_pattern := {prefix}number{suffix}
+ number      := integer{'.' fraction}{exponent}
+ prefix      := '&#92;u0000'..'&#92;uFFFD' - special_characters
+ suffix      := '&#92;u0000'..'&#92;uFFFD' - special_characters
+ integer     := min_int | '#' | '#' integer | '#' ',' integer
+ min_int     := '0' | '0' min_int | '0' ',' min_int
+ fraction    := '0'* '#'*
+ exponent    := 'E' '0' '0'*
+ &#32;
+ Notation:
+   X*       0 or more instances of X
+   { X }    0 or 1 instances of X
+   X | Y    either X or Y
+   X..Y     any character from X up to Y, inclusive
+   S - T    characters in S, except those in T
+ </pre>
+
+ <p><strong>Special Pattern Characters</strong>
+
+ <p>Many characters in a pattern are taken literally; they are matched during
+ parsing and output unchanged during formatting.  Special characters, on the
+ other hand, stand for other characters, strings, or classes of characters.
+ They must be quoted, unless noted otherwise, if they are to appear in the
+ prefix or suffix as literals.
+
+ <p>The characters listed here are used in non-localized patterns.  Localized
+ patterns use the corresponding characters taken from this formatter's
+ <code>DecimalFormatSymbols</code> object instead, and these characters lose
+ their special status.  Two exceptions are the currency sign and quote, which
+ are not localized.
+
+ <p><table border=1>
+ <tr><th>Symbol<th>Location<th>Localized?<th>Meaning</tr>
+ <tr><td>0<td>Number<td>Y<td>Digit
+ <tr><td>#<td>Number<td>Y<td>Digit, zero shows as absent</tr>
+ <tr><td>.<td>Number<td>Y<td>Decimal separator or monetary decimal separator</tr>
+ <tr><td>-<td>Number<td>Y<td>Minus sign</tr>
+ <tr><td>,<td>Number<td>Y<td>Grouping separator</tr>
+ <tr><td>E<td>Number<td>Y
+          <td>Separates mantissa and exponent in scientific notation.
+              <em>Need not be quoted in prefix or suffix.</em></tr>
+ <tr><td>;<td>Subpattern boundary<td>Y
+          <td>Separates positive and negative subpatterns</tr>
+ <tr><td>%<td>Prefix or suffix<td>Y<td>Multiply by 100 and show as percentage</tr>
+ <tr><td>&#92;u2030<td>Prefix or suffix<td>Y
+                   <td>Multiply by 1000 and show as per mille</tr>
+ <tr><td>&#164;<br>(&#92;u00A4)<td>Prefix or suffix<td>N
+                   <td>Currency sign, replaced by currency symbol.  If
+                   doubled, replaced by international currency symbol.
+                   If present in a pattern, the monetary decimal separator
+                   is used instead of the decimal separator.</tr>
+ <tr><td>'<td>Prefix or suffix<td>N
+          <td>Used to quote special characters in a prefix or suffix,
+              for example, <code>"'#'#"</code> formats 123 to
+              <code>"#123"</code>.  To create a single quote
+              itself, use two in a row: <code>"# o''clock"</code>.</tr>
+ </table>
+<!--[END]-->
+
+</@sect>
+
+<@sect title="Date/time issues">
+<@setting name="dateFormat" type="string" default="" merging=false />
+<@setting name="timeFormat" type="string" default="" merging=false />
+<@setting name="datetimeFormat" type="string" default="" merging=false />
+<@setting name="timeZone" type="string" default="" merging=false />
+
+<p>These settings are directly the settings of FreeMarker; see the <@fma>FreeMarker Manual</@fma> for more details. Also, about the format patterns <@a href="datetimepattern.html">read this</@a>.</p>
+
+<p>If the formats are not defined, then the default format for the current locale will be used (which is specified by the Java platform implementation you run FMPP on). If the time zone is not defined, then the time zone of the host computer will be used.</p>
+
+
+</@sect>
+
+<@sect title="Handling errors">
+<@setting name="stopOnError" type="boolean" default="true" clShort="s, c" merging=false />
+
+<p>Be default when FMPP encounters problem during the processing of a source file, it terminates the whole processing session with the error. It can be annoying if you have many bad files, because you have to restart the whole session and wait until the session reaches another bungled template (or other kind of problematic source file), again and again, until you have fixed all of them. If you change this setting to <@c>false</@c>, FMPP will not stop on the errors, just skips the problematic source file and continues the processing session with the next source file. You should use <@s>logFile</@s> together in this case, so you can later digest all problems occured during the processing session.</p>
+
+<p>Note that this settings will only suppress errors that occur during the processing of source files. It will not suppress errors like, for example, bad data files (unless it's loaded in a template with <@c>pp.data</@c>) or invalid setting values.</p>
+
+</@sect>
+
+
+<@sect title="Expert mode">
+<@setting name="expert" type="boolean" default="false" clShort="x" merging=false />
+
+<p>This setting is to enable suspicious situations, when the engine or the tool suspects that you have miss-configured something, and thus an accidental data loss can happen. It is recommended to leave this setting false, until it actually blocks something that you want to do.</p>
+
+<p>Please note that overwriting a file in general is a normal situation for FMPP; no expert mode required to do that.</p>
+
+</@sect>
+
+<@sect title="Case sensitive path comparison">
+<@setting name="caseSensitive" type="boolean" default="false" merging=false />
+
+<p>This setting tells if FMPP should differentiate upper- and lower-case letters when it compares paths for equality, or when it matches paths to path patterns. Regardless of this setting, FMPP always tries to keep the case of file names (i.e. the output of <@c>Foo.txt</@> will be <@c>Foo.txt</@>, and not <@c>foo.txt</@> or <@c>FOO.TXT</@>), as far as the host operating system does not prevent this.</p>
+
+</@sect>
+
+<@sect title="Logging" anchor="logging">
+<@setting name="logFile" type="string (path)" default=""  clShort="L" merging=false />
+<@setting name="appendLogFile" type="boolean" default="" merging=false />
+
+<p>If these settings are supported or not, depends on the front-end you use. If a setting is not supported, the front-end must silently ignore it.</p>
+
+<p>If the <@s>logFile</@s> setting is set, the front-end should record information about the processing session into the file, such as the warning messages and errors occurred.</p>
+
+<p>If <@s>appendLogFile</@s> is <@c>false</@c>, then already existing log file (possibly left from the previous processing session) is deleted and restarted. This is the recommended default behavior, however a front-end may chooses something different. If <@s>appendLogFile</@s> is <@c>true</@c>, then old log file should be continued.</p>
+
+<p>Please read the documentation of <@a href="frontends.html">the front-end you use</@a> for the precise behavior of these settings.</p>
+
+</@sect>
+
+
+<@sect title="Showing the progress and other messages">
+<@setting name="quiet" type="string" default="" clShort="q, v, Q" merging=false />
+<@setting name="echoFormat" type="string" default="" clShort="F" merging=false />
+<@setting name="columns" type="integer" default="" merging=false />
+<@setting name="snip" type="string (path)" default="" merging=false />
+
+<p>If these settings are supported or not, depends on the front-end you use. If a setting is not supported, the front-end must silently ignore it.</p>
+
+<p>The <@s>quiet</@s> setting tells the front-end if how much should it show the progress of the processing session on the screen. The accepted values are <@c>true</@c>, <@c>false</@c> (of type string or boolean), and <@c>reallyQuiet</@c>. Also, empty string is equivalent with <@c>true</@c>. (Values <@c>-1</@c>, <@c>0</@c>, <@c>1</@c> are also supported for backward compatibility.) The precise meaning of values is front-end specific.</p>
+
+<p>The <@s>echoFormat</@s> setting specifies how to display the progress of the processing session on the screen. The meaning of values and the set of understood values are front-end specific, but values <@c>verbose</@c>, <@c>normal</@c>, <@c>terse</@c> and <@c>quiet</@c> should be understood, also the shorthands of them: <@c>v</@c>, <@c>n</@c>, <@c>t</@c> and  <@c>q</@c>. The front-end must not stop with error if it doesn't understand the value that comes from a configuration file.</p>
+
+<p>The <@s>columns</@s> setting specifies the number of columns can be used for textual ouputs, as on the console screen.</p>
+
+<p>The <@s>snip</@s> setting indicates if the front-end should snip too long messages when it prints them to the screen.</p>
+
+<p>Please read the documentation of <@a href="frontends.html">the front-end you use</@a> for the precise behavior of these settings.</p>
+
+</@sect>
+
+<@sect title="Meta settings" anchor="metaSettings">
+<@setting name="configurationBase" type="string (path)" default="" merging=false />
+<@setting name="inheritConfiguration" type="string (path)" default="" merging=false />
+
+<p>These settings influence the interpretation of the configuration file they are stored in. Although front-ends may support the specification of these settings outside configuration files, with the front-end specific interface, the meta setting specified in this way is used to emulate that the setting is present in the configuration file the front-end loads.</p>
+
+<p>The <@s>configurationBase</@s> setting sets the <@a href="configfile.html#configurationBase">configuration base</@a> for the setting values stored in the same configuration file. If the <@s>configurationBase</@s> itself is a relative path, then it is resolved relatively to the directory of the configuration file.</p>
+
+<p>If <@s>inheritConfiguration</@s> is present in a configuration file, then the configuration will <@a href="configfile.html#inheritance">inherit the configuration file</@a> pointed by the value of this setting. If <@s>inheritConfiguration</@s> is a relative path, then it is resolved relatively to the configuration base, which is already overridden by <@s>configurationBase</@s> if that's persent in the configuration file.</p>
+
+</@sect>
+
+
+<@sect title="XML related settings" anchor="xml">
+
+<@setting name="xmlCatalogFiles" type="sequence (of paths)" default="" merging=true />
+<@setting name="xmlCatalogPrefer" type="string" default="public" merging=false />
+<@setting name="validateXml" type="boolean" default="false" merging=false />
+<@setting name="xpathEngine" type="string" default="dontSet" merging=false />
+<@setting name="xmlRenderings" type="sequence (of hashes)" default="ex:empty" merging=true />
+
+<@sect title="Catalogs">
+
+<p>Catalog files are (primarily) used to map public identifiers (and system identifiers) to local files. For example, you want to load an XML file that starts with this:</p>
+
+<@prg>
+<?xml version="1.0"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+>
+</@prg>
+
+<p>Whenever you try to load this XML file, the XML parser will need the DTD requested by the DOCTYPE, so it will try to download it from <@c>http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd</@c> (and all other files the DTD will refer to), which is obviously a bad joke. The standard solution is that you obtain the DTD file (and the further files it refers to) and store it locally on your computer, and also you write a catalog file that maps public identifiers (as <@c>-//W3C//DTD XHTML 1.0 Transitional//EN</@c>) to the local paths of the files. Then, you have to specify the catalog file(s) for FMPP with the <@s>xmlCatalogFiles</@s> setting.</p>
+
+<p>FMPP supports the "widely known" catalog formats: OASIS plain text TR9401 catalog files, OASIS XML Catalogs, and XCatalogs. Delegate entries are supported. Don't panic if you can't undestand a word of it! :) Just look at <@example 'xml_validating' />. For most people it's enough to know (copy-paste...) what (s)he sees there. If you still need more information, please visit the Web page of the OASIS Entity Resolution Technical Committee: <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=entity">http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=entity</a>.</p>
+
+<p>The meaning of <@s>xmlCatalogPrefer</@s> should be clean if you are familiar with OASIS catalogs. If you are not, just left it unchanged. The allowed values of this setting are <@c>system</@c>, <@c>public</@c>, and <@c>globalDefault</@c>.</p>
+
+<p>Both catalog related settings has a global (Java virtual machine level) default. Please find the documentation of <@c>org.apache.xml.resolver</@c> package on the Internet about this. In the case of <@s>xmlCatalogFiles</@s>, the global default will be appended at the end of the list of catalog files. In the case of <@s>xmlCatalogPrefer</@s>, the global default is used when the value of the setting is <@c>globalDefault</@c>. Attention! If you don't use the <@s>xmlCatalogFiles</@s> FMPP setting, then the catalog feature is disabled, so you must specify this setting (even an empty sequence) to use the global defaults.</p>
+
+</@sect>
+
+
+<@sect title="Validation">
+
+<p>The <@s>validateXml</@s> setting specifies if, by default, XML files are validated (i.e. checked against the DTD) or not. With "by default" I mean that this can be overridden for individual files, as with the <@c>validate</@c> option of the <@a href="dataloader.html#key_xml">xml data loader</@a>.</p>
+
+</@sect>
+
+
+<@sect title="XPath engine">
+
+<p>The <@s>xpathEngine</@s> setting specifies which XPath engine will FreeMarker use when you access XML data (see <@a href="dataloader.html#key_xml">XML dataloader</@a>). This setting accepts these values:</p>
+
+<ul>
+  <li><@c>jaxen</@c>: Use Jaxen. For this to work, you need to <a href="http://jaxen.org/">obtain <@c>jaxen.jar</@c></a> (1.1-beta-8 or later!), and make it accessible for FMPP (e.g. copy it into the <@c>lib</@c> directory of the FMPP installation, or if you use FMPP as Ant task, then into the <@c>lib</@c> directory of Ant). Jaxen provides richer set of capabilities for FreeMarker templates than Xalan.</li>
+  <li><@c>xalan</@c>: Use Apache Xalan. Xalan is accessible for sure if you are using Sun J2SE 1.4, but not in 1.5.</li>
+  <li><@c>default</@c>: Let FreeMarker choose the XPath engine it prefers. In FreeMarker 2.3 it will be Xalan (if available).</li>
+  <li><@c>dontSet</@c>: Don't set what XPath engine will be used. For most users it is the same as <@c>default</@c> (see below). This is the default value of the setting.</li>
+  <li>All other values are interpreted as the full-qualified class name of an XPath engine adapter class, that is, a <@c>freemarker.ext.dom.XPathSupport</@c> implementation.</li>
+</ul>
+
+<p>If you embed FMPP into your application, then you have to know that XPath engine choosing is a VM level setting (static field) of FreeMarker. Whenever you execute a processing session, FMPP will aggressively set this FreeMarker setting according the <@s>xpathEngine</@s> FMPP setting. Thus, if you don't want FMPP to interfere with other FreeMarker dependent components in the same VM, you should keep value <@c>dontSet</@c>.</p>
+
+</@sect>
+
+<@sect title="XML rendering" anchor="xmlRendering">
+
+<p>XML rendering is similar to the typical XSLT usage pattern, if you know that. The source file, for which <@c>renderXml</@c> processing mode is choosen (see the <@s>modes</@s> setting), will be parsed as XML file. Then, this XML document will be rendered to one or more output files with a FreeMarker template, which is choosen based on the value of the <@s>xmlRenderings</@s> setting. The template gets the XML documents with the <@a href="pphash.html#key_doc"><@c>pp.doc</@c> variable</@a>. Since the template shouldn't be executed in itself, it should be an ignored file (for example it should be stored in a directory that has an <@c>ignoredir.fmpp</@c> file).
+
+<p>For an example of this pattern check <@example 'xml_rendering'/>.</p>
+
+<@note>Sometimes you rather want to handle XML files as data than as source files. In this case use <@s>data</@s>, <@s>localData</@s>, or <@a href="pphash.html#key_loadData"><@c>pp.loadData</@c></@a> with the <@a href="dataloader.html#key_xml">XML data loader</@a>, not XML rendering.</@note>
+
+<p>The <@s>xmlRenderings</@s> setting stores a sequence of XML rendering configurations. An XML rendering configuration is a hash that stores the options of an XML rendering. The options are:</p>
+
+<ul>
+  <li>Options specify which XML files should be processed with the configuration:
+    <ul>
+      <li><@c>IfSourceIs</@c>: Optional, defaults to an empty sequence. This option is a sequence of path patterns (strings), or a single path pattern. FMPP will not render the XML file with this configuration if its source root relative virtual path does not match a pattern in this sequence. If this sequence is empty, FMPP will not consider this condition, that is, it will not exclude any XML files because of their path.</li>
+      
+      <li><@c>ifDocumentElementIs</@c>: Optional, defaults to an empty sequence. This option is a sequence of element names (strings), or a single element name. FMPP will not render the XML file with this configuration if this sequence doesn't contain the document element (the root element) of the XML file. If this sequence is empty, FMPP will not consider this condition, that is, it will not exclude any XML files because of their document element. The element names can use name-space prefixes. The prefixes and the default name-space of elements can be specified with the <@c>xmlns</@c> option of the configuration.</li>
+    </ul>
+  </li>
+  
+  <li>Options specify how to load the XML file. These are exactly the same as the options of the <@a href="dataloader.html#key_xml">XML data loader</@a> (<@c>xmlns</@c>, <@c>index</@c>, ...etc.), except that <@c>false</@c> value for <@c>namespaceAware</@c> is not allowed.</li>
+  
+  <li>Options for java programmers, to build extra local data based on the loaded XML file.
+    <ul>
+      <li><@c>localDataBuilder</@c>: Optional, defaults to an empty sequence. This is a sequence of strings, or a single string. Each string will be evaluated as BeanShell script (once per <@c>Settings.execute()</@c>), which must return an <@c>fmpp.LocalDataBuilder</@c>. The aim of these data builders is to do the complex or resource eager parts of the XML processing that you don't want to do in FTL, and expose the results as local data. The data loaders can get the loaded XML document with <@c>templateEnvironment.getXmlDocument()</@c>, or <@c>templateEnvironment.getWrappedXmlDocument()</@c>. These data builders will be invoked after the application of the <@s>localData</@s> setting, and can replace earlier added local variables. They will be executed in the same order as they appear in the sequence.</li>
+    </ul>
+  </li>
+  
+  <li>Options specify how to render the XML document to output file:
+    <ul>
+      <li><@c>template</@c>: Required if <@c>copy</@c> is <@c>false</@c>. This is the source root relative virtual path of a FreeMarker template, which will be invoked to render the output. (The template file itself should be an ignored file, as it doesn't produce output alone.) The template can access the XML document with the <@a href="pphash.html#key_doc"><@c>pp.doc</@c> variable</@a>.</li>
+      
+      <li><@c>copy</@c>: Required if <@c>template</@c> is not specified, defaults to <@c>false</@c>. This is a boolean value. If it is <@c>true</@c>, then the XML document will be copied to the output file (exact copy). In this case the <@c>template</@c> option can't be used.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Example:</p>
+
+<@prg><#noparse>
+xmlRenderings: [
+    {
+        ifDocumentElementIs: product
+        template: renderer/product.html
+        xmlns: {D: http://example.com/xmlns/products}
+    }
+    {
+        ifDocumentElementIs: book
+        template: renderer/book.html
+        index: {
+            element: [part, chapter]
+            attribute: ppFile
+            numbering: hierarchical
+            value: '%e_%n.html'
+        }
+    }
+]
+</#noparse></@prg>
+
+<p>When <@c>renderXml</@c> processing mode is chosen for a source file (see <@s>modes</@s>), then the first matching XML rendering configuration of the sequence will be used. A configuration is matching if nor the <@c>ifSourceIs</@c>, nor the <@c>ifDocumentElementIs</@c> option excludes the XML file. (Thus, if a configuration doesn't use any of the <@c>if<@r>...</@r></@c> options, it will be used for all source files, unless an earlier configuration matches the source file too.)</p>
+
+</@sect>
+
+</@sect>
+
+
+<@sect title="FreeMarker links (external includes)">
+<@setting name="freemarkerLinks" type="hash (of sequence of paths)" default="" merging=true />
+
+<p>FreeMarker links is a dirty hack to satisfy a frequent demand: <@c>&lt;#include ...></@c>/<@c>&lt;#import ...></@c> files that are outside the source root directory, as common FTL macro libraries used in multiple projects.</p>
+
+<p>Assume you store your commonly used FreeMarker includes in the <@c>c:\user\freemarker\include</@c> directory. But, this directory is outside the <@s>sourceRoot</@s>, so you can't reach it with <@c>&lt;#include ...></@c>/<@c>&lt;#import ...></@c>. To solve this, add this to the FMPP configuration file:</p>
+
+<@prg><#noparse>
+freemarkerLinks: {
+    inc: c:/user/freemarker/include
+}
+</#noparse></@prg>
+
+<p>Now you can include files of that external directory like this:</p>
+
+<@prg><#noparse>
+<#include "/@inc/foo.ftl">
+</#noparse></@prg>
+
+<p>Here, FreeMarker will actually read <@c>c:\user\freemarker\include\foo.ftl</@c>. The seeming <@c>@inc</@c> entry in the source root directory (seeming, as there is no such file or directory there in reality) acts as an alias, a transparent link to <@c>c:\user\freemarker\include</@c>. (Note that in the configuration file I have used <@a 'overview.html#realPath'>slash instead of backslash for convenience</@a>.)</p>
+
+<p>It is important that link entries (as <@c>@inc</@c> above) are visible only for the predefined FreeMarker directives that use template paths (in FreeMarker 2.3, these are <@c>&lt;#include ...></@c> and <@c>&lt;#import ...></@c>), or for user defined directives that internally use those predefined directives. They are not visible for anything else. Thus, they are not visible for the functions and directives of the <@c>pp</@c> hash, nor FMPP will try to process the <@c>@inc</@c> directory (since it doesn't see it at all).</p>
+
+<p>As you have seen, a link is defined by associating a name (<@c>inc</@c> in the last example, but you can use anything else you prefer) with a path. You can have more links with different names. The link is visible in the source root (never in its subdirectories) as a directory (or file) of name <@c>@<@r>name</@r></@c> (where <@c><@r>name</@r></@c> is the link name). Regarding the associated path, the rules are the same as with <@s>sourceRoot</@s>, <@s>outputRoot</@s>, ...etc: it is a <@a 'overview.html#realPath'>real path</@a>, so if it is relative, then it will be interpreted relatively to the <@a 'overview.html#realPath'>configuration base</@a>.</p>
+
+<p>For example, assume, that you also have project specific include files, and you store them outside the source root (because you have multiple source roots in your project), in the <@c>include</@c> subdirectory of the same directory, where you stores the FMPP configuration files for your project. Use this in the FMPP configuration file:</p>
+
+<@prg><#noparse>
+freemarkerLinks: {
+    inc: /home/joe/freemarker/include
+    projInc: include
+}
+</#noparse></@prg>
+
+<p>Note that the path associated with <@c>projInc</@c> is a relative path, so it will be resolved relatively to the directory of the configuration file (unless you have overridden the configuration base, of course...). Now you can do things like this:</p>
+
+<@prg><#noparse>
+<#include "/@projInc/header.html">
+<#include "/@inc/foo.ftl">
+<#import "/@projInc/forms.ftl" as f>
+</#noparse></@prg>
+
+<p>If the configuration file that contains the above is <@c>/home/joe/projects/foo/cfg3.fmpp</@c>, then <@c>&lt;#include '/@projInc/header.html'></@c> will read <@c>/home/joe/projects/foo/include/header.html</@c>.</p>
+
+<p>In the generic case, a FreeMarker link is associated with a list of paths. For example:</p>
+
+<@prg><#noparse>
+freemarkerLinks: {
+    inc: [/home/joe/freemarker/include, /home/kate/freemarker/include]
+}
+</#noparse></@prg>
+
+<p>When you use <@c>&lt;#include '/@inc/foo.ftl'></@c> in a template, then FMPP will check if <@c>/home/joe/freemarker/include/foo.ftl</@c> exist, and if not, it will try <@c>/home/kate/freemarker/include/foo.ftl</@c>.</p>
+
+<p>Files that are really in the source root directory have priority over files that are accessible through FreeMarker links. For example, if you invoke <@c>&lt;#include '/@inc/foo.ftl'></@c>, and the source root directory has a subdirectory called <@c>@inc</@c>, and that subdirectory has a file called <@c>foo.ftl</@c>, then that file will be used, without considering that the <@c>@inc</@c> in the path possibly refers to a FreeMarker link. If a subdirectory called <@c>@inc</@c> exists, but it doesn't contain <@c>foo.ftl</@c>, then the <@c>inc</@c> link will be used.</p>
+
+<p>A FreeMarker link can point to files as well, not only to directories. For example:</p>
+
+<@prg><#noparse>
+freemarkerLinks: {
+    footer: /home/joe/footers/gpl.html
+}
+</#noparse></@prg>
+
+<p>and then in a template you can do this:</p>
+
+<@prg><#noparse>
+<#include "@footer">
+</#noparse></@prg>
+
+<p>The merging of the <@s>freemarkerLinks</@s> settings is differs a bit from the merging of other hash settings: when the two hashes to merge contains the same key (i.e. the same link name), then the lists of paths for that key will be concatenated. For example, if <@c>common.fmpp</@c> is:</p>
+
+<@prg><#noparse>
+freemarkerLinks: {
+    a: c:/user/fm/libs1
+    b: [inc1, inc2]
+}
+</#noparse></@prg>
+
+<p>and <@c>config.fmpp</@c> is:</p>
+
+<@prg><#noparse>
+inheritConfiguration: common.fmpp
+...
+freemarkerLinks: {
+    a: c:/user/fm/libs2
+    b: [inc3, inc4]
+    c: foo
+}
+...
+</#noparse></@prg>
+
+<p>then the resulting setting value is equivalent with:</p>
+
+<@prg><#noparse>
+freemarkerLinks: {
+    a: [c:/user/fm/libs2, c:/user/fm/libs1]
+    b: [inc3, inc4, inc1, inc2]
+    c: foo
+}
+</#noparse></@prg>
+
+<p>Note that the name of the links doesn't start with <@c>@</@c>; the <@c>@</@c> is used only to refer to the links. To protect users from mistakes regarding this, it is not allowed to start a link name with <@c>@</@c>.</p>
+
+</@sect>
+
+
+<@sect title="Object wrapping" anchor="objectWrapping">
+<@setting name="objectWrapper" type="string (BeanShell expression)" default='"ow = new BeansWrapper(); ow.setSimpleMapWrapper(true); return ow;"' merging=false />
+
+<p>The <@s>objectWrapper</@s> setting is for FreeMarker "experts" who want to use a customized <@c>ObjectWrapper</@c>. The value of the setting is a BeanShell expression that must result in an object whose class extends the <@c>freemarker.ext.beans.BeansWrapper</@c> class. The value can be a simple expression like <@c>"new com.example.MyWrapper()"</@c>, or multiple instructions ending with a return statement like in the default value above.</p>
+
+<p>The <@c>freemarker.template.ObjectWrapper</@c> and <@c>freemarker.ext.beans.BeansWrapper</@c> classes are automatically imported, so you don't have to use full-qualified class name for them.</p>
+
+<p>The <@c>ObjectWrapper</@c> is created before any other setting values (or the <@c>fmpp.Engine</@c> instance for that mater), so the BeanShell expression has no access to any setting values.</p>
+
+</@sect>
+
+
+<@sect title="Template syntax" anchor="templateSyntax">
+<@setting name="tagSyntax" type="string" default='ex:<@c>angleBracket</@c> with FreeMarker 2.3.x, <@c>autoDetect</@c> with later versions' merging=false />
+
+<p>The <@s>tagSyntax</@s> setting determines the syntax of the templates (angle bracket syntax like <@c>&lt;#include "foo"></@c> VS square bracket syntax like <@c>[#include "foo"]</@c>) that has no <@c>ftl</@c> directive in it. If the template uses <@c>ftl</@c> directive (like it starts with <@c>&lt;#ftl></@c> or <@c>[#ftl]</@c>), then the syntax of the <@c>ftl</@c> tag determines the syntax of the template, and the <@s>tagSyntax</@s> setting is ignored.</p>
+
+<p>The possible values of this setting are <@c>angleBracket</@c>, <@c>squareBracket</@c> and <@c>autoDetect</@c>. The recommended value is <@c>autoDetect</@c>, which will auto-detect the syntax of each template independently, by choosing the syntax of the first FreeMarker tag in the template. For example when it finds a <@c>[@</@c> in the template, it will choose square bracket syntax.</p>
+
+</@sect>
+
+
+</@page>

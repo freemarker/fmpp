@@ -1,0 +1,8 @@
+<#-- $Id: test.txt,v 1.1 2003/10/26 23:52:02 ddekany Exp $ -->
+<#assign d = '2003-10-26'?date('yyyy-mm-dd')>
+Locale: ${pp.locale}
+Day: ${d?string('EEEE')}
+
+<#setting locale="en_US">
+Locale: ${pp.locale}
+Day: ${d?string('EEEE')}

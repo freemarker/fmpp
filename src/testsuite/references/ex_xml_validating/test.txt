@@ -1,0 +1,12 @@
+
+Title:
+Test
+
+Paragraphs:
+- p1
+- p2
+- p3
+
+Paragraphs where class is "foo":
+- p1
+- p3

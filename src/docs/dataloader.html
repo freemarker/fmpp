@@ -1,0 +1,535 @@
+<@page title="Data Loaders" keywords="data loader">
+
+<@sect title="Introduction">
+
+<p>Data loaders are Java objects that load data from certain type of data source, such as a CSV file or MySQL data-base, and expose the data as variables for the templates. For example, a data loader was invoked in the <@a href="qtour.html">Quick Tour</@a> when you have written <@c>csv(data/birds.csv)</@>.</p>
+
+<p>Data loaders are typically invoked:
+  <ul>
+    <li>... by <@a href="tdd.html">TDD</@a> functions used in the <@s>data</@s> setting
+    <li>... by TDD functions used in the <@s>localData</@s> setting
+    <li>... by the <@a href="pphash.html#key_loadData">pp.loadData</@a> method used in FreeMarker templates
+  </ul>
+ 
+</@sect>
+
+
+<@sect title="Predefined data loaders">
+
+<p>Data loaders that load data directly from files will want you to give the path of the file as parameter. There you have to give <@a href="overview.html#realPath">real path</@a>. If you give a relative path, then it will be interpreted relatively to the <@s>dataRoot</@s>, which defaults to the <@s>sourceRoot</@s> if you didn't specified it. The data files can be outside the <@s>dataRoot</@s> directory; it is used only as a base directory.</p>
+
+<@note>I have not written a database/SQL/JDBC data loader yet... Of coruse, you can write a such data loader yourself. Contributions are welcome!</@note>
+
+<@dataLoader name="csv">
+  <@param name="path" type="string">The path of the CSV file.</@param>
+  <@param name="options" type="hash" optional=true>The list of valid options:
+    <ul>
+      <li><@c>separator</@c>: The character that separates the columns. Defaults to <@c>";"</@c>. It can be any character. It also understands the string <@c>"tab"</@c>, which means that the separtor character will be the tab character.</li>
+      
+      <li><@c>encoding</@c>: The charset used for the CSV file. Defaults to the value of the <@s>sourceEncoding</@s> setting.</li>
+
+      <li><@c>trimCells</@c>: Specifies if all cells will be trimmed (boolean). Trimming means the removal of all leading and trailing white-space. Defaults to no trimming (in which case only header cells are trimmed). <@e>For tables directly entered by humans (like in Excel) it is strongly recommended to turn this on.</@e>
+      
+      <li><@c>decimalSeparator</@c>: Alternative character used for the decimal dot in the CSV files. The dot will be always assumed as decimal separator, except if <@c>groupingSeparator</@c> is set to dot. Note that this option has significance only if you use <@c>:n</@c> (or <@c>:number</@c>) in the headers, so the data loader has to interpret the text as numbers.</li>
+      
+      <li><@c>groupingSeparator</@c>: The character used for grouping symbol in the CSV file (as the coma in $20,000,000). Be default, grouping is not allowed. Note that this option has significance only if you use <@c>:n</@c> (or <@c>:number</@c>) in the headers.</li>
+      
+      <li><@c>altTrue</@c>: Alternative word interpreted as boolean true. Note that this option has significance only if you use <@c>:b</@c> (or <@c>:boolean</@c>) in the headers, so the data loader has to parse the text as booleans.</li>
+      
+      <li><@c>altFalse</@c>: Alternative word interpreted as boolean false. Note that this option has significance only if you use <@c>:b</@c> (or <@c>:boolean</@c>) in the headers.</li>
+      
+      <li><@c>emptyValue</@c>: A string or a sequence of strings which define the values that are equal to an empty cell. For example, if this is <@c>["-", "N/A"]</@c>, then cells whose content is a minus sign or N/A will look like they were left empty. The comparison is case-sensitive. The header row is not affected by this option.
+      
+      <li><@c>dateFormat</@c>: The <@a href="datetimepattern.html">pattern</@a> used to parse date values. Note that this option has significance only if you use <@c>:d</@c> (or <@c>:date</@c>) in the headers.</li> 
+      
+      <li><@c>timeFormat</@c>: The <@a href="datetimepattern.html">pattern</@a> used to parse time values. Note that this option has significance only if you use <@c>:t</@c> (or <@c>:time</@c>) in the headers.</li> 
+      
+      <li><@c>dateTimeFormat</@c>: The <@a href="datetimepattern.html">pattern</@a> used to parse date-time values. Note that this option has significance only if you use <@c>:dt</@c> (or <@c>:dateTime</@c>) in the headers.</li> 
+
+      <li><@c>normalizeHeaders</@c>: Specifies if the header names coming from the file will be normalized
+      or should be left as is (boolean). Normalization means:
+      <ol>
+        <li>Remove the part between the first <@c>"("</@c> and last
+            <@c>")"</@c>, before the header is parsed for column type
+            identifier (like <@c>":n"</@c>; column type identifiers are discussed somewhere later).
+        <li>After the type identifier was extracted and removed, the cell value is trimmed. (Note that this happens even if this option is off.)
+        <li>Then it's converted to lower case.
+        <li>Then the following characters are replaced with <@c>"_"</@c>:
+            space, comma, semicolon, colon. <li>Then all <@c>"__"</@c>
+            and <@c>"___"</@c> and so on is replaced with a single
+            <@c>"_"</@c>.
+      </ol>
+      For example, <@c>"Price, old (category: A, B, F): n"</@c> will be normailzed to <@c>"price_old"</@c>, and the column type identifier will be <@c>n</@c>.
+      </li>
+
+      <li><@c>headers</@c>: Use this if the CSV file has no header row, that is, if the first row doesn't store column names. The option value must be a sequence of strings. Each item in the sequence corresponds to a cell value of the imaginary (actually missing) header row, and will be parsed on the same way as a real header row would be.</li>
+      
+      <li><@c>replaceHeaders</@c>: Use this if the CSV file does have a header row, but you don't like/trust the content of it. The rules are the same as with the <@c>header</@c> option, except of course that it replaces the existing header row.</li>
+    </ul>
+  </@param>
+  
+  <p>Examples (with TDD syntax):</p>
+  <ul>
+    <li><@c>csv(data/foo.txt)</@c>
+    <li><@c>csv(data/foo.txt, {separator:tab, encoding:UTF-8})</@c>
+    <li><@c>csv(data/foo.txt, {separator:',', encoding:ISO-8859-2, headers:[name, size:n, lastModified:dt]})</@c>
+  </ul>
+  
+  <p>The <@c>csv</@c> data loader parses CSV (Column Separated Values) file, or other file of similar formats (as tab divided text, comma separated values), and returns it as a sequence. The sequence is the list of the table rows, and each row is a hash, where you can access the cells with the column name. The column names (headers) are stored in the first row of the CSV file (unless you use the <@c>headers</@c> option), so this row is not part of the result sequence.</p>
+
+  <p>For example, if this is the CSV file:</p>
+  
+<@prg>
+name;color;price
+rose;red;10
+rose;yellow;15
+tulip;white;6
+</@prg>
+
+  <p>and you load it into the variable <@c>flowers</@c>, then you can print it as:</p>
+
+<@prg><#noparse>
+<table border=1>
+<#list flowers as flower>
+  <tr><td>${flower.name}<td>${flower.color}<td>${flower.price}
+</#list>
+</table>
+</#noparse></@prg>
+
+  <p>and the output will be:</p>
+
+<@prg><#noparse>
+<table border=1>
+  <tr><td>rose<td>red<td>10
+  <tr><td>rose<td>yellow<td>15
+  <tr><td>tulip<td>white<td>6
+</table>
+</#noparse></@prg>
+
+  <p>The rows are not only hashes, but also sequences, so instead of the column name you can use the 0 based column index. Thus the above template could be written like this as well, just it is less readable:</p>
+  
+<@prg><#noparse>
+<table border=1>
+<#list flowers as flower>
+  <tr><td>${flower[0]}<td>${flower[1]}<td>${flower[2]}
+</#list>
+</table>
+</#noparse></@prg>
+
+  <p>and actually then it would be simpler to write:</p>
+
+<@prg><#noparse>
+<table border=1>
+<#list flowers as flower>
+  <tr><#list flower as cell><td>${cell}</#list>
+</#list>
+</table>
+</#noparse></@prg>
+  
+  <p>The values (cells) in the CSV file will be always exposed as string variables, unless you specify a different type in the header cells directly. To specify the type, type a colon after the column name, and a type identifier. The type identifier can be: <@c>n</@c> (or <@c>number</@c>) or <@c>b</@c> (or <@c>boolean</@c>) or <@c>d</@c> (or <@c>date</@c>) or <@c>t</@c> (or <@c>time</@c>) or <@c>dt</@c> (or <@c>dateTime</@c>) or <@c>s</@c> (or <@c>string</@c>). For example, if you want to expose the price column as number, and not as string (so you can do arithmetic with it, or use the number formatting facilities), then the CSV file would be:</p>
+
+<@prg>
+name;color;price:n
+rose;red;10
+rose;yellow;15
+tulip;white;6
+</@prg>
+
+  <p>Numerical values must use dot (<@c>.</@c>) as decimal separator, and no grouping, unless you change these with the <@c>decimalSeparator</@c> and/or <@c>groupingSeparator</@c> options.</p>
+
+  <p>Boolean values must be one of <@c>true</@c>, <@c>yes</@c>, <@c>y</@c>, <@c>1</@c>, <@c>false</@c>, <@c>no</@c>, <@c>n</@c>, <@c>0</@c>, or the words defined be the <@c>altTrue</@c> and <@c>altFalse options</@c>. Upper- and lower-case letters are not distinguished.</p>
+  
+  <p>Date, time and date-time values use common SQL format with optional time zone, as <@c>"2003-06-25"</@c>, <@c>"22:30:08"</@c>, <@c>"2003-06-25 10:30:08 PM"</@c>, <@c>"2003-06-25 10:30:08 PM GMT+02:00"</@c>. But if you use option <@c>dateFormat</@c>, <@c>timeFormat</@c>, or <@c>datetimeFormat</@c>, then that format has to be used for dates, times, and date-times respectively. If the time zone is not given in a value, the value of the <@s>timeZone</@s> setting is used.</p>
+
+  <p>The variable returned by  the <@c>csv</@c> data loader is not only a sequence, but also a hash at the same time, that contains one key: <@c>headers</@c>. This is a sequence that stores the column names.</p>
+
+<@prg><#noparse>
+<#list flowers.headers as h>
+- ${h}
+</#list>
+</#noparse></@prg>
+
+  <p>will print:</p>
+
+<@prg>
+- name
+- color
+- price
+</@prg>
+
+  <p>Note that only the name of the column is returned, not the type identifier stuff (as <@c>:n</@c>).</p>
+
+</@dataLoader>
+
+<@dataLoader name="text">
+  <@param name="path" type="string">The path of the text file.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for the text file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  
+  <p>Examples (with TDD syntax):</p>
+  <ul>
+    <li><@c>text(C:/autoexec.bat)</@c>
+    <li><@c>text(C:/autoexec.bat, CP850)</@c>
+  </ul>
+  
+  <p>This data loader loads a plain text file, and returns that as a string.</p>
+</@dataLoader>
+
+<@dataLoader name="slicedText">
+  <@param name="path" type="string">The path of the text file.</@param>
+  <@param name="options" type="hash" optional=true>The list of valid options:
+    <ul>
+      <li><@c>separator</@c>: The string that slices the text file into items, that is, the string between two adjoining items. It defaults to <@c>"\n"</@c>, so each line of the text will be an item. Examples: If you want the items to be separated with empty lines, then you should write <@c>"\n\n"</@c> (this is what is between two items if you imagine it). Of course in this case the items can contain single line-breaks (but not multiple consequent line breaks), not like in the default case. If you want to separate the items with a <@c>"---"</@c> that is considered as separator only if it's alone in a line (not in the middle of a line) then the separator should be <@c>"\n---\n"</@c>. If you simply want to separate the items with semicolon then the separator should be <@c>";"</@c> (in this case you certainly want to use the <@c>trim</@c> option described below). There is some "magic" involved in the handling of line-breaks: 1.: no mater if you are using UN*X, DOS/Windows or Mac line-breaks in the <@c>separator</@c> option and in the text file, they will be considered to be equal, 2.: when the text file is searched for a multi-line separator string, those evil invisible extra spaces and tabs at the end of the lines will be tolerated.</li> 
+      <li><@c>trim</@c>: If it's <@c>true</@c>, then each item will be trimmed individually, that is, the leading and trailing white space will be removed from them. Defaults to <@c>false</@c>.</li>
+      <li><@c>dropEmptyLastItem</@c>: If it's <@c>true</@c> then the last item will be removed from the result if it's a 0 length string (after trimming, if the <@c>trim</@c> option is <@c>true</@c>). Defaults to <@c>true</@c>, so if the text file ends with a separator or the text file is empty, you will not get a needless empty item.</li>
+      <li><@c>encoding</@c>: The charset used for the text file. Defaults to the value of the <@s>sourceEncoding</@s> setting.</li>
+    </ul>
+  </@param>
+  
+  <p>Examples (with TDD syntax):</p>
+  <ul>
+    <li><@c>slicedText(data/foo.txt)</@c></li>
+    <li><@c>slicedText(data/foo.txt, {separator:\n---\n, encoding:UTF-8})</@c></li>
+    <li><@c>slicedText(data/foo.txt, {separator:';', trim})</@c></li>
+  </ul>
+  
+  <p>This data loader loads a text file and slices it to items (strings) by cutting out all occurences of the separator string specified with the <@c>separator</@c> option. The result is a sequence of strings.</p>
+
+  <p>For example, if this is the <@c>data/stuff.txt</@c> file:</p>
+<@prg>
+This is the first item.
+
+Still the first item...
+
+--8<--
+
+The items are separated with this:
+--8<--
+just don't forget to surround it with
+empty lines.
+
+--8<--
+
+This is the last item.
+</@prg>
+
+  <p>and it's loaded in the configuration file like:
+ 
+<@prg>
+data: {
+    stuff: slicedText(data/stuff.txt, {separator:"\n\n--8<--\n\n"})
+}
+</@prg><#-- " -->
+
+  <p>then the output of this template file</p>
+  
+<@prg><#noparse>
+<#escape x as x?html>
+
+<#list stuff as i>
+<pre>
+${i}
+</pre>
+</#list>
+
+</#escape>
+</#noparse></@prg>
+  
+  <p>will be this:</p>
+
+<@prg>
+
+<pre>
+This is the first item.
+
+Still the first item...
+</pre>
+<pre>
+The items are separated with this:
+--8&lt;--
+just don't forget to surround it with
+empty lines.
+</pre>
+<pre>
+This is the last item.
+</pre>
+
+</@prg>
+
+<p>Note the double <@c>\n</@c>-s in the separator that causes the data loader to treat <@c>"–8&lt;--"</@c> as separator only if it is surrounded with empty lines.</p>
+
+</@dataLoader>
+
+<@dataLoader name="tdd">
+  <@param name="path" type="string">The path of the TDD file.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for the TDD file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  
+  <p>Examples (with TDD syntax):</p>
+  <ul>
+    <li><@c>tdd(data/foo.tdd)</@c>
+    <li><@c>tdd(data/foo.tdd, ISO-8859-5)</@c>
+  </ul>
+  
+  <p>This data loader parses a <@a href="tdd.html">TDD</@a> file. The loaded TDD is interpreted in <@a href="tdd.html#modes">hash mode</@a>, and TDD functions will invoke data loaders, exactly like with the <@s>data</@s> setting.</p>
+  
+  <p>See <@example 'tdd' /> for a concrete example.</p>
+</@dataLoader>
+
+
+<@dataLoader name="tddSequence">
+  <@param name="path" type="string">The path of the TDD file.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for the TDD file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  
+  <p>This is like the <@a href="#key_tdd"><@c>tdd</@c> dataloader</@a>, except that it interprets the file as a <@a href="tdd.html">TDD</@a> sequence (TDD "sequence mode"), rather than as a TDD hash. So the result will be a sequence (a list), not a hash.</p>
+</@dataLoader>
+
+<@dataLoader name="properties">
+  <@param name="path" type="string">The path of the "properties" file.</@param>
+  
+  <p>Loads a <@a href="properties.html">"properties" file</@a>. The result is a hash.</p>
+</@dataLoader>
+
+
+<@dataLoader name="xml">
+  <@param name="path" type="string">The path of the XML file.</@param>
+  <@param name="options" type="hash" optional=true>Options. See later...</@param>
+
+  <@note>Sometimes XML files are rather source files (as the HTML-s and the JPG in the <@a href="qtour.html">Quick Tour</@a>) than data files (as <@c>data/birds.tdd</@c> in the Quick Tour), just you need to invoke a template to render them to their final form (e.g. to HTML pages). If this is the case, you should use <@c>renderXml</@c> processing mode (<@a href="settings.html#key_modes">see here...</@a>), not XML data loader. An example that uses this approach is <@example 'xml_rendering' />.</@note>
+  
+  <p>Loads an XML file. This uses the built-in XML wrapper of FreeMarker 2.3 and later; please read <@fma href="xgui.html">FreeMarker Manual/XML Processing Guide</@fma> for more information about the usage of the returned variable.</p>
+
+  <p>To use this, JAXP 1.2+ must be available. For more info, read <@a href="installing.html">the chapter about installing FMPP</@a>.</p>
+  
+  <p>Notes:</p>
+  <ul>
+    <li>Comment nodes will be removed by default (see option <@c>removeComments</@c> below).
+    <li>Processing instruction well be keep by default (see option <@c>removePIs</@c> below).
+    <li>CDATA sections count as plain text nodes.
+    <li>There are no adjacent text nodes in the node tree; adjacent text nodes will be joined.
+  </ul>
+
+  <p>The example <@example 'xml_try'/> is a good tool to understand this data loader and its options.</p>
+  
+  <p>Options:</p>
+  <ul>
+    <li><@c>removeComments</@c>: Optional, defaults to <@c>true</@c>: Specifies if XML comment nodes will be removed from the node tree.
+      
+    <li><@c>removePIs</@c>: Optional, defaults to <@c>false</@c>: Specifies if XML processing instruction nodes will be removed from the node tree.
+
+    <li><@c>validate</@c>: Optional, defaults to the value of the <@s>validateXml</@s> setting: Specifies if the XML file should be validated (checked agains the DTD). If it's true, and the XML is not valid, then the data loading fails. 
+
+    <li><@c>namespaceAware</@c>: Optional, defaults to <@c>true</@c>: Specifies if the XML parsing should be XML name-space aware or not. If the parsing is not name-space aware, colons in element and attribute names will not be considered as name-space prefix delimiters, so the "local name" of the node will contain the colon and the name-space prefix before that.
+
+    <li><@c>xincludeAware</@c>: Optional, defaults to <@c>false</@c>: Basically, it specifies whether the XML parsing should replace the XInclude-s with the included content. For most practical purposes you should set it to <@c>true</@c> (but due to backward-compatibility issues it defaults to <@c>false</@c>). Note that for setting this successfully to <@c>true</@c> you need at least Java 5.
+    
+    <li><@c>xmlns</@c>: Optional. This is a hash that maps prefixes to XML name-space URI-s. The prefixes can be used in the other options. This option has no impact outside the XML data loader invocation, so the prefixes will not be available in the templates. The XML name-space for prefixless elements (with other words, the default name-space) is "no name-space" initially, but it can be changed by assigning name-space URI to the reserved prefix <@c>D</@c> (similar as if you use <@c>xmlns="<@r>...</@r>"</@c> in an XML document).   
+    
+    <li><@c>index</@c>: Adds attributes to element nodes, that can be helpful when later you process the XML with the templates. We say on this, that you index the elements. Well, it's hard to explain... :) Look at the output of example <@example 'xml_try'/>; the <@c>id</@c> attributes were added by this option, they are not present in the XML file. Also you can easily try other aspects of indexing with that example. The value of this option is a hash that contains the indexing options, or a sequence of hashes if you want to do more indexing successively. The hash accepts these subvariables (sub-options):
+  
+    <ul>
+      <li><@c>element</@c>: Required. The name of the XML element or elements to index. If this is a string, then it selects a single element only. If this is a sequence, then it must be the sequence of element names that it selects. To use name-space prefixes, see option <@c>xmlns</@c>.
+  
+      <li><@c>attribute</@c>: Optional, defaults to <@c>id</@c>. This is the name of the XML attribute that will be added to the indexed elements (the indexed elements are the elements selected by the sub-option <@c>element</@c>). If the element has this attribute already, then the original value of the attribute will be kept. To use name-space prefixes, see option <@c>xmlns</@c>.
+      
+      <li><@c>numbering</@c>: Optional, defaults to <@c>sequential</@c>: The rule for the numbering of the indexed elements. The number is used in the attribute values; see option <@c>value</@c>. This must be one of the following strings:
+      <ul>
+        <li><@c>sequential</@c>: The number for the first indexed element is 1, for the second indexed element is 2, etc. The element numbering is done in the "document order", that is, in the order in which the first character of the XML representation of each node occurs (after expansion of general entities).
+        <li><@c>hierarchical</@c>: Similar to sequential numbering, but, for example, if we have an indexed element that got number <@c>2</@c>, then indexed elements nested into this element will get numbers <@c>2_1</@c>, <@c>2_2</@c>, <@c>2_3</@c>, etc. The indexed elements that are nested into the element numbered as <@c>2_1</@c>, will get numbers <@c>2_1_1</@c>, <@c>2_1_2</@c>, <@c>2_1_3</@c>, etc. For example, look at the output file names in <@example 'xml_rendering'/>; they are generated with the hierarchical indexing of the <@c>part</@c> and <@c>chapter</@c> elements. Or use <@example 'xml_try'/> to try it.
+      </ul>
+      
+      <li><@c>value</@c>: Optional, defaults to <@c>'ppi_%n'</@c>: A string that describes the format of index values. All character will go directly into the value, except that <@c>%</@c> is used for place holders. The valid place holders are:
+      <ul>
+        <li><@c>'%n'</@c>: This will be replaced with the value generated based on the value of option <@c>numbering</@c>.
+        <li><@c>'%e'</@c>: This will be replaced with the name (local, prefixless name) of the element
+        <li><@c>'%%'</@c>: This will be replaced with a single <@c>%</@c>.
+      </ul>
+    </ul>
+  </ul>
+</@dataLoader>
+
+
+<@dataLoader name="eval">
+  <@param name="expression" type="string">Expression in BeansShell language.</@param>
+  <@param name="variables" type="hash" optional=true>Values that will be visible for the expression as variables.</@param>
+
+ <p>Evaluates a BeanShell expression, or runs a more complex BeanShell script and uses its <@c>return</@c>-ed value.</p>
+ <p>You can use the predefined variable <@c>engine</@c> to access the current FMPP engine instance.</p>
+  
+  <p>Examples (with TDD syntax):</p>
+  <ul>
+    <li><@c>eval('System.getProperties()')</@c>
+    <li><@c>eval('fmpp.Engine.getVersionNumber()')</@c>
+    <li><@c>eval('<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;f = engine.getSourceRoot().getParentFile();<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;if (f == null) {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return new String[]{};<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;} else {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return f.list();<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            ')</@c>
+     <li>In a configuration file:<br>
+         <@c>width: 100
+         <br>height: 50
+         <br>area: eval('a * b', {a:get(width), b:get(height)})</@c>
+   </ul>
+</@dataLoader>
+
+
+<@dataLoader name="htmlUtils">
+<p>The returned hash contains custom directives that help HTML template development.</p> 
+
+<p>Currently it contains only 1 directive: <@c>img</@c>. This is used as HTML <@c>img</@c> element, but the <@c>width</@c> and <@c>height</@c> attributes are calculated automatically (unless these attributes are specified in the template). Also, the processing will stop with error, if the image file pointed by the <@c>src</@c> attribute is missing.</p>
+
+<p>Example: If you have loaded the hash into the <@c>html</@c> variable, then you can do this in a template:</p>
+
+<@prg><#noparse>
+<@html.img src="falcon.png" alt="Falcon" />
+</#noparse></@prg>
+
+<p>and the output will be something like this (depending on the concrete dimensions of the image):</p>
+
+<@prg><#noparse>
+<img src="falcon.png" alt="Falcon" width="80" height="120">
+</#noparse></@prg>
+
+<p>See also the example in <@example 'img_dims' />.</p>
+
+<p>Directive <@c>img</@c> accepts any extra parameters (attributes). The extra parameters will be printed as the attributes of the HTML <@c>img</@c> element.     
+
+</@dataLoader>
+
+
+<@dataLoader name="xhtmlUtils">
+
+<p>This is the same as <@c>htmlUtils</@c>, but it is for XHTML output.</p>
+
+</@dataLoader>
+
+
+<@dataLoader name="now">
+  <@param name="options" type="hash" optional=true>The supported options are:
+    <ul>
+      <li><@c>locale</@c>: The locale (language) used for displaying the date. It defaults to the "locale" setting of the FMPP engine. The value of the option is a usual java locale strings, such as <@c>en_GB</@c>, <@c>fr</@c>, <@c>ar_SA</@>, ...etc. To see the complete list of locale codes, call the command line FMPP tool:<br><@c>fmpp --print-locales</@>
+      <li><@c>date</@c>: The format of the date (year, month, day) part of the date: <@c>short</@c>, <@c>medium</@c>, <@c>long</@c>, <@c>default</@c>. The exact meaning of these formats are locale dependent, and it is defined by the Java platform implementation. You can't use this option together with the <@c>pattern</@c> option.
+      <li><@c>time</@c>: The format of the time (hour, minute, second, millisecond) part of the date: <@c>short</@c>, <@c>medium</@c>, <@c>long</@c>, <@c>default</@c>. The exact meaning of these formats are locale dependent, and it is defined by the Java platform implementation. You can't use this option together with the <@c>pattern</@c> option.
+      <li><@c>pattern</@c>: A pattern (mask) that specifies the formatting of the date. For more information <@a href="datetimepattern.html">read this</@a>.
+      <li><@c>zone</@c>: The time zone you would like to use ford displaying the date. Defaults to the "time zone" FMPP engine setting. The zone is given with a string, for example: <@c>GMT</@c>, <@c>GMT+02</@c>, <@c>GMT-02</@c> or <@c>GMT+02:30</@c>.
+    </ul>
+  </@param>
+  
+  <p>Examples (with TDD syntax):
+  <ul>
+    <li><@c>now()</@c>
+    <li><@c>now({pattern:"EEEE, MMMM dd, yyyy, hh:mm:ss a '('zzz')'"})</@c>
+        <br>This will print something like: Tuesday, April 08, 2003, 09:24:44 PM (GMT+02)
+    <li><@c>now({date:short, time:short, zone:GMT})</@c>
+  </ul>
+  
+  <p>This data loader loads the current date and time from the system clock, and produces a string from it. Since FreeMarker has introduced native date/time value support, it is maybe better to use <@a href="pphash.html#key_sessionStart"><@c>pp.sessionStart</@c></@a> or <@a href="pphash.html#key_now"><@c>pp.now</@c></@a> instead of this data loader.</p>
+</@dataLoader>
+
+<@dataLoader name="get">
+  <@param name="varName" type="string">The name of the variable.</@param>
+  <@param name="subVarName" type="string" optional=true>The name of the sub-variable.</@param>
+  <@param name="subSubVarName" type="string" optional=true>...etc. You can specify any number of parameters.</@param>
+
+<p>This data loader returns the value of a variable that was already put into the <@s>data</@s> hash. For example:</p>
+
+<@prg>
+data: {
+    a: 123
+    b: get(a)
+}
+</@prg>
+
+<p>Here the value of <@c>b</@c> will be the same as the value of <@c>a</@c>, which is <@c>123</@c>. You can retrieve the value of subvariables with additional parameters:</p>
+
+<@prg>
+data: {
+    a: {
+        x: 123
+        y: {
+            q:234
+        }
+    }
+    b: get(a, x)
+    c: get(a, y, q)
+}
+</@prg>
+
+<p>Here <@c>b</@c> will be <@c>123</@c>, <@c>c</@c> will be <@c>234</@c>.</p>
+
+<p>The <@c>get</@c> data loader was introduced so that data loaders can get the values loaded by other data loaders previously. For example:</p>
+
+<@prg>
+data: {
+    doc: xml(data/foo.xml)
+    index: com.example.MyIndexBuilderDataLoader(get(doc))
+}
+</@prg>
+
+<p>The <@c>get</@c> data loader sees the variables that were already put into the hash in the same enclosing <@s>data</@s>/<@s>localData</@s> hash TDD expression where it is called, but it doesn't see values that are put into the data model elsewhere, as in other (inherited or inheriting) configuration files. However, if you use <@c>get</@c> in the <@s>localData</@s> setting, it will also see the session level data (see <@s>data</@s>).</p>
+
+</@dataLoader>
+
+<@dataLoader name="antProperty">
+  <@param name="properyName" type="string">The name of the Ant property.</@param>
+  <@param name="defaultValue" type="any" optional=true>The value returned if the Ant property does not exist.</@param>
+
+  <p>This data loader returns the value of an Ant property. If no Ant property with the given name exists, it will return nothing (i.e. will not add new variable to the shared data model), or it will return the value of the second parameter if you use that. 
+
+  <p>The values of Ant properties are strings. But sometimes you want to see a property as numerical variable, or as boolean variable, etc. If the property name you give as data loader parameter ends with <@c>?n</@c>, then the string will be converted to number variable, and the <@c>?n</@c> itself will not count as the part of the actual property name. The complete list of postfixes:</p>
+  <ul>  
+    <li><@c>?n</@c>: Convert to number. The string value must follow Java language number format, that is, the decimal separator is always dot (<@c>.</@c>).</li>
+    <li><@c>?b</@c>: Convert to boolean. Valid values are: <@c>true</@c>, <@c>false</@c>, <@c>yes</@c>, <@c>no</@c>, <@c>y</@c>, <@c>n</@c>, <@c>0</@c>, <@c>1</@c>. Upper- and lowercase letters are considered as equivalent.</li>
+    <li><@c>?d</@c>: Convert to date. Use common SQL format with optional time zone, as <@c>"2003-06-25 GMT"</@c>. If the time zone is omitted, the value of the <@s>timeZone</@s> setting is used.</li>
+    <li><@c>?t</@c>: Convert to time. Use common SQL format with optional time zone, as <@c>"22:05:30 GMT-02:00"</@c>. The usage of AM/PM is also supported, e.g. <@c>"10:05:30 PM"</@c>. If the time zone is omitted, then the value of the <@s>timeZone</@s> setting is used.</li>
+    <li><@c>?dt</@c>: Convert to date-time. The date and time format is the same as with <@c>?d</@c> and <@c>?t</@c>, e.g. <@c>"2003-06-25 10:05:30 PM GMT"</@c>.</li>
+    <li><@c>?s</@c>: Keep the property as string. This can be useful if the actual property name ends with a prefix, so you must protect it against misinterpretation: <@c>foo?t?s</@c>.</li>
+  </ul>
+  
+  <p>To see a concrete example, look at <@example 'ant2' />.</p>
+
+  <p>This data loader will work only if you execute FMPP as Ant task.</p>
+
+</@dataLoader>
+
+<@dataLoader name="antProperites">
+  <@param name="properyName1" type="string" optional=true>The name of an Ant property to expose.</@param>
+  <@param name="properyName2" type="string" optional=true>The name of another Ant property to expose.</@param>
+  <@param name="properyNameN" type="string" optional=true>...etc. You can specify any number of Ant parameters.</@param>
+  
+  <p>Returns the set of all Ant properties, or the set of selected ant properties, as a hash.
+
+  <p>If you use this data loader without parameters, then it returns the hash of <@e>all</@e> Ant properties. To see a concrete example, look at <@example 'ant' />.</p>
+
+  <p>You can also give the name of properties to expose as parameters. For example if you want to put only the Ant properties <@c>foo</@c> and <@c>bar</@c> into the shared data model, then you write: <@c>antProperties(foo, bar)</@c>. Parameters that refer to not existing Ant properties will be silently ignored. The same postfixes (as <@c>?n</@c>) are supported as with <@a href="#key_antProperty"><@c>antProperty</@c></@a>.</p>
+  
+  <p>To see a concrete example, look at <@example 'ant2' />.</p>
+
+  <p>This data loader will work only if you execute FMPP as Ant task.</p>
+</@dataLoader>
+
+
+<@dataLoader name="antProject">
+  <p>Returns the current Ant project object (<@c>org.apache.tools.ant.Project</@c>). See the example in <@example 'ant' />.</p>
+  <p>This data loader will work only if you execute FMPP as Ant task.</p>
+</@dataLoader>
+
+
+<@dataLoader name="antTask">
+  <p>Returns the current Ant task object (<@c>org.apache.tools.ant.Task</@c>). See the example in <@example 'ant' />.</p>
+  <p>This data loader will work only if you execute FMPP as Ant task.</p>
+</@dataLoader>
+
+</@sect>
+
+
+<@sect title="Custom data loaders">
+
+<p>If you want to write custom data loader, you have to write a Java class that implements the <@c>fmpp.tdd.DataLoader</@c> interface (see in the <@a href="api/index.html">API documentation</@a>). Then, if the class is available in the class path, or if you drop its jar into the <@c>lib</@> directory of the FMPP installation, you can call it similarly as a predefined data loader, just you use the full-qualified class name as the data loader name. For example:<br> <@c>com.example.fmpp.SQLDataLoader("SELECT&nbsp;*&nbsp;FROM&nbsp;products")</@>.</p>
+
+<p><@e>If you have written a data loader that can be useful for other FMPP users, I will be happy to make it available on the FMPP home page for download. So if you want to contribute with your data loader, drop me a mail (<@myEmail />) or write to the mailing list. Thank you!</@e></p>
+
+</@sect>
+
+</@page>

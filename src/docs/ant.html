@@ -1,0 +1,203 @@
+<@page title="The Ant Task" keywords="ant, ant task">
+
+<@sect title="Description">
+
+<p>If you need the FMPP Ant task in a project xml (<@c>build.xml</@c>), use the <@c>taskdef</@c> core task:</p>
+
+<@prg><taskdef name="fmpp" classname="fmpp.tools.AntTask" /></@prg>
+
+<p>Then you can use the <@c>&lt;fmpp <@r>...</@r>></@c> task further down. You may remember the 4th step of <@a href="qtour.html">Quick Tour</@a>. This is an Ant equivalent:</p>
+
+<@prg><#noparse>
+<project name="FMPP test" default="build">
+    <taskdef name="fmpp" classname="fmpp.tools.AntTask" />
+    
+    <target name="build">
+        <fmpp
+              sourceRoot="src" outputRoot="out"
+              data="tdd(data/style.tdd), birds:csv(data/birds.csv)"
+        />
+    </target>
+</project>
+</#noparse></@prg>
+
+<p>Almost all parameters of the Ant task correspond to the <@a href="settings.html">FMPP settings</@a>. If the setting value is of scalar type (as string, boolean, number) then just enter the value simply with Ant-ish syntax, not with TDD syntax. If the setting value is of more tricky type, as hash or sequence, then use <@a href="tdd.html">TDD syntax</@a> for it. For hash settings the value is <@a href="tdd.html#modes">hash mode TDD</@a>, and for sequence setting it is sequence mode TDD, so the brackets should be omitted, as with <@s>data</@s> above.</p>
+
+<p>The <@a href="configfile.html#configurationBase">configuration base</@a> for the setting values given with Ant parameters is the Ant project base directory. That is, if you enter <@c>sourceRoot="src"</@c>, then <@c>src</@c> is interpreted relatively to the project base directory.</p>
+
+<p>There is no parameter that directly corresponds to the <@s>sources</@s> setting. The sources are chosen with nested <@c>&lt;fileset></@c>-style parameters and nested elements (as <@c>include</@c> and <@c>exclude</@c>). However, if you use the <@s>outputFile</@s> setting, you can't use <@c>&lt;fileset></@c>-style stuff, and <@s>sources</@s> will be specified with the  <@c>sourceFile</@c> parameter.
+
+<p>Alternatively, the <@s>data</@s>, <@s>localData</@s>, <@s>borders</@s>, <@s>modes</@s>, <@s>turns</@s>, <@s>xmlRenderings</@s> and <@s>freemarkerLinks</@s> settings can be specified with nested elements instead of parameters. For example, this is equivalent with the above example:</p>
+
+<@prg><#noparse>
+<project name="FMPP test" default="build">
+    <taskdef name="fmpp" classname="fmpp.tools.AntTask" />
+    
+    <target name="build">
+        <fmpp sourceRoot="src" outputRoot="out">
+            <data>
+                 tdd(data/style.tdd)
+                 birds: csv(data/birds.csv)
+            </data>
+        </fmpp>
+    </target>
+</project>
+</#noparse></@prg>
+
+<p>This can be useful, if the setting value is long. The content of the element can be a CDATA section, which is useful if the setting value contains HTML or XML fragments. Unlike with attributes, Ant property interpolations (<@c>$${"{foo}"}</@c>) in the text are not expanded, unless you force that with the <@c>expandProperties</@c> attribute of the element (<@c>&lt;data expandProperties="yes"><@r>...</@r></@c>).</p> 
+
+<p>About the support and interpretation of FMPP settings:</p>
+<ul>
+  <li>The values of settings <@s>ignoreCvsFiles</@s>, <@s>ignoreSvnFiles</@s> and <@s>ignoreTemporaryFiles</@s> are always set to <@c>false</@c>, and there is no Ant task parameter for them. This is so that they don't interfere with Ant's standard <@c>defaultExcludes</@c> parameter.</li>
+  <li>Settings <@s>echoFormat</@s>, <@s>snip</@s> and <@s>columns</@s> are ignored, and there is no Ant task parameter for them.</li>
+  <li>The <@s>quiet</@s> setting implements only grades <@c>true</@c> and <@c>false</@c>. <@c>reallyQuiet</@c> is the same as <@c>true</@c>.</li>
+  <li>All <@a href="settings.html#logging">logging related settings</@a> are supported.</li>
+</ul>
+
+<p>To access the Ant properties and other Ant specific data in the templates, you can use data loaders such as <@c>antProperty()</@c>, <@c>antProperties()</@c>, <@c>antProject()</@c> and <@c>antTask()</@c>. Read the <@a href="dataloader.html">chapter about data loaders</@a> for more details.</p>
+
+</@sect>
+
+
+<@sect title="Parameters">
+
+<p>The FMPP task accepts the following parameters:</p>
+<ul>
+  <li><@a href="settings.html">All FMPP settings</@a> except <@s>sources</@s>, <@s>ignoreCvsFiles</@s>, <@s>ignoreSvnFiles</@s>, <@s>ignoreTemporaryFiles</@s>, <@s>echoFormat</@s>, <@s>snip</@s> and <@s>columns</@s>. If the setting value is of scalar type (as string, boolean, number) then just enter the value simply with Ant-ish syntax, not with TDD syntax. If the setting value is of more tricky type, as hash or sequence, then use TDD syntax for it. For hash settings the value is hash mode TDD, and for sequence setting it is sequence mode TDD, so the brackets should be omitted. The <@a href="configfile.html#configurationBase">configuration base</@a> for the setting values is the Ant project base directory.</li>
+  
+  <li>To follow the Ant conventions, <@c>srcdir</@c> and <@c>destdir</@c> attribute names can be optionally used instead of <@c>sourceRoot</@c> and <@c>outputRoot</@c> attribute names. These are just alias names.</li>
+  
+  <li>Configuration file handling:
+    <ul>
+      <li><@c>configuration</@c>: Loads a <@a href="configfile.html">configuration file</@a>. The setting values given with the parameters has higher precedence.</li>
+
+      <li><@c>configurationBase</@c>: Emulates that <@s>configurationBase</@s> meta setting is present in configuration file with the given value.</li>
+  
+      <li><@c>inheritConfiguration</@c>: Emulates that <@s>inheritConfiguration</@s> meta setting is present in configuration file with the given value.</li>
+    </ul>
+  </li>
+  
+  <li>Ant <@c>&lt;fileset></@c>-style attributes (see the Ant documentation for more details). Used for specifing the value of the <@s>sources</@s> setting:
+    <ul>
+      <li><@c>dir</@c>: The directory that the patterns are relative to. If this attribute is omitted, then the FMPP source root will be used as the base. Note that regardless of the value of this attribute, all source files must be inside the source root.
+      <li><@c>casesensitive</@c>: Sets case sensitivity of the file names. (Same as the FMPP setting)
+      <li><@c>defaultexcludes</@c>: Indicates whether default excludes should be used or not (<@c>"yes"</@c> or <@c>"no"</@c>); default excludes are used when omitted.
+      <li><@c>excludes</@c>: comma- or space-separated list of patterns of files that must be excluded; no files (except default excludes) are excluded when omitted.
+      <li><@c>excludesfile</@c>: the name of a file; each line of this file is taken to be an exclude pattern.
+      <li><@c>followsymlinks</@c>: Shall symbolic links be followed? Defaults to true.
+      <li><@c>includes</@c>: Comma- or space-separated list of patterns of files that must be included; all files are included when omitted. Note that be default all files of the source root directory are included.
+      <li><@c>includesfile</@c>: The name of a file; each line of this file is taken to be an include pattern.  
+    </ul>
+  </li>
+  
+  <li><@c>sourceFile</@c>: It can be used only if the <@s>outputFile</@s> setting is specified. It specifies the value of the <@s>sources</@s> setting, as a simple string (not a comma separated list) that specifies the path of a single file. <@c>&lt;fileset></@c>-style attributes/elements will be ignored.</li>
+  
+  <li><@c>antTaskFailOnError</@c>: Specifies if the Ant task should fail if there were errors during the execution of the processing session. Defaults to <@c>true</@c>. It has nothing to do with the <@s>stopOnError</@s> setting. If this parameter is <@c>true</@c>, the Ant task will fail if there were any failed file processing during the processing session, even if it was skipped because <@s>stopOnError</@s> was <@c>true</@c> (so the session wasn't aborted). If this parameter is <@c>false</@c>, then the Ant task will be successful regardless of the failed file processings or other errors during the processing session, even if the processing session was aborted. But, it never suppresses errors occurred during the initialization of the FMPP engine (i.e. errors occurred before the processing session could be stated).</li>
+</ul>
+
+<p>Either the <@c>configuration</@c> parameter, or <@c>sourceRoot</@c>+<@c>outputRoot</@c> parameters, or <@c>sourceFile</@c>+<@c>outputFile</@c> parameters are required. All other parameters are optional. When you use <@c>configuration</@c>, any Ant task parameters can become optional, when the value of the coressponding settings are given in the configuration file.</p>
+
+<p><@e>Attention!</@e> When you specify the <@s>sources</@s> setting in a configuration file, its value will be added to the set of files and directories that the Ant task itself selects, which is, following the Ant tradition, by default all files and directories inside the source root. Thus, usually you will want to exclude all files in the Ant task, so only those specified in the configuration file will remain:
+<@prg>
+<fmpp configuration="config-with-sources-setting.fmpp" excludes="**/*" />
+</@prg>
+
+</@sect>
+
+
+<@sect title="Nested elements">
+
+<p>The FMPP task accepts the following nested elements:
+<ul>
+  <li>Elements for attribute substitution: Using these elements is the same as if you were use the attributes (parameters) with the same name, and with the same value as the nested text (or CDATA section) of the elements. Ant property values (<@c>$${"{foo}"}</@c>) are not expanded by default, but you can override this with a <@c>expandProperties="yes"</@c> attribute. Note that you etiher give a certain setting with attribute, or with element, but not both.
+    <ul>
+      <li><@c>data</@c>
+      <li><@c>localData</@c>
+      <li><@c>borders</@c>
+      <li><@c>modes</@c>
+      <li><@c>turns</@c>
+      <li><@c>xmlRenderings</@c>
+      <li><@c>freemarkerLinks</@c>
+    </ul>
+  <li><@c>&lt;fileset></@c>-style elements (see the Ant documentation for more details):
+    <ul>
+      <li><@c>patternset</@c>
+      <li><@c>include</@c>: Note that be default all files inside the source root directory are included.
+      <li><@c>exclude</@c>
+      <li><@c>includesfile</@c>
+      <li><@c>excludesfile</@c>
+    </ul> 
+</ul>
+
+</@sect>
+
+
+<@sect title="Examples">
+
+<p>Run processing session with the settings stored in <@c><@r>&lt;projectBaseDir></@r>/config.fmpp</@c> (or <@c>fmpp.cfg</@c>):</p>
+<@prg><#noparse>
+<fmpp configuration="." />
+</#noparse></@prg>
+
+<p>As the previous, but override <@s>outputEncoding</@s>:</p>
+<@prg><#noparse>
+<fmpp configuration="." outputEncoding="UTF-8" />
+</#noparse></@prg>
+
+<p>Processes all files in <@c>src/www</@c> and stores the output in <@c>build/www</@c>:</p>
+<@prg><#noparse>
+<fmpp sourceRoot="src/www" outputRoot="build/www" />
+</#noparse></@prg>
+
+<p>Same as the previous, but processes files with extension <@c>ftl</@c> only:</p>
+<@prg><#noparse>
+<fmpp
+    sourceRoot="src/www" outputRoot="build/www"
+    includes="**/*.ftl"
+/>
+</#noparse></@prg>
+
+<p>Same as the previous:</p>
+<@prg><#noparse>
+<fmpp sourceRoot="src/www" outputRoot="build/www">
+    <include name="**/*.ftl" />
+</fmpp>
+</#noparse></@prg>
+
+<p>Run processing session with the settings stored in <@c><@r>&lt;projectBaseDir></@r>/src/wwwconfig.fmpp</@c>, but process files with extension <@c>ftl</@c> only:</p>
+<@prg><#noparse>
+<fmpp configuration="src/wwwconfig.fmpp" includes="**/*.ftl" />
+</#noparse></@prg>
+
+<p>Processes a single file:</p>
+<@prg><#noparse>
+<fmpp sourceFile="src/test.txt" outputFile="build/test.txt" />
+</#noparse></@prg>
+
+<p>Exposes Ant properties <@c>foo</@c>, <@c>bar</@c> and <@c>baaz</@c> for the templates:</p>
+<@prg><#noparse>
+<fmpp sourceRoot="src/www" outputRoot="build/www"
+        data="antProperties(foo, bar, baaz)"
+/>
+</#noparse></@prg>
+
+<p>Just to show something more complex...:</p>
+<@prg><#noparse>
+<fmpp sourceRoot="src/www" outputRoot="build/www"
+        replaceExtension="ftl, html"
+        modes="copy(**/*.html, **/*.htm)"
+>
+    <borders><![CDATA[
+        border('<#escape x as x?html>', '</#escape>', **/*.ftl)
+    ]]></borders>
+    <data>
+        bgColor: white
+        fgColor: black
+        antProps: antProperties()
+    </data>
+</fmpp>
+</#noparse></@prg>
+
+</@sect>
+
+</@page>

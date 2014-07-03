@@ -1,0 +1,3 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp

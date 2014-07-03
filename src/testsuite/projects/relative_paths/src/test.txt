@@ -1,0 +1,2 @@
+${pp.sourceFileSize('s.txt')}
+<#include '/include/test.txt'>

@@ -1,0 +1,20 @@
+m1: {k1:1,k2:2, k3:3 , k4:4
+    k5:5
+    k6:6,
+    k7
+    :
+    7
+    , k8:8
+    # mooo
+    k9 <#-- mooo --> : 9 <#-- mooo --> }, m2: {a:b:c:d, 'a:b':c:d, "a:b:c":d}
+m3: {
+    1:1, true:true
+}
+m4: {
+  {a:A, b:BAD, c:BAD}
+  {b:B, c:BAD}
+  {c:C}, d:D
+}
+m5: {a:[1, 2, 3], b:{a:11, b:22, c:33}, {{{c:3}}}}
+tdd(data/hash.tdd)
+m6: {a:BAD, b:BAD, c:BAD, d:444, tdd(data/hash.tdd)}

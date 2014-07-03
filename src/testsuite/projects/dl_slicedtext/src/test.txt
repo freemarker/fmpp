@@ -1,0 +1,127 @@
+<#ftl encoding="ISO-8859-2">
+
+<#macro listFileNoMagic fileName separator>
+<#list pp.loadData('slicedText', fileName, {"separator":separator, 'dropEmptyLastItem':false, 'encoding':'utf-8'}) as x>
+[${x}]
+</#list>
+</#macro>
+
+<#macro listFileTrim fileName separator>
+<#list pp.loadData('slicedText', fileName, {"separator":separator, 'trim':true, 'encoding':'utf-8'}) as x>
+[${x}]
+</#list>
+</#macro>
+
+<@listFileNoMagic 't1.txt', '\n' />
+==
+[a]
+[ b]
+[ c ]
+
+---------
+
+<@listFileNoMagic 't2.txt', '\n' />
+==
+[a]
+[ b]
+[ c ]
+[]
+
+<@listFileTrim 't1.txt', '\n' />
+==
+[a]
+[b]
+[c]
+
+---------
+
+<@listFileTrim 't2.txt', '\n' />
+==
+[a]
+[b]
+[c]
+
+---------
+
+<@listFileNoMagic 't3.txt', '\n---\n' />
+==
+[---
+ a
+ A ]
+[ b --- B ]
+[ c 
+---]
+
+<@listFileNoMagic 't4.txt', '\n---\n' />
+==
+[---
+ a
+ A ]
+[ b --- B ]
+[ c ]
+[]
+
+<@listFileNoMagic 't5.txt', '\n---\n' />
+==
+[---
+ a
+ A ]
+[ b --- B ]
+[ c 
+---x]
+
+<@listFileNoMagic 't6.txt', '\n---\n' />
+==
+<@listFileNoMagic 't6cr.txt', '\n---\n' />
+==
+<@listFileNoMagic 't6lf.txt', '\n---\n' />
+==
+[a]
+[ b]
+[  c]
+[ d ]
+[e  ]
+
+<@listFileTrim 't7.txt', ',' />
+==
+[red]
+[green]
+[blue]
+
+<@listFileTrim 't8.txt', '\n\n--8<--\n\n' />
+==
+[A a a
+aaa
+a]
+[Separate items like this:
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+--8<--
+
+But don't forget to put empty lines around it!]
+[C c c
+ccc
+c]
+
+<@listFileTrim 't9.txt', '->' />
+==
+[a]
+[b]
+[]
+[]
+[]
+[c]
+
+<@listFileTrim 'empty.txt', '\n' />
+==
+
+<@listFileNoMagic 'empty.txt', '\n' />
+==
+[]

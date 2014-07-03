@@ -1,0 +1,20 @@
+<project name="FMPP Ant test 3" default="build">
+    <taskdef name="fmpp" classname="fmpp.tools.AntTask" />
+    
+    <target name="build">
+        <!--
+            It will execute the qtour_step4 example, but with overridden
+            text color. Also, the output-root and log-file are overridden,
+            so the output and log file will be created in this directory,
+            rather than in the ../qtour_step4 direcotry. (Consider that
+            relative paths in cfg files are resolved relatively to the
+            cfg file.)
+        -->
+        <fmpp
+            configuration="../qtour_step4"
+            data="textColor:blue"
+            outputroot="out"
+            logfile="log.fmpp"
+        />
+    </target>
+</project>

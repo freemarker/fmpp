@@ -1,0 +1,2 @@
+${o.x} = X
+${o.class?default('missing')} = missing

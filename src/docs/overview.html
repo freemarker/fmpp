@@ -1,0 +1,111 @@
+<@page title="System Overview and Terminology" keywords="overview">
+
+<p>Please read the <@a href="qtour.html">Quick Tour</@a> before this, otherwise you will not understand...</p>
+
+
+<@sect title="FMPP core and front-ends">
+
+<p>FMPP consist of the FMPP core, and the front-ends wrapping that. Front-ends provide interface by which you can communicate with the FMPP core. For example the command-line tool (that we have used previously) is a front-end that provides command-line interface. The FMPP Ant task is another front-end that provides Ant task interface. A graphical front-end could be written too. But whatever front-end you use, you (indirectly) use the FMPP core. So most of the documentation is about the FMPP core, which basically encapsulates all abilities of FMPP.</p>
+
+<p>Note that there are more skins of the onion: the FMPP core wraps FreeMarker, the template engine.</p>
+
+<p>For more info see <@a href="writefrontend.html">the chapter about writing front-ends</@a>.</p>
+
+</@sect>
+
+
+<@sect title="Settings" anchor="settings">
+
+<p>Settings are variables that describe for the FMPP core what and how to do. Examples of settings you have already met: <@s>sourceRoot</@s>, <@s>outputRoot</@s>, <@s>data</@s>. Front-ends basically do nothing else, just set the settings of the core, and then "trigger" the core to do the job. So if you know <@a href='settings.html'>all settings</@a>, then basically you know everything FMPP can do.</p>
+
+<p>It's a good practice to store the settings of your project in <@a href='configfile.html'>configuration files</@a> (as <@c>config.fmpp</@c> was). As the FMPP core understand them, you can use them with all front-ends. Configuration files use a simple FMPP specific language, <@a href='tdd.html'>TDD</@a>.</p>
+
+</@sect>
+
+
+<@sect title="File processing and related terms">
+
+<p><@e>Processing a file</@e> is the act of the generation of the output file (or files) based on a source file. This may means the execution of the file as FreeMarker template, or binary-copying the file, processing the file as XML, or, in extreme case, create no output the file (say, for a <@c>.bak</@c> file). The path of the output file relatively to the <@s>outputRoot</@s> will be the same as the path of the corresponding source file relatively to the <@s>sourceRoot</@s> (at least initially; the template can change the output file path on-the-fly).</p>
+
+<p>Term <@e>processing mode</@e> refers to how a certain file is processed. In the Quick Tour, the HTML files were processed in "execute" mode, and the image file was processed in "copy" mode. You can find all details about processing modes <@a href='settings.html#processingMode'>here</@a>.</p>
+
+<p><@e>Processing session</@e>: This is the course of batch processing the (selected) files of the source directory. For example, all <@c>fmpp</@c> call in the Quick Tour did a processing session.</p>
+
+<p>Strictly speaking, FMPP processes only files, but not directories. It does, however, look for source files in the sub-directories of the source root directory recursively, and when an output file has to be created, its missing parent directories will be created automatically. So you get the impression that FMPP processes directories like files, but actually it doesn't. Thus, FMPP doesn't output empty directories. Also, any settings that deal with processing are applicable only for files, but not for directories.</p>
+
+<p>You do not use term "processing" for data files as <@c>data/style.tdd</@c> or <@c>data/birds.csv</@c> was. A data file isn't processed like a template file (or an image file), it does not produce output file itself. Instead, it can be loaded into a variable for later usage in templates.</p>
+
+</@sect>
+
+
+<@sect title="Data, data loader" anchor="data">
+
+<p>In FMPP context <@e>data</@e> means data coming from data sources as XML file, CSV file, MySQL database, etc. In the Quick Tour, <@c>data/style.tdd</@c> and <@c>data/birds.csv</@c> are data files. Files that are processed to produce output files, as the HTML-s and the image are not data files.</p>
+
+<p>The FreeMarker templates see the "data" as variables. This set of variables is called <@e>the data model</@e> with FreeMarker terminology. The data model is shared, visible for all templates. During output generation the template may creates new variables for temporary calculations, but those variables are not part of the data model, and will gone when the template execution is finished. Templates can't modify the data model, so all templates get the same data model, which was filled with the <@s>data</@> setting at the very beginning of the processing session.</p> 
+
+<p><@e>Data loaders</@e> are objects that load and interpret data from certain type of data source, so FMPP can expose the data as variables for the templates. For example, in the Quick Tour we have used data loader <@c>csv</@c> that interprets CSV files. When the data source is file based, you use paths as data <@c>data/birds.csv</@c>. Relative paths are relative to the directory dictated by the <@s>dataRoot</@s> setting, which is be default the same as <@s>sourceRoot</@s>. Data loaders are described in more details <@a href="dataloader.html">here</@a>.</p>  
+
+</@sect>
+
+
+<@sect title="The pp hash">
+
+<p>The data model always contains a <@a href="#hash">hash</@a> with name <@c>pp</@c> (stands for PreProcessor). This hash contains directives and methods and other variables that templates can use to control output generation, do path calculations, and do various other FMPP specific operations. You can find the description of the <@c>pp</@c> hash <@a href="pphash.html">here</@a>.</p>
+
+</@sect>
+
+
+<@sect title="Virtual paths" anchor="virtualPath">
+
+<p>FMPP works with 3 file systems: the real file system, and 2 virtual file systems:</p>
+<ul>
+  <li><@e>source file system</@e>: The root directory of this file system is the <@s>sourceRoot</@s> directory. Template files usually see this file system, as when they <@c>&lt;#include <@r>...</@r>></@c> other template files. All files that FMPP processes must be inside this file system, thus inside the source root directory.</li>
+  
+  <li><@e>output file system</@e>: The root directory of this file system is the <@s>outputRoot</@s> directory. In templates, directives that control output file names and paths (as <@c>&lt;@pp.changeOutputFile <@r>...</@r>></@c>) use this file system. It is guaranteed that all output files will be inside this file system, thus inside the output root directory.</li>
+</ul>
+
+<p>Most directives/methods in templates that require path parameters use one of the virtual file systems. These paths are called <@e>virtual paths</@e>. Virtual paths always use UN*X style format, so they always use slash (<@c>/</@c>), not back-slash (<@c>\</@c>). Absolute virtual paths (as <@c>/foo/bar</@c>) always start from the virtual file system root (not from the root of the real file-system). You can't leave this root, not even with tricky path as <@c>/..</@c>. Relative virtual paths (as <@c>foo/bar</@c> or  <@c>../foo/bar</@c>) are resolved relatively to:</p>
+<ul>
+  <li>If they are used in built-in FreeMarker directives (as <@c>&lt;#include <@r>...</@r>></@c> or <@c>&lt;#import <@r>...</@r>></@c>): the directory of the currently executing template.</li>
+  <li>If they are used in other directives to refer to source files: the directory of the currently processed source file.</li>
+  <li>If they are used in directives to refer to output files: the directory of the currently written output file.</li>
+</ul>
+
+<p>Note that the <@s>dataRoot</@s> setting (used by data loaders) just specifies a base directory, not a virtual file system root. So you can leave it with <@c>..</@c>-s.</p>
+
+</@sect>
+
+
+<@sect title="Real paths" anchor="realPath">
+
+<p>Paths that navigate in the real file system (not in a <@a '#virtualPath'>virtual file systems</@a>) are called <@e>real paths</@e>. Real paths always use the native path format of the host operating system. However, Windows users can and should use slash (<@c>/</@c>) instead of backslash (<@c>\</@c>), to keep UN*X compliance, and to avoid escaping issues.</p>
+
+<p>Real paths are used in these cases:</p>
+<ul>
+  <li>For setting values that store a path (or paths), such as <@s>sourceRoot</@s> and <@s>outputRoot</@s>. Relative paths in these settings are resolved relatively to the, so called, <@e>configuration base</@e> (unless explicitly stated otherwise for a certain setting). If the setting value comes from a configuration file, then it is the directory that contains the configuration file (however, this can be overridden with the <@s>configurationBase</@s> setting). If the value comes from other source (such as from a command-line argument), then the front-end specifies what the configuration base is for that setting value (see the documentation of the front-end).
+  
+  <li>For data loaders that load files, as <@c>csv(data/birds.csv)</@c>. If the path is relative, then it is relative to the <@s>dataRoot</@s>, which defaults to the <@s>sourceRoot</@s>. Note that the usage of <@c>/</@c> instead of the native path separator (as backslash) is always allowed and recommended here.
+
+  <li>As the parameter to some <@c>pp</@c> directives/methods that explicitly state this.  
+</ul>
+
+<p>In other cases FMPP uses <@a href="#virtualPath">virtual paths</@a>.
+
+</@sect>
+
+
+<@sect title="Adopted FreeMarker type names">
+
+<p>FMPP adopts some of FreeMarker's terms regarding the type names, to decrease confusion:</p>
+<ul>
+  <li>String: text.
+  <li>Boolean: logical value. It can be <@c>true</@c> or <@c>false</@c>.
+  <li>Number: Number... maybe decimal, maybe whole. You often will also see term "integer", which means whole number.
+  <li><@e>Sequence</@e>: You may know this with name list, or array, or vector. It is a list of values of any type. The items in the list are indexed with integers, starting from 0.
+  <li><@anchor id="hash" /><@e>Hash</@e>: You may know this with name dictionary, or map, or associative array. This is a set of name-value pairs. The names are unique strings in the hash, so they identify the values associated with them. As it used to be said, they are "keys".
+</ul>
+
+</@sect>
+
+</@page>

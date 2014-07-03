@@ -1,0 +1,25 @@
+A a a
+aaa
+a
+
+--8<--
+
+Separate items like this:
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+
+--8<--
+But don't forget to put empty lines around it!
+
+Separate items like this:
+--8<--
+
+But don't forget to put empty lines around it!
+
+--8<--
+
+C c c
+ccc
+c

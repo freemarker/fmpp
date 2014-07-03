@@ -1,0 +1,13 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+data: {
+    doc: xml(
+        data/test.xml
+        {
+            xincludeAware: true
+            removeComments: false
+            index: {element: [part, chapter, para], value: '%n'}
+        }
+    )
+}

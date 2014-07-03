@@ -1,0 +1,8 @@
+sourceRoot: src
+outputRoot: out
+dataRoot: src/data
+logFile: log.fmpp
+data: {
+    t1: text("1.txt")
+    t1_utf8_bom: text("1-utf8-bom.txt", UTF-8)
+}

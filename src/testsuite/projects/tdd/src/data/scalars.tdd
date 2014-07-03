@@ -1,0 +1,42 @@
+strings: [
+    foo-bar/**/baz.txt
+    C:\windows\system32
+    25%
+    #FF80FF
+    7.txt
+    1-2
+    True
+    "contains space"
+    "a'b"
+    "(c)"
+    "<head>"
+    "7"
+    "true"
+    'x"y'
+    'x\'y'
+    "x\'y"
+    "x\"y"
+    r"a\'b"
+    r'a\"b'
+    "line1
+     line2
+     line3"
+    !?
+    "\x64-\x64\x64-\x064\x00640"
+    "A \
+     B \
+     \
+     \
+     C D"
+    'X \      
+
+     Y \ 
+     
+     
+     Z\
+    ']
+vBoolean1: true
+vBoolean2: false
+vNumber1: 7
+vNumber2: +0.7
+vNumber3: -0.7

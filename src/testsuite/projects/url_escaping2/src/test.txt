@@ -1,0 +1,20 @@
+<#ftl encoding="ISO-8859-2">
+
+<#assign s = "béka">
+
+output_encoding: ${.output_encoding?default("-")} = ISO-8859-2
+url_escaping_charset: ${.url_escaping_charset?default("-")} = UTF-16
+${s?url}
+${pp.urlEnc(s)}
+
+<@pp.setOutputEncoding encoding="utf-8" />
+output_encoding: ${.output_encoding?default("-")} = utf-8
+url_escaping_charset: ${.url_escaping_charset?default("-")} = UTF-16
+${s?url}
+${pp.urlEnc(s)}
+
+<#setting url_escaping_charset="ISO-8859-2" />
+output_encoding: ${.output_encoding?default("-")} = utf-8
+url_escaping_charset: ${.url_escaping_charset?default("-")} = ISO-8859-2
+${s?url}
+${pp.urlEnc(s)}

@@ -1,0 +1,23 @@
+<#ftl encoding="ISO-8859-2">
+
+<#assign s = "/a nõügy/az">
+
+output_encoding: ${.output_encoding?default("-")} = ISO-8859-2
+url_escaping_charset: ${.url_escaping_charset?default("-")} = -
+${s?url}
+${pp.urlEnc(s)}
+${pp.urlPathEnc(s)}
+
+<@pp.setOutputEncoding encoding="utf-8" />
+output_encoding: ${.output_encoding?default("-")} = utf-8
+url_escaping_charset: ${.url_escaping_charset?default("-")} = -
+${s?url}
+${pp.urlEnc(s)}
+${pp.urlPathEnc(s)}
+
+<#setting url_escaping_charset="utf-16" />
+output_encoding: ${.output_encoding?default("-")} = utf-8
+url_escaping_charset: ${.url_escaping_charset?default("-")} = utf-16
+${s?url}
+${pp.urlEnc(s)}
+${pp.urlPathEnc(s)}

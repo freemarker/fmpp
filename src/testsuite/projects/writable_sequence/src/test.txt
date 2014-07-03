@@ -1,0 +1,24 @@
+<#assign x = pp.newWritableSequence(stuff)>
+<@pp.add seq=x value='C' />
+<#assign y = pp.newWritableSequence(x)>
+<@pp.add seq=y value='D' />
+<#assign z = pp.newWritableSequence(['X', 'Y'])>
+<@pp.add seq=z value='Z' />
+
+stuff:
+<@listSequence stuff />
+
+x:
+<@listSequence x />
+
+y:
+<@listSequence y />
+
+z:
+<@listSequence z />
+
+<#macro listSequence seq>
+  <#list seq as i>
+  - ${i}
+  </#list>
+</#macro>

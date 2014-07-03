@@ -1,0 +1,24 @@
+<html>
+  <body bgColor='${bgColor}'>
+    <h1>Test</h1>
+    <p>Other pages:
+    <ul>
+      <li><a href="sub/1.html">sub/1.html</a>
+      <li><a href="sub/2.html">sub/2.html</a>
+      <li><a href="sub/3_j.html">sub/3_j.html</a>
+      <li><a href="sub/food.html">sub/food.html</a>
+      <li><a href="sub/subsub/1.html">sub/subsub/1.html</a>
+      <li><a href="sub/subsub/2.html">sub/subsub/2.html</a>
+      <li><a href="sub/sky/1.html">sub/sky/1.html</a>
+      <li><a href="sub/sky/2.html">sub/sky/2.html</a>
+      <li><a href="sub/sky/3_a.html">sub/sky/3_a.html</a>
+      <li><a href="sub2/1.html">sub2/1.html</a>
+      <li><a href="sub2/2.html">sub2/2.html</a>
+    </ul>
+    
+  <p>Here it is the config file used:
+  <table border=1 cellspacing=0 cellpadding=4 bgcolor=white width="100%"><tr><td>
+  <pre>${pp.loadData('text', '../config.fmpp')?html}</pre>
+  </table>
+  </body>
+</html>

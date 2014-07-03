@@ -1,0 +1,35 @@
+m1:
+    - (k1) : num (1)
+    - (k2) : num (2)
+    - (k3) : num (3)
+    - (k4) : num (4)
+    - (k5) : num (5)
+    - (k6) : num (6)
+    - (k7) : num (7)
+    - (k8) : num (8)
+    - (k9) : num (9)
+m2:
+    - (a) : str (b:c:d)
+    - (a:b) : str (c:d)
+    - (a:b:c) : str (d)
+m3:
+    - (1) : num (1)
+    - (true) : bool (true)
+m4:
+    - (a) : str (A)
+    - (b) : str (B)
+    - (c) : str (C)
+    - (d) : str (D)
+m5:
+    - (a) : seq [(num (1)), (num (2)), (num (3))]
+    - (b) : hash {(a):(num (11))], (b):(num (22))], (c):(num (33))]}
+    - (c) : num (3)
+m6:
+    - (a) : num (111)
+    - (b) : num (222)
+    - (c) : num (333)
+    - (d) : num (444)
+
+a: 111
+b: 222
+c: 333

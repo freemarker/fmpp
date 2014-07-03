@@ -1,0 +1,8 @@
+<product>
+  <name>big widget</name>
+  <price>$15</price>
+  <description>
+     This is an extra large widget, manufactured with a technology
+     developed by the NASA.
+  </description>
+</product>

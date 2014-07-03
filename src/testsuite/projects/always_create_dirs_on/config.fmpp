@@ -1,0 +1,8 @@
+sourceRoot: src
+outputRoot: out
+dataRoot: src/data
+alwaysCreateDirectories: true
+modes: [ignore(.gitignore)]
+data: {
+    doc: xml(test.xml)
+}

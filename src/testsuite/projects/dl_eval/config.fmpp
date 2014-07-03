@@ -1,0 +1,9 @@
+sourceRoot: src
+outputRoot: out
+data: {
+    a:4
+    e1:eval("1+1")
+    e2:eval("a / 2", {a:get(a)})
+    e3:eval("a - b", {a:get(a), b:get(e2)})
+    e4:eval("x = 3; x *= 2; x -= 4; return x;")
+}

@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title>XML Tree Dump</title>
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <@pp.setOutputEncoding encoding="UTF-8" />
+</head>
+<body bgcolor="white" color="black">
+
+<h1>XML Tree Dump</h1>
+
+<@dumpXml doc />
+
+<p><b>Legend:</b>
+<ul>
+    <li><tt><font color=blue>&lt;foo bar="123"></font></tt>: Element node
+    <li><tt>"Blah blah"</tt>: Text node
+    <li><tt><font color=brown>&lt;?foo bar ?></font></tt>: Processing instruction node
+    <li><tt><font color=green>&lt;!-- Blah blah --></font></tt>: Comment node
+    <li><font color=gray>foo</font>: Other node
+</ul>
+
+</body>
+
+<#function showXmlSource s>
+  <#return s?xml?xml?replace(" ", r"&nbsp;")?replace('\n', '&amp;#xA;')?replace('\r', '&amp;#xD;')>
+</#function>
+
+<#--
+Prints an XML node tree as colored HTML.
+-->
+<#macro dumpXml node>
+  <ul>
+    <@dumpXml_internal node />
+  </ul>
+</#macro>
+
+<#macro dumpXml_internal node>
+    <#local type = node?node_type>
+    <#if type == 'element'>
+        <li><tt><font color=blue>&lt;<#rt>
+        <#if node?node_namespace?? && node?node_namespace != ''>
+            <font color=blue size="-1">'${node?node_namespace}'</font>:<#t>
+        </#if>
+        ${node?node_name}<#t>
+        <#list node.@@ as att>
+            ${' '}<#t>
+            <#if att?node_namespace?? && att?node_namespace != ''>
+                <font color=blue size="-1">'${att?node_namespace}'</font>:<#t>
+            </#if>
+            ${att?node_name}="${showXmlSource(att)}"<#t>
+        </#list>
+        ></font></tt><#lt>
+    <#elseif type == 'text'>
+        <li><tt>"${showXmlSource(node)}"</tt><#lt>
+    <#elseif type == 'pi'>
+        <#local nodeName = node?node_name>
+        <li><tt><font color=brown>&lt;?${nodeName?substring(4)} ${showXmlSource(node)}?></font></tt><#lt>
+    <#elseif type == 'comment'>
+        <li><tt><font color=green>&lt;!-- ${node} --></font></tt><#lt>
+    <#else>
+        <li><font color=gray>${node?node_type}</font><#lt>
+    </#if>
+    <#if node?children?size != 0>
+        <ul>
+        <#list node?children as c>
+            <@dumpXml_internal c /><#t>
+        </#list>
+        </ul>
+    </#if>
+</#macro>

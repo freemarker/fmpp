@@ -1,0 +1,8 @@
+/.ivy/
+/.bin/
+/build/
+/build.properties
+/archive/
+/lib/fmpp.jar
+
+src/manual/book.xml~

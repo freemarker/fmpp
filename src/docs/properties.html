@@ -1,0 +1,64 @@
+<@page title='"Properties" Files' keywords="properties">
+
+<p>This is a standard format widely used in the Java world to specify set of name-value pairs, where all name is unique (a key).</p>
+
+<p>Name-value pairs are specified with <@c><@r>name</@r>=<@r>value</@r></@c> format, and each such pair is in its own line. For example:</p>
+
+<@prg>
+bgColor=blue
+textColor=white
+copyright=Copyright (c) 2003, Big Joe All rights reserved.
+</@prg>
+
+<p>If the last character on the line is backslash (<@c>\</@c>), then the next line is treated as a continuation of the current line; the <@c>\</@c> and line break are simply discarded, and any leading whitespace (space, tab, etc.) characters on the continuation line are also discarded and are not part of the value. It is useful if the line would be too long for conveniently reading/editing it:</p>
+
+<@prg>
+copyright=Copyright (c) 2003, \
+          Big Joe \
+          All rights reserved.
+</@prg>
+
+<p>Note that if you accidentally put a space after the <@c>\</@c>, then it will not work.</p>
+
+<p>In the name or value, Java language escape sequences <@c>\t</@>, <@c>\n</@>, <@c>\r</@>, <@c>\f</@>, <@c>\\</@>, <@c>\"</@>, <@c>\'</@>, and <@c>\u<@r>xxxx</@r></@> are recognized and converted to single characters. Any other escape sequence will be converted to the character after the backlash (e.g. <@c>\x</@> will be converted to <@c>x</@>). Note that because of the special meaning of backslash, to put a backslash into the name or value, you have to write two backslashes (<@c>\\</@>).</p>
+
+<@prg>
+aNativeWindowsPath=C:\\My Documents\\test
+someText=First line\nSecond line\nThrid line
+</@prg>
+
+<p>Whitespace is ignored  after and before the <@c>=</@c>, so you can write:</p>
+
+<@prg>
+bgColor = blue
+textColor = white
+</@prg>
+
+<p>Alternatively, you can use colon or just whitespace to separate the name and value:</p>
+
+<@prg>
+bgColor: blue
+textColor white
+</@prg>
+
+<p>Thus, if the name contains <@c>=</@>, <@c>:</@> or whitespace, it must be escaped:</p>
+
+<@prg>
+this\ is\ the\ name = something
+C\: = /mnt/win
+</@prg>
+
+<p>Empty lines of the file, and the lines that start with <@c>#</@c> or <@c>!</@c>, will be ignored. This can be used for commenting:</p>
+
+<@prg>
+# colors
+bgColor=blue
+textColor=white
+
+# other text
+copyright=Copyright (c) 2003, Big Joe All rights reserved.
+</@prg>
+
+<p>"properties" files always use ISO-8859-1 charset. If you have to enter a character that is not in the ISO-8859-1 repertoire, you have to use the <@c>\u<@r>xxxx</@></@> escape (where <@c><@r>xxxx</@></@> is the hexadecimal UCS code of the character).</p>
+
+</@page>

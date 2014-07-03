@@ -1,0 +1,47 @@
+<#-- Generates the Table of Contents pages for the FMPP Manual -->
+
+<@pp.dropOutputFile/>
+
+<@generateTocPage manualFiles, true />
+
+<#macro generateTocPage seq, mainToc=false>
+  <#local tocDesc = seq[0]>
+  <@pp.nestOutputFile name=pp.home+tocDesc.file>
+    <@page title=tocDesc.title keywords=tocDesc.keywords?if_exists>
+      <#if tocDesc.preToc??>
+        <@tocDesc.preToc?interpret />
+      </#if>
+      <#if mainToc>
+        <@recursiveToc seq[1..seq?size - 1], 'Table of Contents' />
+      <#else>
+        <@recursiveToc seq[1..seq?size - 1], 'Chapter Contents' />
+      </#if>
+      <#if tocDesc.postToc??>
+        <@tocDesc.postToc?interpret />
+      </#if>
+    </@page>
+  </@pp.nestOutputFile>
+  
+  <#list seq as subseq>
+    <#if subseq?is_sequence>
+      <@generateTocPage subseq />
+    </#if>
+  </#list>
+</#macro>
+
+<#macro recursiveToc seq title=''>
+  <@toc title>
+    <#list seq as f>
+      <#if f?is_sequence>
+        <@toci href=pp.home+f[0].file title=f[0].title>
+          <@recursiveToc f[1..f?size - 1] />
+	</@toci>
+      <#else>
+        <#if !pp.s.manualFileTitles[f]??>
+           <#stop "Missing file or file didn't used <@page>: ${f}">
+        </#if>
+        <@toci href=pp.home+f title=pp.s.manualFileTitles[f] />
+      </#if>
+    </#list>
+  </@toc>
+</#macro>

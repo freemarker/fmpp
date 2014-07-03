@@ -1,0 +1,29 @@
+<@pp.renameOutputFile name="n0.txt" />
+n0[
+<@pp.nestOutputFile name='n1.txt'>
+  n1
+  <@pp.nestOutputFile name='n2.txt'>
+    n2
+    <@pp.nestOutputFile name='n3.txt'>
+      n3[
+      <@pp.nestOutputFile name='n1.txt'>
+        -=N1=-
+        <@pp.nestOutputFile name='n0.txt'>
+          -=N0=-
+        </@pp.nestOutputFile>
+      </@pp.nestOutputFile>
+      -=N3=-
+      <@pp.nestOutputFile name='trash.txt'>
+        Trash
+        <@pp.nestOutputFile name='n2.txt'>
+          -=N2=-
+        </@pp.nestOutputFile>
+        <@pp.dropOutputFile />
+      </@pp.nestOutputFile>
+      ]n3
+    </@pp.nestOutputFile>
+    ]n2
+  </@pp.nestOutputFile>
+  ]n1
+</@pp.nestOutputFile>
+]n0

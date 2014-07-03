@@ -1,0 +1,34 @@
+<#-- $Id: scalars.txt,v 1.1 2003/10/29 19:28:36 ddekany Exp $ -->
+<#assign tdd = pp.loadData('tdd', 'data/scalars.tdd')>
+<#list tdd.strings as s>
+  <#if !s?is_string>
+    Non-string!
+  <#else>
+    [${s}]
+  </#if>
+</#list>
+<#if !tdd.vBoolean1?is_boolean>
+  Non-boolean!
+<#else>
+  [${tdd.vBoolean1?string}]
+</#if>
+<#if !tdd.vBoolean2?is_boolean>
+  Non-boolean!
+<#else>
+  [${tdd.vBoolean2?string}]
+</#if>
+<#if !tdd.vNumber1?is_number>
+  Non-number!
+<#else>
+  [${tdd.vNumber1}]
+</#if>
+<#if !tdd.vNumber2?is_number>
+  Non-number!
+<#else>
+  [${tdd.vNumber2}]
+</#if>
+<#if !tdd.vNumber3?is_number>
+  Non-number!
+<#else>
+  [${tdd.vNumber3}]
+</#if>

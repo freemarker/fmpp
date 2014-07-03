@@ -1,0 +1,24 @@
+<project name="FMPP Ant test 2" default="build">
+    <taskdef name="fmpp" classname="fmpp.tools.AntTask" />
+    
+    <property name="p1" value="P1!" />
+    <property name="p2" value="P2!" />
+    <property name="p3" value="P3!" />
+    <property name="x" value="1.2" />
+    <property name="test" value="yes" />
+    <property name="time" value="22:05:30 GMT-02:00" />
+
+    <target name="build">
+        <fmpp
+            sourceroot="src" outputroot="out"
+            logfile="log.fmpp"
+        >
+            <data>
+                antProperties(p1, p2, x?n, test?b, time?t, thisWillBeIgnored)
+                wombat1: antProperty(p3)
+                wombat2: antProperty(p4)
+                wombat3: antProperty(p4, 'P4?')
+            </data>
+        </fmpp>
+    </target>
+</project>

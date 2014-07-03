@@ -1,0 +1,30 @@
+<?foo bar baaz ?>
+<book>
+  <!-- This is a comment -->
+  <part title="Part 1">
+    <chapter title="Chapter 1.1">
+      <para>A</para>
+      <para><![CDATA[CDATA is just text.]]></para>
+    </chapter>
+    <chapter title="Chapter 1.2">
+      <para>A</para>
+      <para>B</para>
+    </chapter>
+    <chapter title="Chapter 1.3">
+      <para>A</para>
+      <para>B</para>
+    </chapter>
+  </part>
+  <part title="Part 2">
+    <chapter title="Chapter 2.1">
+      <para>A</para>
+      <para>B</para>
+      <para>C</para>
+    </chapter>
+    <chapter title="Chapter 2.2">
+      <para>A</para>
+      <para>B</para>
+      <para>C</para>
+    </chapter>
+  </part>
+</book>

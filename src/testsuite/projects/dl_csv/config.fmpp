@@ -1,0 +1,28 @@
+sourceRoot: src
+outputRoot: out
+dataRoot: src/data
+logFile: log.fmpp
+outputEncoding: utf-8
+data: {
+    csv: csv(test.txt, {
+            separator: tab
+            dateFormat: yyyy.MM.dd
+            timeFormat: HH-mm-ss
+            dateTimeFormat: 'yyyy.MM.dd HH-mm-ss'
+        })
+    csv2r: csv(test2.txt, {replaceHeaders: [r1:n, r2:n, r3:n]})
+    csv2a: csv(test2.txt, {headers: [a1, a2, a3]})
+    csv3r: csv(test3.txt, {replaceHeaders: [r1:n, r2:n, r3:n]})
+    csv3a: csv(test3.txt, {headers: [a1, a2, a3]})
+    csv4r: csv(test4.txt, {replaceHeaders: [r1:n, r2:n, r3:n]})
+    csv4a: csv(test4.txt, {headers: [a1, a2, a3]})
+    csv5: csv(test5.txt, {
+            normalizeHeaders
+            trimCells
+            separator: tab
+            dateFormat: yyyy.MM.dd
+            timeFormat: HH-mm-ss
+            dateTimeFormat: 'yyyy.MM.dd HH-mm-ss'
+        })
+    csv_utf8_bom: csv(test-utf8-bom.csv, {encoding: UTF-8})
+}

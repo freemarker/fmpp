@@ -1,0 +1,4 @@
+res = new HashMap();
+res.put("x", "Just for test: " + templateEnvironment.getData("author"));
+res.put("y", "Blah for 3_j...");
+return res;

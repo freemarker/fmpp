@@ -1,0 +1,10 @@
+<h1>Hello ${user}!</h1>
+
+<p>Our offers:
+<ul>
+  <#list animals as animal>
+    <li>${animal.name?cap_first} for ${animal.price} credits
+  </#list>
+</ul>
+
+<p>Note that we know that you are <#if !tall>not </#if> tall, ${user}.</p>

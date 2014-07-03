@@ -1,0 +1,24 @@
+<#assign x = pp.newWritableHash(stuff)>
+<@pp.set hash=x key='c' value='C' />
+<#assign y = pp.newWritableHash(x)>
+<@pp.set hash=y key='d' value='D' />
+<#assign z = pp.newWritableHash({'x':'X'})>
+<@pp.set hash=z key='z' value='Z' />
+
+stuff:
+<@listMap stuff />
+
+x:
+<@listMap x />
+
+y:
+<@listMap y />
+
+z:
+<@listMap z />
+
+<#macro listMap map>
+  <#list map?keys?sort as k>
+  - ${k} = ${map[k]}
+  </#list>
+</#macro>

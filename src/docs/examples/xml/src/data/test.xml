@@ -1,0 +1,14 @@
+<book title="The XML Test">
+  <chapter title="Preface">
+    <para>Preface blah blah...</para>
+    <para>And preface blah blah...</para>
+  </chapter>
+  <chapter title="Blah">
+    <para>Blah blah blah...</para>
+    <para>And blah blah blah...</para>
+  </chapter>
+  <chapter title="Foo">
+    <para>Foo blah blah...</para>
+    <para>And foo blah blah...</para>
+  </chapter>
+</book>

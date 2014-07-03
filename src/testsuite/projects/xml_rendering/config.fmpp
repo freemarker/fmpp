@@ -1,0 +1,22 @@
+inheritConfiguration: inherited.fmpp
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+xmlRenderings: [
+    {ifDocumentElementIs:a, template:renderer/test1.ftl, validate}
+    {ifDocumentElementIs:b, template:renderer/test2.ftl, index:{element:c}}
+    {ifDocumentElementIs:e:c, template:renderer/test3.ftl, xmlns:{e:'http://e/'}}
+    {
+        ifSourceIs:ldb.xml
+        template:renderer/ldb.ftl
+        localDataBuilder: [
+            "new fmpp.testsuite.TestXmlLocalDataBuilder2()"
+            "new fmpp.testsuite.TestXmlLocalDataBuilder()"
+        ]
+    }
+    {ifDocumentElementIs:[g, h], template:renderer/test6.ftl}
+    {ifSourceIs:[**g*, **f*], template:renderer/test5.ftl}
+    {ifDocumentElementIs:copyMe, copy}
+]
+xmlCatalogFiles: dtds/catalog.xml
+localData: case('ldb.xml', {a:wrong, c:3})

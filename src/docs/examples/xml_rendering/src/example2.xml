@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<book title="Example 2">
+  <part title="Preface">
+    <p>Yet another example book.</p>
+  </part>
+  
+  <part title="Blah">
+    <chapter title="Blah blah">
+      <p>So you have seen that you can have more books...</p>
+    </chapter>
+  </part>
+</book>

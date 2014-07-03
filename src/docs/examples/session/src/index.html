@@ -1,0 +1,14 @@
+<#escape x as x?html>
+<html>
+<head><title>Index</title></head>
+<body>
+  <h1>Index</h1>
+  <#assign pages = pp.s.contents?sort_by("link")>
+  <ul>
+  <#list pages as page>
+    <li><a href="${pp.urlPathEnc(page.link)}">${page.title}</a>
+  </#list>
+  </ul>
+<body>
+</html>
+</#escape>

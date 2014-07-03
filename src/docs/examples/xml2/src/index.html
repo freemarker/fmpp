@@ -1,0 +1,19 @@
+<#escape x as x?html>
+<html>
+<head>
+  <title>Product Catalog</title>
+</head>
+<body>
+
+<h1>Product Catalog</h1>
+
+<p>The available products are:
+
+<ul>
+<#list prodXml.products.product?sort_by('name') as p>
+  <li><a href="product_${p.@id}.html">${p.name}</a>
+</#list>
+</ul>
+
+</body>
+</#escape>

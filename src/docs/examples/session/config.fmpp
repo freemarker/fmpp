@@ -1,0 +1,4 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+turns: turn(2, index.html)

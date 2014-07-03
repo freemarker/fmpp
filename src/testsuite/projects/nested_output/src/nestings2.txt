@@ -1,0 +1,12 @@
+n2.0[
+<@pp.nestOutputFile name='n2.1.txt'>
+  n1
+  <@pp.nestOutputFile name='nestings2.txt'>
+    -=N2.0=-
+    <@pp.nestOutputFile name='n2.1.txt'>
+      -=N2.1=-
+    </@pp.nestOutputFile>
+  </@pp.nestOutputFile>
+  ]n1
+</@pp.nestOutputFile>
+]n2.0

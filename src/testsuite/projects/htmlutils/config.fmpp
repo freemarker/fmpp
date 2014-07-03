@@ -1,0 +1,7 @@
+# $Id: config.fmpp,v 1.2 2003/11/02 13:17:58 ddekany Exp $
+sourceRoot: src
+outputRoot: out
+data: {
+    htmlUtils()
+    sortAttrs: eval('new fmpp.testsuite.SortAttrsTransform()')
+}

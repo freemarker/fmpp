@@ -1,0 +1,5 @@
+# $Id: config.fmpp,v 1.1 2005/01/28 00:02:39 ddekany Exp $
+sourceRoot: src
+outputRoot: out
+urlEscapingCharset: UTF-16
+logFile: log.fmpp

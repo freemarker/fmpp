@@ -1,0 +1,20 @@
+
+stuff:
+  - a = A
+  - b = B
+
+x:
+  - a = A
+  - b = B
+  - c = C
+
+y:
+  - a = A
+  - b = B
+  - c = C
+  - d = D
+
+z:
+  - x = X
+  - z = Z
+

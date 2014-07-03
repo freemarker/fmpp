@@ -1,0 +1,36 @@
+<@pp.dropOutputFile />
+<#list prodXml.products.product as p>
+<@pp.changeOutputFile name="product_${p.@id}.html" />
+<#escape x as x?html>
+<html>
+<head>
+  <title>${p.name}</title>
+</head>
+<body>
+
+<h1>${p.name}</h1>
+
+<p><b>Price:</b> $${p.price}
+
+<p><b>Description:</b>
+<br>${p.description}
+</p>
+
+<p><b>Manufacturer:</b>
+<br><i>Name:</i> ${p.manufacturer}
+<#assign m = manuXml.manufacturers['manufacturer[name="${p.manufacturer}"]']>
+<#if m?has_content>
+  <#if m.address?has_content><br><i>Address:</i> ${m.address}</#if>
+  <#if m.phone?has_content><br><i>Phone:</i> ${m.phone}</#if>
+  <#if m.homepage?has_content><br><i>Homepage:</i> <a href="${m.homepage}">${m.homepage}</a></#if>
+  <#if m.email?has_content><br><i>Email:</i> <a href="mailto:${m.email}">${m.email}</a></#if>
+<#else>
+  <@pp.warning message="Referenced manufacturer not found: ${p.manufacturer}" />
+</#if>
+
+<hr>
+<a href="index.html">Back...</a>
+
+</body>
+</#escape>
+</#list>

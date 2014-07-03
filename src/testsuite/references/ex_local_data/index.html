@@ -1,0 +1,52 @@
+<html>
+  <body bgColor='green'>
+    <h1>Test</h1>
+    <p>Other pages:
+    <ul>
+      <li><a href="sub/1.html">sub/1.html</a>
+      <li><a href="sub/2.html">sub/2.html</a>
+      <li><a href="sub/3_j.html">sub/3_j.html</a>
+      <li><a href="sub/food.html">sub/food.html</a>
+      <li><a href="sub/subsub/1.html">sub/subsub/1.html</a>
+      <li><a href="sub/subsub/2.html">sub/subsub/2.html</a>
+      <li><a href="sub/sky/1.html">sub/sky/1.html</a>
+      <li><a href="sub/sky/2.html">sub/sky/2.html</a>
+      <li><a href="sub/sky/3_a.html">sub/sky/3_a.html</a>
+      <li><a href="sub2/1.html">sub2/1.html</a>
+      <li><a href="sub2/2.html">sub2/2.html</a>
+    </ul>
+    
+  <p>Here it is the config file used:
+  <table border=1 cellspacing=0 cellpadding=4 bgcolor=white width="100%"><tr><td>
+  <pre>sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+
+modes: ignore(**/*.bsh)
+
+data: {
+    bgColor: green
+    author: Anonymous
+}
+
+localData: [
+    # Run the attached BeanShell script for HTML-s, if there is one available.
+    case(**/*.htm, **/*.html, bsh({ignoreMissing}))
+    
+    # Independently of the above,
+    # set &quot;bgColor&quot; to &quot;yellow&quot; when processing the files of the &quot;sub&quot; folder:
+    # except for the files in &quot;sun/sky/**&quot;, where use &quot;blue&quot;.
+    # But, never override the &quot;bgColor&quot; if the file name starts with &quot;foo&quot;
+    layer()
+    case(**/foo*, {})
+    case(sub/sky/**, {bgColor: blue})
+    case(sub/**, sub2/**, {bgColor: yellow})
+    
+    # Independently of all above, set the &quot;author&quot;...
+    layer()
+    case(**/*_j.*, {author: Joe})
+    case(**/*_a.*, {author: Amy})
+]</pre>
+  </table>
+  </body>
+</html>

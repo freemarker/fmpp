@@ -1,0 +1,99 @@
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+
+<#setting number_format=",##0.00">
+<#setting datetime_format="MMM dd, yyyy hh:mm:ss a">
+
+<p>Header query and row hashes:
+
+<table border=1>
+  <tr><#list csv.headers as h><th>${h}</#list>
+<#list csv as row>
+  <tr><#list csv.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>Row sequences:
+
+<table border=1>
+<#list csv as row>
+  <tr><#list row as cell><td>${cell?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>CSV2 headers replaced:
+
+<table border=1>
+  <tr><#list csv2r.headers as h><th>${h}</#list>
+<#list csv2r as row>
+  <tr><#list csv2r.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>CSV2 headers added:
+
+<table border=1>
+  <tr><#list csv2a.headers as h><th>${h}</#list>
+<#list csv2a as row>
+  <tr><#list csv2a.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>CSV3 headers replaced:
+
+<table border=1>
+  <tr><#list csv3r.headers as h><th>${h}</#list>
+<#list csv3r as row>
+  <tr><#list csv3r.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>CSV3 headers added:
+
+<table border=1>
+  <tr><#list csv3a.headers as h><th>${h}</#list>
+<#list csv3a as row>
+  <tr><#list csv3a.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>CSV4 headers replaced:
+
+<table border=1>
+  <tr><#list csv4r.headers as h><th>${h}</#list>
+<#list csv4r as row>
+  <tr><#list csv4r.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>CSV4 headers added:
+
+<table border=1>
+  <tr><#list csv4a.headers as h><th>${h}</#list>
+<#list csv4a as row>
+  <tr><#list csv4a.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>Header normalization:
+
+<table border=1>
+  <tr><#list csv5.headers as h><th>${h}</#list>
+<#list csv5 as row>
+  <tr><#list csv5.headers as h><td>${row[h]?default("N/A")?string}</#list>
+</#list>
+</table>
+
+<p>UTF-8 BOM:
+
+<table border=1>
+<#list csv_utf8_bom as row>
+  <tr><td>${row.aá}<td>${row.eé}
+</#list>
+</table>
+
+</body>
+</html>

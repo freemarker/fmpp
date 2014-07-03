@@ -1,0 +1,15 @@
+
+output_encoding: ISO-8859-2 = ISO-8859-2
+url_escaping_charset: UTF-16 = UTF-16
+b%FE%FF%00%E9ka
+b%FE%FF%00%E9ka
+
+output_encoding: utf-8 = utf-8
+url_escaping_charset: UTF-16 = UTF-16
+b%FE%FF%00%E9ka
+b%FE%FF%00%E9ka
+
+output_encoding: utf-8 = utf-8
+url_escaping_charset: ISO-8859-2 = ISO-8859-2
+b%E9ka
+b%E9ka

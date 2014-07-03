@@ -1,0 +1,106 @@
+<@page title="Configuration Files" keywords="configuration file">
+
+<@sect title="Basics">
+
+<p>Configuration files are text files that store setting values. They can use two syntaxes (two formats):</p>
+<ul>
+  <li><@a href="tdd.html">TDD</@a>: This is the preferred format.</li>
+  <li><@a href="properties.html">Java "Properties"</@a>: This is mostly supported for backward compatibility with the FMPP 0.8.X series.</li>
+</ul>
+
+<p>The syntax that a configuration file uses is detected with the file extension. For "properties" configuration files, the file extension must be <@c>cfg</@c> or <@c>properties</@c>. For TDD files, the preferred file extension is <@c>fmpp</@c>, but it can be anything but <@c>cfg</@c> and <@c>properties</@c>.</p>
+
+<p>When you want to load a configuration file, you specify the path of the file for the front-end somehow (read <@a href='frontends.html'>the documentation of the front-end</@a>). But if the configuration file name is one of these standard names:</p>
+<ul>
+  <li><@c>config.fmpp</@c></li>
+  <li><@c>fmpp.cfg</@c></li>
+</ul>
+
+<p>then it is enough to give the path of the directory that contains the configuration file. (<@c>config.fmpp</@c> has higher priority if both file is present.)</p>
+
+</@sect>
+
+
+<@sect title="The configuration base" anchor="configurationBase">
+
+<p>The configuration base is the directory used as base for resolving relative <@a href="overview.html#realPath">real paths</@a> in setting values. Be default, the configuration base is the directory that contains the configuration file. For example, if <@c>/home/me/project1/config.fmpp</@c> contains <@c>sourceRoot:&nbsp;src</@c>, then the <@s>sourceRoot</@s> will be <@c>/home/me/project1/src</@c>.</p>
+
+<p>The configuration base can be changed with the <@s>configurationBase</@s> meta setting. For example, if in the previous example <@c>config.fmpp</@c> contains <@c>configurationBase:&nbsp;../project2</@c>, then the <@s>sourceRoot</@s> will be <@c>/home/me/project2/src</@c>. The <@s>configurationBase</@s> setting applies only for the setting values specified in the same file it is stored in.</p>
+
+<p>Not all relative paths in settings are resolved relatively to the <@s>configurationBase</@s>. Relative <@a href="overview.html#virtualPath">virtual paths</@a>, for example, are relative to the <@s>sourceRoot</@s> or <@s>outputRoot</@s>. Relative paths of data files passed to data loaders are relative to the <@s>dataRoot</@s>.</p>
+
+<p>If the setting value comes not from a configuration file (such as from a command-line argument), then the front-end specifies what the configuration base is for that setting value (see the documentation of the front-end).</p>
+
+</@sect>
+
+
+<@sect title="Configuration inheritance" anchor="inheritance">
+
+<p>A configuration file can inherit setting values from another configuration file, with the <@s>inheritConfiguration</@s> meta setting. When the FMPP core loads a configuration file, and it finds <@s>inheritConfiguration</@s> setting in it, it will automatically load that configuration file too, and then merge its settings with the settings loaded from the inheriting (the first) configuration file. The settings stored in the inheriting configuration file have higher priority than the settings stored in the inherited configuration file. Thus, if both file contains the same setting, then the value stored in the inheriting file will be used, or it will be merged with the other value if the setting supports merging.</p>
+
+<p>The above description is applicable recursively. That is, an inherited configuration file can inherit another configuration file, and that can inherit yet another configuration file, and so on.</p>
+
+<p><@a href="settings.html#metaSettings">Meta settings</@a> (as <@s>inheritConfiguration</@s> and <@s>configurationBase</@s>) are never inherited. They influence only the file where they are actually present.</p>
+
+<p>A possible usage of configuration inheritance is to customize a common configuration file. See: <@example path='inherit_config' />.</p>
+
+</@sect>
+
+
+<@sect title="Configuration files with TDD syntax">
+
+<p>These files start in TDD hash mode. For example:</p>
+
+<@prg>
+sourceRoot: src
+outputRoot: out
+data: {tdd(data/style.tdd), birds:csv(data/birds.csv)}
+removeExtensions: [ftl, t2]
+datetimeFormat: "MMM d, yyyy hh:mm a zzz"
+caseSensitive
+</@prg>
+
+<p>According the TDD syntax, values of type sequence (as <@s>removeExtensions</@s>) was put into square brackets. However, for sequence settings, if the sequence would contain exactly 1 element, then you can just give that element directly:</p>
+
+<@prg>
+removeExtensions: ftl
+</@prg>
+
+<p>and the value will be automatically converted to a sequence that contains the a single string <@c>ftl</@c>, as it is known that <@s>removeExtensions</@s> must be a sequence. This is a feature of the setting handling mechanism, not TDD, so don't try to use this trick elsewhere.</p>
+
+<p>TDD configuration files always use ISO-8859-1 encoding, if there is no other encoding suggested in the file with <@a href="tdd.html#encoding">TDD's encoding comment</@a>.</p>
+
+<p>For more information about TDD, please read <@a href="tdd.html">the chapter about TDD</@a>.</p>
+
+</@sect>
+
+
+<@sect title='Configuration files with "properties" syntax'>
+
+<p><@e>Attention:</@e> "properties" configuration files must use <@c>cfg</@c> or <@c>properties</@c> file extension.</p>
+
+<p>This is the previous example configuration file with "properties" format:</p>
+
+<@prg>
+sourceRoot = src
+outputRoot = out
+data = tdd(data/style.tdd), birds:csv(data/birds.csv)
+removeExtensions = ftl, t2
+datetimeFormat = MMM d, yyyy hh:mm a zzz
+caseSensitive
+</@prg>
+
+<p>The differences to TDD configuration files are:</p>
+<ul>
+  <li>It uses <@a href="properties.html">"properties" syntax</@a>...</li>
+  <li>The values do not use TDD syntax, except for composite types as hashes and sequences. For example, the value of <@s>datetimeFormat</@s> is not quoted (in TDD it was, as the string contains spaces and coma), it is just entered directly.</li>
+  <li>The <@c>{</@c> and <@c>}</@c> for the <@s>data</@s> hash and the <@c>[</@c> and <@c>]</@c> for the <@s>removeExtensions</@s> sequence is omitted. This is because the value of a hash setting is parsed as hash mode TDD, and the value of a sequence setting is parsed as sequence mode TDD, so the brackets are implied.</li>
+  <li>For boolean settings, empty-string is considered as <@c>true</@c> (see the line that sets <@s>caseSensitive</@s>).</li>
+  <li>Setting names can be written with lower case dashed form (as <@s check=false>output-root</@s>) instead of mixed case (as <@s>outputRoot</@s>). This is for backward compatibility with FMPP 0.8.X, where configuration files were use to store options to the command-line tool. The two forms can be used mixed in the same configuration file.</li>
+</ul>
+
+<p>Otherwise "properties" configuration files work in the same way as TDD configuration files. For example, they can inherit an other configuration file. It is not a problem if a "properties" configuration file inherits TDD configuration file or the opposite.</p>
+
+</@sect>
+
+</@page>

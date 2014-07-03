@@ -1,0 +1,33 @@
+    [foo-bar/**/baz.txt]
+    [C:\windows\system32]
+    [25%]
+    [7.txt]
+    [1-2]
+    [True]
+    [contains space]
+    [a'b]
+    [(c)]
+    [<head>]
+    [7]
+    [true]
+    [x"y]
+    [x'y]
+    [x'y]
+    [x"y]
+    [a\'b]
+    [a\"b]
+    [line1
+     line2
+     line3]
+    [!?]
+    [d-dd-dd0]
+    [A B C D]
+    [X 
+     Y 
+     
+     Z]
+  [true]
+  [false]
+  [7]
+  [0.7]
+  [-0.7]

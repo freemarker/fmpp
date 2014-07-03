@@ -1,0 +1,35 @@
+sourceRoot: src
+outputRoot: out
+data: {
+    foos: [
+        {name:"qweqwe", url:"http://qweqwe.com"}
+        {name:"asdasd", url:"http://asdasd.com"}
+        {name:"cvbcvbcv", url:"http://cvbcvbcvb.com"}
+        {name:"iopiopi", url:"http://iopiopo.com"}
+        {name:"bmbnmbm", url:"http://bnmnbmb.com"}
+        {name:"uiouioui", url:"http://uiouiouio.com"}
+        {name:"bvnbvnbv", url:"http://bvnbvnbvnbv.com"}
+        {name:"hghjghjghjg", url:"http://hghjghjghjg.com"}
+        {name:"werwer", url:"http://werwerr.com"}
+        {name:"mnmbnbm", url:"http://mbnmbnmb.com"}
+        {name:"gfhfghgfgfh", url:"http://fghgfhgfhg.com"}
+        {name:"asdasas", url:"http://asdasdasd.com"}
+        {name:"yuuiyiyu", url:"http://yuiyuiyui.com"}
+        {name:"rtytryytr", url:"http://rttryytr.com"}
+        {name:"kjhkjhk", url:"http://khjkhjkhjk.com"}
+        {name:"rrrrr", url:"http://rrrrr.com"}
+        {name:"ddfdgfgf", url:"http://ddffdg.com"}
+        {name:"jhjhhgjh", url:"http://jghjjhj.com"}
+        {name:"zzzzzzzz", url:"http://zzzzzzzz.com"}
+        {name:"zxzxxzzx", url:"http://zzxzxzxzx.com"}
+        {name:"cvvcvvcv", url:"http://ccvvcvcvcv.com"}
+        {name:"bnvvbnvb", url:"http://vbnvbnnvbnb.com"}
+        {name:"asdsadasd", url:"http://asdasdasd.com"}
+        {name:"vvvvvv", url:"http://vvvvvvv.com"}
+        {name:"ssssss", url:"http://sssss.com"}
+        {name:"qqqqqqq", url:"http://qqqqqq.com"}
+        {name:"xxxxxxx", url:"http://xxxxx.com"}
+        {name:"vvvvv", url:"http://vvvvv.com"}
+        {name:"aaaaaaa", url:"http://aaaaaaaa.com"}
+    ]
+}

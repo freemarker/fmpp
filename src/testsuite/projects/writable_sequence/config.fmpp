@@ -1,0 +1,6 @@
+# $Id: config.fmpp,v 1.1 2005/10/20 22:14:35 ddekany Exp $
+sourceRoot: src
+outputRoot: out
+data: {
+    stuff: [A, B]
+}

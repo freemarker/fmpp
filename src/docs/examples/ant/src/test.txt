@@ -1,0 +1,4 @@
+Hello property: ${hello}
+Basedir property: ${basedir}
+Project name: ${proj.name}
+Target name: ${task.target.name}

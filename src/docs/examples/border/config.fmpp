@@ -1,0 +1,15 @@
+sourceRoot: src
+outputRoot: out
+logFile: log.fmpp
+borders: [
+    border(
+        "<#include '/include/test.ftl'><#escape x as x?html>"
+        "</#escape>"
+        *.html
+    )
+    border(
+        "<@pp.renameOutputFile name=pp.outputFileName+'.html'/><pre><@html_escape><#noparse>"
+        "</#noparse></@></pre>"
+        *.c
+    )
+]

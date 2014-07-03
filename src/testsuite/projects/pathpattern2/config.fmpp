@@ -1,0 +1,13 @@
+# $Id: config.fmpp,v 1.1 2003/10/28 01:42:35 ddekany Exp $
+sourceRoot: src
+outputRoot: out
+borders: [
+    header("h1_", ???/1*.*)
+    header("h2_", /???/2*.*)
+    header("h3_", /???/s*b/3*.*)
+    header("h4_", **/s*b/4*.*)
+    footer("_f1", /*/1*.*)
+    footer("_f2", /*/*/2*.*)
+    footer("_f3", /*/**/3*.*)
+    footer("_f4", /*/*/**/4*.*)
+]

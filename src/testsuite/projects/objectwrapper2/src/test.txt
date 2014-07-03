@@ -1,0 +1,2 @@
+${o.x} = X
+${o.class.name} = java.util.HashMap

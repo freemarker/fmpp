@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<book title="Example 1">
+  <part title="Preface">
+    <p>This is an example "book" that demonstrates <e>FreeMarker</e> and FMPP.</p>
+  </part>
+  
+  <part title="An Example Part">
+    <chapter title="An example chapter">
+      <p>A paragraph with <e>emphasized</e> and <mark>marked</mark> sections.</p>
+      
+      <quote>A quotation with <e>emphasized</e> and <mark>marked</mark> sections.</quote>
+
+      <p>A <e>emphasized section with a <mark>marked section</mark> in it</e>.</p>
+    </chapter>
+    
+    <chapter title="Another example chapter">
+      <p>Blah...</p>
+      <p>Blah blah...</p>
+    </chapter>
+  </part>
+  <part title="Another Example Part">
+    <chapter title="Yet another example chapter">
+      <p>Blah blah blah...</p>
+      <p>Blah blah blah blah...</p>
+    </chapter>
+    
+    <chapter title="And... yet another example chapter">
+      <p>Blah blah blah blah blah...</p>
+      <p>Blah blah blah blah blah blah...</p>
+    </chapter>
+    
+    <chapter title="The last example chapter">
+      <p>Blah blah blah blah blah blah blah...</p>
+      <p>Blah blah blah blah blah blah blah blah...</p>
+    </chapter>
+  </part>
+</book>
