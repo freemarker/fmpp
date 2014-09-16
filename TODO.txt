@@ -17,13 +17,16 @@
 *************************************************************************
 
 Misc:
- . [!!] Create contribs page, publish the schema reader and the Elipse stuff
-   there.
+ . [!!!] Change licence to the same as of FreeMarker
+ . [!!!] No more version ranges in POM dependencies
+ . [!!] Optional SLF4J logging
  . [!] Native Windows exe instead of fmpp.bat+lcp.bat.
    Bat-s has idiot limitations.
  . Add a GUI front-end
 
 Data loaders:
+ . [!!] More convenient way of putting OS environment variables into the data-model
+ . [!!] True JSON data loader - TDD almost does that...
  . [!] Add sql(...) data-loader. See below in the Drafts section...
    Also somehow integrate the database *schema* loader that was contributed.
  . [!] Post-DTD era validation: W3C XML Schema and Relax NG validation, pre-loaded schema validation
@@ -32,6 +35,8 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
+ . [!!!] Update FreeMarker to 2.3.21
+ . [!!] add support to new FM settings
  . [!!] freemarkerLinks should be able to load with class-loader.
  . [!] Improve pp directive error messages so that they write out if the parameter was null
    (instead of complaining that it was missing or not of the proper type)
