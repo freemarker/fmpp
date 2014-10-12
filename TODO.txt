@@ -36,6 +36,10 @@ Data loaders:
 
 Core:
  . [!!!] Update FreeMarker to 2.3.21
+ . [!!] Now that error messages are longer and contain FTL stack trace, long message
+   snipping is annoying. It should shouldn't snip before the end of the FreeMarker error
+   message.
+ . [!!] The "--- Java stack trace: ---" parts repeat the FTL error message
  . [!!] add support to new FM settings
  . [!!] freemarkerLinks should be able to load with class-loader.
  . [!] Improve pp directive error messages so that they write out if the parameter was null
