@@ -4,5 +4,7 @@
 /build.properties
 /archive/
 /lib/fmpp.jar
+/docs/
 
 src/manual/book.xml~
+
