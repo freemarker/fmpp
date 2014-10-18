@@ -17,12 +17,17 @@
 *************************************************************************
 
 Misc:
- . [!!!] get rid of oro
- . [!!!] includeantruntime, ant.jar version
  . [!!!] Change licence to the same as of FreeMarker
+ . [!!!] includeantruntime, ant.jar version
+ . [!!!] Check Findbugs issues
+ . [!!!] Before release:
+   . Find reference to Java 1.2 and Oro in docs
+   . Re-run test on Java 1.4
+   . Run FMPP manually on some projects
+   . Test Maven artifact
  . [!!] Optional SLF4J logging
  . [!] Native Windows exe instead of fmpp.bat+lcp.bat.
-   Bat-s has idiot limitations.
+   Bat-s has idiotic limitations.
  . Add a GUI front-end
 
 Data loaders:
@@ -36,12 +41,11 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
- . [!!!] Update FreeMarker to 2.3.21
- . [!!] Now that error messages are longer and contain FTL stack trace, long message
+ . [!!!] Now that error messages are longer and contain FTL stack trace, long message
    snipping is annoying. It should shouldn't snip before the end of the FreeMarker error
    message.
- . [!!] The "--- Java stack trace: ---" parts repeat the FTL error message
- . [!!] add support to new FM settings
+ . [!!!] The "--- Java stack trace: ---" parts repeat the FTL error message
+ . [!!!] add support to new FM settings
  . [!!] freemarkerLinks should be able to load with class-loader.
  . [!] Improve pp directive error messages so that they write out if the parameter was null
    (instead of complaining that it was missing or not of the proper type)
