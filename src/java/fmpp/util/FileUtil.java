@@ -1,7 +1,7 @@
 package fmpp.util;
 
 /*
- * Copyright (c) 2003, Dániel Dékány
+ * Copyright (c) 2003, Dï¿½niel Dï¿½kï¿½ny
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -274,10 +274,11 @@ public class FileUtil {
     }
 
     /**
-     * Convers UN*X style path to Perl 5 regular expression.
+     * Converts UN*X style path to regular expression (originally, for Perl 5 dialect, but also works for Java's
+     * dialect).
      * In additional to standard UN*X path meta characters (<code>*</code>,
      * <code>?</code>) it understands <code>**</code>, that is the same as
-     * in Jakarta Ant. It assumes that the paths what you will later match
+     * in Ant. It assumes that the paths what you will later match
      * with the pattern are always starting with slash (they are absoulte paths
      * to an imaginary base).
      */

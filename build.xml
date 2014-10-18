@@ -13,14 +13,12 @@
         property="bootclasspath.correct" />
     
     <property name="freemarker.lib" value="lib/freemarker.jar" />
-    <property name="oro.lib" value="lib/oro.jar" />
     <property name="bsh.lib" value="lib/bsh.jar" />
     <property name="resolver.lib" value="lib/resolver.jar" />
     <property name="imageinfo.lib" value="lib/imageinfo.jar" />
 
     <path id="classpath.path">
         <pathelement path="${freemarker.lib}" />
-        <pathelement path="${oro.lib}" />
         <pathelement path="${bsh.lib}" />
         <pathelement path="${resolver.lib}" />
         <pathelement path="${imageinfo.lib}" />
@@ -51,7 +49,7 @@
         <jar basedir="build/compile" jarfile="lib/fmpp.jar">
             <manifest>
                 <attribute name="Main-Class" value="fmpp.tools.CommandLine" />
-                <attribute name="Class-Path" value="oro.jar freemarker.jar bsh.jar resolver.jar imageinfo.jar" />
+                <attribute name="Class-Path" value="freemarker.jar bsh.jar resolver.jar imageinfo.jar" />
                 <attribute name="Extension-name" value="fmpp" />
                 <attribute name="Specification-Title" value="FMPP" />
                 <attribute name="Specification-Version" value="${version}" />
@@ -322,12 +320,6 @@
                   <version>2.3.21</version>
                 </dependency>
                 <dependency>
-                  <groupId>oro</groupId>
-                  <artifactId>oro</artifactId>
-                  <!-- I guess there will not be non-BC changes anymore. -->
-                  <version>2.0.8</version>
-                </dependency>
-                <dependency>
                   <groupId>org.beanshell</groupId>
                   <artifactId>bsh</artifactId>
                   <version>2.0b4</version>
@@ -401,10 +393,6 @@
             <param name="_install_reallyDoIt" value="true" />
         </antcall>
         <antcall target="_install_jar_doit">
-            <param name="jarName" value="oro.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-        <antcall target="_install_jar_doit">
             <param name="jarName" value="bsh.jar" />
             <param name="_install_reallyDoIt" value="true" />
         </antcall>
@@ -442,10 +430,6 @@
 
         <antcall target="_install_jar">
             <param name="jarName" value="freemarker.jar" />
-        </antcall>
-
-        <antcall target="_install_jar">
-            <param name="jarName" value="oro.jar" />
         </antcall>
 
         <antcall target="_install_jar">

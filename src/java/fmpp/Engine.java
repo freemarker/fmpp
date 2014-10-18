@@ -1,7 +1,7 @@
 package fmpp;
 
 /*
- * Copyright (c) 2003, Dániel Dékány
+ * Copyright (c) 2003, Dï¿½niel Dï¿½kï¿½ny
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,11 +47,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
-
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import fmpp.util.BorderedReader;
 import fmpp.util.BugException;
@@ -243,8 +240,6 @@ public class Engine {
     
     // Misc
     private Configuration fmCfg;
-    private Perl5Matcher reMatcher = new Perl5Matcher();
-    private Perl5Compiler reCompiler = new Perl5Compiler();
     private MultiProgressListener progListeners = new MultiProgressListener();
     private TemplateEnvironment templateEnv;
     private int maxTurn, currentTurn;
@@ -860,9 +855,7 @@ public class Engine {
                                     FileUtil.getRelativePath(srcRoot, sf)));
                 }
                 for (i = 0; i < ln; i++) {
-                    if (reMatcher.matches(
-                            sfPathForComparison,
-                            xrcc.compiledPathPatterns[i])) {
+                    if (xrcc.compiledPathPatterns[i].matcher(sfPathForComparison).matches()) {
                         break;
                     }
                 }
@@ -2452,7 +2445,7 @@ public class Engine {
         return localDataBuilders.choose(sf);
     }
 
-    Pattern pathPatternToOroPattern (String path) {
+    Pattern pathPatternToRegexpPattern (String path) {
         String originalPattern = path;
 
         path = FileUtil.pathToUnixStyle(path);
@@ -2461,9 +2454,8 @@ public class Engine {
         }
         path = FileUtil.pathPatternToPerl5Regex(path);
         try {
-            return reCompiler.compile(
-                    path, Perl5Compiler.READ_ONLY_MASK);
-        } catch (MalformedPatternException exc) {
+            return Pattern.compile(path);
+        } catch (PatternSyntaxException exc) {
             throw new BugException(
                     "Failed to parse path pattern: " + originalPattern,
                     exc);
@@ -2656,7 +2648,7 @@ public class Engine {
         Iterator it = choosers.iterator();
         while (it.hasNext()) {
             Chooser c = (Chooser) it.next();
-            if (reMatcher.matches(fp, c.oroPattern)) {
+            if (c.regexpPattern.matcher(fp).matches()) {
                 return c;
             }
         }
@@ -2852,15 +2844,15 @@ public class Engine {
     private class Chooser {
         private Chooser(String pathPattern) {
             this.pathPattern = pathPattern;
-            this.oroPattern = pathPatternToOroPattern(pathPattern);
+            this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
         
         void recompile() {
-            this.oroPattern = pathPatternToOroPattern(pathPattern);
+            this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
         
         private String pathPattern;
-        private Pattern oroPattern;
+        private Pattern regexpPattern;
     }
 
     private class PModeChooser extends Chooser {
@@ -3149,7 +3141,7 @@ public class Engine {
             compiledPathPatterns = new Pattern[ln];
             for (int i = 0; i < ln; i++) {
                 compiledPathPatterns[i]
-                        = pathPatternToOroPattern((String) pathPatterns.get(i));
+                        = pathPatternToRegexpPattern((String) pathPatterns.get(i));
             }
         }
 
