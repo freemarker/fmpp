@@ -305,7 +305,7 @@
               <url>http://fmpp.sourceforge.net</url>
               <licenses>
                 <license>
-                  <name>BSD license</name>
+                  <name>Apache License, Version 2.0</name>
                   <url>http://fmpp.sourceforge.net/license.html</url>
                 </license>
               </licenses>

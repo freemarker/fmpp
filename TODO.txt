@@ -18,8 +18,13 @@
 
 Misc:
  . [!!!] Change licence to the same as of FreeMarker
+ . [!!!] Remove xml-resolver if possible
+ . [!!!] Include licence in fmpp.jar
+ . [!!!] Remove @author and @version tags
  . [!!!] includeantruntime, ant.jar version
  . [!!!] Check Findbugs issues
+ . [!!!] Check dist output
+ . [!!!] Maven dist to Sonatype
  . [!!!] Before release:
    . Find reference to Java 1.2 and Oro in docs
    . Re-run test on Java 1.4

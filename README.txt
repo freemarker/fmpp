@@ -58,11 +58,8 @@ Read BUILD.txt
 License
 -------
 
-FMPP is released under the BSD license. For more information read
-the LICENSE.txt.
-
-This product includes software developed by the 
-Visigoth Software Society (http://www.visigoths.org/).
+FMPP is Free software released under Apache License 2.0. For more information
+read the LICENSE.txt.
 
 This product includes software developed by the
 Apache Software Foundation (http://www.apache.org/).
