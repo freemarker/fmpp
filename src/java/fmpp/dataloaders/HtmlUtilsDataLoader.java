@@ -1,7 +1,7 @@
 package fmpp.dataloaders;
 
 /*
- * Copyright (c) 2003, Dániel Dékány
+ * Copyright (c) 2003, Dï¿½niel Dï¿½kï¿½ny
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,6 @@ package fmpp.dataloaders;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import imageinfo.ImageInfo;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -41,6 +40,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.devlib.schmidt.imageinfo.ImageInfo;
 
 import fmpp.Engine;
 import fmpp.tdd.DataLoader;

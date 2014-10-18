@@ -1,7 +1,7 @@
 package fmpp;
 
 /*
- * Copyright (c) 2003, Dániel Dékány
+ * Copyright (c) 2003, Dï¿½niel Dï¿½kï¿½ny
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -106,7 +106,6 @@ class FmppTemplateLoader implements TemplateLoader {
 
     public Reader getReader(Object templateSource, String encoding)
             throws IOException {
-        
         return engine.wrapReader(
                 new InputStreamReader(
                         new FileInputStream((File) templateSource),

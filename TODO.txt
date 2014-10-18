@@ -17,8 +17,9 @@
 *************************************************************************
 
 Misc:
+ . [!!!] get rid of oro
+ . [!!!] includeantruntime, ant.jar version
  . [!!!] Change licence to the same as of FreeMarker
- . [!!!] No more version ranges in POM dependencies
  . [!!] Optional SLF4J logging
  . [!] Native Windows exe instead of fmpp.bat+lcp.bat.
    Bat-s has idiot limitations.

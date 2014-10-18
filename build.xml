@@ -15,21 +15,16 @@
     <property name="freemarker.lib" value="lib/freemarker.jar" />
     <property name="oro.lib" value="lib/oro.jar" />
     <property name="bsh.lib" value="lib/bsh.jar" />
-    <property name="jaxp.lib" value="lib/forbuild/jaxp.jar" />
-    <property name="sax.lib" value="lib/forbuild/sax.jar" />
-    <property name="dom.lib" value="lib/forbuild/dom.jar" />
     <property name="resolver.lib" value="lib/resolver.jar" />
+    <property name="imageinfo.lib" value="lib/imageinfo.jar" />
 
     <path id="classpath.path">
         <pathelement path="${freemarker.lib}" />
         <pathelement path="${oro.lib}" />
         <pathelement path="${bsh.lib}" />
-        <pathelement path="${jaxp.lib}" />
-        <pathelement path="${sax.lib}" />
-        <pathelement path="${dom.lib}" />
         <pathelement path="${resolver.lib}" />
+        <pathelement path="${imageinfo.lib}" />
         <pathelement path="lib/fmpp.jar" />
-        <pathelement path="lib/forbuild/classes/" />
         <pathelement path="${env.ANT_HOME}/lib/ant.jar" />
     </path>
 
@@ -56,7 +51,7 @@
         <jar basedir="build/compile" jarfile="lib/fmpp.jar">
             <manifest>
                 <attribute name="Main-Class" value="fmpp.tools.CommandLine" />
-                <attribute name="Class-Path" value="oro.jar freemarker.jar bsh.jar resolver.jar" />
+                <attribute name="Class-Path" value="oro.jar freemarker.jar bsh.jar resolver.jar imageinfo.jar" />
                 <attribute name="Extension-name" value="fmpp" />
                 <attribute name="Specification-Title" value="FMPP" />
                 <attribute name="Specification-Version" value="${version}" />
@@ -84,16 +79,11 @@
                 destdir="build/compile"
                 deprecation="off"
                 debug="on"
-                source="1.2"
-                target="1.2"
+                source="1.4"
+                target="1.4"
         >
             <classpath refid="classpath.path" />
         </javac>
-        <copy todir="build/compile">
-            <fileset dir="lib/forbuild/classes">
-                <exclude name="**/*.java*" />
-            </fileset>
-        </copy>
         <copy
             file="src/java/fmpp/version.properties" todir="build/compile/fmpp"
             overwrite="true"
@@ -207,12 +197,7 @@
                 <exclude name="README.txt" />
             </fileset>
             <fileset dir=".">
-                <include name="lib/forbuild/**" />
-                <include name="lib/fmpp.jar" />
-                <include name="lib/oro.jar" />
-                <include name="lib/freemarker.jar" />
-                <include name="lib/bsh.jar" />
-                <include name="lib/resolver.jar" />
+                <include name="lib/**" />
             </fileset>
         </copy>
         <copy file="README.txt" todir="dist/fmpp_${version}" filtering="true" />
@@ -267,15 +252,15 @@
                 destdir="build/testsuite/compile"
                 deprecation="on"
                 debug="on"
-                source="1.2"
-                target="1.2"
+                source="1.4"
+                target="1.4"
         >
             <classpath refid="classpath.path" />
         </javac>
         <property name="fmpp.testcase" value="" />
         <java fork="true"
                 classname="fmpp.testsuite.TestSuite"
-                classpath="lib/fmpp.jar;${xpathSupport.lib};build/testsuite/compile"
+                classpath="lib/fmpp.jar;build/testsuite/compile"
         >
             <arg value="${basedir}" />
             <arg value="${fmpp.testcase}" />
@@ -351,6 +336,11 @@
                   <groupId>xml-resolver</groupId>
                   <artifactId>xml-resolver</artifactId>
                   <version>1.2</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.devlib.schmidt</groupId>
+                    <artifactId>imageinfo</artifactId>
+                    <version>1.9</version>
                 </dependency>
               </dependencies>
             </project>
