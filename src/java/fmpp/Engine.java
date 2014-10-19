@@ -701,7 +701,7 @@ public class Engine {
 
         try {
             if (allowOutFAdj && pmode != Engine.PMODE_IGNORE) {
-                df = addjustOutputFileName(df);
+                df = adjustOutputFileName(df);
             }
             if (!expertMode && pmode != Engine.PMODE_IGNORE) {
                 if (sf.equals(df)) {
@@ -813,87 +813,98 @@ public class Engine {
             throws ProcessingException, DataModelBuildingException,
             TemplateException, IOException, InstallationException,
             GenericProcessingException {
-        int i, ln;
-        Object o;
-
-        XmlRenderingConfiguration xrc = null;
-        
         XmlDependentOps xops = getXmlDependentOps(
                 "Rendering XML file " + sf.getAbsolutePath() + ".");
 
-        String sfPathForComparison = null;
+        final XmlRenderingConfiguration xrc;
         Object loadedDoc = null;  // this is an org.w3c.Document
         boolean isLoadedDocumentValidated = false;
-        int xrccln = xmlRendCfgCntrs.size();
-        int xrcci;
-        findRendering: for (xrcci = 0; xrcci < xrccln; xrcci++) {
-            XmlRenderingCfgContainer xrcc
-                    = (XmlRenderingCfgContainer) xmlRendCfgCntrs.get(xrcci);
-
-            // Filter: ifSourceIs
-            ln = xrcc.compiledPathPatterns.length;
-            if (ln != 0) {
-                if (sfPathForComparison == null) {
-                    sfPathForComparison = normalizePathForComparison(
-                            FileUtil.pathToUnixStyle(
-                                    FileUtil.getRelativePath(srcRoot, sf)));
-                }
-                for (i = 0; i < ln; i++) {
-                    if (xrcc.compiledPathPatterns[i].matcher(sfPathForComparison).matches()) {
-                        break;
-                    }
-                }
-                if (i == ln) {
-                    continue findRendering;
-                }
-            }
-
-            xrc = xrcc.xmlRenderingCfg;
-
-            // Filter: ifDocumentElementIs
-            ln = xrc.getDocumentElementLocalNames().size();
-            if (ln != 0) {
-                if (loadedDoc == null) {
-                    o = xrc.getXmlDataLoaderOptions().get("validate");
-                    if (o == null) {
-                        o = getValidateXml() ? Boolean.TRUE : Boolean.FALSE;
-                    }
-                    isLoadedDocumentValidated = Boolean.TRUE.equals(o);
-                    loadXml: while (true) {
-                        try {
-                            loadedDoc = xops.loadXmlFile(
-                                    this, sf, isLoadedDocumentValidated);
-                        } catch (Exception e) {
-                            if (isLoadedDocumentValidated) {
-                                isLoadedDocumentValidated = false;
-                                continue loadXml;
-                            }
-                            throw new DataModelBuildingException(
-                                    "Failed to load XML source file.", e);
+        {
+            String sfPathForComparison = null;
+            int xrccln = xmlRendCfgCntrs.size();
+            int xrccIdx;
+            XmlRenderingConfiguration curXRC = null;
+            findMatchingXRC: for (xrccIdx = 0; xrccIdx < xrccln; xrccIdx++) {
+                XmlRenderingCfgContainer curXRCC = (XmlRenderingCfgContainer) xmlRendCfgCntrs.get(xrccIdx);
+                curXRC = curXRCC.xmlRenderingCfg;
+    
+                // Filter: ifSourceIs
+                {
+                    int ln = curXRCC.compiledPathPatterns.length;
+                    if (ln != 0) {
+                        if (sfPathForComparison == null) {
+                            sfPathForComparison = normalizePathForComparison(
+                                    FileUtil.pathToUnixStyle(
+                                            FileUtil.getRelativePath(srcRoot, sf)));
                         }
-                        break loadXml;
+                        int i;
+                        for (i = 0; i < ln; i++) {
+                            if (curXRCC.compiledPathPatterns[i].matcher(sfPathForComparison).matches()) {
+                                break;
+                            }
+                        }
+                        if (i == ln) {
+                            // curXRC was excluded
+                            continue findMatchingXRC;
+                        }
                     }
-                }
+                } // end Filter: ifSourceIs
+                // At this point: we know that "ifSourceIs" doesn't exclude curXRC
+    
+                // Filter: ifDocumentElementIs
+                {
+                    int ln = curXRC.getDocumentElementLocalNames().size();
+                    if (ln != 0) {
+                        if (loadedDoc == null) {
+                            Object o = curXRC.getXmlDataLoaderOptions().get("validate");
+                            if (o == null) {
+                                o = getValidateXml() ? Boolean.TRUE : Boolean.FALSE;
+                            }
+                            isLoadedDocumentValidated = Boolean.TRUE.equals(o);
+                            loadXml: while (true) {
+                                try {
+                                    loadedDoc = xops.loadXmlFile(
+                                            this, sf, isLoadedDocumentValidated);
+                                } catch (Exception e) {
+                                    if (isLoadedDocumentValidated) {
+                                        isLoadedDocumentValidated = false;
+                                        // Retry without validation:
+                                        continue loadXml;
+                                    }
+                                    throw new DataModelBuildingException(
+                                            "Failed to load XML source file.", e);
+                                }
+                                break loadXml;
+                            }
+                        }
+                        // At this point: loadedDoc is non-null
+                        
+                        List localNames = curXRC.getDocumentElementLocalNames();
+                        List namespaces = curXRC.getDocumentElementNamespaces();
+                        int i;
+                        for (i = 0; i < ln; i++) {
+                            if (xops.documentElementEquals(
+                                    loadedDoc,
+                                    (String) namespaces.get(i),
+                                    (String) localNames.get(i))) {
+                                break;
+                            }
+                        }
+                        if (i == ln) {
+                            // curXRC was excluded
+                            continue findMatchingXRC;
+                        }
+                    }
+                } // end Filter: ifDocumentElementIs
+                // At this point: we know that "ifDocumentElementIs" doesn't exclude curXRC
                 
-                List localNames = xrc.getDocumentElementLocalNames();
-                List namespaces = xrc.getDocumentElementNamespaces();
-                for (i = 0; i < ln; i++) {
-                    if (xops.documentElementEquals(
-                            loadedDoc,
-                            (String) namespaces.get(i),
-                            (String) localNames.get(i))) {
-                        break;
-                    }
-                }
-                if (i == ln) {
-                    continue findRendering;
-                }
-            }
+                // Nothing has excluded it, so curXRC is matching:
+                break findMatchingXRC;
+            }  // findRendering
             
-            break findRendering;
-        }  // findRendering
-
-        if (xrcci == xrccln) {
+            xrc = xrccIdx != xrccln ? curXRC : null;
+        } // end find matching XRC
+        if (xrc == null) {
             throw new GenericProcessingException(
                     "The source file has to be processed in "
                     + "\"renderXml\" mode, but there is no matching "
@@ -910,11 +921,11 @@ public class Engine {
             }
             FileUtil.copyFile(sf, df);
         } else {
-            o = xrc.getXmlDataLoaderOptions().get("validate");
-            if (o == null) {
-                o = getValidateXml() ? Boolean.TRUE : Boolean.FALSE;
+            Object xmlDLValidateOpt = xrc.getXmlDataLoaderOptions().get("validate");
+            if (xmlDLValidateOpt == null) {
+                xmlDLValidateOpt = Boolean.valueOf(getValidateXml());
             }
-            boolean doctMustBeValidated = Boolean.TRUE.equals(o);
+            boolean doctMustBeValidated = Boolean.TRUE.equals(xmlDLValidateOpt);
             if (isLoadedDocumentValidated != doctMustBeValidated) {
                 loadedDoc = null;
             }
@@ -2541,78 +2552,11 @@ public class Engine {
         return header;
     }
 
-    private File addjustOutputFileName(File f) throws IOException {
+    private File adjustOutputFileName(File f) throws IOException {
         String fn = f.getName();
-        String s = null, s2 = null;
-        int e, i, ln;
-
-        if (!csPathCmp) {
-            s2 = fn.toLowerCase();
-        }
-        ln = removeExtensions.size();
-        for (i = 0; i < ln; i++) {
-            s = "." + (String) removeExtensions.get(i);
-            if (csPathCmp) {
-                if (fn.endsWith(s)) {
-                    break;
-                }
-            } else {
-                if (s2.endsWith(s.toLowerCase())) {
-                    break;
-                }
-            }
-        }
-        if (i != ln) {
-            fn = fn.substring(0, fn.length() - s.length());
-        }
-
-        e = fn.indexOf('.');
-        if (e != -1) {
-            s2 = fn.substring(0, e);
-        } else {
-            s2 = fn;
-            e = fn.length();
-        }
-        if (!csPathCmp) {
-            s2 = s2.toLowerCase();
-        }
-        ln = removePostfixes.size();
-        for (i = 0; i < ln; i++) {
-            s = (String) removePostfixes.get(i);
-            if (csPathCmp) {
-                if (s2.endsWith(s)) {
-                    break;
-                }
-            } else {
-                if (s2.endsWith(s.toLowerCase())) {
-                    break;
-                }
-            }
-        }
-        if (i != ln) {
-            fn = fn.substring(0, e - s.length()) + fn.substring(e);
-        }
-
-        if (!csPathCmp) {
-            s2 = fn.toLowerCase();
-        }
-        String[] entry = null;
-        ln = replaceExtensions.size();
-        for (i = 0; i < ln; i++) {
-            entry = (String[]) replaceExtensions.get(i);
-            if (csPathCmp) {
-                if (fn.endsWith("." + entry[0])) {
-                    break;
-                }
-            } else {
-                if (s2.endsWith("." + (entry[0]).toLowerCase())) {
-                    break;
-                }
-            }
-        }
-        if (i != ln) {
-            fn = fn.substring(0, fn.length() - entry[0].length()) + entry[1];
-        }
+        fn = applyRemoveExtensionSetting(fn);
+        fn = applyRemovePostfixesSetting(fn);
+        fn = applyReplaceExtensionsSetting(fn);
         
         if (fn.length() == 0) {
             throw new IOException(
@@ -2623,7 +2567,62 @@ public class Engine {
         
         return new File(f.getParent(), fn).getCanonicalFile();
     }
-    
+
+    private String applyRemoveExtensionSetting(String fn) {
+        final String fnNormdCase = csPathCmp ? fn : fn.toLowerCase();
+        int ln = removeExtensions.size();
+        for (int i = 0; i < ln; i++) {
+            final String dotExtToRemove = "." + (String) removeExtensions.get(i);
+            final String dotExtToRemoveNormdCase = csPathCmp ? dotExtToRemove : dotExtToRemove.toLowerCase(); 
+            if (fnNormdCase.endsWith(dotExtToRemoveNormdCase)) {
+                // We only remove one extension:
+                return fn.substring(0, fn.length() - dotExtToRemove.length());
+            }
+        }
+        return fn;
+    }
+
+    private String applyRemovePostfixesSetting(String fn) {
+        final int extDotIdx;
+        final String fnWithoutExt;
+        {
+            int i = fn.indexOf('.');
+            if (i != -1) {
+                fnWithoutExt = fn.substring(0, i);
+                extDotIdx = i;
+            } else {
+                fnWithoutExt = fn;
+                extDotIdx = fn.length();
+            }
+        }
+        
+        final String fnWithoutExtNormdCase = csPathCmp ? fnWithoutExt : fnWithoutExt.toLowerCase(); 
+        final int ln = removePostfixes.size();
+        for (int i = 0; i < ln; i++) {
+            final String posfixToRemove = (String) removePostfixes.get(i);
+            final String posfixToRemoveNormdCase = csPathCmp ? posfixToRemove : posfixToRemove.toLowerCase();  
+            if (fnWithoutExtNormdCase.endsWith(posfixToRemoveNormdCase)) {
+                // We only remove one postfix:
+                return fn.substring(0, extDotIdx - posfixToRemove.length()) + fn.substring(extDotIdx);
+            }
+        }
+        return fn;
+    }
+
+    private String applyReplaceExtensionsSetting(String fn) {
+        final String fnNormedCase = csPathCmp ? fn : fn.toLowerCase();
+        final int ln = replaceExtensions.size();
+        for (int i = 0; i < ln; i++) {
+            final String[] fromToPair = (String[]) replaceExtensions.get(i);
+            final String replacedExtNormedCase = csPathCmp ? fromToPair[0] : fromToPair[0].toLowerCase(); 
+            if (fnNormedCase.endsWith("." + replacedExtNormedCase)) {
+                // We only d one substitution:
+                return fn.substring(0, fn.length() - fromToPair[0].length()) + fromToPair[1];
+            }
+        }
+        return fn;
+    }
+
     private Chooser findChooser(LinkedList choosers, File f)
             throws IOException {
         String fp = FileUtil.getRelativePath(srcRoot, f);
@@ -2636,7 +2635,6 @@ public class Engine {
                 return c;
             }
         }
-
         return null;
     }
     
