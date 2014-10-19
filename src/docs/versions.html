@@ -5,17 +5,24 @@
   <p>Bug fixes:</p>
   <ul>
     <li>Fixed an oversight where an <@c>Engine</@c> static field was accidentally initialized in a non-static initializer, causing problems in multi-threaded environment.</li>
+    <li>Removed version ranges from Maven dependencies, replacing them with concrete version numbers.</li>
   </ul>
   
   <p>New features, improvements:</p>
   <ul>
-    <li>The license has been changed from BSD to Apache License 2.0</li>
-    <li>The minimum required Java version has been increased to 1.4.</li>
-    <li>The minimum required FreeMarker version has been increased to 2.3.21.</li>
-    <li>Removed <@c>lib/oro.jar</@c>, as regular expression support is included in Java 1.4.</li>
-    <li>Updated <@c>lib/freemarker.jar</@c> and the included FreeMarker Manual to 2.3.21.</li>
-    <li>Updated <@c>ImageInfo</@c> to version 1.9. It isn't included in <@c>fmpp.jar</@c> any more, instead it's in <@c>lib/imageinfo.jar</@c> (or if you are using Maven, it will be automatically pulled in as dependency).</li>
-    <li>Updated <@c>xml-resolver.jar</@c> from 1.1 to version 1.2 (note that thus its license changes from Apache License 1.1 to Apache License 2.0)</li>
+    <li>FMPP license has been changed from BSD to Apache License 2.0.</li>
+    <li>
+      The dependencies of FMPP has been updated/changed:
+      <ul>
+        <li>The minimum required Java version has been increased from 1.2. to 1.4.</li>
+        <li>The minimum required FreeMarker version has been increased from 2.3.15 to 2.3.21.</li>
+        <li>Removed Oro dependency (<@c>lib/oro.jar</@c>) as regular expression support is included in Java 1.4.</li>
+        <li>Updated FreeMarker dependency from 2.3.15 to 2.3.21 (<@c>lib/freemarker.jar</@c> and FreeMarker Manual).</li>
+        <li>Updated <@c>ImageInfo</@c> to version 1.9. It isn't included in <@c>fmpp.jar</@c> any more, instead it's a regular dependency (<@c>lib/imageinfo.jar</@c>).</li>
+        <li>Updated <@c>xml-resolver.jar</@c> dependency from 1.1 to version 1.2 (note that thus its license changes from Apache License 1.1 to Apache License 2.0)</li>
+      </ul>
+    </li>
+    <li>The project source code was moved to GitHub</li>
   </ul>
   
 </@sect>
