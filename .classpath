@@ -8,6 +8,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.4.0_04"/>
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Ant/lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/imageinfo.jar"/>
-	<classpathentry kind="lib" path="lib/forbuild/jaxen.jar"/>
+	<classpathentry kind="lib" path="lib/jaxen-1.1.6.jar"/>
 	<classpathentry kind="output" path=".bin"/>
 </classpath>
