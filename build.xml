@@ -273,9 +273,9 @@
             <fileset dir="src/docs/examples" includes="*/out/"/>
             <fileset dir="src/docs/examples" includes="*/fmpp.log"/>
             <fileset dir="src/docs/examples" includes="*/log.fmpp"/>
-            <fileset dir="src/testsuite/projects" includes="*/out/"/>
-            <fileset dir="src/testsuite/projects" includes="*/fmpp.log"/>
-            <fileset dir="src/testsuite/projects" includes="*/log.fmpp"/>
+            <fileset dir="src/testsuite/tests" includes="*/out/"/>
+            <fileset dir="src/testsuite/tests" includes="*/fmpp.log"/>
+            <fileset dir="src/testsuite/tests" includes="*/log.fmpp"/>
             <!-- Ant doesn't allow it: <fileset dir="lib" includes="fmpp.jar"/> -->
         </delete>
     </target>
