@@ -17,15 +17,19 @@
 *************************************************************************
 
 Misc:
- . [!!!] Change licence to the same as of FreeMarker
- . [!!!] Remove xml-resolver if possible
+ . [!!!] Use Maven dir structure
  . [!!!] Include licence in fmpp.jar
- . [!!!] Remove @author and @version tags
  . [!!!] includeantruntime, ant.jar version
- . [!!!] Check Findbugs issues
+ . [!!!] Ant script doesn't fail on failed test suite:
+    [java] - pathpattern3: OK
+    [java] Java Result: 1
+    BUILD SUCCESSFUL
+ . [!!!] JavaDoc like in FM
  . [!!!] Check dist output
- . [!!!] Maven dist to Sonatype
+ . [!!!] Maven dist to Sonatype like in FM
+ . [!!!] Try if deploy-to-ant still works
  . [!!!] Before release:
+   . Increase version number
    . Find reference to Java 1.2 and Oro in docs
    . Re-run test on Java 1.4
    . Run FMPP manually on some projects
@@ -51,6 +55,10 @@ Core:
    message.
  . [!!!] The "--- Java stack trace: ---" parts repeat the FTL error message
  . [!!!] add support to new FM settings
+ . Ugly:
+   [java] Error when processing this file: versions.html
+   [java] freemarker.template.TemplateModelException: Failed to transform
+   [java] path"https://github.com/freemarker/fmpp"
  . [!!] freemarkerLinks should be able to load with class-loader.
  . [!] Improve pp directive error messages so that they write out if the parameter was null
    (instead of complaining that it was missing or not of the proper type)
