@@ -85,9 +85,6 @@ public class SetTransform
                 throw newUnsupportedParamException(pname);
             }
         }
-        if (seq == null && hash == null) {
-            throw newMissingParamException("seq or hash");
-        }
         if (seq != null) {
             if (value == null) {
                 throw newMissingParamException("value");
@@ -99,7 +96,7 @@ public class SetTransform
                 throw new TemplateModelException("Index out of bounds.");
             }
             seq.getList().set(index, value);
-        } else {
+        } else if (hash != null) {
             if (value == null) {
                 throw newMissingParamException("value");
             }
@@ -107,6 +104,8 @@ public class SetTransform
                 throw newMissingParamException("key");
             }
             hash.getMap().put(key, value);
+        } else {
+            throw newMissingParamException("seq or hash");
         }
 
         return null;

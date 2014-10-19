@@ -1975,6 +1975,9 @@ public class Settings {
                                 + "\" setting to true.)"); 
                     }
                 } else {
+                    if (sourceFile == null) {
+                        throw new BugException("sourceFile == null");
+                    }
                     if (outputFile.getCanonicalFile()
                             .equals(sourceFile.getCanonicalFile())) {
                         throw new SettingException(

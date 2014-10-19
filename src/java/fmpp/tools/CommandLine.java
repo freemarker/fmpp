@@ -113,7 +113,6 @@ public class CommandLine {
     
     private int run(String[] args) {
         String s;
-        File f;
         int i;
         int exitCode = 0;
 
@@ -194,7 +193,7 @@ public class CommandLine {
             }
         }
         
-        File defaultCfg = Settings.getDefaultConfigurationFile(new File("."));
+        final File defaultCfg = Settings.getDefaultConfigurationFile(new File("."));
         if (args.length == 0 && defaultCfg == null) {
             printHelp(null, false);
             return -1;
@@ -604,7 +603,7 @@ public class CommandLine {
             savedImpliedOps.putAll(impliedOps);
             impliedOps.clear(); 
             
-            String opC = ops.getProperty(OPTION_CONFIGURATION);
+            final String opCfg = ops.getProperty(OPTION_CONFIGURATION);
             ops.remove(OPTION_CONFIGURATION); // remove non-setting
             
             Settings settings = new Settings(new File("."));
@@ -613,16 +612,17 @@ public class CommandLine {
             ops = null;
             
             // Load cfg file
-            if ((opC != null || defaultCfg != null)
-                    && (opC == null || !opC.equals(Settings.VALUE_NONE))) {
-                if (opC == null) { 
-                    f = defaultCfg;
-                    pt("Note: Using the " + f.getName()
-                            + " in the working directory.");
-                } else {
-                    f = new File(opC);
-                }
-                settings.loadDefaults(f);
+            final File cfgToLoad;
+            if (opCfg != null) {
+                cfgToLoad = !opCfg.equals(Settings.VALUE_NONE) ? new File(opCfg) : null;
+            } else if (defaultCfg != null) {
+                cfgToLoad = defaultCfg;
+                pt("Note: Using the " + cfgToLoad.getName() + " in the working directory.");
+            } else {
+                cfgToLoad = null;
+            }
+            if (cfgToLoad != null) {
+                settings.loadDefaults(cfgToLoad);
             }
 
             // Add implied options
@@ -631,7 +631,7 @@ public class CommandLine {
             savedImpliedOps = null;
 
             // -----------------------------------------------------------------
-            // Inerpret pre-interpreted options again
+            // Interpret pre-interpreted options again
 
             i = Settings.quietSettingValueToInt((String)
                     settings.get(Settings.NAME_QUIET), Settings.NAME_QUIET);
@@ -658,13 +658,11 @@ public class CommandLine {
                     = settings.get(Settings.NAME_OUTPUT_FILE) != null;
 
             // - Start logging:
-            f = (File) settings.get(Settings.NAME_LOG_FILE);
-            if (!((FileWithSettingValue) f).getSettingValue()
-                    .equals("none")) {
+            FileWithSettingValue logFile = (FileWithSettingValue) settings.get(Settings.NAME_LOG_FILE);
+            if (!logFile.getSettingValue().equals("none")) {
                 startLogging(
-                        f,
-                        ((Boolean) settings.get(Settings.NAME_APPEND_LOG_FILE))
-                                .booleanValue());
+                        logFile,
+                        ((Boolean) settings.get(Settings.NAME_APPEND_LOG_FILE)).booleanValue());
             }
             if (logListener != null) {
                 settings.addProgressListener(logListener);

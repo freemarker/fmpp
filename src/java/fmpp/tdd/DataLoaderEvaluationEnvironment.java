@@ -51,7 +51,7 @@ public class DataLoaderEvaluationEnvironment implements EvaluationEnvironment {
                             + "but parameter at position " + (i + 1)                            + " is a " + Interpreter.getTypeName(o) + ".");
                 }
                 String name = (String) o;
-                if (i == 0) {
+                if (m == null) {
                     o = findTopLevelVariable(name);
                 } else {
                     o = m.get(name);
