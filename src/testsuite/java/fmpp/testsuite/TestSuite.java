@@ -87,10 +87,10 @@ public class TestSuite {
         TestSuite testSuite = new TestSuite(
                 new File(fmppHomeDir,
                         "src" + File.separator + "testsuite"
-                        + File.separator + "projects"),
+                        + File.separator + "tests"),
                 new File(fmppHomeDir,
                         "src" + File.separator + "testsuite"
-                        + File.separator + "references"),
+                        + File.separator + "expected"),
                 outputDir,
                 testcase);
         testSuite.progressListener = new ConsoleTestProgressListener(); 
