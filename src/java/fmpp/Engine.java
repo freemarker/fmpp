@@ -42,6 +42,7 @@ import fmpp.util.InstallationException;
 import fmpp.util.MiscUtil;
 import fmpp.util.StringUtil;
 import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.dom.NodeModel;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -228,7 +229,6 @@ public class Engine {
     private TemplateEnvironment templateEnv;
     private int maxTurn, currentTurn;
     private Map attributes = new HashMap();
-    private XmlDependentOps xmlDependentOps;
     private Boolean chachedXmlSupportAvailable;
     private boolean parametersLocked;
     
@@ -542,14 +542,7 @@ public class Engine {
         boolean done = false;
         try {
             if (!xpathEngine.equals(XPATH_ENGINE_DONT_SET)) {
-                XmlDependentOps xmlOps;
-                try {
-                    xmlOps = getXmlDependentOps("Set XPath engine.");
-                } catch (InstallationException e) {
-                    throw new IllegalConfigurationException(
-                            "Can't set the XPath engine.", e);
-                }
-                xmlOps.setFreeMarkerXPathEngine(xpathEngine);
+                EngineXmlUtils.setFreeMarkerXPathEngine(xpathEngine);
             }
             
             maxTurn = 1;
@@ -813,9 +806,6 @@ public class Engine {
             throws ProcessingException, DataModelBuildingException,
             TemplateException, IOException, InstallationException,
             GenericProcessingException {
-        XmlDependentOps xops = getXmlDependentOps(
-                "Rendering XML file " + sf.getAbsolutePath() + ".");
-
         final XmlRenderingConfiguration xrc;
         Object loadedDoc = null;  // this is an org.w3c.Document
         boolean isLoadedDocumentValidated = false;
@@ -863,7 +853,7 @@ public class Engine {
                             isLoadedDocumentValidated = Boolean.TRUE.equals(o);
                             loadXml: while (true) {
                                 try {
-                                    loadedDoc = xops.loadXmlFile(
+                                    loadedDoc = EngineXmlUtils.loadXmlFile(
                                             this, sf, isLoadedDocumentValidated);
                                 } catch (Exception e) {
                                     if (isLoadedDocumentValidated) {
@@ -883,7 +873,7 @@ public class Engine {
                         List namespaces = curXRC.getDocumentElementNamespaces();
                         int i;
                         for (i = 0; i < ln; i++) {
-                            if (xops.documentElementEquals(
+                            if (EngineXmlUtils.documentElementEquals(
                                     loadedDoc,
                                     (String) namespaces.get(i),
                                     (String) localNames.get(i))) {
@@ -931,7 +921,7 @@ public class Engine {
             }
             if (loadedDoc == null) {
                 try {
-                    loadedDoc = xops.loadXmlFile(this, sf, doctMustBeValidated);
+                    loadedDoc = EngineXmlUtils.loadXmlFile(this, sf, doctMustBeValidated);
                 } catch (Exception e) {
                     throw new DataModelBuildingException(
                             "Failed to load the XML source file.", e);
@@ -943,7 +933,7 @@ public class Engine {
             args.add("");
             args.add(xrc.getXmlDataLoaderOptions());
             try {
-                wrappedDoc = xops.loadWithXmlDataLoader(this, args, loadedDoc);
+                wrappedDoc = EngineXmlUtils.loadWithXmlDataLoader(this, args, loadedDoc);
             } catch (Exception e) {
                 throw new DataModelBuildingException(
                         "Failed to load the XML source file.", e);
@@ -1917,9 +1907,7 @@ public class Engine {
             throws InstallationException {
         checkParameterLock();
         if (xmlEntityResolver != null) {
-            XmlDependentOps xmlOps = getXmlDependentOps(
-                    "Set XML entity resolver.");  
-            if (!xmlOps.isEntityResolver(xmlEntityResolver)) {
+            if (!EngineXmlUtils.isEntityResolver(xmlEntityResolver)) {
                 throw new IllegalArgumentException(
                         "The argument to Engine.setXmlEntiryResolver "
                         + "must implement org.xml.sax.EntityResolver. "
@@ -2772,36 +2760,6 @@ public class Engine {
             cachedVersion = v;
             cachedBuildInfo = d;
         }
-    }
-    
-    private XmlDependentOps getXmlDependentOps(String requiredForThis)
-            throws InstallationException {
-        if (xmlDependentOps == null) {
-            checkXmlSupportAvailability(requiredForThis);
-            Class cl;
-            try {
-                cl = MiscUtil.classForName("fmpp.XmlDependentOpsImpl");
-            } catch (ClassNotFoundException e) {
-                throw new BugException(
-                        "Failed to get fmpp.XmlDependentOpsImpl.", e);
-            } catch (SecurityException e) {
-                throw new BugException(
-                        "Failed to get fmpp.XmlDependentOpsImpl.", e);
-            }
-            try {
-                xmlDependentOps = (XmlDependentOps) cl.newInstance();
-            } catch (IllegalArgumentException e) {
-                throw new BugException(
-                        "Failed to instantiate fmpp.XmlDependentOpsImpl", e);
-            } catch (IllegalAccessException e) {
-                throw new BugException(
-                        "Failed to instantiate fmpp.XmlDependentOpsImpl", e);
-            } catch (InstantiationException e) {
-                throw new BugException(
-                        "Failed to instantiate fmpp.XmlDependentOpsImpl", e);
-            } 
-       }
-       return xmlDependentOps;
     }
     
     private void lockParameters() {
