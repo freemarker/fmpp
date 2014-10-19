@@ -67,22 +67,38 @@ public class TemplateModelUtils {
         }
     }
 
-    protected void dieWithMissingParam(String pname)
-            throws TemplateModelException {
-        throw new TemplateModelException(
-                "Required parameter " + StringUtil.jQuote(pname)
-                + " is missing.");
+    /**
+     * @deprecated Use {@code throw} {@link #newMissingParamException(String)}.
+     */
+    protected void dieWithMissingParam(String pname) throws TemplateModelException {
+        throw newMissingParamException(pname);
+    }
+    
+    protected TemplateModelException newMissingParamException(String pname) {
+        return new TemplateModelException("Required parameter with this name is missing: " + pname);
     }
 
-    protected void dieWithUnknownParam(String pname)
-            throws TemplateModelException {
-        throw new TemplateModelException(
-                "Unsupported parameter: " + pname);
+    /**
+     * @deprecated Use {@code throw} {@link #newUnsupportedParamException(String)}.
+     */
+    protected void dieWithUnknownParam(String pname) throws TemplateModelException {
+        throw newUnsupportedParamException(pname);
     }
 
-    protected void dieWithParamsNotAllowed()
-            throws TemplateModelException {
-    throw new TemplateModelException(
-            "Transform does not allow parameters");
+    protected TemplateModelException newUnsupportedParamException(String pname) {
+        return new TemplateModelException("Unsupported parameter: " + pname);
     }
+    
+    /**
+     * @deprecated Use {@code throw} {@link #newNoParamsAllowedException()}.
+     */
+    protected void dieWithParamsNotAllowed() throws TemplateModelException {
+        throw newNoParamsAllowedException();
+    }
+    
+    protected TemplateModelException newNoParamsAllowedException()
+            throws TemplateModelException {
+        return new TemplateModelException("This directive doesn't allow any parameters");
+    }
+    
 }

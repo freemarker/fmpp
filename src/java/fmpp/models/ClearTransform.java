@@ -56,11 +56,11 @@ public class ClearTransform
                 }
                 hash = (WritableHash) pvalue;
             } else {
-                dieWithUnknownParam(pname);
+                throw newUnsupportedParamException(pname);
             }
         }
         if (seq == null && hash == null) {
-            dieWithMissingParam("seq or hash");
+            throw newMissingParamException("seq or hash");
         }
         if (seq != null) {
             seq.getList().clear();

@@ -82,18 +82,18 @@ public class SetTransform
             } else if ("value".equals(pname)) {
                 value = (TemplateModel) pvalue;
             } else {
-                dieWithUnknownParam(pname);
+                throw newUnsupportedParamException(pname);
             }
         }
         if (seq == null && hash == null) {
-            dieWithMissingParam("seq or hash");
+            throw newMissingParamException("seq or hash");
         }
         if (seq != null) {
             if (value == null) {
-                dieWithMissingParam("value");
+                throw newMissingParamException("value");
             }
             if (!hasIndex) {
-                dieWithMissingParam("index");
+                throw newMissingParamException("index");
             }
             if (index < 0 || index >= seq.getList().size()) {
                 throw new TemplateModelException("Index out of bounds.");
@@ -101,10 +101,10 @@ public class SetTransform
             seq.getList().set(index, value);
         } else {
             if (value == null) {
-                dieWithMissingParam("value");
+                throw newMissingParamException("value");
             }
             if (key == null) {
-                dieWithMissingParam("key");
+                throw newMissingParamException("key");
             }
             hash.getMap().put(key, value);
         }

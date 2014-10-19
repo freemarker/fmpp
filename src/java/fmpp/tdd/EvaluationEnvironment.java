@@ -87,7 +87,6 @@ public interface EvaluationEnvironment {
      *     If the return value is a {@link FunctionCall} object, it will not be
      *     evaluated again. This way, the final result of a TDD expression
      *     evaluation can contain {@link FunctionCall} objects.
-     * @throws Exception
      */
     Object evalFunctionCall(FunctionCall fc, Interpreter ip) throws Exception;
     

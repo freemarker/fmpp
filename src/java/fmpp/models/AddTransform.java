@@ -64,14 +64,14 @@ public class AddTransform
             } else if ("value".equals(pname)) {
                 value = (TemplateModel) pvalue;
             } else {
-                dieWithUnknownParam(pname);
+                throw newUnsupportedParamException(pname);
             }
         }
         if (seq == null) {
-            dieWithMissingParam("seq");
+            throw newMissingParamException("seq");
         }
         if (value == null) {
-            dieWithMissingParam("value");
+            throw newMissingParamException("value");
         }
         if (hasIndex) {
             if (index < 0 || index > seq.getList().size()) {

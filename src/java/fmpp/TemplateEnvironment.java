@@ -699,11 +699,11 @@ public class TemplateEnvironment {
                 } else if ("append".equals(pname)) {
                     append = boolParam(pvalue, pname);
                 } else {
-                    dieWithUnknownParam(pname);
+                    throw newUnsupportedParamException(pname);
                 }
             } 
             if (name == null) {
-                dieWithMissingParam("name");
+                throw newMissingParamException("name");
             }
             
             try {
@@ -748,7 +748,7 @@ public class TemplateEnvironment {
                 } else if ("extension".equals(pname)) {
                     extension = strParam(pvalue, pname);
                 } else {
-                    dieWithUnknownParam(pname);
+                    throw newUnsupportedParamException(pname);
                 }
             }
             if (name == null) {
@@ -791,7 +791,7 @@ public class TemplateEnvironment {
         public Writer getWriter(Writer out, Map params)
                 throws TemplateModelException {
             if (params != null && params.size() != 0) {
-                dieWithParamsNotAllowed();
+                throw newNoParamsAllowedException();
             }
 
             try {
@@ -811,7 +811,7 @@ public class TemplateEnvironment {
         public Writer getWriter(Writer out, Map params)
                 throws TemplateModelException {
             if (params != null && params.size() != 0) {
-                dieWithParamsNotAllowed();
+                throw newNoParamsAllowedException();
             }
 
             try {
@@ -851,11 +851,11 @@ public class TemplateEnvironment {
                 } else if ("append".equals(pname)) {
                     append = boolParam(pvalue, pname);
                 } else {
-                    dieWithUnknownParam(pname);
+                    throw newUnsupportedParamException(pname);
                 }
             }
             if (name == null) {
-                dieWithMissingParam("name");
+                throw newMissingParamException("name");
             }
 
             try {
@@ -916,11 +916,11 @@ public class TemplateEnvironment {
                 if ("encoding".equals(pname)) {
                     encoding = strParam(pvalue, pname);
                 } else {
-                    dieWithUnknownParam(pname);
+                    throw newUnsupportedParamException(pname);
                 }
             }
             if (encoding == null) {
-                dieWithMissingParam("encoding");
+                throw newMissingParamException("encoding");
             }
 
             try {
@@ -953,11 +953,11 @@ public class TemplateEnvironment {
                 if ("message".equals(pname)) {
                     message = strParam(pvalue, pname);
                 } else {
-                    dieWithUnknownParam(pname);
+                    throw newUnsupportedParamException(pname);
                 }
             }
             if (message == null) {
-                dieWithMissingParam("message");
+                throw newMissingParamException("message");
             }
 
             eng.sendWarning(srcFile, message);

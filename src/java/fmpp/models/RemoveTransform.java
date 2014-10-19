@@ -77,15 +77,15 @@ public class RemoveTransform
                 }
                 key = ((TemplateScalarModel) pvalue).getAsString();
             } else {
-                dieWithUnknownParam(pname);
+                throw newUnsupportedParamException(pname);
             }
         }
         if (seq == null && hash == null) {
-            dieWithMissingParam("seq or hash");
+            throw newMissingParamException("seq or hash");
         }
         if (seq != null) {
             if (!hasIndex) {
-                dieWithMissingParam("index");
+                throw newMissingParamException("index");
             }
             if (index < 0 || index >= seq.getList().size()) {
                 throw new TemplateModelException("Index out of bounds.");
@@ -94,7 +94,7 @@ public class RemoveTransform
         }
         if (hash != null) {
             if (key == null) {
-                dieWithMissingParam("key");
+                throw newMissingParamException("key");
             }
             hash.getMap().remove(key);
         }
