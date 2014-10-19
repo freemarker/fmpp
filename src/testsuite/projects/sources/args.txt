@@ -1,3 +1,2 @@
-# $Id: args.txt,v 1.1 2003/10/14 09:58:11 ddekany Exp $
 4.txt
 6.txt

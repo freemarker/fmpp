@@ -1,4 +1,3 @@
-# $Id: config.fmpp,v 1.1 2003/11/12 18:58:11 ddekany Exp $
 sourceRoot: src
 outputRoot: out
 modes: ignore(**/*.inc)
