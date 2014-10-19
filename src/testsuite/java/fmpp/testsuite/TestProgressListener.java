@@ -18,9 +18,6 @@ package fmpp.testsuite;
 
 /**
  * Contains callback method for monitoring test suite execution.
- *  
- * @author D�niel D�k�ny
- * @version $Id: TestProgressListener.java,v 1.1 2004/01/01 02:46:36 ddekany Exp $
  */
 public interface TestProgressListener {
     

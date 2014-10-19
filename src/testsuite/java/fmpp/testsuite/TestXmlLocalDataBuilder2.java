@@ -25,8 +25,6 @@ import fmpp.TemplateEnvironment;
 import freemarker.template.TemplateNodeModel;
 
 /**
- * @author D�niel D�k�ny
- * @version $Id: TestXmlLocalDataBuilder2.java,v 1.1 2004/01/19 20:08:30 ddekany Exp $
  */
 public class TestXmlLocalDataBuilder2 implements LocalDataBuilder {
 

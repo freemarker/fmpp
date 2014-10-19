@@ -26,8 +26,6 @@ import fmpp.LocalDataBuilder;
 import fmpp.TemplateEnvironment;
 
 /**
- * @author D�niel D�k�ny
- * @version $Id: TestXmlLocalDataBuilder.java,v 1.1 2004/01/19 20:08:30 ddekany Exp $
  */
 public class TestXmlLocalDataBuilder implements LocalDataBuilder {
 

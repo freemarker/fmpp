@@ -35,9 +35,6 @@ import fmpp.util.StringUtil;
 
 /**
  * FMPP test suite.
- *  
- * @author D�niel D�k�ny
- * @version $Id: TestSuite.java,v 1.11 2004/04/12 19:07:21 ddekany Exp $
  */
 public class TestSuite {
     private final File projsParentDir;

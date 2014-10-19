@@ -18,9 +18,6 @@ package fmpp.testsuite;
 
 /**
  * Prints test suite progress to the console.
- *  
- * @author D�niel D�k�ny
- * @version $Id: ConsoleTestProgressListener.java,v 1.1 2004/01/01 02:46:36 ddekany Exp $
  */
 public class ConsoleTestProgressListener implements TestProgressListener {
 

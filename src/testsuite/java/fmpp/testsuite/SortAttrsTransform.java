@@ -28,9 +28,6 @@ import freemarker.template.TemplateTransformModel;
 
 /**
  * Sorts the attributes of elements to alphabetical order.
- *  
- * @author D�niel D�k�ny
- * @version $Id: SortAttrsTransform.java,v 1.1 2003/11/02 13:17:58 ddekany Exp $
  */
 public class SortAttrsTransform implements TemplateTransformModel {
     
