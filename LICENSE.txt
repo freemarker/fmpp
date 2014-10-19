@@ -16,24 +16,35 @@ limitations under the License.
 END LICENSE
 
 
-The contents of the bin directory is partially derived from Apache Ant,
-a software developed by the Apache Software Foundation. Also, the binary
-lib/resolver.jar is software developed by the Apache Software Foundation:
+This product includes software developed by the
+Apache Software Foundation (http://www.apache.org/).
 
-  This product includes software developed by the
-  Apache Software Foundation (http://www.apache.org/).
 
-Read LICENSE_ANT.txt, and LICENSE_RESOLVER.txt for more information.
+SOFTWARE INCLUDED IN THE FULL FMPP DISTRIBUTION
 
-lib/bsh.jar contains a binary distribution of BeanShell.
-BeanShell is covered by LGPL (GNU Lesser Public License) license.
+The full FMPP distribution (not "fmpp.jar" itself) includes software developed
+by various parties, under various licenses. Below you find the list of these,
+with the location inside the distribution archive.
 
-Visit http://www.beanshell.org for more information.
+  The contents of the "bin" directory is derived from Apache Ant, a software
+  developed by the Apache Software Foundation.
+  Read LICENSE_ANT.txt for more information.
 
-lib/imageinfo.jar contains a binary distribution of ImageInfo, developed
-by Marco Schmidt, and was contributed to the Public Domain by the author.
+  "lib/resolver.jar" is a binary distribution of Apache xml-commons Resolver,
+  a software developed by the Apache Software Foundation.
+  Read LICENSE_RESOLVER.txt for more information.
 
-lib/freemarker.jar contains a binary distribution of FreeMarker.
-FreeMarker (since 2.3.21) is covered by Apache License, Version 2.0.
+  "lib/bsh.jar" is a binary distribution of BeanShell.
+  BeanShell is under LGPL (GNU Lesser Public License) license.
+  Visit http://www.beanshell.org for more information.
 
-Read LICENSE_FREEMARKER.txt for more information.
+  "lib/imageinfo.jar" is a binary distribution of ImageInfo, a software
+  developed by Marco Schmidt, who has contributed it to the Public Domain.
+
+  "lib/freemarker.jar" is a binary distribution of FreeMarker.
+  FreeMarker is under Apache License 2.0 (since FreeMarker 2.3.21).
+  Read LICENSE_FREEMARKER.txt for more information.
+
+"lib/fmpp.jar" doesn't contain parts that belong under a different license or
+to a different copyright owner than the main license and copyright owner of
+FMPP (since FMPP 0.9.15).
