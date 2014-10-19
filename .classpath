@@ -9,5 +9,5 @@
 	<classpathentry kind="lib" path="C:/Program Files (x86)/Ant/lib/ant.jar"/>
 	<classpathentry kind="lib" path="lib/imageinfo.jar"/>
 	<classpathentry kind="lib" path="lib/forbuild/jaxen.jar"/>
-	<classpathentry kind="output" path="build/testsuite/compile"/>
+	<classpathentry kind="output" path=".bin"/>
 </classpath>
