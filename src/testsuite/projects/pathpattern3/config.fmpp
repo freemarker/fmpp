@@ -1,0 +1,12 @@
+# $Id: config.fmpp,v 1.1 2003/10/28 01:42:35 ddekany Exp $
+sourceRoot: src
+outputRoot: out
+borders: [
+    header("*.txt_", **/*.txt)
+    layer()
+    header("foo.*_", foo.*)
+    layer()
+    header("Bar.*_", Bar.*)
+    layer()
+    header("SUB/*_", SUB/*)
+]
