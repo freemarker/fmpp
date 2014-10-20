@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <project basedir="." default="build" name="fmpp">
-    <property file="src/java/fmpp/version.properties" />
+    <property file="src/main/resources/fmpp/version.properties" />
     <property environment="env" />
     
     <property file="build.properties" />
@@ -46,7 +46,7 @@
 
     <target name="jar" depends="compile" description="Re-build fmpp.jar">
         <mkdir dir="lib" />
-        <jar basedir="build/compile" jarfile="lib/fmpp.jar">
+        <jar basedir="build/classes" jarfile="lib/fmpp.jar">
             <manifest>
                 <attribute name="Main-Class" value="fmpp.tools.CommandLine" />
                 <attribute name="Class-Path" value="freemarker.jar bsh.jar resolver.jar imageinfo.jar" />
@@ -69,25 +69,24 @@
             -->set it.<!--
         --></fail>
       
-        <mkdir dir="build/compile" />
+        <mkdir dir="build/classes" />
         <echo>Compling classes using boot classpath ${bootclasspath.path}</echo>
         <javac
                 bootclasspath="${bootclasspath.path}"
-                srcdir="src/java"
-                destdir="build/compile"
-                deprecation="off"
-                debug="on"
-                source="1.4"
-                target="1.4"
+                srcdir="src/main/java"
+                destdir="build/classes"
+                encoding="utf-8"
+                deprecation="off" debug="on"
+                source="1.4" target="1.4"
         >
             <classpath refid="classpath.path" />
         </javac>
-        <copy
-            file="src/java/fmpp/version.properties" todir="build/compile/fmpp"
-            overwrite="true"
-            filtering="true"
-        />
-        <copy file="src/java/fmpp/tools/help.txt" todir="build/compile/fmpp/tools" />
+        <copy toDir="build/classes">
+            <fileset dir="src/main/resources" excludes="fmpp/version.properties" />
+        </copy>
+        <copy toDir="build/classes" filtering="true" overwrite="true">
+            <fileset dir="src/main/resources" includes="fmpp/version.properties" />
+        </copy>
     </target>
 
     <target name="docs" depends="init" description="Re-build docs directory">
@@ -141,8 +140,8 @@
                 doctitle="FMPP ${version} API"
                 packagenames="fmpp.*"
                 excludepackagenames="fmpp.test"
-                sourcepath="src/java"
-                overview="src/java/fmpp/overview.html"
+                sourcepath="src/main/java"
+                overview="src/main/java/fmpp/overview.html"
                 windowtitle="FMPP ${version} API"
                 classpathref="classpath.path"
                 version="false"
@@ -173,19 +172,16 @@
     </target>
 
     <target name="dist"
-            description="Build the distribution: dist/fmpp_${version}.tar.gz"
+            description="Build the distribution: build/dist/fmpp_${version}.tar.gz"
             depends="init, all">
-        <mkdir dir="dist/fmpp_${version}" />
-        <copy todir="dist/fmpp_${version}" includeEmptyDirs="no">
+        <mkdir dir="build/dist/fmpp_${version}" />
+        <copy todir="build/dist/fmpp_${version}" includeEmptyDirs="no">
             <fileset dir=".">
                 <exclude name="**/.*" />
                 <exclude name="**/.*/" />
-                <exclude name="dist/" />
                 <exclude name="build/" />
                 <exclude name="lib/" />
                 <exclude name="src/docs/freemarker/**" />
-                <exclude name="src/testsuite/missing/**" />
-                <exclude name="src/testsuite/java/**/Adhoc*" />
                 <exclude name="build.properties" />
                 <exclude name="bin/dfmpp.bat" />
                 <exclude name="*.bat" />
@@ -198,67 +194,75 @@
                 <include name="lib/**" />
             </fileset>
         </copy>
-        <copy file="README.txt" todir="dist/fmpp_${version}" filtering="true" />
+        <copy file="README.txt" todir="build/dist/fmpp_${version}" filtering="true" />
 
-        <delete file="dist/fmpp_${version}.tar.gz" />
-        <tar tarfile="dist/fmpp_${version}.tar" longfile="gnu">
-            <tarfileset dir="dist/fmpp_${version}" mode="755" prefix="fmpp_${version}">
+        <delete file="build/dist/fmpp_${version}.tar.gz" />
+        <tar tarfile="build/dist/fmpp_${version}.tar" longfile="gnu">
+            <tarfileset dir="build/dist/fmpp_${version}" mode="755" prefix="fmpp_${version}">
                 <include name="bin/**" />
             </tarfileset>
-            <tarfileset dir="dist/fmpp_${version}" prefix="fmpp_${version}">
+            <tarfileset dir="build/dist/fmpp_${version}" prefix="fmpp_${version}">
                 <exclude name="bin/" />
             </tarfileset>
         </tar>
-        <gzip src="dist/fmpp_${version}.tar" zipfile="dist/fmpp_${version}.tar.gz" />
-        <delete file="dist/fmpp_${version}.tar" />
+        <gzip src="build/dist/fmpp_${version}.tar" zipfile="build/dist/fmpp_${version}.tar.gz" />
+        <delete file="build/dist/fmpp_${version}.tar" />
         
-        <delete file="dist/fmpp_${version}.zip" />
-        <zip destfile="dist/fmpp_${version}.zip" encoding="US-ASCII" whenempty="fail">
-            <zipfileset dir="dist/fmpp_${version}" filemode="755" prefix="fmpp_${version}">
+        <delete file="build/dist/fmpp_${version}.zip" />
+        <zip destfile="build/dist/fmpp_${version}.zip" encoding="US-ASCII" whenempty="fail">
+            <zipfileset dir="build/dist/fmpp_${version}" filemode="755" prefix="fmpp_${version}">
                 <include name="bin/**" />
             </zipfileset>
-            <zipfileset dir="dist/fmpp_${version}" prefix="fmpp_${version}">
+            <zipfileset dir="build/dist/fmpp_${version}" prefix="fmpp_${version}">
                 <exclude name="bin/" />
             </zipfileset>
         </zip>
     </target>
     
-    <target name="site"  depends="init"
-            description="Build the WWW site -- require dist/fmpp_${version}.tar.gz">
+    <target name="site" depends="init"
+            description="Build the WWW site -- requires build/dist/fmpp_${version}.tar.gz">
         <antcall target="javadoc" />
         
         <property name="online" value="true"/>
         <antcall target="_fmppgdoc" />
 
-        <mkdir dir="dist/site_${version}" />
-        <copy todir="dist/site_${version}">
+        <mkdir dir="build/dist/site_${version}" />
+        <copy todir="build/dist/site_${version}">
             <fileset dir="docs">
                 <exclude name="examples/" />
             </fileset>
         </copy>
         <!-- Create a tar.gz for quicker uploading -->
-        <tar tarfile="dist/site.tar" basedir="dist/site_${version}" />
-        <gzip src="dist/site.tar" zipfile="dist/site.tar.gz" />
-        <delete file="dist/site.tar" />
+        <tar tarfile="build/dist/site.tar" basedir="build/dist/site_${version}" />
+        <gzip src="build/dist/site.tar" zipfile="build/dist/site.tar.gz" />
+        <delete file="build/dist/site.tar" />
     </target>
 
     <target name="test" depends="jar" description="Run test suite">
-        <mkdir dir="build/testsuite/compile" />
+        <mkdir dir="build/test/classes" />
         <javac
                 bootclasspath="${bootclasspath.path}"
-                srcdir="src/testsuite/java"
-                destdir="build/testsuite/compile"
-                deprecation="on"
-                debug="on"
+                srcdir="src/test/java"
+                destdir="build/test/classes"
+                encoding="utf-8"
+                deprecation="on" debug="on"
                 source="1.4"
                 target="1.4"
         >
             <classpath refid="classpath.path" />
         </javac>
+        <copy toDir="build/test/classes">
+            <fileset dir="src/test/resources">
+                <!-- These are read directly from under src/test/resources: -->
+                <exclude name="tests/**" />
+                <exclude name="expected/**" />
+            </fileset>
+        </copy>
+        
         <property name="fmpp.testcase" value="" />
         <java fork="true"
                 classname="fmpp.testsuite.TestSuite"
-                classpath="lib/fmpp.jar;build/testsuite/compile"
+                classpath="lib/fmpp.jar;build/test/classes"
         >
             <arg value="${basedir}" />
             <arg value="${fmpp.testcase}" />
@@ -268,14 +272,13 @@
     <target name="clean" depends="init" description="Delete all output files">
         <delete dir="build" />
         <delete dir="docs" />
-        <delete dir="dist" />
         <delete includeEmptyDirs="yes">
             <fileset dir="src/docs/examples" includes="*/out/"/>
             <fileset dir="src/docs/examples" includes="*/fmpp.log"/>
             <fileset dir="src/docs/examples" includes="*/log.fmpp"/>
-            <fileset dir="src/testsuite/tests" includes="*/out/"/>
-            <fileset dir="src/testsuite/tests" includes="*/fmpp.log"/>
-            <fileset dir="src/testsuite/tests" includes="*/log.fmpp"/>
+            <fileset dir="src/test/resources/tests" includes="*/out/"/>
+            <fileset dir="src/test/resources/tests" includes="*/fmpp.log"/>
+            <fileset dir="src/test/resources/tests" includes="*/log.fmpp"/>
             <!-- Ant doesn't allow it: <fileset dir="lib" includes="fmpp.jar"/> -->
         </delete>
     </target>
@@ -338,7 +341,10 @@
             </project>
         ]]></echo>
    
-        <jar destfile="build/maven-source-attachment.jar" basedir="src/java"  />
+        <jar destfile="build/maven-source-attachment.jar">
+            <fileset dir="src/main/java" />
+            <fileset dir="src/main/resources" />
+        </jar>
    
         <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
    
@@ -346,7 +352,7 @@
              validargs="y,n"
              addproperty="mavenUpload.answer"
         ><!--
-            -->You are about uploading dist/fmpp_${version}/lib/fmpp.jar <!--
+            -->You are about uploading build/dist/fmpp_${version}/lib/fmpp.jar <!--
             -->into the Maven central repostiry sync. directory. <!--
             -->Be sure that's the final (released) variation there, <!--
             -->and that the version number is correct. <!--
@@ -366,7 +372,7 @@
                addproperty="mavenUpload.password"
        />
    
-        <artifact:deploy file="dist/fmpp_${version}/lib/fmpp.jar">
+        <artifact:deploy file="build/dist/fmpp_${version}/lib/fmpp.jar">
             <remoteRepository url="sftp://web.sourceforge.net/home/groups/f/fm/fmpp/htdocs/maven2">
                 <authentication
                       username="${mavenUpload.user},fmpp"

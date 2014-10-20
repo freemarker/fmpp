@@ -1,3 +1,0 @@
-inheritConfiguration: ../../../docs/examples/img_dims
-borders: border('<@sortAttrs>', '</@sortAttrs>', '*.htm*')
-data: {sortAttrs:eval('new fmpp.testsuite.SortAttrsTransform()')}

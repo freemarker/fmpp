@@ -50,19 +50,27 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
+ . [!!!] Promote --long-help
  . [!!!] Now that error messages are longer and contain FTL stack trace, long message
    snipping is annoying. It should shouldn't snip before the end of the FreeMarker error
    message.
  . [!!!] The "--- Java stack trace: ---" parts repeat the FTL error message
  . [!!!] add support to new FM settings
- . Ugly:
+ . [!!!] Ugly:
    [java] Error when processing this file: versions.html
    [java] freemarker.template.TemplateModelException: Failed to transform
    [java] path"https://github.com/freemarker/fmpp"
- . [!!] freemarkerLinks should be able to load with class-loader.
- . [!] Improve pp directive error messages so that they write out if the parameter was null
-   (instead of complaining that it was missing or not of the proper type)
- . [!] Deep merging
+ ---
+ . [!!] Add FreeMarker feature for position mapping
+ . [!!] Use mountable vfs-es, at least for sources. This would deprecate
+   freemarerLinks, and would work not only for #include but for pp too.
+   Add zip (jar) vfs.
+ . [!!] Add logging via SLF4J as a possible ProressListener.
+ . [!!] Stream filtering mode
+ ---
+ . [!!] DB table data source
+ . [!!] Excel data source
+ . [!!] TDD deep merging
    - Idea for the solution: "merger hash" type should be introduced. In TDD
      a merger hash should be constructed with ~ prefix: ~exp, where exp must evalute
      to a hash. When a value has to be replaced with merger hash during hash merging,
@@ -80,15 +88,15 @@ Core:
        with sequences. Actually, merger sequences should be introduced as
        well ({x:~[1, 2]} merged with {x:~[3, 4]} would result in
        {x:[3, 4, 1, 2]}). Then the merging of "freemarkerLinks" need not be
-       exceptional anymore, and user had to use ~ if (s)he wants to continute
+       exceptional any more, and user had to use ~ if (s)he wants to continue
        the inherited link-list, rather than replace it.
- . ? Inheriting multiple config files
+ . [!] Inheriting multiple config files
+ --
+ . [!] Improve pp directive error messages so that they write out if the parameter was null
+   (instead of complaining that it was missing or not of the proper type)
  . Add "customSettings" setting, which sets Engine attributes.
    It should be of type HASH_WITH_MERGED_SUBVARIABLES.
  . Add new processing mode that processes the file with an user written class.
- . Add real logging. Maybe the current ProgressListener based logger should be
-   replaced then? Or rather a new setting, "debugLog" should be added, that would
-   turn on a Jakarata-commons-logging based logging.
  . [!] @pp.warning and @pp.debug should print the location too (file name, line)
  . [!] UN*X integration
    - "copy-permissions" setting (i.e. copy rwxrwxrwx + owners, as cp would do)
