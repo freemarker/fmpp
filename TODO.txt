@@ -17,9 +17,7 @@
 *************************************************************************
 
 Misc:
- . [!!!] Use Maven dir structure
  . [!!!] Include licence in fmpp.jar
- . [!!!] includeantruntime, ant.jar version
  . [!!!] Ant script doesn't fail on failed test suite:
     [java] - pathpattern3: OK
     [java] Java Result: 1
@@ -34,7 +32,6 @@ Misc:
    . Re-run test on Java 1.4
    . Run FMPP manually on some projects
    . Test Maven artifact
- . [!!] Optional SLF4J logging
  . [!] Native Windows exe instead of fmpp.bat+lcp.bat.
    Bat-s has idiotic limitations.
  . Add a GUI front-end
