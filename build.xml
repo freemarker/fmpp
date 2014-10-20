@@ -28,7 +28,7 @@
 
     <target name="init">
         <tstamp>
-            <format property="timeStamp" pattern="yyyy-MM-dd HH:mm:ss z" timezone="GMT" />
+            <format property="timeStamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC" />
         </tstamp>
         <filter token="VERSION" value="${version}" />
         <filter token="TIMESTAMP" value="${timeStamp}" />
