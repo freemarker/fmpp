@@ -1,13 +1,13 @@
-<@page title="System Overview and Terminology" keywords="overview">
+<@page title="Concepts and Terminology" keywords="overview">
 
-<p>Please read the <@a href="qtour.html">Quick Tour</@a> before this, otherwise you will not understand...</p>
+<p>Read the <@a href="qtour.html">Tutorial</@a> before this, otherwise you won't understand this chapter.</p>
 
 
 <@sect title="FMPP core and front-ends">
 
 <p>FMPP consist of the FMPP core, and the front-ends wrapping that. Front-ends provide interface by which you can communicate with the FMPP core. For example the command-line tool (that we have used previously) is a front-end that provides command-line interface. The FMPP Ant task is another front-end that provides Ant task interface. A graphical front-end could be written too. But whatever front-end you use, you (indirectly) use the FMPP core. So most of the documentation is about the FMPP core, which basically encapsulates all abilities of FMPP.</p>
 
-<p>Note that there are more skins of the onion: the FMPP core wraps FreeMarker, the template engine.</p>
+<p>Note that the FMPP core wraps <a href="http://freemarker.org">FreeMarker</a>, the template engine.</p>
 
 <p>For more info see <@a href="writefrontend.html">the chapter about writing front-ends</@a>.</p>
 
@@ -31,9 +31,9 @@
 
 <p><@e>Processing session</@e>: This is the course of batch processing the (selected) files of the source directory. For example, all <@c>fmpp</@c> call in the Quick Tour did a processing session.</p>
 
-<p>Strictly speaking, FMPP processes only files, but not directories. It does, however, look for source files in the sub-directories of the source root directory recursively, and when an output file has to be created, its missing parent directories will be created automatically. So you get the impression that FMPP processes directories like files, but actually it doesn't. Thus, FMPP doesn't output empty directories. Also, any settings that deal with processing are applicable only for files, but not for directories.</p>
+<p>Strictly speaking, FMPP only processes files, not directories. It looks for source files in the sub-directories of the source root directory recursively, and when an output file has to be created, its missing parent directories will be created automatically. Any setting that deals with processing things is applicable only to files, not to directories (with some exceptions, like <@s>alwaysCreateDirectories</@s>).</p>
 
-<p>You do not use term "processing" for data files as <@c>data/style.tdd</@c> or <@c>data/birds.csv</@c> was. A data file isn't processed like a template file (or an image file), it does not produce output file itself. Instead, it can be loaded into a variable for later usage in templates.</p>
+<p>FMPP doesn't use the term "processing" for data files like <@c>data/style.tdd</@c> or <@c>data/birds.csv</@c> was in the tutorial. A data file isn't processed like a template file (or an image file), it does not produce output file itself. Instead, it can be loaded into a variable for later usage in templates.</p>
 
 </@sect>
 
