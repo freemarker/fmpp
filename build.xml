@@ -11,7 +11,9 @@
     <available classpath="${bootclasspath.path}"
         classname="java.lang.Object" ignoresystemclasses="true" 
         property="bootclasspath.correct" />
-    
+
+    <property name="ant.jar.path" value="${env.ANT_HOME}/lib/ant.jar" />
+
     <property name="freemarker.lib" value="lib/freemarker.jar" />
     <property name="bsh.lib" value="lib/bsh.jar" />
     <property name="resolver.lib" value="lib/resolver.jar" />
@@ -23,7 +25,7 @@
         <pathelement path="${resolver.lib}" />
         <pathelement path="${imageinfo.lib}" />
         <pathelement path="lib/fmpp.jar" />
-        <pathelement path="${env.ANT_HOME}/lib/ant.jar" />
+        <pathelement path="${ant.jar.path}" />
     </path>
 
     <target name="init">
@@ -73,6 +75,7 @@
         <echo>Compling classes using boot classpath ${bootclasspath.path}</echo>
         <javac
                 bootclasspath="${bootclasspath.path}"
+                includeantruntime="false"
                 srcdir="src/main/java"
                 destdir="build/classes"
                 encoding="utf-8"
@@ -242,6 +245,7 @@
         <mkdir dir="build/test/classes" />
         <javac
                 bootclasspath="${bootclasspath.path}"
+                includeantruntime="false"
                 srcdir="src/test/java"
                 destdir="build/test/classes"
                 encoding="utf-8"

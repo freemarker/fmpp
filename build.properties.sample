@@ -1,10 +1,7 @@
-# Point to the rt.jar of JDK 1.2.
-# This is not required, but for releases it should be set, so
-# J2SE 1.2 incompatibilities will cause compilation time errors,
-# rather than runtime errors later.
-bootclasspath.path=C:/jdk1.2/jre/lib/rt.jar
+# Points to the rt.jar of Java 1.4 (if you target that minimum version).
+# Can be commented out, but for building releases it definitely should be set.
+bootclasspath.path=C:/Program Files (x86)/Java/j2re1.4.0_04/lib/rt.jar
 
-# Points to the Jaxen (1.1 beta6 or later) or the Xalan jar.
-# This is not required, excepet if you want to successfully
-# execute the test suite.
-xpathSupport.lib=C:/Program Files/jars/jaxen.jar
+# Points to the ant.jar of Ant 1.5 (if you target that minimum version).
+# Can be commented out, but for building releases it definitely should be set.
+ant.jar.path=C:/Program Files (x86)/jars/ant-1.5.jar
