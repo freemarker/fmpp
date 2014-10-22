@@ -17,7 +17,6 @@
 *************************************************************************
 
 Misc:
- . [!!!] Include licence in fmpp.jar
  . [!!!] Ant script doesn't fail on failed test suite:
     [java] - pathpattern3: OK
     [java] Java Result: 1

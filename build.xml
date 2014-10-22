@@ -267,6 +267,7 @@
         <java fork="true"
                 classname="fmpp.testsuite.TestSuite"
                 classpath="lib/fmpp.jar;build/test/classes"
+                failonerror="true"
         >
             <arg value="${basedir}" />
             <arg value="${fmpp.testcase}" />
