@@ -16,3 +16,6 @@ dependency.freemarker.version=2.3.21
 dependency.bsh.version=2.0b4
 dependency.xmlResolver.version=1.2
 dependency.imageinfo.version=1.9
+
+# Points to the Maven 3 executable:
+mvnCommand=C:/Program Files (x86)/maven3/bin/mvn.bat

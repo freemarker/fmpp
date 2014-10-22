@@ -17,10 +17,9 @@
 *************************************************************************
 
 Misc:
- . [!!!] Maven dist to Sonatype like in FM
+ . [!!!] Find reference to Java 1.2 and Oro in docs
  . [!!!] Before release:
    . Increase version number
-   . Find reference to Java 1.2 and Oro in docs
    . Re-run test on Java 1.4
    . Run FMPP manually on some projects
    . Test Maven artifact
@@ -31,15 +30,17 @@ Misc:
 Data loaders:
  . [!!] More convenient way of putting OS environment variables into the data-model
  . [!!] True JSON data loader - TDD almost does that...
- . [!] Add sql(...) data-loader. See below in the Drafts section...
-   Also somehow integrate the database *schema* loader that was contributed.
- . [!] Post-DTD era validation: W3C XML Schema and Relax NG validation, pre-loaded schema validation
+ . [!!] Excel and Calc data loader
+ . [!!] sql(...) data-loader. See below in the Drafts section...
+ . [!] DB schema data source
+ . [!] W3C XML Schema and Relax NG validation, pre-loaded schema validation
  . [!] Add xmlDir data-loader (loads all XML files in a directory)
  . ? Add add(...) data-loader for string and sequence concatenation, and arithmetical addition.
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
  . [!!!] Promote --long-help
+ . [!!!] Support all FreeMarker settings up to 2.3.21
  . [!!!] Now that error messages are longer and contain FTL stack trace, long message
    snipping is annoying. It should shouldn't snip before the end of the FreeMarker error
    message.
@@ -57,8 +58,6 @@ Core:
  . [!!] Add logging via SLF4J as a possible ProressListener.
  . [!!] Stream filtering mode
  ---
- . [!!] DB table data source
- . [!!] Excel data source
  . [!!] TDD deep merging
    - Idea for the solution: "merger hash" type should be introduced. In TDD
      a merger hash should be constructed with ~ prefix: ~exp, where exp must evalute

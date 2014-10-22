@@ -32,7 +32,7 @@
 
     <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${dependency.freemarker.version}/documentation/_html" />
     <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
-    <property name="distFileNameBase" value="build/dist/fmpp_${version}" />
+    <property name="dist.dir" value="build/dist/fmpp_${version}" />
     
     <target name="all" description="Build fmpp.jar and the documentation" depends="jar, docs" />
 
@@ -245,8 +245,8 @@
     <target name="dist"
             description="Build the distribution archives"
             depends="all">
-        <mkdir dir="${distFileNameBase}" />
-        <copy todir="${distFileNameBase}">
+        <mkdir dir="${dist.dir}" />
+        <copy todir="${dist.dir}">
             <fileset dir=".">
                 <exclude name="**/.*" />
                 <exclude name="**/.*/" />
@@ -256,36 +256,36 @@
                 <exclude name="README.txt" />
             </fileset>
         </copy>
-        <copy todir="${distFileNameBase}" includeEmptyDirs="true">
+        <copy todir="${dist.dir}" includeEmptyDirs="true">
             <fileset dir="build" includes="docs/" />
         </copy>
-        <copy file="README.txt" todir="${distFileNameBase}" filtering="true" />
+        <copy file="README.txt" todir="${dist.dir}" filtering="true" />
 
-        <delete file="${distFileNameBase}.tar.gz" />
-        <tar tarfile="${distFileNameBase}.tar" longfile="gnu">
-            <tarfileset dir="${distFileNameBase}" mode="755" prefix="fmpp_${version}">
+        <delete file="${dist.dir}.tar.gz" />
+        <tar tarfile="${dist.dir}.tar" longfile="gnu">
+            <tarfileset dir="${dist.dir}" mode="755" prefix="fmpp_${version}">
                 <include name="bin/**" />
             </tarfileset>
-            <tarfileset dir="${distFileNameBase}" prefix="fmpp_${version}">
+            <tarfileset dir="${dist.dir}" prefix="fmpp_${version}">
                 <exclude name="bin/" />
             </tarfileset>
         </tar>
-        <gzip src="${distFileNameBase}.tar" zipfile="${distFileNameBase}.tar.gz" />
-        <delete file="${distFileNameBase}.tar" />
+        <gzip src="${dist.dir}.tar" zipfile="${dist.dir}.tar.gz" />
+        <delete file="${dist.dir}.tar" />
         
-        <delete file="${distFileNameBase}.zip" />
-        <zip destfile="${distFileNameBase}.zip" encoding="US-ASCII" whenempty="fail">
-            <zipfileset dir="${distFileNameBase}" filemode="755" prefix="fmpp_${version}">
+        <delete file="${dist.dir}.zip" />
+        <zip destfile="${dist.dir}.zip" encoding="US-ASCII" whenempty="fail">
+            <zipfileset dir="${dist.dir}" filemode="755" prefix="fmpp_${version}">
                 <include name="bin/**" />
             </zipfileset>
-            <zipfileset dir="${distFileNameBase}" prefix="fmpp_${version}">
+            <zipfileset dir="${dist.dir}" prefix="fmpp_${version}">
                 <exclude name="bin/" />
             </zipfileset>
         </zip>
     </target>
     
     <target name="site" depends="docsOnline"
-            description="Build the WWW site -- requires ${distFileNameBase}.tar.gz">
+            description="Build the WWW site -- requires ${dist.dir}.tar.gz">
         <mkdir dir="build/site/site_${version}" />
         <copy todir="build/site/site_${version}">
             <fileset dir="build/docs">
@@ -344,114 +344,140 @@
         </delete>
     </target>
 
-    <!--
-      Uploads the fmpp.jar that is in the current DISTRIBUTION DIRECTORY
-      into the place that the central Maven2 repository syncs itself with
-      periodically. Of course it also uploads the Maven-specific metadata files.
-  
-      Note: maven-ant-tasks-x.x.x.jar must be added to ${ANT_HOME}/lib for
-            this to work. Get it here: http://maven.apache.org/download.html
-    -->
-    <target name="maven-upload" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+    <target name="maven-pom">
         <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
         <fail unless="dependency.bsh.version">dependency.bsh.version wasn't set; check build.properties</fail>
         <fail unless="dependency.xmlResolver.version">dependency.xmlResolver.version wasn't set; check build.properties</fail>
         <fail unless="dependency.imageinfo.version">dependency.imageinfo.version wasn't set; check build.properties</fail>
         
         <echo file="build/pom.xml"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-            <project xmlns="http://maven.apache.org/POM/4.0.0"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-              <modelVersion>4.0.0</modelVersion>
-              <groupId>net.sourceforge.fmpp</groupId>
-              <artifactId>fmpp</artifactId>
-              <version>${version}</version>
-              <packaging>jar</packaging>
-              <name>FMPP</name>
-              <description>
-                General-purpose text file preprocessor tool that uses FreeMarker templates.
-              </description>
-              <url>http://fmpp.sourceforge.net</url>
-              <licenses>
-                <license>
-                  <name>Apache License, Version 2.0</name>
-                  <url>http://fmpp.sourceforge.net/license.html</url>
-                </license>
-              </licenses>
-              <scm>
-                <url>http://fmpp.svn.sourceforge.net/viewvc/fmpp/</url>
-                <connection>scm:svn:https://fmpp.svn.sourceforge.net/svnroot/fmpp</connection>
-              </scm>
-              <dependencies>
-                <dependency>
-                  <groupId>org.freemarker</groupId>
-                  <artifactId>freemarker</artifactId>
-                  <version>${dependency.freemarker.version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>org.beanshell</groupId>
-                  <artifactId>bsh</artifactId>
-                  <version>${dependency.bsh.version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>xml-resolver</groupId>
-                  <artifactId>xml-resolver</artifactId>
-                  <version>${dependency.xmlResolver.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.devlib.schmidt</groupId>
-                    <artifactId>imageinfo</artifactId>
-                    <version>${dependency.imageinfo.version}</version>
-                </dependency>
-              </dependencies>
-            </project>
-        ]]></echo>
-   
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+              
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>9</version>
+  </parent>
+              
+  <groupId>net.sourceforge.fmpp</groupId>
+  <artifactId>fmpp</artifactId>
+  <version>${version}</version>
+              
+  <packaging>jar</packaging>
+              
+  <name>FMPP</name>
+  <description>
+    General-purpose text file preprocessor tool that uses FreeMarker templates.
+  </description>
+  <url>http://fmpp.sourceforge.net</url>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://fmpp.sourceforge.net/license.html</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:freemarker/fmpp.git</connection>
+    <developerConnection>scm:git:git@github.com:freemarker/fmpp.git</developerConnection>
+    <url>git@github.com:freemarker/fmpp.git</url>
+  </scm>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>${dependency.freemarker.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <version>${dependency.bsh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+      <version>${dependency.xmlResolver.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.devlib.schmidt</groupId>
+        <artifactId>imageinfo</artifactId>
+        <version>${dependency.imageinfo.version}</version>
+    </dependency>
+  </dependencies>
+</project>
+]]></echo>
+    </target>
+    
+    <target name="maven-dist" depends="maven-pom" description="Releases the already built distro to a Maven repository">
         <jar destfile="build/maven-source-attachment.jar">
-            <fileset dir="src/main/java" />
-            <fileset dir="src/main/resources" />
+            <fileset dir="${dist.dir}/src/main/java" />
+            <fileset dir="${dist.dir}/src/main/resources" />
         </jar>
-   
-        <artifact:install-provider artifactId="wagon-ssh" version="1.0-beta-2"/>
-   
-        <input
-             validargs="y,n"
-             addproperty="mavenUpload.answer"
-        ><!--
-            -->You are about uploading ${distFileNameBase}/lib/fmpp.jar <!--
-            -->into the Maven central repostiry sync. directory. <!--
-            -->Be sure that's the final (released) variation there, <!--
-            -->and that the version number is correct. <!--
-            -->Proceed? <!--
-        --></input>
+
+        <jar destfile="build/maven-javadoc-attachment.jar">
+            <fileset dir="${dist.dir}/docs/api" />
+        </jar>
+
+        <property name="maven-server-id" value="ossrh" />
+        <property name="maven-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+        <!--
+        Don't deploy to public snapshot repositories here!
+        It isn't backward compatible as version ranges will pick them up.
+        -->
+        
+        <input validargs="y,n" addproperty="mavenUpload.answer">
+  You are about uploading
+  ${dist.dir}/lib/fmpp.jar
+  and its attachments to this Maven repository:
+  ${maven-repository-url}
+  with Maven artifact version number ${version}.
+  Note that it's assumed that you have run `ant dist` just before this.
+  Proceed? </input>
         <condition property="mavenUpload.yes">
             <equals arg1="y" arg2="${mavenUpload.answer}"/>
         </condition>
         <fail unless="mavenUpload.yes" message="Task aborted by user." />
-   
-        <input
-               message="Enter your SourceForge.net user name: "
-               addproperty="mavenUpload.user"
-       />
-        <input
-               message="Enter your SourceForge.net password (WILL BE DISPLAYED AS YOU TYPE IT!): "
-               addproperty="mavenUpload.password"
-       />
-   
-        <artifact:deploy file="${distFileNameBase}/lib/fmpp.jar">
-            <remoteRepository url="sftp://web.sourceforge.net/home/groups/f/fm/fmpp/htdocs/maven2">
-                <authentication
-                      username="${mavenUpload.user},fmpp"
-                      password="${mavenUpload.password}"
-               />
-            </remoteRepository>
-            <pom file="build/pom.xml" />
-            <attach file="build/maven-source-attachment.jar" classifier="sources" />
-        </artifact:deploy>
         
-        <echo>**********************************************</echo>
-        <echo>CLEAR THE SCREEN, NOW! Your password is on it!</echo>
-        <echo>**********************************************</echo>
+        <!-- Sign and deploy the main artifact -->
+        <exec executable="${mvnCommand}">
+            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+            <arg value="-Durl=${maven-repository-url}" />
+            <arg value="-DrepositoryId=${maven-server-id}" />
+            <arg value="-DpomFile=build/pom.xml" />
+            <arg value="-Dfile=${dist.dir}/lib/fmpp.jar" />
+            <arg value="-Pgpg" />
+        </exec>
+
+        <!-- Sign and deploy the sources artifact -->
+        <exec executable="${mvnCommand}">
+            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+            <arg value="-Durl=${maven-repository-url}" />
+            <arg value="-DrepositoryId=${maven-server-id}" />
+            <arg value="-DpomFile=build/pom.xml" />
+            <arg value="-Dfile=build/maven-source-attachment.jar" />
+            <arg value="-Dclassifier=sources" />
+            <arg value="-Pgpg" />
+        </exec>
+
+        <!-- Sign and deploy the javadoc artifact -->
+        <exec executable="${mvnCommand}">
+            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+            <arg value="-Durl=${maven-repository-url}" />
+            <arg value="-DrepositoryId=${maven-server-id}" />
+            <arg value="-DpomFile=build/pom.xml" />
+            <arg value="-Dfile=build/maven-javadoc-attachment.jar" />
+            <arg value="-Dclassifier=javadoc" />
+            <arg value="-Pgpg" />
+        </exec>
+        
+        <echo>*****************************************************************</echo>
+        <echo>Check the above lines for any Maven errors!</echo>
+        <echo>Now you have to release the staged repo on</echo>
+        <echo>https://oss.sonatype.org/.</echo>
+        <echo>*****************************************************************</echo>
     </target>
 
     <target name="install"
