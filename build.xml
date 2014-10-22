@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project basedir="." default="build" name="fmpp" xmlns:b="http://fmpp.sourceforge.org/build">
+<project basedir="." default="jar" name="fmpp" xmlns:b="http://fmpp.sourceforge.org/build">
+    <!-- You have to keep these up-to-date manually: -->
     <property file="src/main/resources/fmpp/version.properties" />
-    <property name="freemarkerVersion" value="2.3.21" />
     <property file="build.properties" />
 
     <property name="bootclasspath.path" value="${sun.boot.class.path}" />
-    <!-- Checking the correctness of the boot.classpath: -->
     <available classpath="${bootclasspath.path}"
         classname="java.lang.Object" ignoresystemclasses="true" 
         property="bootclasspath.correct" />
@@ -16,10 +15,6 @@
     
     <available property="atLeastJDK8" classname="java.util.function.Predicate"/>
     
-    <property name="freemarkerReleases.path" value="[freemarkerReleases.path wasn't set!]" />
-    <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${freemarkerVersion}/documentation/_html" />
-    <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
-
     <path id="classpath.path">
         <pathelement path="lib/freemarker.jar" />
         <pathelement path="lib/bsh.jar" />
@@ -34,8 +29,12 @@
     </tstamp>
     <filter token="VERSION" value="${version}" />
     <filter token="TIMESTAMP" value="${timeStamp}" />
+
+    <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${dependency.freemarker.version}/documentation/_html" />
+    <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
+    <property name="distFileNameBase" value="build/dist/fmpp_${version}" />
     
-    <target name="build" description="Incremental build all (this is the default)" depends="jar, docs" />
+    <target name="all" description="Build fmpp.jar and the documentation" depends="jar, docs" />
 
     <target name="jar" depends="compile" description="Re-build fmpp.jar">
         <mkdir dir="lib" />
@@ -113,7 +112,7 @@
     <target name="docs.preFMPP" depends="jar, javadoc, docs.examples, docs.freemarker" />
     
     <target name="docs.examples">
-        <copy todir="build/docs/examples">
+        <copy todir="build/docs/examples" includeEmptyDirs="true">
             <fileset dir="src/docs/examples">
                 <exclude name="*/out/" />
             </fileset>
@@ -134,7 +133,9 @@
     </target>
 
     <target name="docs.freemarker.unlessAvailable" unless="freemarkerDocs.available">
-        <echo>WARNING! ${freemarkerDocs.path} is not available. For more information please read the BUILD.txt.</echo>
+        <fail unless="freemarkerReleases.path">freemarkerReleases.path wasn't set; check build.properties</fail>
+        <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
+        <fail>FreeMarker documentation wasn't found here: ${freemarkerDocs.path}</fail>
     </target>
     
     <target name="_confirm">
@@ -176,10 +177,14 @@
     
     <!--
       DO NOT EDIT: This was copied from FreeMarker's build.xml. If you fix anything in it,
-      please do it there, then copy it back here.
+      please do it there, then copy it back here. EXCEPT that the file property value is
+      different here.
     -->
     <target name="_fixJDK8JavadocCSS" depends="_rawJavadoc" if="atLeastJDK8">
-        <property name="file" value="build/api/stylesheet.css" />
+        <property name="file" value="build/docs/api/stylesheet.css" />
+        
+        <available file="${file}" property="stylesheet.available"/>
+        <fail unless="stylesheet.available">CSS file not found: ${file}</fail>
         <echo>Fixing JDK 8 CSS in ${file}</echo>
         
         <!-- Tell that it's modified: -->
@@ -238,56 +243,59 @@
     </target>
     
     <target name="dist"
-            description="Build the distribution: build/dist/fmpp_${version}.tar.gz"
-            depends="build">
-        <mkdir dir="build/dist/fmpp_${version}" />
-        <copy todir="build/dist/fmpp_${version}" includeEmptyDirs="no">
+            description="Build the distribution archives"
+            depends="all">
+        <mkdir dir="${distFileNameBase}" />
+        <copy todir="${distFileNameBase}">
             <fileset dir=".">
                 <exclude name="**/.*" />
                 <exclude name="**/.*/" />
                 <exclude name="build/" />
                 <exclude name="build.properties" />
+                <exclude name="**/.*/" />
                 <exclude name="README.txt" />
             </fileset>
+        </copy>
+        <copy todir="${distFileNameBase}" includeEmptyDirs="true">
             <fileset dir="build" includes="docs/" />
         </copy>
-        <copy file="README.txt" todir="build/dist/fmpp_${version}" filtering="true" />
+        <copy file="README.txt" todir="${distFileNameBase}" filtering="true" />
 
-        <delete file="build/dist/fmpp_${version}.tar.gz" />
-        <tar tarfile="build/dist/fmpp_${version}.tar" longfile="gnu">
-            <tarfileset dir="build/dist/fmpp_${version}" mode="755" prefix="fmpp_${version}">
+        <delete file="${distFileNameBase}.tar.gz" />
+        <tar tarfile="${distFileNameBase}.tar" longfile="gnu">
+            <tarfileset dir="${distFileNameBase}" mode="755" prefix="fmpp_${version}">
                 <include name="bin/**" />
             </tarfileset>
-            <tarfileset dir="build/dist/fmpp_${version}" prefix="fmpp_${version}">
+            <tarfileset dir="${distFileNameBase}" prefix="fmpp_${version}">
                 <exclude name="bin/" />
             </tarfileset>
         </tar>
-        <gzip src="build/dist/fmpp_${version}.tar" zipfile="build/dist/fmpp_${version}.tar.gz" />
-        <delete file="build/dist/fmpp_${version}.tar" />
+        <gzip src="${distFileNameBase}.tar" zipfile="${distFileNameBase}.tar.gz" />
+        <delete file="${distFileNameBase}.tar" />
         
-        <delete file="build/dist/fmpp_${version}.zip" />
-        <zip destfile="build/dist/fmpp_${version}.zip" encoding="US-ASCII" whenempty="fail">
-            <zipfileset dir="build/dist/fmpp_${version}" filemode="755" prefix="fmpp_${version}">
+        <delete file="${distFileNameBase}.zip" />
+        <zip destfile="${distFileNameBase}.zip" encoding="US-ASCII" whenempty="fail">
+            <zipfileset dir="${distFileNameBase}" filemode="755" prefix="fmpp_${version}">
                 <include name="bin/**" />
             </zipfileset>
-            <zipfileset dir="build/dist/fmpp_${version}" prefix="fmpp_${version}">
+            <zipfileset dir="${distFileNameBase}" prefix="fmpp_${version}">
                 <exclude name="bin/" />
             </zipfileset>
         </zip>
     </target>
     
     <target name="site" depends="docsOnline"
-            description="Build the WWW site -- requires build/dist/fmpp_${version}.tar.gz">
-        <mkdir dir="build/dist/site_${version}" />
-        <copy todir="build/dist/site_${version}">
+            description="Build the WWW site -- requires ${distFileNameBase}.tar.gz">
+        <mkdir dir="build/site/site_${version}" />
+        <copy todir="build/site/site_${version}">
             <fileset dir="build/docs">
                 <exclude name="examples/" />
             </fileset>
         </copy>
         <!-- Create a tar.gz for quicker uploading -->
-        <tar tarfile="build/dist/site.tar" basedir="build/dist/site_${version}" />
-        <gzip src="build/dist/site.tar" zipfile="build/dist/site.tar.gz" />
-        <delete file="build/dist/site.tar" />
+        <tar tarfile="build/site/site.tar" basedir="build/site/site_${version}" />
+        <gzip src="build/site/site.tar" zipfile="build/site/site.tar.gz" />
+        <delete file="build/site/site.tar" />
     </target>
 
     <target name="test" depends="jar" description="Run test suite">
@@ -345,6 +353,11 @@
             this to work. Get it here: http://maven.apache.org/download.html
     -->
     <target name="maven-upload" xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+        <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
+        <fail unless="dependency.bsh.version">dependency.bsh.version wasn't set; check build.properties</fail>
+        <fail unless="dependency.xmlResolver.version">dependency.xmlResolver.version wasn't set; check build.properties</fail>
+        <fail unless="dependency.imageinfo.version">dependency.imageinfo.version wasn't set; check build.properties</fail>
+        
         <echo file="build/pom.xml"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
             <project xmlns="http://maven.apache.org/POM/4.0.0"
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -373,22 +386,22 @@
                 <dependency>
                   <groupId>org.freemarker</groupId>
                   <artifactId>freemarker</artifactId>
-                  <version>${freemarkerVersion}</version>
+                  <version>${dependency.freemarker.version}</version>
                 </dependency>
                 <dependency>
                   <groupId>org.beanshell</groupId>
                   <artifactId>bsh</artifactId>
-                  <version>2.0b4</version>
+                  <version>${dependency.bsh.version}</version>
                 </dependency>
                 <dependency>
                   <groupId>xml-resolver</groupId>
                   <artifactId>xml-resolver</artifactId>
-                  <version>1.2</version>
+                  <version>${dependency.xmlResolver.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.devlib.schmidt</groupId>
                     <artifactId>imageinfo</artifactId>
-                    <version>1.9</version>
+                    <version>${dependency.imageinfo.version}</version>
                 </dependency>
               </dependencies>
             </project>
@@ -405,7 +418,7 @@
              validargs="y,n"
              addproperty="mavenUpload.answer"
         ><!--
-            -->You are about uploading build/dist/fmpp_${version}/lib/fmpp.jar <!--
+            -->You are about uploading ${distFileNameBase}/lib/fmpp.jar <!--
             -->into the Maven central repostiry sync. directory. <!--
             -->Be sure that's the final (released) variation there, <!--
             -->and that the version number is correct. <!--
@@ -425,7 +438,7 @@
                addproperty="mavenUpload.password"
        />
    
-        <artifact:deploy file="build/dist/fmpp_${version}/lib/fmpp.jar">
+        <artifact:deploy file="${distFileNameBase}/lib/fmpp.jar">
             <remoteRepository url="sftp://web.sourceforge.net/home/groups/f/fm/fmpp/htdocs/maven2">
                 <authentication
                       username="${mavenUpload.user},fmpp"
@@ -441,30 +454,6 @@
         <echo>**********************************************</echo>
     </target>
 
-    <target name="qinstall"
-            description='Same as "install", but assumes "y" for all questions.'>
-        <antcall target="_install_jar_doit">
-            <param name="jarName" value="fmpp.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-        <antcall target="_install_jar_doit">
-            <param name="jarName" value="freemarker.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-        <antcall target="_install_jar_doit">
-            <param name="jarName" value="bsh.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-        <antcall target="_install_jar_doit">
-            <param name="jarName" value="resolver.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-        <antcall target="_install_jar_doit">
-            <param name="jarName" value="imageinfo.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-    </target>
-
     <target name="install"
             description="Copy the required jar-s into the Ant lib directory.">
         <fail unless="env.ANT_HOME" message="Environment variable ANT_HOME is not set, so I don't know where to copy the .jar-s." />
@@ -472,14 +461,11 @@
         <input validargs="y,n" addproperty="_install_answer"><!--
             -->This will copy the .jar files required for FMPP ${version} from the <!--
             -->${basedir}/lib directory into the ${env.ANT_HOME}/lib directory. <!--
-            -->You will be prompted if a .jar file has to be overwritten (except for fmpp.jar). <!--
-            -->(If you don't want confimations, use the agressive overwriter "ant qinstall".) <!--
             -->Note that if the same java packages <!--
-            -->are already installed, but with different file names as in the FMPP lib <!--
-            -->directory, (as freemarker-2.2.5.jar instead of freemarker.jar), then it is <!--
-            -->indeterminable if the newly installed .jar-s will be visible or the old .jar-s, <!--
-            -->so you have to delete the old .jar-s manually. <!--
-            -->Do you want to continute? <!--
+            -->are already installed, but with different jar file names as in the FMPP lib <!--
+            -->directory (like freemarker-2.3.21.jar instead of freemarker.jar), then it's <!--
+            -->indeterminable if the newly installed or old classes will be visible, <!--
+            -->so you must delete the old .jar-s manually. Do you want to continue? <!--
         --></input>
         <condition property="_install_abort">
             <equals arg1="n" arg2="${_install_answer}"/>
@@ -501,6 +487,10 @@
 
         <antcall target="_install_jar">
             <param name="jarName" value="resolver.jar" />
+        </antcall>
+        
+        <antcall target="_install_jar">
+            <param name="jarName" value="imageinfo.jar" />
         </antcall>
     </target>
 

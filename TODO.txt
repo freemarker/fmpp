@@ -17,9 +17,7 @@
 *************************************************************************
 
 Misc:
- . [!!!] Check dist output (esp. Manual and API links)
  . [!!!] Maven dist to Sonatype like in FM
- . [!!!] Try if deploy-to-ant still works
  . [!!!] Before release:
    . Increase version number
    . Find reference to Java 1.2 and Oro in docs

@@ -1,5 +1,5 @@
-FMPP - FreeMarker based PreProcessor
-====================================
+FMPP - FreeMarker-based file PreProcessor
+=========================================
 
 This is the README.txt file comes with the FMPP @VERSION@
 distribution.
@@ -13,10 +13,10 @@ What is FMPP?
 -------------
 
 FMPP is a general-purpose text file preprocessor tool that uses
-FreeMarker templates. It is particularly designed for HTML preprocessor,
+FreeMarker templates. It is particularly designed for HTML preprocessing,
 for the generation of complete (static) home-pages: directory structure
 that contains HTML-s, image files, etc. But of course it can be used to
-generate source code or whatever text files. FMPP is extendable with
+generate source code or whatever text files. FMPP is extendible with
 Java classes to pull data from any data sources (as a database) and
 embed the data into the generated files.
 
