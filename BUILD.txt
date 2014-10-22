@@ -1,3 +1,6 @@
+To build FMPP, you will need JDK (Java Development Kit) and Apache Ant to
+be installed.
+
 This text describes how to (re)build FMPP and related files.
 
 To build lib/fmpp.jar (incremental building): `ant`

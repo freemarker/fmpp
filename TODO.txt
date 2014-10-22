@@ -17,7 +17,6 @@
 *************************************************************************
 
 Misc:
- . [!!!] Find reference to Java 1.2 and Oro in docs
  . [!!!] Before release:
    . Increase version number
    . Re-run test on Java 1.4
