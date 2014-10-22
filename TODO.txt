@@ -17,12 +17,7 @@
 *************************************************************************
 
 Misc:
- . [!!!] Ant script doesn't fail on failed test suite:
-    [java] - pathpattern3: OK
-    [java] Java Result: 1
-    BUILD SUCCESSFUL
- . [!!!] JavaDoc like in FM
- . [!!!] Check dist output
+ . [!!!] Check dist output (esp. Manual and API links)
  . [!!!] Maven dist to Sonatype like in FM
  . [!!!] Try if deploy-to-ant still works
  . [!!!] Before release:

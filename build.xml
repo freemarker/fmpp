@@ -13,6 +13,8 @@
         property="bootclasspath.correct" />
 
     <property name="ant.jar.path" value="${env.ANT_HOME}/lib/ant.jar" />
+    
+    <available property="atLeastJDK8" classname="java.util.function.Predicate"/>
 
     <property name="freemarker.lib" value="lib/freemarker.jar" />
     <property name="bsh.lib" value="lib/bsh.jar" />
@@ -136,22 +138,94 @@
         <echo>WARNING! src/docs/freemarker is not available. For more information please read the BUILD.txt.</echo>
     </target>
 
-    <target name="javadoc" depends="init" description="Build the JavaDoc API documentation">
-        <mkdir dir="docs/api" />
+    <target name="javadoc" depends="_rawJavadoc, _fixJDK8JavadocCSS" description="Build the JavaDocs" />
+    
+    <target name="_rawJavadoc">
+        <mkdir dir="build/api" />
+        <delete includeEmptyDirs="yes">
+            <fileset dir="build/api" includes="**/*" />
+        </delete>
         <javadoc
-                destdir="docs/api"
-                doctitle="FMPP ${version} API"
-                packagenames="fmpp.*"
-                excludepackagenames="fmpp.test"
                 sourcepath="src/main/java"
-                overview="src/main/java/fmpp/overview.html"
+                destdir="build/api"
+                doctitle="FMPP ${version} API"
                 windowtitle="FMPP ${version} API"
+                overview="src/main/java/fmpp/overview.html"
                 classpathref="classpath.path"
-                version="false"
-                author="false"
+                use="true"
+                charset="UTF-8"
+                docencoding="UTF-8"
+                locale="en_US"
+                failonerror="true"
+        >
+            <link href="http://docs.oracle.com/javase/8/docs/api/"/>
+            <link href="http://freemarker.org/docs/api/"/>
+        </javadoc>
+    </target>
+    
+    <!--
+      DO NOT EDIT: This was copied from FreeMarker's build.xml. If you fix anything in it,
+      please do it there, then copy it back here.
+    -->
+    <target name="_fixJDK8JavadocCSS" depends="_rawJavadoc" if="atLeastJDK8">
+        <property name="file" value="build/api/stylesheet.css" />
+        <echo>Fixing JDK 8 CSS in ${file}</echo>
+        
+        <!-- Tell that it's modified: -->
+        <replaceregexp
+            file="${file}" flags="gs" encoding="utf-8"
+            match="/\* (Javadoc style sheet) \*/" replace="/\* \1 - JDK 8 usability fix regexp substitutions applied \*/"
+        />
+        
+        <!-- Font family fixes: -->
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="['&quot;]DejaVu Sans['&quot;]" replace="Arial"
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="['&quot;]DejaVu Sans Mono['&quot;]" replace="'Courier New'"
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="['&quot;]DejaVu Serif['&quot;]" replace="Arial"
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="(?&lt;=[\s,:])serif\b" replace="sans-serif"
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="(?&lt;=[\s,:])Georgia,\s*" replace=""
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="['&quot;]Times New Roman['&quot;],\s*" replace=""
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="(?&lt;=[\s,:])Times,\s*" replace=""
+        />
+        <replaceregexp
+            file="${file}" flags="gsi" encoding="utf-8"
+            match="(?&lt;=[\s,:])Arial\s*,\s*Arial\b" replace="Arial"
+        />
+        
+        <!-- "Parameters:", "Returns:", "Throws:", "Since:", "See also:" etc. fixes: -->
+        <property name="ddSelectorStart" value="(?:\.contentContainer\s+\.(?:details|description)|\.serializedFormContainer)\s+dl\s+dd\b.*?\{[^\}]*\b" />
+        <property name="ddPropertyEnd" value="\b.+?;" />
+        <!-- - Put back description (dd) indentation: -->
+        <replaceregexp
+            file="${file}" flags="gs" encoding="utf-8"
+            match="(${ddSelectorStart})margin${ddPropertyEnd}" replace="\1margin: 5px 0 10px 20px;"
+        />
+        <!-- - No monospace font for the description (dd) part: -->
+        <replaceregexp
+            file="${file}" flags="gs" encoding="utf-8"
+            match="(${ddSelectorStart})font-family${ddPropertyEnd}" replace="\1"
         />
     </target>
-
+    
     <target name="fmppgdoc" depends="init"
             description="Re-build FMPP generated parts of docs, for offline reading">
         <property name="online" value="false" />

@@ -56,25 +56,25 @@ import freemarker.template.TemplateNodeModel;
  * rather use a {@link fmpp.setting.Settings} object instead of directly using
  * this class.
  * 
- * <p><b><code>fmpp.Engine</code> vs <code>fmpp.setting.Settings</code></b>:
- * The design of the <code>Engine</code> object API is driven by the internal
+ * <p><b>{@link Engine fmpp.Engine} vs {@link fmpp.setting.Settings}</b>:
+ * The design of the {@link Engine} object API is driven by the internal
  * architecture of FMPP system. It doesn't consider front-ends, doesn't know
- * configuration files or similar high-level stuff. <code>Settings</code>
+ * configuration files or similar high-level stuff. {@code Settings}
  * wraps the Engine object, and implements end-user (front-end) centric
  * concepts, as the settings and configuration files described in the FMPP
- * Manual. The API of <code>Engine</code> is more natural and convenient
- * than the API of a <code>Map</code>-like object as a
- * <code>Settings</code> object. But <code>Settings</code> are far easier
+ * Manual. The API of {@link Engine} is more natural and convenient
+ * than the API of a {@code Map}-like object as a
+ * {@code Settings} object. But {@code Settings} are far easier
  * to use if you want FMPP behave as described in the FMPP Manual from the
  * viewpoint of end-user. In principle, if FMPP is used embedded in a way
  * that the end-user will never face FMPP (doesn't use the FMPP Manual,
- * etc.), using the <code>Engine</code> object directly can be a good
+ * etc.), using the {@link Engine} object directly can be a good
  * solution. But, since the Java programmers get know FMPP through the
  * higher-level concepts (they try it with the command-line tool, etc.), I
- * say, just use <code>Settings</code> always. The resource usage overhead
- * is negligible, and all capabilities of the <code>Engine</code> will be
+ * say, just use {@code Settings} always. The resource usage overhead
+ * is negligible, and all capabilities of the {@link Engine} will be
  * available, plus some extra features (as configuration files). So basically,
- * the introduction of <code>Settings</code> has degraded <code>Engine</code> to
+ * the introduction of {@code Settings} has degraded {@link Engine} to
  * an internally used object.
  * 
  * <p><b>Engine parameters:</b>
@@ -134,17 +134,17 @@ public class Engine {
     public static final int SKIP_ALL = 2;
     
     /**
-     * A commonly used reserved parameter value: <code>"source"</code>.
+     * A commonly used reserved parameter value: {@code "source"}.
      */ 
     public static final String PARAMETER_VALUE_SOURCE = "source";
 
     /**
-     * A commonly used reserved parameter value: <code>"source"</code>.
+     * A commonly used reserved parameter value: {@code "source"}.
      */ 
     public static final String PARAMETER_VALUE_OUTPUT = "output";
 
     /**
-     * A commonly used reserved parameter value: <code>"host"</code>.
+     * A commonly used reserved parameter value: {@code "host"}.
      */ 
     public static final String PARAMETER_VALUE_HOST = "host";
 
@@ -245,14 +245,14 @@ public class Engine {
     
     /**
      * Creates a new FMPP engine instance.
-     * Use the setter methods (as <code>setProgressListener</code>) to configure
+     * Use the setter methods (as {@code setProgressListener}) to configure
      * the new instance.  
      * 
      * @param beansWrapper the FreeMarker beans-wrapper that this instance
-     *    will use. Just use <code>null</code> if you don't know what's this.
+     *    will use. Just use {@code null} if you don't know what's this.
      *    If you do know what's this, note that FMPP by default (when this
-     *    parameter is <code>null</code>) uses a <code>BeansWrapper</code> with
-     *    <code>simpleMapWrapper</code> set to <code>true</code>.
+     *    parameter is {@code null}) uses a {@code BeansWrapper} with
+     *    {@code simpleMapWrapper} set to {@code true}.
      */
     public Engine(BeansWrapper beansWrapper) {
         if (beansWrapper == null) {
@@ -294,9 +294,9 @@ public class Engine {
      *      are re-sorted based on the associated turns (the original order
      *      of files is kept inside turns).
      *    
-     * @throws ProcessingException if <code>Engine.process</code> has
+     * @throws ProcessingException if {@code Engine.process} has
      *     thrown any exception. The message of this exception holds nothing
-     *     interesting (just a static text). Call its <code>getCause()</code>
+     *     interesting (just a static text). Call its {@code getCause()}
      *     method to get the exception that caused the termination. Note that
      *     all (so even non-checked exceptions) thrown be the engine are
      *     catched and wrapped by this exeption.
@@ -407,12 +407,12 @@ public class Engine {
      * @param src the source file (not directory). Can't be null.
      * @param out the output file (not directory). Can't be null.
      * 
-     * @throws ProcessingException if <code>Engine.process</code> has
+     * @throws ProcessingException if {@code Engine.process} has
      *     thrown any exception. The message of this exception holds nothing
-     *     interesting (just a static text). Call its <code>getCause()</code>
+     *     interesting (just a static text). Call its {@code getCause()}
      *     method to get the exception that caused the termination. Note that
      *     all (so even non-checked exceptions) thrown be the engine are
-     *     catched and wrapped by this exeption.
+     *     catched and wrapped by this exception.
      */
     public void process(File src, File out)
             throws ProcessingException {
@@ -982,11 +982,11 @@ public class Engine {
     /**
      * Returns the output root directory.
      * This can be null. However, it is never null while a processing session is
-     * runing, since the output root must be specified for successfully start a
+     * running, since the output root must be specified for successfully start a
      * processing session.
      * 
-     * <p>The returned <code>File</code> is always a canonical
-     * <code>File</code>.</p> 
+     * <p>The returned {@code File} is always a canonical
+     * {@code File}.</p> 
      */
     public File getOutputRoot() {
         return outRoot;
@@ -1010,8 +1010,8 @@ public class Engine {
      * runing, since the source root must be specified for successfully start a
      * processing session.
      * 
-     * <p>The returned <code>File</code> is always a canonical
-     * <code>File</code>.</p> 
+     * <p>The returned {@code File} is always a canonical
+     * {@code File}.</p> 
      */
     public File getSourceRoot() {
         return srcRoot;
@@ -1039,8 +1039,8 @@ public class Engine {
      * the source root must be specified for successfully start a processing
      * session.
      * 
-     * <p>The returned <code>File</code> is always a canonical
-     * <code>File</code>.</p> 
+     * <p>The returned {@code File} is always a canonical
+     * {@code File}.</p> 
      */
     public File getDataRoot() {
         if (dataRoot == null) {
@@ -1052,7 +1052,7 @@ public class Engine {
 
     /**
      * Sets the root directory of data files.
-     * If it is <code>"source"</code> or <code>null</code>, then the source
+     * If it is {@code "source"} or {@code null}, then the source
      * directory will be used.
      */
     public void setDataRoot(File dataRoot)
@@ -1068,31 +1068,31 @@ public class Engine {
     /**
      * Adds a FreeMarker link. FreeMarker links are fake files/directories
      * visible in the source root directory. They are visible for the predefined
-     * FreeMarker directives only (thus, not for <code>pp</code> variables).
+     * FreeMarker directives only (thus, not for {@code pp} variables).
      * A FreeMarker link acts as an alias or hard-link to another file or
      * directory. This is a hack that allows you to
-     * <code>&lt;#include ...></code> or <code>&lt;#import ...></code> files
+     * {@code <#include ...>} or {@code <#import ...>} files
      * that are outside the source root directory.
      * 
      * <p>The link is visible as a file or directory in the source root
-     * directory with name <tt>@<i>name</i></tt>. For example, if the link name
-     * is <code>"inc"</code>, then it can be used as
-     * <tt>&lt;#include '/@inc/blah.ftl'></tt> (assuming the link points
-     * to a directory that contains file <tt>blah.ftl</tt>).
+     * directory with name {@code @}<i>{@code name}</i>. For example, if the link name
+     * is {@code "inc"}, then it can be used as
+     * {@code <#include '/@inc/blah.ftl'>} (assuming the link points
+     * to a directory that contains file {@code blah.ftl}).
      * 
      * <p>In the generic case, a FreeMarker link is associated with a list of
      * files/directories, not just with a single file/directory. For example,
-     * if <tt>inc</tt> is associated with <tt>/home/joe/inc1</tt> and
-     * <tt>/home/joe/inc2</tt> (in this order), then
-     * <tt>&lt;#include '/@inc/blah.ftl'></tt> will try to read
-     * <tt>/home/joe/inc1/blah.ftl</tt>, and if that file is missing,
-     * then <tt>/home/joe/inc2/blah.ftl</tt>. You can associate the name with
+     * if {@code inc} is associated with {@code /home/joe/inc1} and
+     * {@code /home/joe/inc2} (in this order), then
+     * {@code <#include '/@inc/blah.ftl'>} will try to read
+     * {@code /home/joe/inc1/blah.ftl}, and if that file is missing,
+     * then {@code /home/joe/inc2/blah.ftl}. You can associate the name with
      * multiple files/directories by calling this method with the same name for
      * multiple times. The earlier you have added a file/directory, the higher
      * its priority is. 
      * 
      * @param name the name of fake entry in the source root directory, minus
-     *     the <tt>@</tt> prefix. To prevent confusion, the name can't start
+     *     the {@code @} prefix. To prevent confusion, the name can't start
      *     with @.
      * @param fileOrDir the file or directory the link will point to. It can be
      *     a outside the source root directory.
@@ -1129,10 +1129,10 @@ public class Engine {
     /**
      * Returns the list of files associated with a FreeMarker link name.
      * 
-     * @param name the name of the link (do not use the <tt>@</tt> preifx)
+     * @param name the name of the link (do not use the {@code @} preifx)
      * 
      * @return the list of canonical files associated with this link, or
-     *     <code>null</code>, if no FreeMarker link with the given name exist.
+     *     {@code null}, if no FreeMarker link with the given name exist.
      */
     public List getFreemarkerLink(String name) {
         return (List) freemarkerLinks.get(name);
@@ -1243,14 +1243,14 @@ public class Engine {
     /**
      * Sets the encoding (charset) of textual source files.
      * Note that according to FreeMarker rules, this can be overridden in a
-     * template with <code>&lt#ftl encoding="..."></code>.
+     * template with {@code &lt;#ftl encoding="...">}.
      * 
      * <p>Initially the encoding is ISO-8859-1.
      * 
-     * @param encoding The encoding, or <code>"host"</code> if the default
-     *     encoding (<code>file.encoding</code> system property) of the host
-     *     machine should be used. <code>null</code> is the same as
-     *     <code>"host"</code>.
+     * @param encoding The encoding, or {@code "host"} if the default
+     *     encoding ({@code file.encoding} system property) of the host
+     *     machine should be used. {@code null} is the same as
+     *     {@code "host"}.
      */
     public void setSourceEncoding(String encoding) {
         checkParameterLock();
@@ -1263,8 +1263,8 @@ public class Engine {
     
     /**
      * Returns the source encoding used for the template files.
-     * This is not <code>null</code> or <code>"host"</code>; this is always
-     * a concrete encoding, such as <code>"UTF-8"</code>.
+     * This is not {@code null} or {@code "host"}; this is always
+     * a concrete encoding, such as {@code "UTF-8"}.
      */
     public String getSourceEncoding() {
         return fmCfg.getDefaultEncoding();
@@ -1273,7 +1273,7 @@ public class Engine {
     /**
      * Sets the locale (country, language).
      * 
-     * <p>Initially the locale is <code>en_US</code>.
+     * <p>Initially the locale is {@code en_US}.
      * 
      * @param locale The locale, or null if the default locale of the host
      *     machine should be used.
@@ -1290,7 +1290,7 @@ public class Engine {
     /**
      * Sets the locale (country, language).
      *
-     * <p>Initially the locale is <code>en_US</code>.
+     * <p>Initially the locale is {@code en_US}.
      *
      * @param locale The locale, or "host" if the default locale of the host
      *     machine should be used. Null is the same as "host".
@@ -1313,10 +1313,10 @@ public class Engine {
     }
 
     /**
-     * Sets if the <code>#</code> is required in FTL tags or not.
-     * In the old template syntax <code>#</code> was not required.
+     * Sets if the {@code #} is required in FTL tags or not.
+     * In the old template syntax {@code #} was not required.
      * The default and recommended value for this engine parameter is
-     * <code>false</code>.
+     * {@code false}.
      */    
     public void setOldTemplateSyntax(boolean oldSyntax) {
         checkParameterLock();
@@ -1331,7 +1331,7 @@ public class Engine {
     }
     
     /**
-     * Sets the <tt>tagSyntax</tt> setting of FreeMarker. 
+     * Sets the {@code tagSyntax} setting of FreeMarker. 
      * The recommendend value for new projects is
      * {@link Configuration#AUTO_DETECT_TAG_SYNTAX}, the defalt with
      * FreeMarker 2.3.x is  {@link Configuration#ANGLE_BRACKET_TAG_SYNTAX},
@@ -1352,12 +1352,12 @@ public class Engine {
     
     /**
      * Sets the encoding used for textural output (template generated files).
-     * By default it is <code>"source"</code>.
+     * By default it is {@code "source"}.
      *  
      * @param outputEncoding The name of encoding. If it is
-     *     <code>"source"</code>, then the encoding of the source (template
-     *     file) will be used for the output. <code>null</code> is the same as
-     *     <code>"source"</code>. If it is <code>"host"</code> then the
+     *     {@code "source"}, then the encoding of the source (template
+     *     file) will be used for the output. {@code null} is the same as
+     *     {@code "source"}. If it is {@code "host"} then the
      *     default encoding of the host machine will be used.
      */
     public void setOutputEncoding(String outputEncoding) {
@@ -1372,9 +1372,9 @@ public class Engine {
     }
     
     /**
-     * Retruns the output encoding used; It can be <code>"source"</code>
+     * Retruns the output encoding used; It can be {@code "source"}
      * (since that can't be resolved to a concrete charset), but never
-     * <code>null</code> or <code>"host"</code>. 
+     * {@code null} or {@code "host"}. 
      */
     public String getOutputEncoding() {
         return outputEncoding;
@@ -1382,12 +1382,12 @@ public class Engine {
 
     /**
      * Sets the charset used for URL escaping. By default it is
-     * <code>"output"</code>.
+     * {@code "output"}.
      *  
      * @param urlEscapingCharset The name of charset (encoding) that is used
-     *     for URL escaping. If it is <code>"output"</code>, then the encoding
-     *     of the output will be used. <code>null</code> is the same as
-     *     <code>"output"</code>. If it is <code>"host"</code> then the
+     *     for URL escaping. If it is {@code "output"}, then the encoding
+     *     of the output will be used. {@code null} is the same as
+     *     {@code "output"}. If it is {@code "host"} then the
      *     default encoding of the host machine will be used.
      */
     public void setUrlEscapingCharset(String urlEscapingCharset) {
@@ -1406,18 +1406,19 @@ public class Engine {
     }
     
     /**
-     * Retruns the output encoding used; It can be <code>"output"</code>
+     * Retruns the output encoding used; It can be {@code "output"}
      * (since that can't be resolved to a concrete charset), but never
-     * <code>null</code>. 
+     * {@code null}. 
      */
     public String getUrlEscapingCharset() {
         return urlEscapingCharset;
     }
 
     /**
-     * Sets the number format used to convert numbers to strings.
-     * This is a pattern as <code>java.text.DecimalFormat</code> defines,
-     * or the reserved values <code>"number"</code> or <code>"currency"</code>.
+     * Sets the number format used to convert numbers to strings, as defined
+     * by {@link Configuration#setNumberFormat(String)}.
+     * At least on FreeMarker 2.3.21, this is a pattern as {@link java.text.DecimalFormat} defines it,
+     * or the reserved values {@code "number"} or {@code "currency"}.
      */    
     public void setNumberFormat(String format) {
         checkParameterLock();
@@ -1434,10 +1435,8 @@ public class Engine {
     /**
      * Sets the format used to convert date values (year + month + day) to
      * strings.
-     * This is a pattern as <code>java.text.SimpleDateFormat</code> defines,
-     * or the reserved values <code>"short"</code> or <code>"medium"</code>
-     * or <code>"long"</code>.
-     * Please read the FreeMarker Manual for more information.
+     * See {@link Configuration#setDateFormat(String)} in the FreeMarker API
+     * for more information.
      * 
      * <p>The default is the format suggested by the underlying Java platform
      * implementation for the current locale.
@@ -1457,10 +1456,8 @@ public class Engine {
     /**
      * Sets the format used to convert time values (hour + minute + second
      * + millisecond) to strings.
-     * This is a pattern as <code>java.text.SimpleDateFormat</code> defines,
-     * or the reserved values <code>"short"</code> or <code>"medium"</code>
-     * or <code>"long"</code>.
-     * Please read the FreeMarker Manual for more information.
+     * See {@link Configuration#setTimeFormat(String)} in the FreeMarker API
+     * for more information.
      * 
      * <p>The default is the format suggested by the underlying Java platform
      * implementation for the current locale.
@@ -1480,11 +1477,8 @@ public class Engine {
     /**
      * Sets the format used to convert date-time values (year + month + day +
      * hour + minute + second + millisecond) to strings.
-     * This is a pattern as <code>java.text.SimpleDateFormat</code> defines,
-     * or the reserved values <code>"short"</code> or <code>"medium"</code>
-     * or <code>"long"</code>, or <code>"short_medium"</code>,
-     * <code>"short_long"</code> or <code>"medium_short"</code>, etc.
-     * Please read the FreeMarker Manual for more information.
+     * See {@link Configuration#setDateTimeFormat(String)} in the FreeMarker API
+     * for more information.
      * 
      * <p>The default is the format suggested by the underlying Java platform
      * implementation for the current locale.
@@ -1518,14 +1512,14 @@ public class Engine {
     }
 
     /**
-     * Adds a new entry to the end of path-pattern->processing-mode
+     * Adds a new entry to the end of path-pattern -&gt; processing-mode
      * mapping list.
      * @param pattern a path pattern as "*.txt" or
      *      "/docs/**<!-- -->/item_??.xml".
      *      You have to use slash (/) or backslash (\) or the platform specific
      *      separator to spearate directories.
      * @param pmode the mode in which you want to process the files. Use the
-     *      <CODE>PMODE_...</CODE> constants.
+     *      {@code PMODE_...} constants.
      */
     public void addModeChooser(
             String pattern, int pmode) {
@@ -1546,7 +1540,7 @@ public class Engine {
     }
     
     /**
-     * Adds a new entry to the end of path-pattern->header mapping list of
+     * Adds a new entry to the end of path-pattern -&gt; header mapping list of
      * layer 0.
      * 
      * @deprecated Use {@link #addHeaderChooser(int, String, String)} instead.
@@ -1557,7 +1551,7 @@ public class Engine {
     }
 
     /**
-     * Adds a new entry to the end of path-pattern->header mapping list of the
+     * Adds a new entry to the end of path-pattern -&gt; header mapping list of the
      * given layer. Layers are indexed from 0. The lower the layer index is,
      * the earlier the header occurs in the text.
      */ 
@@ -1567,7 +1561,7 @@ public class Engine {
     }
 
     /**
-     * Adds a new entry to the end of path-pattern->footer mapping list of
+     * Adds a new entry to the end of path-pattern -&gt; footer mapping list of
      * layer 0.
      * 
      * @deprecated Use {@link #addFooterChooser(int, String, String)} instead.
@@ -1578,7 +1572,7 @@ public class Engine {
     }
 
     /**
-     * Adds a new entry to the end of path-pattern->footer mapping list of the
+     * Adds a new entry to the end of path-pattern -&gt; footer mapping list of the
      * given layer. Layers are indexed from 0. The lower the layer index is,
      * the later the footer occurs in the text.
      */ 
@@ -1588,7 +1582,7 @@ public class Engine {
     }
 
     /**
-     * Adds a new entry to the end of path-pattern->turn-number mapping list.
+     * Adds a new entry to the end of path-pattern -&gt; turn-number mapping list.
      */
     public void addTurnChooser(String pattern, int turn) {
         checkParameterLock();
@@ -1598,8 +1592,8 @@ public class Engine {
     }
 
     /**
-     * Removes all processing mode choosers. This is the inital state after
-     * the instantiantion of <code>Engine</code> (i.e. no processing mode
+     * Removes all processing mode choosers. This is the initial state after
+     * the instantiation of {@link Engine} (i.e. no processing mode
      * choosers).
      */
     public void clearModeChoosers() {
@@ -1730,7 +1724,7 @@ public class Engine {
     }
 
     /**
-     * Adds an old-exension -> new-extension pair to the list of
+     * Adds an old-exension -&gt; new-extension pair to the list of
      * extension replacements.
      * If a source file name ends with the old extension, then it will
      * be replaced with the new extension in the output file name.
@@ -1778,8 +1772,8 @@ public class Engine {
     /**
      * Sets the {@link Engine} should automatically process the files and
      * directories inside a directory whose processing was asked through the
-     * public {@link Engine} API. Defaults to <code>true</code>. It is set to
-     * <code>false</code> by front-ends that explicitly specify the list of
+     * public {@link Engine} API. Defaults to {@code true}. It is set to
+     * {@code false} by front-ends that explicitly specify the list of
      * source files and source directories, rather than expecting the
      * {@link Engine} to discover them.
      */
@@ -1799,9 +1793,9 @@ public class Engine {
      * not work for templates that rename or drop the original output file
      * during the template execution.
      * 
-     * <p>The initial value of this engine parameter is <code>SKIP_NONE</code>.
+     * <p>The initial value of this engine parameter is {@code SKIP_NONE}.
      * 
-     * @param skipWhat a <code>SKIP_...</code> contant.
+     * @param skipWhat a {@code SKIP_...} contant.
      */
     public void setSkipUnchanged(int skipWhat) {
         checkParameterLock();
@@ -1815,16 +1809,17 @@ public class Engine {
     /**
      * Sets whether for source directories a corresponding output directory
      * will be created even if no file output went into it. Defaults to
-     * <code>false</code>.
+     * {@code false}.
      * 
      * <p>Notes:
      * <ul>
-     *    <li>Even if this is set to <tt>true</tt>, if
-     *        a directory contains an <tt>ignoredir.fmpp</tt> file, it will not
+     *    <li>Even if this is set to {@code true}, if
+     *        a directory contains an {@code ignoredir.fmpp} file, it will not
      *        create output directory.
-     *    <li>If the directory contains a file called <tt>createdir.fmpp</tt>,
+     *    <li>If the directory contains a file called {@code createdir.fmpp},
      *        the directory will be created even if this setting is
-     *        <tt>false</tt>.
+     *        {@code false}.
+     * </ul>
      */
     public void setAlwaysCreateDirectories(boolean enable) {
         checkParameterLock();
@@ -1837,9 +1832,10 @@ public class Engine {
 
     /**
      * Sets if the CVS files inside the source root directory should be
-     * ignoread or not. This engine parameter is initially true.
-     * <p>The CVS files are: <code>**<!-- -->/.cvsignore</code>,
-     * <code>**<!-- -->/CVS/**</code> and <code>**<!-- -->/.#*</code>
+     * ignored or not. This engine parameter is initially true.
+     * 
+     * <p>The CVS files are: {@code **}{@code /.cvsignore},
+     * {@code **}{@code /CVS/**} and {@code **}{@code /.#*}
      */
     public void setIgnoreCvsFiles(boolean ignoreCvsFiles) {
         checkParameterLock();
@@ -1852,8 +1848,9 @@ public class Engine {
 
     /**
      * Sets if the SVN files inside the source root directory should be
-     * ignoread or not. This engine parameter is initially true.
-     * <p>The SVN files are: <code>**<!-- -->/SVN/**</code>
+     * ignored or not. This engine parameter is initially true.
+     * 
+     * <p>The SVN files are: {@code **}{@code /SVN/**}
      */
     public void setIgnoreSvnFiles(boolean ignoreSvnFiles) {
         checkParameterLock();
@@ -1866,7 +1863,7 @@ public class Engine {
     
     /**
      * Set if well-known temporary files inside the source root directory should
-     * be ingored or not. For the list of well-known temporary file patterns,
+     * be ignored or not. For the list of well-known temporary file patterns,
      * read the FMPP Manual.
      */
     public void setIgnoreTemporaryFiles(
@@ -1881,7 +1878,7 @@ public class Engine {
     
     /**
      * Sets if which XPath engine should be used.
-     * @param xpathEngine one of the <code>XPATH_ENGINE_...</code> constants,
+     * @param xpathEngine one of the {@code XPATH_ENGINE_...} constants,
      * or a class name.
      */
     public void setXpathEngine(String xpathEngine) {
@@ -1896,12 +1893,12 @@ public class Engine {
     /**
      * Sets the XML entiry resolver used for reading XML documents.
      * 
-     * The default value is <code>null</code>.
+     * The default value is {@code null}.
      *   
      * @param xmlEntityResolver it must implement
-     *     <code>org.xml.sax.EntityResolver</code> (it is declared as
-     *     <code>Object</code> to prevent linkage errors when XML related
-     *     features are not used), or it must be  <code>null</code>.
+     *     {@link org.xml.sax.EntityResolver org.xml.sax.EntityResolver} (it was declared as
+     *     {@code Object} to prevent linkage errors when XML related
+     *     features are not used on pre-1.4 Java), or it must be  {@code null}.
      */
     public void setXmlEntityResolver(Object xmlEntityResolver)
             throws InstallationException {
@@ -1920,10 +1917,10 @@ public class Engine {
     
     /**
      * Gets the XML entiry resolver used for reading XML documents.
-     * @return <code>null</code> of no resolver is used, or an
-     *     <code>org.xml.sax.EntityResolver</code> (it is declared as
-     *     <code>Object</code> to prevent linkage errors when XML related
-     *     features are not used).
+     * @return {@code null} of no resolver is used, or an
+     *     {@link org.xml.sax.EntityResolver org.xml.sax.EntityResolver} (it was declared as
+     *     {@code Object} to prevent linkage errors when XML related
+     *     features are not used on pre-1.4 Java).
      */
     public Object getXmlEntiryResolver() {
         return xmlEntityResolver;
@@ -1931,7 +1928,7 @@ public class Engine {
     
     /**
      * Sets if XML documents should be validated when they are loaded.
-     * Defaults to <code>true</code>. 
+     * Defaults to {@code true}. 
      */
     public void setValidateXml(boolean validateXml) {
         checkParameterLock();
@@ -1986,7 +1983,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Byte</code> object.
+     * Convenience method for adding a {@link Byte} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, byte value) {
@@ -1995,7 +1992,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Short</code> object.
+     * Convenience method for adding a {@link Short} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, short value) {
@@ -2004,7 +2001,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Integer</code> object.
+     * Convenience method for adding a {@link Integer} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, int value) {
@@ -2013,7 +2010,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Long</code> object.
+     * Convenience method for adding a {@link Long} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, long value) {
@@ -2022,7 +2019,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Float</code> object.
+     * Convenience method for adding a {@link Float} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, float value) {
@@ -2031,7 +2028,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Double</code> object.
+     * Convenience method for adding a {@link Double} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, double value) {
@@ -2040,7 +2037,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Character</code> object.
+     * Convenience method for adding a {@link Character} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, char value) {
@@ -2049,7 +2046,7 @@ public class Engine {
     }
 
     /**
-     * Convenience method for adding a <code>Boolean</code> object.
+     * Convenience method for adding a {@link Boolean} object.
      * @see #addData(String, Object)
      */
     public void addData(String name, boolean value) {
@@ -2079,15 +2076,15 @@ public class Engine {
     
     /**
      * Gets the value of a variable. This method accesses the variables that
-     * are visible for all templates. It corresponds to setting <tt>data</tt>.
+     * are visible for all templates. It corresponds to setting {@code data}.
      * 
      * <p><em><b>Warning!</b> When the processing session is executing, you must
      * not modify the returned object.</em>
      * 
-     * @return <code>null</code> if no such variable exist.
+     * @return {@code null} if no such variable exist.
      * Values are returned exactly as they were added, that is, without
      * FreeMarker's wrapping (but note that some variables initially use
-     * FreeMarker <code>TemplateModel</code> types, such as variables created by
+     * FreeMarker {@link TemplateModel} types, such as variables created by
      * some of the data loaders).
      * 
      * @see #addData(String, Object)
@@ -2101,7 +2098,7 @@ public class Engine {
      * processing session executes. I does nothing if there is no variable
      * exists for the given name.
      * 
-     * @return the removed value, or <code>null</code> if there was no value
+     * @return the removed value, or {@code null} if there was no value
      *     stored for the given name.
      * 
      * @see #addData(String, Object)
@@ -2120,7 +2117,7 @@ public class Engine {
     /**
      * Adds a local data builder. The local data builder will be invoked
      * directly before the execution of templates (if the
-     * <code>pathPattern</code> matches the source file path). 
+     * {@code pathPattern} matches the source file path). 
      * 
      * @param layer the index of the layer, stating from 0. 0 is the layer with
      *     the highest priority.
@@ -2154,7 +2151,7 @@ public class Engine {
     // Misc public
 
     /**
-     * Converts an <code>ProgressListener.EVENT_...</code> constant to English
+     * Converts an {@code ProgressListener.EVENT_...} constant to English
      * text.
      */
     public static String getProgressListenerEventName(int event) {
@@ -2178,7 +2175,7 @@ public class Engine {
     }
 
     /**
-     * Wraps any object as <code>TemplateModel</code>. 
+     * Wraps any object as {@link TemplateModel}. 
      */
     public TemplateModel wrap(Object obj) throws TemplateModelException {
         return fmCfg.getObjectWrapper().wrap(obj);
@@ -2215,7 +2212,7 @@ public class Engine {
      * Adds/replaces an engine attribute.
      * Attributes are arbitrary key-value pairs that are associated with the
      * {@link Engine} object. FMPP reserves all keys starting with
-     * <tt>fmpp.</tt> for its own use. Attributes are not understood by the
+     * {@code fmpp.} for its own use. Attributes are not understood by the
      * {@link Engine}, but by data loaders, local data builders, and tools that
      * create them.
      * 
@@ -2224,13 +2221,13 @@ public class Engine {
      * 
      * @param name the name of the attribute. To prevent name
      *     clashes, it should follow the naming convention of Java classes, e.g.
-     *     <code>"com.example.someproject.something"</code>.
+     *     {@code "com.example.someproject.something"}.
      * @param value the value of the attribute. If it implements
      *     {@link ProgressListener}, then it will receive notifications about
      *     the events of the {@link Engine}. If attribute(s) with that value is
      *     (are) removed, then the value object doesn't receive more
      *     notifications. 
-     * @return The  previous value of the attribute, or <code>null</code> if
+     * @return The  previous value of the attribute, or {@code null} if
      *     there was no attribute with the given name.
      */
     public Object setAttribute(String name, Object value) {
@@ -2251,7 +2248,7 @@ public class Engine {
      *
      * @see #setAttribute(String, Object)
      *  
-     * @return <code>null</code> if no attribute exists with the given name.
+     * @return {@code null} if no attribute exists with the given name.
      */ 
     public Object getAttribute(String name) {
         return attributes.get(name);
@@ -2262,7 +2259,7 @@ public class Engine {
      * 
      * @see #setAttribute(String, Object)
      *  
-     * @return The value of the removed attribute or <code>null</code> if there
+     * @return The value of the removed attribute or {@code null} if there
      *     was no attribute with the given name.
      */
     public Object removeAttribute(String name) {
@@ -2287,7 +2284,7 @@ public class Engine {
 
     /**
      * Returns the FMPP version number string. FMPP version number string
-     * follows the <tt>major.minor.sub</tt> or <tt>major.minor.sub.nightly</tt>
+     * follows the {@code major.minor.sub} or {@code major.minor.sub.nightly}
      * format, where each part (separated by dots) is an non-negative integer
      * number. 
      */
@@ -2337,10 +2334,10 @@ public class Engine {
      * 
      * @param requiredForThis a short sentence that describes for human reader
      *     if for what do we need the XML support (e.g.
-     *     <code>"Usage of xml data loader."</code> or
-     *     <code>"Set XML entity resolver."</code>). This sentence is used
+     *     {@code "Usage of xml data loader."} or
+     *     {@code "Set XML entity resolver."}). This sentence is used
      *     in error message of the {@link fmpp.util.InstallationException}.
-     *     Can be <code>null</code>.
+     *     Can be {@code null}.
      * 
      * @throws InstallationException if the XML support is not available.
      */
@@ -2451,7 +2448,7 @@ public class Engine {
     private static final int MAX_WBLN = 64; 
     
     /**
-     * Moves the header after the <tt>&lt;#ftl ..></tt> if that exists.
+     * Moves the header after the {@code <#ftl ...>} if that exists.
      * The returned header should by used instead of the parameter header.
      * The reader's "position" will be increased, but the readen characters
      * are added to the new header, so they don't lose. 
@@ -2853,7 +2850,7 @@ public class Engine {
         
         /**
          * @return the list of choosen objects, ordered by ascending layer
-         *     index. Possibly an empty list, but never <code>null</code>.
+         *     index. Possibly an empty list, but never {@code null}.
          */
         private List choose(File f) throws IOException {
             List result = new ArrayList(usedLayers);

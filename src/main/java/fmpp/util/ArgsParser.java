@@ -26,8 +26,8 @@ import java.util.Set;
 
 /**
  * Simple command-line argument parser that mimics the logic of UN*X
- * tools as <code>ls</code>. It does not support the logic of tools like
- * <code>gcc</code>.
+ * tools as {@code ls}. It does not support the logic of tools like
+ * {@code gcc}.
  * 
  * <p>Features: short (1 character) and long option names, options
  * with no argument, with optional argument and with mandatory argument, option
@@ -36,7 +36,7 @@ import java.util.Set;
  *
  * <p>For example, here it is a typical "UN*X command-line":
  *
- * <p><code>$ ls -laT4 --color=auto --quote-name etc etc/mysql</code>
+ * <p>{@code $ ls -laT4 --color=auto --quote-name etc etc/mysql}
  *
  * <p>Here, we have 3 options given with short-name: "l", "a" and "T", and
  * 2 options given with long-name: "color" and "quote-name". Two options have
@@ -45,7 +45,7 @@ import java.util.Set;
  * main method doesn't get the program name (here: "ls"), so we don't deal with
  * that.
  *  
- * <p>A short example, that defines a subset of <code>ls</code> options:
+ * <p>A short example, that defines a subset of {@code ls} options:
  * <pre>
  * // 1. Create parser instance:
  * ArgsParser ap = new ArgsParser();
@@ -92,7 +92,7 @@ import java.util.Set;
  * </pre>
  * 
  * <p>This defines the following options:</p>
- * <table border=1>
+ * <table border=1 summary="Example options declared">
  *   <tr><th>short-name<th>long-name<th>argument?
  *   <tr><td>a<td>all<td>no
  *   <tr><td>A<td>almost-all<td>no
@@ -102,11 +102,11 @@ import java.util.Set;
  *   <tr><td>Q<td>quote-name<td>no
  * </table>
  * <p>and will parse command-line arguments like:
- * <br><code>-laT4 --color=auto --quote-name etc etc/mysql</code>
+ * <br>{@code -laT4 --color=auto --quote-name etc etc/mysql}
  * 
  * <p>The resulting properties will be:</p>
  * 
- * <table border=1>
+ * <table border=1 summary="Example options result Properties">
  *   <tr><th>name<th>value
  *   <tr><td>all<td>""
  *   <tr><td>l<td>""
@@ -136,10 +136,10 @@ import java.util.Set;
  * </pre>
  * 
  * <p>If you parse this with the above modification:
- * <br><code>-la --quote-name etc etc/mysql</code><br>
+ * <br>{@code -la --quote-name etc etc/mysql}<br>
  * then the "tabsize" property will be "8", and the
  * "color" property will be "none". If you parse this:
- * <br><code>-laT4 --color --quote-name etc etc/mysql</code><br>
+ * <br>{@code -laT4 --color --quote-name etc etc/mysql}<br>
  * then the "tabsize" property will be "4", and the
  * "color" property will be "always" (note that it is
  * the default argument of "color", as there was no argument given for that in
@@ -176,7 +176,7 @@ import java.util.Set;
  * ...
  * </pre>
  * 
- * <p>The <code>parse</code> method will throw exception if two options in
+ * <p>The {@code parse} method will throw exception if two options in
  * args[] tries to set the same property, so the two options will mutually
  * exclude each other here.
  *
@@ -261,13 +261,13 @@ public class ArgsParser implements java.io.Serializable {
      * {@link #getNonOptions getNonOptions}.
      * 
      * @param args the array of Strings that you get as the parameter of
-     *     <code>main</code> method.
+     *     {@code main} method.
      * @throws BadArgsException if the user has entered bad command-line
      *     arguments. The message in the exception (call
-     *     <code>exception.getMessage()</code>) contains the (relatively)
+     *     {@code exception.getMessage()}) contains the (relatively)
      *     user-frinedly desription of the problem.
      * @return the properties object that stores the options. This is the
-     *     same object as <code>getOptions()</code> returns.
+     *     same object as {@code getOptions()} returns.
      */
     public Properties parse(String[] args) throws BadArgsException {
         if (defaultProperties == null) {
@@ -404,16 +404,16 @@ public class ArgsParser implements java.io.Serializable {
 
     /**
      * Returns the options resulting from the latest {@link #parse parse}
-     * call as <code>Properties</code> object. An empty
-     * <code>Properties</code> object will be returned if there was no
-     * <code>parse</code> call yet.
+     * call as {@link Properties} object. An empty
+     * {@link Properties} object will be returned if there was no
+     * {@code parse} call yet.
      */    
     public Properties getOptions() {
         return prsdOps;
     }
     
     /**
-     * Convenience funtcion to read the option <code>Properties</code> object. 
+     * Convenience funtcion to read the option {@link Properties} object. 
      */
     public String getOption(String name) {
         return (String) prsdOps.get(name);
@@ -421,15 +421,15 @@ public class ArgsParser implements java.io.Serializable {
     
     /**
      * Retruns the non-options resulting from the latest {@link #parse parse}
-     * call. An empty array will be returned if there was no <code>parse</code>
+     * call. An empty array will be returned if there was no {@code parse}
      * call yet.
      * 
      * <p>Non-options are the elements of args[] that are not not options
-     * (as "<code>-l</code>" or "<code>--quote-name</code>"), nor option
-     * arguments (as the "<code>4</code>" after "<code>--tabsize 4</code>",
-     * assuming that "<code>tabsize</code>" has mandatory argument). For
-     * example, in "<code>-l etc --tabsize 8 etc/mysql</code>" there are 2
-     * non-options: "<code>etc</code>" and "<code>etc/mysql</code>".
+     * (as "{@code -l}" or "{@code --quote-name}"), nor option
+     * arguments (as the "{@code 4}" after "{@code --tabsize 4}",
+     * assuming that "{@code tabsize}" has mandatory argument). For
+     * example, in "{@code -l etc --tabsize 8 etc/mysql}" there are 2
+     * non-options: "{@code etc}" and "{@code etc/mysql}".
      */
     public String[] getNonOptions() {
         if (prsdNonOpsArray == null) {
@@ -466,29 +466,29 @@ public class ArgsParser implements java.io.Serializable {
      * {@link OptionDefinition#defaultArg defaultArg} method of the returned
      * object. 
      * @param shortName the short-name of option or null. Examples of
-     *     short-names are "<code>a</code>" and "<code>l</code>" in
-     *     "<code>$ ls -la</code>" If the option has argument, then this
+     *     short-names are "{@code a}" and "{@code l}" in
+     *     "{@code $ ls -la}" If the option has argument, then this
      *     parameter has to be in the form "<i>s</i>&nbsp;<i>ARGNAME</i>" or
-     *     "<i>s</i>=<i>ARGNAME</i>"; for example: <code>"T COLS"</code>.
-     *     The space or <code>=</code> indicates that the option supports
+     *     "<i>s</i>=<i>ARGNAME</i>"; for example: {@code "T COLS"}.
+     *     The space or {@code =} indicates that the option supports
      *     argument.
      *     The <i>ARGNAME</i> is used only for showing the help, otherwise its
      *     value is unimportant.
-     *     Note that if you will indicate in the <code>longName</code>
+     *     Note that if you will indicate in the {@code longName}
      *     parameter that the option has argument, you don't have to indicate it
      *     here.
      * @param longName the long-name of option or null. An example of long-name
-     *     is <code>"quote-name"</code> in "<code>$ ls --quote-name</code>"
+     *     is {@code "quote-name"} in "{@code $ ls --quote-name}"
      *     If the option supports argument, then this parameter has to
      *     be in the form "<i>long-name</i>=<i>ARGNAME</i>" or
      *     "<i>long-name</i>&nbsp;<i>ARGNAME</i>"; for example:
-     *     <code>"tabsize=COLS"</code>. The <code>=</code> or space indicates
+     *     {@code "tabsize=COLS"}. The {@code =} or space indicates
      *     that the option supports argument. The <i>ARGNAME</i> is used only
      *     for showing the help, otherwise its value is unimportant.
-     *     Note that if you have already indicated in the <code>shortName</code>
+     *     Note that if you have already indicated in the {@code shortName}
      *     parameter that the option has argument, you don't have to indicate it
      *     agian here.
-     * @return the newly created <code>OptionDefinition</code>; this is
+     * @return the newly created {@code OptionDefinition}; this is
      *     returned to let you addjust the new option with methods like
      *     {@link OptionDefinition#desc(String) desc},
      *     {@link OptionDefinition#property(String, String) property},
@@ -541,13 +541,13 @@ public class ArgsParser implements java.io.Serializable {
 
     /**
      * Sets the properies object that will be the default properties object for
-     * the properies object that <code>parse</code> creates for the options
+     * the properies object that {@code parse} creates for the options
      * (See {@link java.util.Properties#Properties(Properties defaults)}).
-     * Also, <code>parse</code> will put the implied option values into
+     * Also, {@code parse} will put the implied option values into
      * the default properties object.
      * By default there is no default properties object.
      * 
-     * <p>This setting takes effect only when you call <code>parse</code> next
+     * <p>This setting takes effect only when you call {@code parse} next
      * time. 
      */
     public void setDefaultProperties(Properties defaultProperties) {
@@ -555,9 +555,9 @@ public class ArgsParser implements java.io.Serializable {
     }
     
     /**
-     * Customizes the error messages showed for users.
-     * The <code>Properties</code> should contain the following keys,
-     * associoated with the translation of the following sentences:
+     * Customizes the error messages shown to the user.
+     * The {@link Properties} should contain the following keys,
+     * associated with the translation of the following sentences:
      * <ul>
      *   <li>"OPTION_CONFLICT":
      *           "This option conflicts with a preceding option: "
@@ -565,7 +565,7 @@ public class ArgsParser implements java.io.Serializable {
      *   <li>"OPTION_UNKNOWN": "Unknown option: "
      *   <li>"ARG_NOT_ALLOWED": "This option does not allow argument: "
      * </ul>
-     * You may use the <code>MSG_...</code> constants for the key values.
+     * You may use the {@code MSG_...} constants for the key values.
      */
     public void setMessages(Properties messages) {
         this.messages = messages;
@@ -628,8 +628,8 @@ public class ArgsParser implements java.io.Serializable {
         }
         
         /**
-         * Convenience method; same as calling <code>property(String)</code> and
-         * then <code>propertyValue</code>. This method only applies for
+         * Convenience method; same as calling {@code property(String)} and
+         * then {@code propertyValue}. This method only applies for
          * options that do no support argument.
          * 
          * @see #property(String) 
@@ -648,7 +648,7 @@ public class ArgsParser implements java.io.Serializable {
 
         /**
          * Convenience method; same as calling
-         * <code>property(propertyName, optionName)</code>, where optionName
+         * {@code property(propertyName, optionName)}, where optionName
          * is the long-name if that exists, otherwise the short-name.
          * This method only applies for options that do no support argument.
          *
@@ -708,11 +708,11 @@ public class ArgsParser implements java.io.Serializable {
          * 
          * <p>Note that introducing default value for an option is not a
          * backward compatible step. For example if "color" has no default
-         * value, then "<code>--color red</code>" is interpreted as "color"
+         * value, then "{@code --color red}" is interpreted as "color"
          * has an argument that is "red". But, if "color" has a default value,
          * then it is interpreted as "color" has the default value, and
          * we have a non-option "red". Of coruse, there would not be problem
-         * if we use "<code>--color=red</code>".   
+         * if we use "{@code --color=red}".   
          */
         public OptionDefinition defaultArg(String defaultValue) {
             if (argType == ARGT_NONE) {
@@ -751,7 +751,7 @@ public class ArgsParser implements java.io.Serializable {
          *     Do not use the <i>long-name</i>=<i>ARGNAME</i> form here.
          * @param shortName the short-name of option or null.
          *     Do <em>not</em> use the <i>s</i>=<i>ARGNAME</i> form here.
-         * @return the newly created <code>OptionDefinition</code>.
+         * @return the newly created {@code OptionDefinition}.
          * @throws IllegalArgumentException If an option with the same
          *     long-name or short-name is already added, or if the given long-
          *     or short-name is malformed.
@@ -1070,7 +1070,7 @@ public class ArgsParser implements java.io.Serializable {
 
     /**
      * The user has entered invalid options in the command-line.
-     * Use the <code>getMessage()</code> method to get the description of the
+     * Use the {@code getMessage()} method to get the description of the
      * problem, that you can directly print to the terminal for the user.
      */
     public static class BadArgsException extends Exception {

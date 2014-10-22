@@ -198,7 +198,7 @@ public class TemplateEnvironment {
      * In practice it means that it can be safely called from a Java
      * method that is (indirectly) invoked by the executing template. For
      * example, in a {@link freemarker.template.TemplateTransformModel} that is
-     * used in the template with <tt>&lt;@...></tt>.
+     * used in the template with {@code <@...>}.
      */
     public static TemplateEnvironment getCurrentInstance() {
         return (TemplateEnvironment) THREAD_LOCAL.get();
@@ -228,8 +228,8 @@ public class TemplateEnvironment {
     }
     
     /**
-     * Returns the processed XML document (<code>pp.doc</code>) as
-     * <code>org.w3c.dom.Document</code>. This will return non-<code>null</code>
+     * Returns the processed XML document ({@code pp.doc}) as
+     * {@link org.w3c.dom.Document}. This will return non-{@code null}
      * if, and only if the current processing mode is "renderXml".
      * 
      * @see #getWrappedXmlDocument()
@@ -240,7 +240,7 @@ public class TemplateEnvironment {
 
     /**
      * The same as {@link #getXmlDocument()}, but returns the document as
-     * <code>freemarker.ext.dom.NodeModel</code>. 
+     * {@link freemarker.ext.dom.NodeModel}. 
      */
     public TemplateNodeModel getWrappedXmlDocument() {
         return wrappedXmlDocument;
@@ -251,7 +251,7 @@ public class TemplateEnvironment {
      * specifict variables (local data).
      * 
      * @param name the name of the variable.
-     * @return the value of the variable, or <code>null</code> if no variable
+     * @return the value of the variable, or {@code null} if no variable
      *     with the given name exists.
      */
     public Object getData(String name) {
@@ -267,7 +267,7 @@ public class TemplateEnvironment {
     }
     
     /**
-     * Retuns the FreeMarker <code>Template</code> object for the source file. 
+     * Retuns the FreeMarker {@link Template} object for the source file. 
      */
     public Template getTemplate() {
         return template;
@@ -393,15 +393,15 @@ public class TemplateEnvironment {
      * Resolves a source path to a File object.
      * Use this for your custom transforms that wants the path of a source file
      * as parameter. When it tries to find the file, paths as
-     * <code>foo.jpg</code> will be interpreted relatively to the current source
-     * file, while paths like <code>/img/foo.jpg</code> will be interpreted
+     * {@code foo.jpg} will be interpreted relatively to the current source
+     * file, while paths like {@code /img/foo.jpg} will be interpreted
      * relatively to source root directory.
      * 
      * <p>Note that an IOException will be thrown if the file is outside the
      * source root directory.
      * 
      * @param path the path in UN*X or native format.
-     * @return <code>java.io.File</code> object thar points to the file. 
+     * @return {@link File} object that points to the file. 
      */
     public File resolveSourcePath(String path) throws IOException {
         path = FileUtil.pathToUnixStyle(path);
@@ -472,11 +472,11 @@ public class TemplateEnvironment {
      * @param dst the path of the other output file in UN*X or native format.
      *     The (virtual) root directory will be the output root directory, not
      *     the real root directory of the host system.
-     * @return the path of <code>dst</code> relatively to the current output
+     * @return the path of {@code dst} relatively to the current output
      *     file, in UN*X format.
      *     It never starts with slash. It ends with slash if and only if
-     *     <code>dst</code> ends with slash, except if the return value would
-     *     be a signe slash then, in which case the result will be an empty
+     *     {@code dst} ends with slash, except if the return value would
+     *     be a single slash then, in which case the result will be an empty
      *     string instead.
      */
     public String getPathTo(String dst) throws IOException {

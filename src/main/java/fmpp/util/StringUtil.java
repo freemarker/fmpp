@@ -383,14 +383,14 @@ public class StringUtil {
      *
      * \\, \", \', \n, \t, \r, \b and \f will be replaced according to
      * Java rules. In additional, it knows \g, \l, \a and \{ which are
-     * replaced with &lt;, >, &amp; and { respectively.
+     * replaced with &lt;, &gt;, &amp; and { respectively.
      * \x works as hexadecimal character code escape. The character
      * codes are interpreted according to UCS basic plane (Unicode).
      * "f\x006Fo", "f\x06Fo" and "f\x6Fo" will be "foo".
      * "f\x006F123" will be "foo123" as the maximum number of digits is 4.
      *
      * All other \X (where X is any character not mentioned above or
-     * End-of-string) will cause a <code>ParseException.</code>
+     * End-of-string) will cause a {@link ParseException}.
      *
      * @param s String literal <em>without</em> the surrounding quotation marks
      * @return String with all escape sequences resolved
@@ -665,8 +665,8 @@ public class StringUtil {
     
     /**
      * Replaces all occurances of a sub-string in a string.
-     * @param text The string where it will replace <code>oldsub</code> with
-     *     <code>newsub</code>.
+     * @param text The string where it will replace {@code oldsub} with
+     *     {@code newsub}.
      * @return String The string after the replacements.
      */
     public static String replace(String text, String oldsub, String newsub) {
@@ -689,7 +689,7 @@ public class StringUtil {
     }
 
     /**
-     * Same as <code>expandTabs(text, tabWidth, 0)</code>.
+     * Same as {@code expandTabs(text, tabWidth, 0)}.
      * @see #expandTabs(String, int, int) 
      */
     public static String expandTabs(String text, int tabWidth) {
@@ -739,7 +739,7 @@ public class StringUtil {
     } 
 
     /**
-     * Removes the line-break from the end of the <code>StringBuffer</code>. 
+     * Removes the line-break from the end of the {@link StringBuffer}. 
      */
     public static void chomp(StringBuffer sb) {
         int ln = sb.length();
@@ -885,7 +885,7 @@ public class StringUtil {
 
     /**
      * Hard-wraps flow-text. This is a convenience method that equivalent with
-     * <code>wrap(text, screenWidth, 0, 0, LINE_BREAK, false)</code>.
+     * {@code wrap(text, screenWidth, 0, 0, LINE_BREAK, false)}.
      *
      * @see #wrap(String, int, int, int, String, boolean)
      */
@@ -895,7 +895,7 @@ public class StringUtil {
 
     /**
      * Hard-wraps flow-text. This is a convenience method that equivalent with
-     * <code>wrap(text, screenWidth, 0, 0, LINE_BREAK, true)</code>.
+     * {@code wrap(text, screenWidth, 0, 0, LINE_BREAK, true)}.
      *
      * @see #wrap(String, int, int, int, String, boolean)
      */
@@ -905,7 +905,7 @@ public class StringUtil {
 
     /**
      * Hard-wraps flow-text. This is a convenience method that equivalent with
-     * <code>wrap(text, screenWidth, 0, 0, lineBreak, false)</code>.
+     * {@code wrap(text, screenWidth, 0, 0, lineBreak, false)}.
      *
      * @see #wrap(String, int, int, int, String, boolean)
      */
@@ -915,7 +915,7 @@ public class StringUtil {
 
     /**
      * Hard-wraps flow-text. This is a convenience method that equivalent with
-     * <code>wrap(text, screenWidth, indent, indent, LINE_BREAK, false)</code>.
+     * {@code wrap(text, screenWidth, indent, indent, LINE_BREAK, false)}.
      *
      * @see #wrap(String, int, int, int, String, boolean)
      */
@@ -937,7 +937,7 @@ public class StringUtil {
 
     /**
      * Hard-wraps flow-text. This is a convenience method that equivalent with
-     * <code>wrap(text, screenWidth, indent, indent, lineBreak, false)</code>.
+     * {@code wrap(text, screenWidth, indent, indent, lineBreak, false)}.
      *
      * @see #wrap(String, int, int, int, String, boolean)
      */
@@ -962,7 +962,7 @@ public class StringUtil {
     /**
      * Hard-wraps flow-text. Uses StringBuffer-s instead of String-s.
      * This is a convenience method that equivalent with
-     * <code>wrap(text, screenWidth, firstIndent, indent, LINE_BREAK)</code>.
+     * {@code wrap(text, screenWidth, firstIndent, indent, LINE_BREAK)}.
      *
      * @see #wrap(StringBuffer, int, int, int, String, boolean)
      */
@@ -978,7 +978,7 @@ public class StringUtil {
      * source text will be kept. All types of line-breaks (UN*X, Mac, DOS/Win)
      * are understood.
      * @param screenWidth The (minimum) width of the screen. It does not
-     *     utilize the <code>screenWidth</code>-th column of the screen to store
+     *     utilize the {@code screenWidth}-th column of the screen to store
      *     characters, except line-breaks (because some terminals/editors
      *     do an automatic line-break when you write visible character there,
      *     and some doesn't... so it is unpredicalbe if an explicit line-break
@@ -988,7 +988,7 @@ public class StringUtil {
      * @param lineBreak The String used for line-breaks
      * @param traceMode Set this true if the input text is a Java stack
      *     trace. In this mode, all lines starting with
-     *     optional indentation + <tt>'at'</tt> + space are treated as location
+     *     optional indentation + {@code 'at'} + space are treated as location
      *     lines, and will be indented and wrapped in a silghtly special way. 
      * @throws IllegalArgumentException if the number of columns remaining for
      * the text is less than 2.
@@ -1003,7 +1003,7 @@ public class StringUtil {
 
     /**
      * Hard-wraps flow-text. Uses StringBuffer-s instead of String-s.
-     * This is the method that is internally used by all other <code>wrap</code>
+     * This is the method that is internally used by all other {@code wrap}
      * variations, so if you are working with StringBuffers anyway, it gives
      * better performance.
      *
@@ -1290,7 +1290,7 @@ public class StringUtil {
     }
     
     /**
-     * Converts a string to <code>BigDecimal</code>.
+     * Converts a string to {@link BigDecimal}.
      */
     public static BigDecimal stringToBigDecimal(String s)
             throws ParseException {
@@ -1319,9 +1319,9 @@ public class StringUtil {
     }
 
     /**
-     * Parses a date of format <code>"yyyy-MM-dd"</code>
-     * or <code>"yyyy-MM-dd z"</code> and returns it as
-     * <code>TemplateDateModel</code>.
+     * Parses a date of format {@code "yyyy-MM-dd"}
+     * or {@code "yyyy-MM-dd z"} and returns it as
+     * {@link TemplateDateModel}.
      */
     public static TemplateDateModel stringToDate(String s, TimeZone tz)
             throws ParseException {
@@ -1349,10 +1349,10 @@ public class StringUtil {
     }
 
     /**
-     * Parses a time of format <code>"H:mm:ss"</code>
-     * or <code>"h:mm:ss a"</code> or <code>"H:mm:ss z"</code>
-     * or <code>"h:mm:ss a z"</code> and returns it as
-     * <code>TemplateDateModel</code>.
+     * Parses a time of format {@code "H:mm:ss"}
+     * or {@code "h:mm:ss a"} or {@code "H:mm:ss z"}
+     * or {@code "h:mm:ss a z"} and returns it as
+     * {@link TemplateDateModel}.
      */
     public static TemplateDateModel stringToTime(String s, TimeZone tz)
             throws ParseException {
@@ -1392,11 +1392,11 @@ public class StringUtil {
     }
 
     /**
-     * Parses a date-time of format <code>"yyyy-MM-dd H:mm:ss"</code>
-     * or <code>"yyyy-MM-dd h:mm:ss a"</code> or
-     * <code>"yyyy-MM-dd H:mm:ss z"</code>
-     * or <code>"yyyy-MM-dd h:mm:ss a z"</code> and returns it as
-     * <code>TemplateDateModel</code>.
+     * Parses a date-time of format {@code "yyyy-MM-dd H:mm:ss"}
+     * or {@code "yyyy-MM-dd h:mm:ss a"} or
+     * {@code "yyyy-MM-dd H:mm:ss z"}
+     * or {@code "yyyy-MM-dd h:mm:ss a z"} and returns it as
+     * {@link TemplateDateModel}.
      */
     public static TemplateDateModel stringToDateTime(String s, TimeZone tz)
             throws ParseException {
@@ -1441,7 +1441,7 @@ public class StringUtil {
     }
     
     /**
-     * Converts all line-breaks to UN*X linebreaks (<code>"\n"</code>). The
+     * Converts all line-breaks to UN*X linebreaks ({@code "\n"}). The
      * input text can contain UN*X, DOS (Windows) and Mac linebreaks mixed.  
      */
     public static String normalizeLinebreaks(String s) {
