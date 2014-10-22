@@ -5,6 +5,7 @@
     <property environment="env" />
     
     <property file="build.properties" />
+    <property name="freemarkerVersion" value="2.3.21" />
 
     <property name="bootclasspath.path" value="${sun.boot.class.path}" />
     <!-- Checking the correctness of the boot.classpath: -->
@@ -13,6 +14,8 @@
         property="bootclasspath.correct" />
 
     <property name="ant.jar.path" value="${env.ANT_HOME}/lib/ant.jar" />
+    
+    <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${freemarkerVersion}/documentation/_html" />
     
     <available property="atLeastJDK8" classname="java.util.function.Predicate"/>
 
@@ -94,25 +97,24 @@
         </copy>
     </target>
 
-    <target name="docs" depends="init" description="Re-build docs directory">
-        <mkdir dir="docs" />
-
-        <antcall target="javadoc" />
+    <target name="docs" depends="init, javadoc" description="Re-build docs directory">
+        <copy todir="build/docs/api">
+          <fileset dir="build/api"/>
+        </copy>        
         
-        <copy todir="docs/examples">
+        <copy todir="build/docs/examples">
             <fileset dir="src/docs/examples" defaultexcludes="no">
                 <exclude name="*/out/" />
-                <exclude name="**/CVS/" />
+                <exclude name="**/.svn/" />
             </fileset>
         </copy>
 
-        <available file="src/docs/freemarker" type="dir" property="freemarkermanual.available" />
+        <available file="${freemarkerDocs.path}" type="dir" property="freemarkermanual.available" />
         <antcall target="freemarkermanual" />
         <antcall target="_freemarkermanual_check" />
 
         <property name="online" value="false"/>
         <antcall target="_fmppgdoc" />
-        
     </target>
 
     <target name="_confirm" depends="init">
@@ -130,7 +132,7 @@
     <target name="freemarkermanual" depends="init" if="freemarkermanual.available"
             description="Copy FreeMarker manual">
         <copy todir="docs/freemarker">
-            <fileset dir="src/docs/freemarker" />
+            <fileset dir="${freemarkerDocs.path}" includes="**" />
         </copy>
     </target>
 
@@ -267,9 +269,8 @@
                 <exclude name="report.txt" />
                 <exclude name="README.txt" />
             </fileset>
-            <fileset dir=".">
-                <include name="lib/**" />
-            </fileset>
+            <fileset dir="." includes="lib/" />
+            <fileset dir="build" includes="docs/" />
         </copy>
         <copy file="README.txt" todir="build/dist/fmpp_${version}" filtering="true" />
 
@@ -350,7 +351,6 @@
 
     <target name="clean" depends="init" description="Delete all output files">
         <delete dir="build" />
-        <delete dir="docs" />
         <delete includeEmptyDirs="yes">
             <fileset dir="src/docs/examples" includes="*/out/"/>
             <fileset dir="src/docs/examples" includes="*/fmpp.log"/>
@@ -399,7 +399,7 @@
                 <dependency>
                   <groupId>org.freemarker</groupId>
                   <artifactId>freemarker</artifactId>
-                  <version>2.3.21</version>
+                  <version>${freemarkerVersion}</version>
                 </dependency>
                 <dependency>
                   <groupId>org.beanshell</groupId>

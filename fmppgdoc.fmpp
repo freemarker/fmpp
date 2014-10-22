@@ -9,8 +9,8 @@ work without installing FMPP for Ant.
 -->
 
 sourceRoot: src/docs
-outputRoot: docs
-logFile: build/log.fmpp
+outputRoot: build/docs
+logFile: build/docgen-log.txt
 turns: [turn(2, **/*_T2.*), turn(3, **/*_T3.*)]
 removePostfixes: [_T2, _T3]
 modes: [ignore(examples/, freemarker/)]
