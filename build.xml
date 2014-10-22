@@ -243,8 +243,9 @@
     </target>
     
     <target name="dist"
-            description="Build the distribution archives"
+            description="Build the distribution (release) archives"
             depends="all">
+        <fail unless="atLeastJDK8" message="The release should be built with JDK 8+ (you may need to set JAVA_HOME)" />
         <mkdir dir="${dist.dir}" />
         <copy todir="${dist.dir}">
             <fileset dir=".">
