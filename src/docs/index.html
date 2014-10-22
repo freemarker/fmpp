@@ -84,7 +84,7 @@
 <#if online>
   <#macro downloadLink fileName>
     <b><a href="http://prdownloads.sourceforge.net/fmpp/${fileName}">${fileName}</a>
-    <#assign rfile=basedir + pp.slash + "dist" + pp.slash + fileName />
+    <#local rfile=basedir + pp.slash + "build/dist" + pp.slash + fileName />
     <#if pp.realFileExists(rfile)>
       (${(pp.realFileSize(rfile)/1024/1024)?string("#0.0")} M)</b>
     <#else>

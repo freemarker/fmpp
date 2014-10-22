@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project basedir="." default="build" name="fmpp">
+<project basedir="." default="build" name="fmpp" xmlns:b="http://fmpp.sourceforge.org/build">
     <property file="src/main/resources/fmpp/version.properties" />
-    <property environment="env" />
-    
-    <property file="build.properties" />
     <property name="freemarkerVersion" value="2.3.21" />
+    <property file="build.properties" />
 
     <property name="bootclasspath.path" value="${sun.boot.class.path}" />
     <!-- Checking the correctness of the boot.classpath: -->
@@ -13,43 +11,31 @@
         classname="java.lang.Object" ignoresystemclasses="true" 
         property="bootclasspath.correct" />
 
+    <property environment="env" />
     <property name="ant.jar.path" value="${env.ANT_HOME}/lib/ant.jar" />
     
-    <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${freemarkerVersion}/documentation/_html" />
-    
     <available property="atLeastJDK8" classname="java.util.function.Predicate"/>
-
-    <property name="freemarker.lib" value="lib/freemarker.jar" />
-    <property name="bsh.lib" value="lib/bsh.jar" />
-    <property name="resolver.lib" value="lib/resolver.jar" />
-    <property name="imageinfo.lib" value="lib/imageinfo.jar" />
+    
+    <property name="freemarkerReleases.path" value="[freemarkerReleases.path wasn't set!]" />
+    <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${freemarkerVersion}/documentation/_html" />
+    <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
 
     <path id="classpath.path">
-        <pathelement path="${freemarker.lib}" />
-        <pathelement path="${bsh.lib}" />
-        <pathelement path="${resolver.lib}" />
-        <pathelement path="${imageinfo.lib}" />
+        <pathelement path="lib/freemarker.jar" />
+        <pathelement path="lib/bsh.jar" />
+        <pathelement path="lib/resolver.jar" />
+        <pathelement path="lib/imageinfo.jar" />
         <pathelement path="lib/fmpp.jar" />
         <pathelement path="${ant.jar.path}" />
     </path>
 
-    <target name="init">
-        <tstamp>
-            <format property="timeStamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC" />
-        </tstamp>
-        <filter token="VERSION" value="${version}" />
-        <filter token="TIMESTAMP" value="${timeStamp}" />
-    </target>
-
-    <target name="all" description="Clean and re-build all">
-        <antcall target="clean" />
-        <antcall target="build" />
-    </target>
-
-    <target name="build" description="Incremental build all (this is the default)">
-        <antcall target="jar" />
-        <antcall target="docs" />
-    </target>
+    <tstamp>
+        <format property="timeStamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC" />
+    </tstamp>
+    <filter token="VERSION" value="${version}" />
+    <filter token="TIMESTAMP" value="${timeStamp}" />
+    
+    <target name="build" description="Incremental build all (this is the default)" depends="jar, docs" />
 
     <target name="jar" depends="compile" description="Re-build fmpp.jar">
         <mkdir dir="lib" />
@@ -68,7 +54,7 @@
         </jar>
     </target>
 
-    <target name="compile" depends="init" description="Compile Java source files">
+    <target name="compile" description="Compile Java files and copy resources">
         <fail unless="bootclasspath.correct"><!--
             -->The "boot.classpath" property value (${bootclasspath.path}) <!--
             -->seems to be an incorrect boot classpath. Please fix it in <!--
@@ -97,27 +83,61 @@
         </copy>
     </target>
 
-    <target name="docs" depends="init, javadoc" description="Re-build docs directory">
-        <copy todir="build/docs/api">
-          <fileset dir="build/api"/>
-        </copy>        
-        
-        <copy todir="build/docs/examples">
-            <fileset dir="src/docs/examples" defaultexcludes="no">
-                <exclude name="*/out/" />
-                <exclude name="**/.svn/" />
-            </fileset>
-        </copy>
-
-        <available file="${freemarkerDocs.path}" type="dir" property="freemarkermanual.available" />
-        <antcall target="freemarkermanual" />
-        <antcall target="_freemarkermanual_check" />
-
-        <property name="online" value="false"/>
-        <antcall target="_fmppgdoc" />
+    <target name="docs" depends="docs.preFMPP" description="Generates build/docs directory for offline reading">
+        <b:docs.fmpp online="false" />
     </target>
 
-    <target name="_confirm" depends="init">
+    <target name="docsOnline" depends="docs.preFMPP" description="Generates build/docs directory for online reading">
+        <b:docs.fmpp online="true" />
+    </target>
+    
+    <macrodef name="docs.fmpp" uri="http://fmpp.sourceforge.org/build">
+        <attribute name="online" />
+        <sequential>
+            <mkdir dir="build/docs" />
+            <!--
+               The command-line tool is used instead of FMPP Ant task, in a forked VM,
+               because of the class loading issues caused by the exceptional situation that
+               we (re)build fmpp.jar in this VM, and also because this task should work
+               without installing FMPP for Ant.
+            -->
+            <java fork="true" jar="${basedir}/lib/fmpp.jar" failonerror="true">
+                    <sysproperty key="fmpp.home" value="${basedir}" />
+                    <arg value="-C${basedir}/docs.fmpp" />
+                    <arg value='-D online:@{online}' />
+            </java>
+        </sequential>
+    </macrodef>
+    
+    <!-- "jar" is dependency as FMPP will run from fmpp.jar -->
+    <target name="docs.preFMPP" depends="jar, javadoc, docs.examples, docs.freemarker" />
+    
+    <target name="docs.examples">
+        <copy todir="build/docs/examples">
+            <fileset dir="src/docs/examples">
+                <exclude name="*/out/" />
+            </fileset>
+        </copy>
+    </target>
+    
+    <target
+        name="docs.freemarker"
+        depends="docs.freemarker.ifAvailable, docs.freemarker.unlessAvailable"
+        description="Copy FreeMarker documentation into the docs"
+    />
+
+    <target name="docs.freemarker.ifAvailable" if="freemarkerDocs.available">
+        <mkdir dir="build/docs" />
+        <copy todir="build/docs/freemarker">
+            <fileset dir="${freemarkerDocs.path}" includes="**" />
+        </copy>
+    </target>
+
+    <target name="docs.freemarker.unlessAvailable" unless="freemarkerDocs.available">
+        <echo>WARNING! ${freemarkerDocs.path} is not available. For more information please read the BUILD.txt.</echo>
+    </target>
+    
+    <target name="_confirm">
         <input
             message="Do you want to continute? "
             validargs="y,n"
@@ -129,27 +149,16 @@
         <fail if="_confirm_abort">Build aborted by user.</fail>
     </target>
 
-    <target name="freemarkermanual" depends="init" if="freemarkermanual.available"
-            description="Copy FreeMarker manual">
-        <copy todir="docs/freemarker">
-            <fileset dir="${freemarkerDocs.path}" includes="**" />
-        </copy>
-    </target>
-
-    <target name="_freemarkermanual_check" depends="init" unless="freemarkermanual.available">
-        <echo>WARNING! src/docs/freemarker is not available. For more information please read the BUILD.txt.</echo>
-    </target>
-
     <target name="javadoc" depends="_rawJavadoc, _fixJDK8JavadocCSS" description="Build the JavaDocs" />
     
     <target name="_rawJavadoc">
-        <mkdir dir="build/api" />
+        <mkdir dir="build/docs/api" />
         <delete includeEmptyDirs="yes">
-            <fileset dir="build/api" includes="**/*" />
+            <fileset dir="build/docs/api" includes="**/*" />
         </delete>
         <javadoc
                 sourcepath="src/main/java"
-                destdir="build/api"
+                destdir="build/docs/api"
                 doctitle="FMPP ${version} API"
                 windowtitle="FMPP ${version} API"
                 overview="src/main/java/fmpp/overview.html"
@@ -228,48 +237,18 @@
         />
     </target>
     
-    <target name="fmppgdoc" depends="init"
-            description="Re-build FMPP generated parts of docs, for offline reading">
-        <property name="online" value="false" />
-        <antcall target="_fmppgdoc" />
-    </target>
-
-    <!-- "online" property must be set before calling this -->
-    <target name="_fmppgdoc" depends="init">
-        <mkdir dir="build" />
-        <!--
-           The command-line tool is used instead of FMPP Ant task, in a forked VM,
-           because of the class loading issues caused by the exceptional situation that
-           we (re)build fmpp.jar in this VM, and also because this task should work
-           without installing FMPP for Ant.
-        -->
-        <java fork="true" jar="${basedir}/lib/fmpp.jar" failonerror="true">
-            <sysproperty key="fmpp.home" value="${basedir}" />
-            <arg value="-C${basedir}/fmppgdoc.fmpp" />
-            <arg value='-D online:${online}' />
-        </java>
-    </target>
-
     <target name="dist"
             description="Build the distribution: build/dist/fmpp_${version}.tar.gz"
-            depends="init, all">
+            depends="build">
         <mkdir dir="build/dist/fmpp_${version}" />
         <copy todir="build/dist/fmpp_${version}" includeEmptyDirs="no">
             <fileset dir=".">
                 <exclude name="**/.*" />
                 <exclude name="**/.*/" />
                 <exclude name="build/" />
-                <exclude name="lib/" />
-                <exclude name="src/docs/freemarker/**" />
                 <exclude name="build.properties" />
-                <exclude name="bin/dfmpp.bat" />
-                <exclude name="*.bat" />
-                <exclude name="*.prj" />
-                <exclude name="*.arv" />
-                <exclude name="report.txt" />
                 <exclude name="README.txt" />
             </fileset>
-            <fileset dir="." includes="lib/" />
             <fileset dir="build" includes="docs/" />
         </copy>
         <copy file="README.txt" todir="build/dist/fmpp_${version}" filtering="true" />
@@ -297,16 +276,11 @@
         </zip>
     </target>
     
-    <target name="site" depends="init"
+    <target name="site" depends="docsOnline"
             description="Build the WWW site -- requires build/dist/fmpp_${version}.tar.gz">
-        <antcall target="javadoc" />
-        
-        <property name="online" value="true"/>
-        <antcall target="_fmppgdoc" />
-
         <mkdir dir="build/dist/site_${version}" />
         <copy todir="build/dist/site_${version}">
-            <fileset dir="docs">
+            <fileset dir="build/docs">
                 <exclude name="examples/" />
             </fileset>
         </copy>
@@ -349,7 +323,7 @@
         </java>
     </target>
 
-    <target name="clean" depends="init" description="Delete all output files">
+    <target name="clean" description="Delete all output files">
         <delete dir="build" />
         <delete includeEmptyDirs="yes">
             <fileset dir="src/docs/examples" includes="*/out/"/>
@@ -467,7 +441,7 @@
         <echo>**********************************************</echo>
     </target>
 
-    <target name="qinstall" depends="init"
+    <target name="qinstall"
             description='Same as "install", but assumes "y" for all questions.'>
         <antcall target="_install_jar_doit">
             <param name="jarName" value="fmpp.jar" />
@@ -485,9 +459,13 @@
             <param name="jarName" value="resolver.jar" />
             <param name="_install_reallyDoIt" value="true" />
         </antcall>
+        <antcall target="_install_jar_doit">
+            <param name="jarName" value="imageinfo.jar" />
+            <param name="_install_reallyDoIt" value="true" />
+        </antcall>
     </target>
 
-    <target name="install" depends="init"
+    <target name="install"
             description="Copy the required jar-s into the Ant lib directory.">
         <fail unless="env.ANT_HOME" message="Environment variable ANT_HOME is not set, so I don't know where to copy the .jar-s." />
 
