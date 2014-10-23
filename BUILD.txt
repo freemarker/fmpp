@@ -1,11 +1,12 @@
 To build FMPP, you will need JDK (Java Development Kit) and Apache Ant to
 be installed.
 
-This text describes how to (re)build FMPP and related files.
+For reproducible builds, it's recommended to copy build.properties.sample into
+build.properties and edit it.
 
-To build lib/fmpp.jar (incremental building): `ant`
-To build the docs: `ant docs`
-To build both: `ant all`
+To build lib/fmpp.jar: `ant`
+To run test suite: `ant test`
+To build the docs: `ant docs` (requires proper build.properties)
 To remove earlier build output: `ant clean`
 
 
@@ -14,13 +15,8 @@ Making a release
 
 1. Release to sourcefoge.net:
 
-* Ensure that the version number in src/main/java/fmpp/version.properties is
+* Ensure that the version numbers in src/main/java/fmpp/version.properties are
   up to date.
-  
-  Note: Releases use major.minor.micro format, like "0.8.15". Nightly releases
-  has an additional ".5" at the end, like in "0.8.15.5", which is a nightly
-  release *after* "0.8.15". Note that the version number can't contain letters
-  because of the limitations of jar manifest format.
 
 * Ensure that all properties in build.properties are set correctly.
   (Copy build.properties.sample if you don't have build.properties yet.)
@@ -49,8 +45,8 @@ Making a release
   
 * Run `ant maven-dist`.
 
-  Note that unlike sourceforge.net releases, this can't be redone
-  if something was wrong in fmpp.jar, so be careful.
+  Note that unlike sourceforge.net releases, Maven Central Repository
+  releases can't ever be redone, so double check everything.
 
 3. Update the Web site:
 
@@ -66,3 +62,5 @@ Making a release
 * Run `ant site`
 
 * Upload the generated site.
+
+4. Make the announcements where appropriate

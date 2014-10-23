@@ -365,7 +365,7 @@
               
   <groupId>net.sourceforge.fmpp</groupId>
   <artifactId>fmpp</artifactId>
-  <version>${version}</version>
+  <version>${mavenVersion}</version>
               
   <packaging>jar</packaging>
               
@@ -434,7 +434,7 @@
   ${dist.dir}/lib/fmpp.jar
   and its attachments to this Maven repository:
   ${maven-repository-url}
-  with Maven artifact version number ${version}.
+  with Maven artifact version number ${mavenVersion}.
   Note that it's assumed that you have run `ant dist` just before this.
   Proceed? </input>
         <condition property="mavenUpload.yes">
