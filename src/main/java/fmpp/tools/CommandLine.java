@@ -195,7 +195,7 @@ public class CommandLine {
         
         final File defaultCfg = Settings.getDefaultConfigurationFile(new File("."));
         if (args.length == 0 && defaultCfg == null) {
-            printHelp(null, false);
+            printHelp(null);
             return -1;
         }
 
@@ -499,7 +499,7 @@ public class CommandLine {
             ap.addOption("h", OPTION_HELP)
                     .desc("Prints help on options.");
             ap.addOption(null, OPTION_LONG_HELP)
-                    .desc("Prints long help.");
+                    .desc("Deprecated; same as -h");
 
             Properties impliedOps = new Properties();
             Properties ops;
@@ -539,14 +539,9 @@ public class CommandLine {
             // -----------------------------------------------------------------
             // Do a special task instead of processing?
 
-            if (ops.containsKey(OPTION_LONG_HELP)) {
-                printHelp(ap, true);
-                throw new FinishedException();
-            }
-
-            if (ops.containsKey(OPTION_HELP)) {
-                printHelp(ap, false);
-                throw new FinishedException();
+            if (ops.containsKey(OPTION_HELP) || ops.containsKey(OPTION_LONG_HELP)) {
+                printHelp(ap);
+                throw FinishedException.INSTANCE;
             }
 
             if (ops.containsKey(OPTION_VERSION)) {
@@ -555,7 +550,7 @@ public class CommandLine {
                 pt("Currently using FreeMarker version "
                         + Engine.getFreeMarkerVersionNumber());
                 pt("For the latest version visit: "                        + "http://fmpp.sourceforge.net/");
-                throw new FinishedException();
+                throw FinishedException.INSTANCE;
             }
 
             if (ops.containsKey(OPTION_PRINT_LOCALES)) {
@@ -592,7 +587,7 @@ public class CommandLine {
                     tOut.println(StringUtil.wrap(
                             sb.toString(), screenCols, 0, 7));
                 }
-                throw new FinishedException();
+                throw FinishedException.INSTANCE;
             }
             
             // -----------------------------------------------------------------
@@ -841,46 +836,25 @@ public class CommandLine {
         return exitCode;
     }
 
-    private void printHelp(ArgsParser ap, boolean longHelp) {
+    private void printHelp(ArgsParser ap) {
         tOut.println(StringUtil.wrap(
                 "Typical usages:\n"
                 + "fmpp -C configfile\n"
                 + "fmpp -S sourcedir -O outputdir\n"
                 + "fmpp sourcefile -o outputfile\n",
                 screenCols, 0, 3));
+        pt("For more examples: http://fmpp.sourceforge.net/commandline.html");
         if (ap == null) {
-            pt("For more help: fmpp -h");
-            pt("For even more help: fmpp --long-help");
+            pt("To see all options: fmpp -h");
         } else {
-            if (longHelp) {
-                String s;
-                try {
-                    InputStream in = Engine.class.getClassLoader()
-                            .getResourceAsStream("fmpp/tools/help.txt");
-                    if (in == null) {
-                        throw new FileNotFoundException();
-                    }
-                    s = FileUtil.loadString(in, "UTF-8");
-                    pt();
-                } catch (IOException e) {
-                    s = "Faled to load <CLASSES>/fmpp/tools/help.txt:\n"
-                            + e;
-                }
-                pt(s);
-                pt();
-                pt();
-                pt("Options");
-                pt("-------");
-                pt();
-                tOut.println(ap.getOptionsHelp(screenCols));
-            } else {
-                pt("Options:");
-                tOut.println(ap.getOptionsHelp(screenCols));
-                pt();
-                pt("Most of the above command-line options directly correspond "
-                        + "to FMPP settings. The detailed description of the "
-                        + "FMPP settings is in the FMPP Manual.");
-            }
+            pt();
+            pt("Options:");
+            tOut.println(ap.getOptionsHelp(screenCols));
+            pt();
+            pt(
+                    "Most of the above command-line options directly correspond "
+                    + "to FMPP settings. The detailed description of the "
+                    + "FMPP settings is in the FMPP Manual.");
         }
         pt();
         tOut.flush();
@@ -1008,5 +982,7 @@ public class CommandLine {
     }
 
     private static class FinishedException extends Exception {
+        private static final long serialVersionUID = 1L;
+        private static final FinishedException INSTANCE = new FinishedException(); 
     }
 }

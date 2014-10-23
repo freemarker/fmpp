@@ -1,6 +1,60 @@
 <@page title="The Command-line Tool" keywords="command-line tool">
 
-<@sect title="Using the command-line" anchor="using_cmdln">
+<@sect title="Basic usage" anchor="cmdln_basics">
+
+<p>FMPP can work in two modes: as a recursive directory processor, or as single file processor.</p>
+
+<p>When you're using it as recursive directory processor, it needs a source root directory and an output root directory. It processes all files inside the source root (including the files in its subdirectories), and writes the processed files into the output root directory with similar path as in the source root (that is, the output of <@c><@r>&lt;source-root></@r>/foo/bar.txt</@c> will be <@c><@r>&lt;output-root></@r>/foo/bar.txt</@c>. If <@c>/home/me/sample-project/src</@c> is the source root and <@c>/home/me/sample-project/out</@c> is the output root, then you issue:</p>
+
+<@prg>fmpp -S /home/me/sample-project/src -O /home/me/sample-project/out</@prg>
+
+<p>It's possible to tell FMPP to process only certain files and/or directories of the source root directory:</p>
+
+<@prg>fmpp -S /home/me/sample-project/src -O /home/me/sample-project/out index.html foo/bar.txt somedir</@prg>
+
+<p>Note that these paths are interpreted relatively to the source root directory, not to the current working directory.</p>
+
+<p>When you use FMPP as single file processor, you specify a single input file, and then an output file with the <@c>-o</@c> option. It's the <@c>-o</@c> option is what triggers single file mode.</p>
+
+<@prg>fmpp /home/me/file-to-process.txt -o /home/me/processed-file.txt</@prg>
+
+<p>In single file mode, the source root and output root directory defaults to the directory of source and output files respectively. (It has significance for example if the source file wants to include another file), but you can override them with the <@c>-S</@c> and <@c>-O</@c> switches. The source file and output file path is always interpreted relatively to the current working directory.</p>
+
+<p>It's often more convenient and manageable to use a project configuration file instead of entering everything as command-line arguments. For example, create file <@c>config.fmpp</@c> with this content:</p>
+
+<@prg>
+sourceRoot: src
+outputRoot: out
+logFile: fmpp.log
+modes: [ ignore(tmp/), copy(**/*.dwg, bin/) ]
+data: {
+  contact: me@example.com
+  clients: csv(data/clients.csv)
+}
+</@prg>
+
+<p>then use it as:</p>
+
+<@prg>fmpp -C /home/me/sample-project/config.fmpp</@prg>
+
+<p>or since <@c>config.fmpp</@c> is the default configuration file name, you can simply issue:</p>
+
+<@prg>fmpp -C /home/me/sample-project</@prg>
+  
+<p>or if you are in the same directory as <@c>config.fmpp</@c> then just issue:</p>
+
+<@prg>fmpp</@prg>
+
+<p>Note that paths in the configuration file are resolved relatively to the configuration file's directory, so it doesn't mater where do you invoke it from. Also note that you can override the settings stored in the configuration file with the command line:</p>
+
+<@prg>fmpp -C /home/me/sample-project/config.fmpp -O other/destination</@prg>
+
+<p>Much of what should be known about FMPP is not specific to its command line interface, so look around in the Table of Contents for more information!</p>
+
+</@sect>
+
+
+<@sect title="Command-line argument syntax primer" anchor="cmdln_syntax_primer">
 
 <p>This section is for users who are not too familiar with using the command-line. No FMPP specific information can be found here, so you may <@a href="#fmpp_cmdline">skip to the next section</@a>.</p>
 
@@ -87,7 +141,7 @@
   <li><@c>--source-encoding=cp852</@c>
 </ul>
 
-<p>I didn't show the combinations like <@c>-E="cp852"</@c>, as the usage of quotation marks is shell dependent. See <@a href="#using_cmdln">the section about using the command-line</@a> for more information.</p>
+<p>I didn't show the combinations like <@c>-E="cp852"</@c>, as the usage of quotation marks is shell dependent. See <@a href="#cmdln_syntax_primer">the section about using the command-line</@a> for more information.</p>
 
 <p>The order in which options occur in the command-line argument list is not significant.</p>
 
@@ -295,18 +349,10 @@ fmpp -Cmycfg.fmpp -- -this-is-a-non-option
 </@sect>
 
 
-<@sect title="All options">
+<@sect title="List of all options">
 
-<p>These are the settings that are not (directly) for specifying FMPP settings:</p>
-<ul> 
-  <li><@c>-C</@c>, <@c>--configuration</@c></li>
-  <li><@c>-h</@c>, <@c>--help</@c></li>
-  <li><@c>--long-help</@c></li>
-  <li><@c>--version</@c></li>
-  <li><@c>--print-locales</@c></li>
-</ul>
-
-<p>This is what FMPP prints with <@c>-h</@c>:</p>
+<p>The complete list of command-line options with brief description is included further below in the output of <@c>fmpp -h</@c>.
+Almost all options correspond to FMPP settings; see the <@a href="settings.html">complete descriptions of FMPP settings here</@a>.</p>
 
 <pre>
 ${pp.loadData('eval', '
@@ -314,7 +360,7 @@ ${pp.loadData('eval', '
     PrintWriter pw = new PrintWriter(sw);
     
     r = fmpp.tools.CommandLine.execute(
-        new String[]{"-h", "--columns", "80"},
+        new String[]{"-h", "--columns", "110"},
         pw,
         new PrintWriter(fmpp.util.NullWriter.INSTANCE));
     if (r != 0) {
