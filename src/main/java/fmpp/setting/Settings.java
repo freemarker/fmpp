@@ -294,7 +294,7 @@ public class Settings {
             try {
                 value = value.trim();
                 if (value.startsWith("+")) {
-                    value.substring(1);
+                    value = value.substring(1).trim();
                 }
                 return new Integer(Integer.parseInt(value));
             } catch (NumberFormatException e) {
@@ -1222,305 +1222,7 @@ public class Settings {
         }
         
         Engine eng = new Engine(ow);
-        execute_common(eng);
-    }
-    
-    /**
-     * Executes a processing session using the setting values and the engine
-     * object passed in. The {@link fmpp.Engine} object is not configured
-     * regarding the settings that are not specified in this object. Thus,
-     * if you don't use clean (new) {@link fmpp.Engine} object, it may
-     * brings some unwanted defaults.
-     * 
-     * @deprecated This method will be soon removed; use {@link #execute()}
-     *     instead.
-     *     Reusing the same engine object for multiple
-     *     <code>execute(...)</code> calls is error-prone (because
-     *     engine parameters set for earlier setting values may remain in
-     *     effect, which is seldom useful, and surprising for most users). Also,
-     *     this method is not compatible with new methods as
-     *     {@link #addProgressListener},
-     *     {@link #setEngineAttribute(String, Object)},
-     *     {@link #doProcessing}, ...etc.
-     * 
-     * @see #execute()
-     *  
-     * @param eng the FMPP engine used for the execution. As the settings of
-     *     the engine will be changed (even if {@link SettingException} was
-     *     thrown!), you should use a new (clean) instance for each invocatons,
-     *     and don't reuse the old object.
-     */
-    public void execute(Engine eng)
-            throws SettingException, ProcessingException {
-        execute_common(eng);
-    }
-    
-    /**
-     * Adds a progress listener. The progress listener will be added to the
-     * internally used {@link fmpp.Engine} object when you call
-     * {@link #execute()}.
-     * 
-     * @see #clearProgressListeners()
-     */
-    public void addProgressListener(ProgressListener pl) {
-        progressListeners.add(pl);
-    }
-
-    /**
-     * Removes all progress listeneres.
-     * 
-     * <p><i><b>Warning!</b> Don't use this method together with the deprecated
-     * {@link #execute(Engine)} method!</i> 
-     * 
-     * @see #addProgressListener(ProgressListener)
-     */
-    public void clearProgressListeners() {
-        progressListeners.clear();
-    }
-
-    /**
-     * Sets an engine attribute. The attribute will be set in the internally
-     * used {@link fmpp.Engine} object when you call {@link #execute()}.
-     * 
-     * <p><i><b>Warning!</b> Don't use this method together with the deprecated
-     * {@link #execute(Engine)} method!</i>
-     *  
-     * @return The  previous value of the attribute, or <code>null</code> if
-     *     there was no attribute with the given name.
-     */
-    public Object setEngineAttribute(String name, Object value) {
-        return engineAttributes.put(name, value);
-    }
-
-    /**
-     * Reads an engine attribute.
-     * 
-     * <p><i><b>Warning!</b> Don't use this method together with the deprecated
-     * {@link #execute(Engine)} method!</i> 
-     *
-     * @see #setEngineAttribute(String, Object)
-     *  
-     * @return <code>null</code> if no attribute exists with the given name.
-     */ 
-    public Object getEngineAttribute(String name) {
-        return engineAttributes.get(name);
-    }
-
-    /**
-     * Removes an engine attribute. It does nothing if the attribute does not
-     * exist.
-     * 
-     * <p><i><b>Warning!</b> Don't use this method together with the deprecated
-     * {@link #execute(Engine)} method!</i> 
-     * 
-     * @see #setEngineAttribute(String, Object)
-     *  
-     * @return The value of the removed attribute or <code>null</code> if there
-     *     was no attribute with the given name.
-     */
-    public Object removeAttribute(String name) {
-        return engineAttributes.remove(name);
-    }
-
-    /**
-     * Removes all engine attributes.
-     * 
-     * @see #setEngineAttribute(String, Object)
-     * 
-     * <p><i><b>Warning!</b> Don't use this method together with the deprecated
-     * {@link #execute(Engine)} method!</i> 
-     */
-    public void clearAttribues() {
-        engineAttributes.clear();
-    }
-
-    /** See {@link Engine#setDontTraverseDirectories(boolean)}. */
-    public void setDontTraverseDirectories(boolean dontTraverseDirs) {
-        this.dontTraverseDirs = dontTraverseDirs;
-    }
-    
-    public boolean getDontTraverseDirectories() {
-        return dontTraverseDirs;
-    }
-    
-    /**
-     * Dumps the current content of this object for debugging purposes.
-     * 
-     * <p><i><b>Warning!</b> Don't use this method together with the deprecated
-     * {@link #execute(Engine)} method!</i> 
-     */
-    public String dump() {
-        return Interpreter.dump(values);
-    }
-
-    /**
-     * Returns 0 for verbose mode, 1 for quiet mode, 2 for really-quiet mode. 
-     */
-    public static int quietSettingValueToInt(String value, String name)
-            throws SettingException {
-        if (value == null) {
-            return 0;
-        }
-        if (value.length() == 0) {
-            return 1;
-        } else if (value.equals("true")) {
-            return 1;
-        } else if (value.equals("false")) {
-            return 0;
-        } else if (value.equals(VALUE_REALLY_QUIET)) {
-            return 2;
-        } else {
-            // Backward compatibility
-            int level;
-            try {
-                level = Integer.parseInt(value) + 1;
-            } catch (NumberFormatException exc) {
-                level = -123;
-            }
-            if (level < 0 || level > 2) {
-                throw new SettingException("The value of the \"" + name
-                        + "\" setting has to be one of (case insensitive): "
-                        + "\"true\" (or empty string), \"false\", \""
-                        + VALUE_REALLY_QUIET + "\", but now it was "
-                        + StringUtil.jQuote(value));
-            }
-            return level;
-        }
-    }
-
-    /**
-     * Returns the default configuration file in the directory.
-     * @return the absolute file, or <code>null</code> if no default
-     *     configuration file exists in the directory.
-     */
-    public static File getDefaultConfigurationFile(File dir) {
-        File f = new File(dir, Settings.DEFAULT_CFG_FILE_NAME);
-        if (f.isFile()) {
-            return f.getAbsoluteFile();
-        } else {
-            f = new File(dir, Settings.DEFAULT_CFG_FILE_NAME_OLD);
-            if (f.isFile()) {
-                return f.getAbsoluteFile();
-            } else {
-                return null;
-            }
-        }
-    }
-
-    /**
-     * Convers legacy dashed setting names to the standard format, as
-     * <code>source-root</code> to <code>sourceRoot</code>.
-     * 
-     * @param props the <code>Properties</code> object to convert.
-     * 
-     * @throws SettingException if no setting with the given name exists.
-     */
-    public void undashNames(Properties props)
-            throws SettingException {
-        Enumeration en = props.propertyNames();
-        while (en.hasMoreElements()) {
-            String name = (String) en.nextElement();
-            String convertedName = (String) cmdLineNames.get(name);
-            if (convertedName == null || convertedName.equals(name)) {
-                if (!defs.containsKey(name)) {
-                    throw newUnknownSettingException(name);
-                }
-            } else {
-                if (props.containsKey(convertedName)) {
-                    throw new SettingException("Setting "
-                            + StringUtil.jQuote(convertedName)
-                            + " was specified twice in the Properties object, "
-                            + "with different but semantically equivalent "
-                            + "names.");
-                }
-                props.setProperty(convertedName, props.getProperty(name));
-                props.remove(name);
-            }
-        }
-    }
-
-    /**
-     * Trims all property values.
-     */
-    public void trimValues(Properties props) {
-        Enumeration en = props.propertyNames();
-        while (en.hasMoreElements()) {
-            String name = (String) en.nextElement();
-            String value = props.getProperty(name);
-            String v2 = value.trim();
-            if (v2 != value) {
-                props.setProperty(name, v2);
-            }
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Protected
-
-    /**
-     * Executes the processing session(s) on the {@link fmpp.Engine} level,
-     * using the already initialized <code>Engine</code> object.
-     * 
-     * <p>By overriding this method, you can
-     * <ul>
-     *   <li>call <code>Engine.process(...)</code> for multiple times, so you 
-     *       can do multiple processing sessions with the same already
-     *       initialized <code>Engine</code> object.
-     *   <li>do extra <code>Engine</code> initialization.
-     * </ul>
-     *  
-     * <p>The inital implementation of this method (that is, the implementation
-     * in the {@link Settings} class) is something like this:
-     * 
-     * <pre>
-     * if (outputFile == null) {
-     *     eng.process(sources);
-     * } else {
-     *     eng.process(sourceFile, outputFile);
-     * }</pre>
-     * 
-     * <p><i><b>Warning!</b> Don't override this method if you use the
-     * deprecated {@link #execute(Engine)} method!</i> 
-     * 
-     * <p>Modifying the {@link Settings} object in this method has no effect on
-     * the <code>Engine</code> object (which is passed in as argument),
-     * since all settings are already applied on it. If you need to modify the
-     * <code>Engine</code> object, call its methods directly.
-     * 
-     * <p>An implementation of this method may leak out the initialized
-     * <code>Engine</code> object for the caller of {@link #execute()}. Also, it
-     * may does not call <code>Engine.proccess(...)</code>, but left it for the
-     * caller (who has the out-leaked <code>Engine</code> object). These are
-     * extreme, but otherwise legitimate usages.
-     *
-     * @param eng the already initialized <code>Engine</code> object. You may
-     *     do extra addjustments on it.
-     * @param sources the list of source files, the parameter to
-     *     {@link fmpp.Engine#process(File[])}. It's <code>null</code> if
-     *     the processing session uses <code>outputFile</code> setting.
-     * @param sourceFile if the session uses <code>outputFile</code> setting,
-     *     then it' the 1st parameter to
-     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null. 
-     * @param outputFile if the session uses <code>outputFile</code> setting,
-     *     then it' the 2nd parameter to
-     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null. 
-     */
-    protected void doProcessing(
-            Engine eng, File[] sources, File sourceFile, File outputFile)
-            throws SettingException, ProcessingException {
-        if (outputFile == null) {
-            eng.process(sources);
-        } else {
-            eng.process(sourceFile, outputFile);
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Private
-
-    private void execute_common(Engine eng)
-            throws SettingException, ProcessingException {
-        String s;
+        
         Boolean b;
         List ls;
         Map m;
@@ -2075,7 +1777,8 @@ public class Settings {
                             if (o != null) {
                                 throw new SettingException(
                                         "The value of the \""
-                                        + NAME_DATA + "\" setting should be a "                                        + "hash, but it is a " + typeName(o)
+                                        + NAME_DATA + "\" setting should be a "
+                                        + "hash, but it is a " + typeName(o)
                                         + " in " + fr.getFileName() + ".");
                             }
                         }
@@ -2120,7 +1823,8 @@ public class Settings {
                 if (!(o instanceof FunctionCall)) {
                     throw new SettingException(
                             "The value of the \"" + NAME_LOCAL_DATA
-                            + "\" setting must be a sequence of TDD function "                            + "calls, but there is an item of type "
+                            + "\" setting must be a sequence of TDD function "
+                            + "calls, but there is an item of type "
                             + Interpreter.getTypeName(o) + "."); 
                 }
                 FunctionCall fc = (FunctionCall) o;
@@ -2144,7 +1848,9 @@ public class Settings {
                     if (paramCnt < 2) {
                         throw new SettingException(
                                 "Problem with the value of the \""
-                                + NAME_LOCAL_DATA + "\" setting: Function call "                                + "to \"" + FUNCTION_CASE + "\" needs at "                                + "least 2 parameters: pathPattern, data");
+                                + NAME_LOCAL_DATA + "\" setting: Function call "
+                                + "to \"" + FUNCTION_CASE + "\" needs at "
+                                + "least 2 parameters: pathPattern, data");
                     }
                     o = params.get(params.size() - 1);
                     LocalDataBuilder builder;
@@ -2194,7 +1900,8 @@ public class Settings {
                         } else {
                             throw new SettingException(
                                     "Problem with the value of the \""
-                                    + NAME_LOCAL_DATA + "\" setting: function "                                    + "call as the last parameter to \""
+                                    + NAME_LOCAL_DATA + "\" setting: function "
+                                    + "call as the last parameter to \""
                                     + FUNCTION_CASE
                                     + "\" must refer to a predefined local "
                                     + "data builder, but there is no "
@@ -2204,7 +1911,8 @@ public class Settings {
                     } else {
                         throw new SettingException(
                                 "Problem with the value of the \""
-                                + NAME_LOCAL_DATA + "\" setting: The last "                                + "parameter to function \"" + FUNCTION_CASE
+                                + NAME_LOCAL_DATA + "\" setting: The last "
+                                + "parameter to function \"" + FUNCTION_CASE
                                 + "\" must be a function call or a hash, but "
                                 + "now it was a " + Interpreter.getTypeName(o)
                                 + ".");
@@ -2230,7 +1938,8 @@ public class Settings {
                 } else {
                     throw new SettingException(
                             "Sequence items in the \"" + NAME_LOCAL_DATA
-                            + "\" setting must be a sequence of TDD function "                            + "calls to \"" + FUNCTION_LAYER + "\" or \""
+                            + "\" setting must be a sequence of TDD function "
+                            + "calls to \"" + FUNCTION_LAYER + "\" or \""
                             + FUNCTION_CASE + "\", but there is a call to "
                             + StringUtil.jQuote(fc.getName()) + "."); 
                 }
@@ -2250,6 +1959,248 @@ public class Settings {
             doProcessing(eng, null, sourceFile, outputFile);
         }
     }
+    
+    /**
+     * Adds a progress listener. The progress listener will be added to the
+     * internally used {@link fmpp.Engine} object when you call
+     * {@link #execute()}.
+     * 
+     * @see #clearProgressListeners()
+     */
+    public void addProgressListener(ProgressListener pl) {
+        progressListeners.add(pl);
+    }
+
+    /**
+     * Removes all progress listeneres.
+     * 
+     * @see #addProgressListener(ProgressListener)
+     */
+    public void clearProgressListeners() {
+        progressListeners.clear();
+    }
+
+    /**
+     * Sets an engine attribute. The attribute will be set in the internally
+     * used {@link fmpp.Engine} object when you call {@link #execute()}.
+     * 
+     * @return The  previous value of the attribute, or <code>null</code> if
+     *     there was no attribute with the given name.
+     */
+    public Object setEngineAttribute(String name, Object value) {
+        return engineAttributes.put(name, value);
+    }
+
+    /**
+     * Reads an engine attribute.
+     *
+     * @see #setEngineAttribute(String, Object)
+     *  
+     * @return <code>null</code> if no attribute exists with the given name.
+     */ 
+    public Object getEngineAttribute(String name) {
+        return engineAttributes.get(name);
+    }
+
+    /**
+     * Removes an engine attribute. It does nothing if the attribute does not
+     * exist.
+     * 
+     * @see #setEngineAttribute(String, Object)
+     *  
+     * @return The value of the removed attribute or <code>null</code> if there
+     *     was no attribute with the given name.
+     */
+    public Object removeAttribute(String name) {
+        return engineAttributes.remove(name);
+    }
+
+    /**
+     * Removes all engine attributes.
+     * 
+     * @see #setEngineAttribute(String, Object)
+     */
+    public void clearAttribues() {
+        engineAttributes.clear();
+    }
+
+    /** See {@link Engine#setDontTraverseDirectories(boolean)}. */
+    public void setDontTraverseDirectories(boolean dontTraverseDirs) {
+        this.dontTraverseDirs = dontTraverseDirs;
+    }
+    
+    public boolean getDontTraverseDirectories() {
+        return dontTraverseDirs;
+    }
+    
+    /**
+     * Dumps the current content of this object for debugging purposes.
+     */
+    public String dump() {
+        return Interpreter.dump(values);
+    }
+
+    /**
+     * Returns 0 for verbose mode, 1 for quiet mode, 2 for really-quiet mode. 
+     */
+    public static int quietSettingValueToInt(String value, String name)
+            throws SettingException {
+        if (value == null) {
+            return 0;
+        }
+        if (value.length() == 0) {
+            return 1;
+        } else if (value.equals("true")) {
+            return 1;
+        } else if (value.equals("false")) {
+            return 0;
+        } else if (value.equals(VALUE_REALLY_QUIET)) {
+            return 2;
+        } else {
+            // Backward compatibility
+            int level;
+            try {
+                level = Integer.parseInt(value) + 1;
+            } catch (NumberFormatException exc) {
+                level = -123;
+            }
+            if (level < 0 || level > 2) {
+                throw new SettingException("The value of the \"" + name
+                        + "\" setting has to be one of (case insensitive): "
+                        + "\"true\" (or empty string), \"false\", \""
+                        + VALUE_REALLY_QUIET + "\", but now it was "
+                        + StringUtil.jQuote(value));
+            }
+            return level;
+        }
+    }
+
+    /**
+     * Returns the default configuration file in the directory.
+     * @return the absolute file, or <code>null</code> if no default
+     *     configuration file exists in the directory.
+     */
+    public static File getDefaultConfigurationFile(File dir) {
+        File f = new File(dir, Settings.DEFAULT_CFG_FILE_NAME);
+        if (f.isFile()) {
+            return f.getAbsoluteFile();
+        } else {
+            f = new File(dir, Settings.DEFAULT_CFG_FILE_NAME_OLD);
+            if (f.isFile()) {
+                return f.getAbsoluteFile();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Convers legacy dashed setting names to the standard format, as
+     * <code>source-root</code> to <code>sourceRoot</code>.
+     * 
+     * @param props the <code>Properties</code> object to convert.
+     * 
+     * @throws SettingException if no setting with the given name exists.
+     */
+    public void undashNames(Properties props)
+            throws SettingException {
+        Enumeration en = props.propertyNames();
+        while (en.hasMoreElements()) {
+            String name = (String) en.nextElement();
+            String convertedName = (String) cmdLineNames.get(name);
+            if (convertedName == null || convertedName.equals(name)) {
+                if (!defs.containsKey(name)) {
+                    throw newUnknownSettingException(name);
+                }
+            } else {
+                if (props.containsKey(convertedName)) {
+                    throw new SettingException("Setting "
+                            + StringUtil.jQuote(convertedName)
+                            + " was specified twice in the Properties object, "
+                            + "with different but semantically equivalent "
+                            + "names.");
+                }
+                props.setProperty(convertedName, props.getProperty(name));
+                props.remove(name);
+            }
+        }
+    }
+
+    /**
+     * Trims all property values.
+     */
+    public void trimValues(Properties props) {
+        Enumeration en = props.propertyNames();
+        while (en.hasMoreElements()) {
+            String name = (String) en.nextElement();
+            String value = props.getProperty(name);
+            String trimmedValue = value.trim();
+            if (!trimmedValue.equals(value)) {
+                props.setProperty(name, trimmedValue);
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Protected
+
+    /**
+     * Executes the processing session(s) on the {@link fmpp.Engine} level,
+     * using the already initialized <code>Engine</code> object.
+     * 
+     * <p>By overriding this method, you can
+     * <ul>
+     *   <li>call <code>Engine.process(...)</code> for multiple times, so you 
+     *       can do multiple processing sessions with the same already
+     *       initialized <code>Engine</code> object.
+     *   <li>do extra <code>Engine</code> initialization.
+     * </ul>
+     *  
+     * <p>The inital implementation of this method (that is, the implementation
+     * in the {@link Settings} class) is something like this:
+     * 
+     * <pre>
+     * if (outputFile == null) {
+     *     eng.process(sources);
+     * } else {
+     *     eng.process(sourceFile, outputFile);
+     * }</pre>
+     * 
+     * <p>Modifying the {@link Settings} object in this method has no effect on
+     * the <code>Engine</code> object (which is passed in as argument),
+     * since all settings are already applied on it. If you need to modify the
+     * <code>Engine</code> object, call its methods directly.
+     * 
+     * <p>An implementation of this method may leak out the initialized
+     * <code>Engine</code> object for the caller of {@link #execute()}. Also, it
+     * may does not call <code>Engine.proccess(...)</code>, but left it for the
+     * caller (who has the out-leaked <code>Engine</code> object). These are
+     * extreme, but otherwise legitimate usages.
+     *
+     * @param eng the already initialized <code>Engine</code> object. You may
+     *     do extra addjustments on it.
+     * @param sources the list of source files, the parameter to
+     *     {@link fmpp.Engine#process(File[])}. It's <code>null</code> if
+     *     the processing session uses <code>outputFile</code> setting.
+     * @param sourceFile if the session uses <code>outputFile</code> setting,
+     *     then it' the 1st parameter to
+     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null. 
+     * @param outputFile if the session uses <code>outputFile</code> setting,
+     *     then it' the 2nd parameter to
+     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null. 
+     */
+    protected void doProcessing(
+            Engine eng, File[] sources, File sourceFile, File outputFile)
+            throws SettingException, ProcessingException {
+        if (outputFile == null) {
+            eng.process(sources);
+        } else {
+            eng.process(sourceFile, outputFile);
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Private
     
     private void addOrSet(Map m, String name, Object value, boolean set)
             throws SettingException {

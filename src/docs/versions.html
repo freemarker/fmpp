@@ -6,6 +6,7 @@
   <ul>
     <li>Fixed an oversight where an <@c>Engine</@c> static field was accidentally initialized in a non-static initializer, causing problems in multi-threaded environment.</li>
     <li>Removed version ranges from Maven dependencies, replacing them with concrete version numbers.</li>
+    <li>Setting values with integer type haven't understood <@c>+</@c> prefix, like in <@c>+1</@c>.</li>
   </ul>
   
   <p>New features, improvements:</p>
@@ -22,6 +23,7 @@
         <li>Updated <@c>xml-resolver.jar</@c> dependency from 1.1 to version 1.2 (note that thus its license changes from Apache License 1.1 to Apache License 2.0)</li>
       </ul>
     </li>
+    <li>Removed long deprecated method: <@c>Settings.execute(Engine eng)</@c>.
     <li>The project source code was moved from SourceForge.net to GitHub: <@url href="https://github.com/freemarker/fmpp" /></li>
     <li>Overall source code structure and Ant build improvements</li>
   </ul>
