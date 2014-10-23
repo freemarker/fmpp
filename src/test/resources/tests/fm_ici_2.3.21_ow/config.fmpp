@@ -1,0 +1,9 @@
+inheritConfiguration: ../fm_ici_null
+outputRoot: out
+freemarkerIncompatibleImprovements: 2.3.21
+objectWrapper: '
+    owb = new BeansWrapperBuilder(freemarkerIncompatibleImprovements);
+    owb.setSimpleMapWrapper(true);
+    owb.setExposeFields(true);
+    return owb.build();
+    '

@@ -1,0 +1,3 @@
+inheritConfiguration: ../fm_ici_null
+outputRoot: out
+freemarkerIncompatibleImprovements: 2.3.21

@@ -1,0 +1,12 @@
+sourceRoot: src
+outputRoot: out
+data: {
+    foo: eval('
+        public class Foo {
+            public String m(String s) { return "s"; }
+            public String m(int x) { return "i"; }
+            public String f = "bar";
+        }
+        return new Foo();
+    ')
+}

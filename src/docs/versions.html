@@ -11,6 +11,12 @@
   
   <p>New features, improvements:</p>
   <ul>
+    <li>
+      New settings (brought over from FreeMarker):
+      <ul>
+        <li><@s>freemarkerIncompatibleImprovements</@s>, also exposed to <@s>objectWrapper</@s> scripts as a global variable with the same name.</li>
+      </ul>
+    </li>
     <li>FMPP license has been changed from BSD to Apache License 2.0. The copyright owner has been changed to be the same as the owner of FreeMarker. The two projects now share the same license and Contributor License Agreement.</li>
     <li>
       The dependencies of FMPP has been updated/changed:
@@ -23,6 +29,7 @@
         <li>Updated <@c>xml-resolver.jar</@c> dependency from 1.1 to version 1.2 (note that thus its license changes from Apache License 1.1 to Apache License 2.0)</li>
       </ul>
     </li>
+    <li>Added new constructor, <@c>Engine(BeansWrapper beansWrapper, Version fmIncompImprovements)</@c>, deprecated the earlier <@c>Version</@c>-less overload.</li>
     <li>Removed long deprecated method: <@c>Settings.execute(Engine eng)</@c>.
     <li>The project source code was moved from SourceForge.net to GitHub: <@url href="https://github.com/freemarker/fmpp" /></li>
     <li>Overall source code structure and Ant build improvements</li>

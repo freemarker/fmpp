@@ -42,7 +42,7 @@ import fmpp.util.InstallationException;
 import fmpp.util.MiscUtil;
 import fmpp.util.StringUtil;
 import freemarker.ext.beans.BeansWrapper;
-import freemarker.ext.dom.NodeModel;
+import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
@@ -50,6 +50,7 @@ import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateNodeModel;
+import freemarker.template.Version;
 
 /**
  * The bare-bone, low-level preprocessor engine. Since FMPP 0.9.0 you should
@@ -238,11 +239,23 @@ public class Engine {
 
     /**
      * Same as {@link #Engine(BeansWrapper) Engine(null)}.
+     * 
+     * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
      */
     public Engine() {
         this(null);
     }
     
+    /**
+     * Same as
+     * {@link #Engine(BeansWrapper, Version) Engine(beansWrapper, null)}.
+     * 
+     * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
+     */
+    public Engine(BeansWrapper beansWrapper) {
+        this(beansWrapper, null);
+    }
+        
     /**
      * Creates a new FMPP engine instance.
      * Use the setter methods (as {@code setProgressListener}) to configure
@@ -253,20 +266,35 @@ public class Engine {
      *    If you do know what's this, note that FMPP by default (when this
      *    parameter is {@code null}) uses a {@code BeansWrapper} with
      *    {@code simpleMapWrapper} set to {@code true}.
+     *    
+     * @param fmIncompImprovements Sets the "incompatible improvements" version of FreeMarker. You should set this to
+     *    the current FreeMarker version in new projects. See {@link Configuration#Configuration(Version)} for details.
+     *    If it's at least {@code 2.3.21} and {@code beansWrapper} is {@code null}, the default will be created using
+     *    {@link BeansWrapperBuilder} instead of {@code new BeansWrapper()}, which means that that the resulting
+     *    {@link BeansWrapper} will be a shared singleton with read-only settings.
      */
-    public Engine(BeansWrapper beansWrapper) {
+    public Engine(BeansWrapper beansWrapper, Version fmIncompImprovements) {
+        fmCfg = fmIncompImprovements != null ? new Configuration(fmIncompImprovements) : new Configuration();
+        
         if (beansWrapper == null) {
-            beansWrapper = new BeansWrapper();
-            beansWrapper.setSimpleMapWrapper(true);
+            if (fmIncompImprovements == null
+                    || fmIncompImprovements.intValue() < Configuration.VERSION_2_3_21.intValue()) {
+                // The old (deprecated) way:
+                BeansWrapper bw = fmIncompImprovements != null
+                        ? new BeansWrapper(fmIncompImprovements) : new BeansWrapper();
+                bw.setSimpleMapWrapper(true);
+                fmCfg.setObjectWrapper(bw);
+            } else {
+                BeansWrapperBuilder bwb = new BeansWrapperBuilder(fmIncompImprovements);
+                bwb.setSimpleMapWrapper(true);
+                fmCfg.setObjectWrapper(bwb.build());
+            }
+        } else {
+            fmCfg.setObjectWrapper(beansWrapper);
         }
-
-        fmCfg = new Configuration();
-
-        fmCfg.setTemplateExceptionHandler(
-                TemplateExceptionHandler.RETHROW_HANDLER);
-        fmCfg.setStrictSyntaxMode(true);
+        
+        fmCfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         fmCfg.setTemplateUpdateDelay(Integer.MAX_VALUE - 10000);
-        fmCfg.setObjectWrapper(beansWrapper);
         fmCfg.setDefaultEncoding("ISO-8859-1");
         fmCfg.setLocale(Locale.US);
         fmCfg.setNumberFormat("0.############");

@@ -1,0 +1,9 @@
+${(1..)?size}
+
+<#attempt>
+  ${foo.m(null)}
+<#recover>
+  Failed
+</#attempt>
+
+${foo.f!'-'}

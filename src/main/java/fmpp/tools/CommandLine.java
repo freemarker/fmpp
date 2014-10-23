@@ -17,9 +17,7 @@
 package fmpp.tools;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -38,13 +36,15 @@ import fmpp.setting.FileWithSettingValue;
 import fmpp.setting.SettingException;
 import fmpp.setting.Settings;
 import fmpp.util.ArgsParser;
+import fmpp.util.ArgsParser.OptionDefinition;
 import fmpp.util.FileUtil;
 import fmpp.util.MiscUtil;
 import fmpp.util.NullOutputStream;
 import fmpp.util.RuntimeExceptionCC;
 import fmpp.util.StringUtil;
-import fmpp.util.ArgsParser.OptionDefinition;
 import freemarker.log.Logger;
+import freemarker.template.Configuration;
+import freemarker.template.Version;
 
 /**
  * Command-line tool for preprocessing single files or entire directories.
@@ -207,21 +207,21 @@ public class CommandLine {
             ArgsParser ap = new ArgsParser();
             
             OptionDefinition od;
-            ap.addOption("S DIR", dn(Settings.NAME_SOURCE_ROOT))
+            ap.addOption("S DIR", cln(Settings.NAME_SOURCE_ROOT))
                     .desc("Sets the root directory of source files. "
                             + "In bulk-mode it defaults to the current "                            + "working directory.");
-            ap.addOption("O DIR", dn(Settings.NAME_OUTPUT_ROOT))
+            ap.addOption("O DIR", cln(Settings.NAME_OUTPUT_ROOT))
                     .desc("Sets the root directory of output files.");
-            ap.addOption("o FILE", dn(Settings.NAME_OUTPUT_FILE))
+            ap.addOption("o FILE", cln(Settings.NAME_OUTPUT_FILE))
                     .desc("The output file. This switches FMPP to single-file "
                             + "mode.");
-            ap.addOption(null, dn(Settings.NAME_FREEMARKER_LINKS) + "=MAP")
+            ap.addOption(null, cln(Settings.NAME_FREEMARKER_LINKS) + "=MAP")
                     .desc("The map of FreeMarker links (external includes).");
-            ap.addOption("U WHAT", dn(Settings.NAME_SKIP_UNCHANGED))
+            ap.addOption("U WHAT", cln(Settings.NAME_SKIP_UNCHANGED))
                     .desc("Skip <WHAT> files if the source was not modified "
                             + "after the output file was last modified. "
                             + "<WHAT> can be \"all\", \"none\" or \"static\"");
-            ap.addOption(null, dn(Settings.NAME_DATA_ROOT) + "=DIR")
+            ap.addOption(null, cln(Settings.NAME_DATA_ROOT) + "=DIR")
                     .desc("Sets the root directory of data files. "
                             + "The reserved value \"source\" means that the "
                             + "data root is the same as the source root. "
@@ -232,64 +232,74 @@ public class CommandLine {
                             + "are merged, rather than overridden). "
                             + "Be default fmpp will use "                            + "./config.fmpp or ./fmpp.cfg if that exists. "                            + "Use value \"none\" (-C none) to prevent this.");
             ap.addOption(null,
-                    dn(Settings.NAME_INHERIT_CONFIGURATION) + " FILE")
+                    cln(Settings.NAME_INHERIT_CONFIGURATION) + " FILE")
                     .desc("Inherits options from a configuration file. "
                             + "The options in the primary configuration "                            + "file (-C) has higher precednece.");
-            ap.addOption("M SEQ", dn(Settings.NAME_MODES))
+            ap.addOption("M SEQ", cln(Settings.NAME_MODES))
                     .desc("The list of TDD function calls that choose the file "
                             + "processing mode, e.g.:\n"
                             + "-M \"ignore(**/tmp/), execute(**/*.htm, "                            + "**/*.html), copy(**/*)\"");
-            ap.addOption(null, dn(Settings.NAME_TURNS) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_TURNS) + "=SEQ")
                     .desc("The list of turn(...)-s that choose the "
                             + "turns of processings, e.g.:\n"
                             + "--turns \"turn(2, **/*_t2.*, ), "
                             + "turn(3, **/*_t3.*, **/*.toc)\"\n"
                             + "By default all files will be procesed in the "
                             + "first turn.");
-            ap.addOption(null, dn(Settings.NAME_BORDERS) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_BORDERS) + "=SEQ")
                     .desc("The list of TDD function calls that choose header "
                             + "and footer for templates, e.g.:\n"
                             + "-M 'border(\"<#escape x as x?html>\", "
                             + "\"</#escape>\", *.htm, *.html), "
                             + "header(\"<#include \\\"/css.ftl\\\">\", *.css)'"
                             );
-            ap.addOption("D TDD", dn(Settings.NAME_DATA))
+            ap.addOption("D TDD", cln(Settings.NAME_DATA))
                     .desc("Creates shared data that all template will see. "
                             + "<TDD> is the Textual Data Definition, e.g.:\n"
                             + "-D \"properties(style.properties), "                            + "onLine:true\"\n"
                             + "Note that paths like \"style.properties\" are "
                             + "relatve to the data root directory.");
-            ap.addOption(null, dn(Settings.NAME_OBJECT_WRAPPER) + "=BSH")
+            Version maxFMVer = Configuration.getVersion();
+            Version defFMVer = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
+            ap.addOption(null, cln(Settings.NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS) + "=VER")
+                    .desc("Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and "
+                            + "were implemented in FreeMarker version <VER>. "
+                            + "In older projects using the highest available 2.3.x is usually a good "
+                            + "compromise. New projects should use the maximum, which is currently \""
+                            + maxFMVer.getMajor() + "." + maxFMVer.getMinor() + "." + maxFMVer.getMicro() + "\". "
+                            + "The default is \""
+                            + defFMVer.getMajor() + "." + defFMVer.getMinor() + "." + defFMVer.getMicro() + "\".");
+            ap.addOption(null, cln(Settings.NAME_OBJECT_WRAPPER) + "=BSH")
                     .desc("Specifies the ObjectWrapper to use with a BeanShell "
                             + "expression that must evaluate to an object "
                             + "that extends BeansWrapper. The default value is "
                             + "a BeansWrapper instance with simpleMapWrapper "
                             + "set to true.");
-            ap.addOption(null, dn(Settings.NAME_LOCAL_DATA) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_LOCAL_DATA) + "=SEQ")
                     .desc("Creates data that is visible only for certain "
                             + "templates. This is a list of case(...) and "                            + "layer() function calls.");
-            ap.addOption(null, dn(Settings.NAME_TEMPLATE_DATA) + "=CLASS")
+            ap.addOption(null, cln(Settings.NAME_TEMPLATE_DATA) + "=CLASS")
                     .desc("Creates Java object that builds data for "
                             + "individual templates.")
                     .hide();
-            ap.addOption("s", dn(Settings.NAME_STOP_ON_ERROR))
+            ap.addOption("s", cln(Settings.NAME_STOP_ON_ERROR))
                     .propertyValue("true")
                     .implied()
                     .desc("Terminate fmpp on failed file processing. "
                             + "This is the default behaviour. "
                             + "Use -c to override this.");
             ap.addOption("c", "continue-on-error")
-                    .property(dn(Settings.NAME_STOP_ON_ERROR), "false")
+                    .property(cln(Settings.NAME_STOP_ON_ERROR), "false")
                     .implied()
                     .desc("Skip to the next file on failed file processing "
                             + "(and log the error: see -L)");
-            ap.addOption("E ENC", dn(Settings.NAME_SOURCE_ENCODING))
+            ap.addOption("E ENC", cln(Settings.NAME_SOURCE_ENCODING))
                     .desc("The encoding of textual sources (templates). "
                             + "Use the special value \"host\" (-E host) if the "
                             + "default encoding of the host machine should "
-                            + "be used. The default value of the option is "
-                            + "\"ISO-8859-1.\"");
-            ap.addOption(null, dn(Settings.NAME_OUTPUT_ENCODING) + "=ENC")
+                            + "be used. The default is "
+                            + "\"ISO-8859-1\".");
+            ap.addOption(null, cln(Settings.NAME_OUTPUT_ENCODING) + "=ENC")
                     .desc("The encoding of template output. Use the special "
                             + "value \"source\" if the encoding of the "
                             + "template file should be used. "
@@ -297,33 +307,33 @@ public class CommandLine {
                             + "default encoding of the host machine should "
                             + "be used. "
                             + "The default is \"source\".");
-            ap.addOption(null, dn(Settings.NAME_URL_ESCAPING_CHARSET) + "=ENC")
+            ap.addOption(null, cln(Settings.NAME_URL_ESCAPING_CHARSET) + "=ENC")
                     .desc("The charset used for URL escaping. Use the special "
                             + "value \"output\" if the encoding of the "
                             + "output file should be used. "
                             + "The default is \"output\".");
-            ap.addOption("A LOC", dn(Settings.NAME_LOCALE))
+            ap.addOption("A LOC", cln(Settings.NAME_LOCALE))
                     .desc("The locale (as ar_SA). Use the special value "
                             + "\"host\" (-A host) if the default locale of "
                             + "the host machine should be used. "
                             + "The default value of the option is en_US.");
-            ap.addOption(null, dn(Settings.NAME_NUMBER_FORMAT) + "=FORMAT")
+            ap.addOption(null, cln(Settings.NAME_NUMBER_FORMAT) + "=FORMAT")
                     .desc("The number format used to show numerical values. "
                             + "The default is 0.############");
-            ap.addOption(null, dn(Settings.NAME_DATE_FORMAT) + "=FORMAT")
+            ap.addOption(null, cln(Settings.NAME_DATE_FORMAT) + "=FORMAT")
                     .desc("The format used to show date (year+month+day) "
                             + "values. The default is locale dependent.");
-            ap.addOption(null, dn(Settings.NAME_TIME_FORMAT) + "=FORMAT")
+            ap.addOption(null, cln(Settings.NAME_TIME_FORMAT) + "=FORMAT")
                     .desc("The format used to show time values. "
                             + "The default is locale dependent.");
-            ap.addOption(null, dn(Settings.NAME_DATETIME_FORMAT) + "=FORMAT")
+            ap.addOption(null, cln(Settings.NAME_DATETIME_FORMAT) + "=FORMAT")
                     .desc("The format used to show date-time values. "
                             + "The default is locale dependent.");
-            ap.addOption(null, dn(Settings.NAME_TIME_ZONE) + "=ZONE")
+            ap.addOption(null, cln(Settings.NAME_TIME_ZONE) + "=ZONE")
                     .desc("Sets the time zone used to show time. "
                             + "The default is the time zone of the host "
                             + "machine. Example: GMT+02");
-            ap.addOption(null, dn(Settings.NAME_TAG_SYNTAX) + "=WHAT")
+            ap.addOption(null, cln(Settings.NAME_TAG_SYNTAX) + "=WHAT")
             .desc("Sets the tag syntax for templates that doesn't start "
                     + "with the ftl directive. Possible values are: "
                     + Settings.VALUE_TAG_SYNTAX_ANGLE_BRACKET + ", "
@@ -332,106 +342,106 @@ public class CommandLine {
                     + "depends on the FreeMarker version. The recommended "
                     + "value is " + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT
                     + ".");
-            ap.addOption(null, dn(Settings.NAME_CASE_SENSITIVE))
+            ap.addOption(null, cln(Settings.NAME_CASE_SENSITIVE))
                     .propertyValue("true")
                     .desc("Upper- and lower-case letters are considered as "
                             + "different characters when comparing or matching "
                             + "paths.");
             ap.addOption(null, "ignore-case")
-                    .property(dn(Settings.NAME_CASE_SENSITIVE), "false")
+                    .property(cln(Settings.NAME_CASE_SENSITIVE), "false")
                     .implied()
                     .desc("Upper- and lower-case letters are considered as "
                             + "the same characters when comparing or matching "
                             + "paths. This is the default.");
-            ap.addOption(null, dn(Settings.NAME_ALWAYS_CREATE_DIRECTORIES))
+            ap.addOption(null, cln(Settings.NAME_ALWAYS_CREATE_DIRECTORIES))
                     .propertyValue("true")
                     .desc("Create output subdirectory even if it will remain "
                             + "empty. Defaults to false.");
-            ap.addOption(null, dn(Settings.NAME_IGNORE_CVS_FILES))
+            ap.addOption(null, cln(Settings.NAME_IGNORE_CVS_FILES))
                     .implied()
                     .desc("Ignore CVS files in the source root directory. "
                             + "This is the default.");
-            ap.addOption(null, "dont-" + dn(Settings.NAME_IGNORE_CVS_FILES))
-                    .property(dn(Settings.NAME_IGNORE_CVS_FILES), "false")
+            ap.addOption(null, "dont-" + cln(Settings.NAME_IGNORE_CVS_FILES))
+                    .property(cln(Settings.NAME_IGNORE_CVS_FILES), "false")
                     .desc("Don't ignore CVS files in the source root "
                             + "directory.");
-            ap.addOption(null, dn(Settings.NAME_IGNORE_SVN_FILES))
+            ap.addOption(null, cln(Settings.NAME_IGNORE_SVN_FILES))
                     .implied()
                     .desc("Ignore SVN files in the source root directory. "
                             + "This is the default.");
-            ap.addOption(null, "dont-" + dn(Settings.NAME_IGNORE_SVN_FILES))
-                    .property(dn(Settings.NAME_IGNORE_SVN_FILES), "false")
+            ap.addOption(null, "dont-" + cln(Settings.NAME_IGNORE_SVN_FILES))
+                    .property(cln(Settings.NAME_IGNORE_SVN_FILES), "false")
                     .desc("Don't ignore SVN files in the source root "
                             + "directory.");
-            ap.addOption(null, dn(Settings.NAME_IGNORE_TEMPORARY_FILES))
+            ap.addOption(null, cln(Settings.NAME_IGNORE_TEMPORARY_FILES))
                     .implied()
                     .desc("Ignore well-known temporary files (e.g. **/?*~) in "                            + "the source root directory. "                            + "This is the default.");
             ap.addOption(null,
-                    "dont-" + dn(Settings.NAME_IGNORE_TEMPORARY_FILES))
-                    .property(dn(Settings.NAME_IGNORE_TEMPORARY_FILES), "false")
+                    "dont-" + cln(Settings.NAME_IGNORE_TEMPORARY_FILES))
+                    .property(cln(Settings.NAME_IGNORE_TEMPORARY_FILES), "false")
                     .desc("Don't ignore well-known temporary files in the "
                             + "source root directory.");
-            ap.addOption("R SEQ", dn(Settings.NAME_REMOVE_EXTENSIONS))
+            ap.addOption("R SEQ", cln(Settings.NAME_REMOVE_EXTENSIONS))
                     .desc("These extensions will be removed from the output "
                             + "file name. <SEQ> contains the extensions "                            + "without the dot.");
-            ap.addOption(null, dn(Settings.OLD_NAME_REMOVE_EXTENSION) + "=L")
+            ap.addOption(null, cln(Settings.OLD_NAME_REMOVE_EXTENSION) + "=L")
                     .hide();
-            ap.addOption(null, dn(Settings.NAME_REPLACE_EXTENSIONS) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_REPLACE_EXTENSIONS) + "=SEQ")
                     .desc("Replaces the extensions with another exensions. "
                             + "The list contains the old and new extensions "
                             + "alternately; old1, new1, old2, new2, etc. "
                             + "The extensions in the <SEQ> do not contain "
                             + "the dot.");
-            ap.addOption(null, dn(Settings.OLD_NAME_REPLACE_EXTENSION) + "=L")
+            ap.addOption(null, cln(Settings.OLD_NAME_REPLACE_EXTENSION) + "=L")
                     .hide();
-            ap.addOption(null, dn(Settings.NAME_REMOVE_POSTFIXES) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_REMOVE_POSTFIXES) + "=SEQ")
                     .desc("If the source file name without the extension ends "
                             + "with a string in the <SEQ>, then that string "
                             + "will be removed from the output file name.");
-            ap.addOption(null, dn(Settings.OLD_NAME_REMOVE_POSTFIX) + "=L")
+            ap.addOption(null, cln(Settings.OLD_NAME_REMOVE_POSTFIX) + "=L")
                     .hide();
-            ap.addOption("L FILE", dn(Settings.NAME_LOG_FILE))
+            ap.addOption("L FILE", cln(Settings.NAME_LOG_FILE))
                     .implied("none")
                     .desc("Sets the log file. "
                             + "Use \"none\" (-L none) to disable logging. "
                             + "The default is \"none\".");
-            od = ap.addOption(null, dn(Settings.NAME_APPEND_LOG_FILE))
+            od = ap.addOption(null, cln(Settings.NAME_APPEND_LOG_FILE))
                     .desc("If the log file already exists, it will be "                            + "continuted, instead of restarting it.");
             if (impliedAppendLogFile) {
                 setAsDefault(od);
             }
-            od = ap.addOption(null, "dont-" + dn(Settings.NAME_APPEND_LOG_FILE))
-                    .property(dn(Settings.NAME_APPEND_LOG_FILE), "false")
+            od = ap.addOption(null, "dont-" + cln(Settings.NAME_APPEND_LOG_FILE))
+                    .property(cln(Settings.NAME_APPEND_LOG_FILE), "false")
                     .desc("If the log file already exists, it will be "                            + "restarted.");
             if (!impliedAppendLogFile) {
                 setAsDefault(od);
             }
-            ap.addOption(null, dn(Settings.NAME_CONFIGURATION_BASE) + "=DIR")
+            ap.addOption(null, cln(Settings.NAME_CONFIGURATION_BASE) + "=DIR")
                     .desc("The directory used as base to "
                             + "resolve relative paths in the configuration "
                             + "file. It defaults to the directory of the "
                             + "configuration file.");
-            ap.addOption("x", dn(Settings.NAME_EXPERT))
+            ap.addOption("x", cln(Settings.NAME_EXPERT))
                     .propertyValue("true")
                     .desc("Expert mode.");
             ap.addOption(null, "not-expert")
-                    .property(dn(Settings.NAME_EXPERT), "false")
+                    .property(cln(Settings.NAME_EXPERT), "false")
                     .desc("Disables expert mode. This is the default.");
-            ap.addOption(null, dn(Settings.NAME_XML_RENDERINGS) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_XML_RENDERINGS) + "=SEQ")
                     .desc("Sets the sequence of XML renderings. Each item is "
                             + "hash, that stores the options of an XML "
                             + "rendering configuration.");
-            ap.addOption(null, dn(Settings.NAME_XPATH_ENGINE) + " NAME")
+            ap.addOption(null, cln(Settings.NAME_XPATH_ENGINE) + "=NAME")
                     .desc("Sets the XPath engine to be used. Legal values are: "
                             + Engine.XPATH_ENGINE_DONT_SET + ", "
                             + Engine.XPATH_ENGINE_DEFAULT + ", "
                             + Engine.XPATH_ENGINE_JAXEN + ", "
                             + Engine.XPATH_ENGINE_XALAN + ", "
                             + "and any adapter class name.");
-            ap.addOption(null, dn(Settings.NAME_XML_CATALOG_FILES) + "=SEQ")
+            ap.addOption(null, cln(Settings.NAME_XML_CATALOG_FILES) + "=SEQ")
                     .desc("Sets the catalog files used for XML entity "                        + "resolution. Catalog based resolution is enabled if "
                         + "and only if this settings is specified.");
-            ap.addOption(null, dn(Settings.NAME_XML_CATALOG_PREFER) + "=WHAT")
+            ap.addOption(null, cln(Settings.NAME_XML_CATALOG_PREFER) + "=WHAT")
                     .desc("Sets if catalog file based XML entity resolution "
                             + "prefers public or system identifiers. Valid "                            + "values are: "
                             + Settings.VALUE_XML_CATALOG_PREFER_PUBLIC + ", "
@@ -444,50 +454,50 @@ public class CommandLine {
                     .desc("Sets if catalog PI-s are allowed. Valid values "                            + "are booleans and \""
                             + Settings.VALUE_GLOBAL_DEFAULT + "\".");
             */
-            ap.addOption(null, dn(Settings.NAME_VALIDATE_XML))
+            ap.addOption(null, cln(Settings.NAME_VALIDATE_XML))
                     .desc("Sets that XML files will be validated by default.");
-            ap.addOption(null, "dont-" + dn(Settings.NAME_VALIDATE_XML))
-                    .property(dn(Settings.NAME_VALIDATE_XML), "false")
+            ap.addOption(null, "dont-" + cln(Settings.NAME_VALIDATE_XML))
+                    .property(cln(Settings.NAME_VALIDATE_XML), "false")
                     .desc("Sets that XML files will not be validated by "                            + "default. This is the default.");
             od = ap.addOption("v", "verbose")
-                    .property(dn(Settings.NAME_QUIET), "false")
+                    .property(cln(Settings.NAME_QUIET), "false")
                     .desc("The opposite of -Q: prints everything to "                            + "the stdout.");
             if (impliedQuiet == 0) {
                 setAsDefault(od);
             }
-            od = ap.addOption("q", dn(Settings.NAME_QUIET))
-                    .property(dn(Settings.NAME_QUIET), "true")
+            od = ap.addOption("q", cln(Settings.NAME_QUIET))
+                    .property(cln(Settings.NAME_QUIET), "true")
                     .desc("Don't write to the stdout, unless the command-line "
                             + "arguments are wrong. Print warning and error "                            + "messages to the stderr.");
             if (impliedQuiet == 1) {
                 setAsDefault(od);
             }
             od = ap.addOption("Q", "really-quiet")
-                    .property(dn(Settings.NAME_QUIET),
+                    .property(cln(Settings.NAME_QUIET),
                             Settings.VALUE_REALLY_QUIET)
                     .desc("As -q, but doesn't even write to the stderr.");
             if (impliedQuiet == 2) {
                 setAsDefault(od);
             }
-            ap.addOption("F FORMAT", dn(Settings.NAME_ECHO_FORMAT))
+            ap.addOption("F FORMAT", cln(Settings.NAME_ECHO_FORMAT))
                     .implied(echoFormatToString(impliedEchoFormat))
                     .desc("The format used for displaying the progress. "
                             + "<FORMAT> is n[ormal], t[erse] or q[uiet] "
                             + "(or v[erbose], which is the same as normal). "
                             + "The default is "
                             + echoFormatToString(impliedEchoFormat) + ".");
-            ap.addOption(null, dn(Settings.NAME_COLUMNS) + "=COLS")
+            ap.addOption(null, cln(Settings.NAME_COLUMNS) + "=COLS")
                     .implied(String.valueOf(impliedColumns))
                     .desc("The number of columns on the console screen. "
                             + "Defaults to " + impliedColumns + ".");
-            od = ap.addOption(null, dn(Settings.NAME_SNIP))
-                    .property(dn(Settings.NAME_SNIP), "true")
+            od = ap.addOption(null, cln(Settings.NAME_SNIP))
+                    .property(cln(Settings.NAME_SNIP), "true")
                     .desc("Snip (--8<--) long messages.");
             if (impliedSnip) {
                 setAsDefault(od);
             }
             od = ap.addOption(null, "dont-snip")
-                    .property(dn(Settings.NAME_SNIP), "false")
+                    .property(cln(Settings.NAME_SNIP), "false")
                     .desc("Don't snip (--8<--) long messages.");
             if (!impliedSnip) {
                 setAsDefault(od);
@@ -517,8 +527,8 @@ public class CommandLine {
             // Pre-interpret some options
             
             i = Settings.quietSettingValueToInt(
-                    ops.getProperty(dn(Settings.NAME_QUIET)),
-                    dn(Settings.NAME_QUIET));
+                    ops.getProperty(cln(Settings.NAME_QUIET)),
+                    cln(Settings.NAME_QUIET));
             if (i > 0) {
                 quiet = true;
                 tOut.flush();
@@ -533,8 +543,8 @@ public class CommandLine {
             }
             
             screenCols = opToInt(
-                    ops.getProperty(dn(Settings.NAME_COLUMNS)),
-                    dn(Settings.NAME_COLUMNS));
+                    ops.getProperty(cln(Settings.NAME_COLUMNS)),
+                    cln(Settings.NAME_COLUMNS));
 
             // -----------------------------------------------------------------
             // Do a special task instead of processing?
@@ -852,9 +862,9 @@ public class CommandLine {
             tOut.println(ap.getOptionsHelp(screenCols));
             pt();
             pt(
-                    "Most of the above command-line options directly correspond "
-                    + "to FMPP settings. The detailed description of the "
-                    + "FMPP settings is in the FMPP Manual.");
+                    "Most options above directly correspond to FMPP settings. "
+                    + "See their full descriptions here: "
+                    + "http://fmpp.sourceforge.net/settings.html");
         }
         pt();
         tOut.flush();
@@ -977,7 +987,7 @@ public class CommandLine {
         }
     }
     
-    private String dn(String name) {
+    private String cln(String name) {
         return Settings.getDashedName(name);
     }
 

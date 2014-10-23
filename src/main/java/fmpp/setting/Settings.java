@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -56,6 +55,7 @@ import fmpp.util.MiscUtil;
 import fmpp.util.StringUtil;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
+import freemarker.template.Version;
 
 /**
  * Stores FMPP settings, loads configuration files, provides other setting
@@ -106,6 +106,7 @@ public class Settings {
     public static final String NAME_OUTPUT_FILE = "outputFile";
     public static final String NAME_DATA_ROOT = "dataRoot";
     public static final String NAME_OBJECT_WRAPPER = "objectWrapper";
+    public static final String NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS = "freemarkerIncompatibleImprovements";
     public static final String NAME_FREEMARKER_LINKS = "freemarkerLinks";
     public static final String NAME_INHERIT_CONFIGURATION
             = "inheritConfiguration";
@@ -779,6 +780,7 @@ public class Settings {
         stdDef(NAME_OUTPUT_FILE, TYPE_CFG_RELATIVE_PATH, false, true);
         stdDef(NAME_DATA_ROOT, TYPE_CFG_RELATIVE_PATH, false, true);
         stdDef(NAME_OBJECT_WRAPPER, TYPE_STRING, false, true);
+        stdDef(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS, TYPE_STRING, false, true);
         stdDef(NAME_FREEMARKER_LINKS,
                 TYPE_HASH_OF_SEQUENCE_OF_CFG_RELATIVE_PATHS, true, true);
         stdDef(NAME_INHERIT_CONFIGURATION, TYPE_CFG_RELATIVE_PATH, false, true);
@@ -1183,46 +1185,67 @@ public class Settings {
      *     the engine are catched and wrapped by this exeption.
      */
     public void execute() throws SettingException, ProcessingException {
-        String s;
-        BeansWrapper ow;
-        s = (String) get(NAME_OBJECT_WRAPPER);
-        if (s != null) {
-            Object bres;
-            bsh.Interpreter intp = new bsh.Interpreter();
-            try {
-                intp.eval("import freemarker.template.ObjectWrapper;");
-                intp.eval("import freemarker.ext.beans.BeansWrapper;");
-                bres = intp.eval(s);
-            } catch (EvalError e) {
-                throw new SettingException("Failed to apply the value of the "
-                        + StringUtil.jQuote(NAME_OBJECT_WRAPPER)
-                        + " setting.", e);
+        final Version fmIcI;
+        {
+            String s = (String) get(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS);
+            if (s != null) {
+                try {
+                    fmIcI = new Version(s);
+                } catch (Exception e) {
+                    throw new SettingException("Failed to apply the value of the "
+                            + StringUtil.jQuote(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS)
+                            + " setting.", e);
+                }
+            } else {
+                fmIcI = null;
             }
-            if (bres == null) {
-                throw new SettingException("Failed to apply the value of the "
-                        + StringUtil.jQuote(NAME_OBJECT_WRAPPER)
-                        + " setting: the result of the setting value "
-                        + "evaluation was null. (The typical reason is that "
-                        + "you forget the \"return\" statement. A rare but "
-                        + "rather evil reason is that you use a \"//\" "
-                        + "comment, and Ant eats the line-breaks, so you "
-                        + "comment out everything after the \"//\".)");
-            }
-            if (!(bres instanceof BeansWrapper)) {
-                throw new SettingException("Failed to apply the value of the "
-                        + StringUtil.jQuote(NAME_OBJECT_WRAPPER)
-                        + " setting: the class of the resulting object must "
-                        + "extend " + BeansWrapper.class.getName()
-                        + ", but the " + bres.getClass().getName()
-                        + " class doesn't extend it.");
-            }
-            ow = (BeansWrapper) bres;
-        } else {
-            ow = null;
         }
         
-        Engine eng = new Engine(ow);
+        final BeansWrapper ow;
+        {
+            String s = (String) get(NAME_OBJECT_WRAPPER);
+            if (s != null) {
+                Object bres;
+                bsh.Interpreter intp = new bsh.Interpreter();
+                try {
+                    intp.eval("import freemarker.template.ObjectWrapper;");
+                    intp.eval("import freemarker.ext.beans.BeansWrapper;");
+                    intp.eval("import freemarker.ext.beans.BeansWrapperBuilder;");
+                    intp.set(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS,
+                            fmIcI != null ? fmIcI : Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+                    bres = intp.eval(s);
+                } catch (EvalError e) {
+                    throw new SettingException("Failed to apply the value of the "
+                            + StringUtil.jQuote(NAME_OBJECT_WRAPPER)
+                            + " setting.", e);
+                }
+                if (bres == null) {
+                    throw new SettingException("Failed to apply the value of the "
+                            + StringUtil.jQuote(NAME_OBJECT_WRAPPER)
+                            + " setting: the result of the setting value "
+                            + "evaluation was null. (The typical reason is that "
+                            + "you forget the \"return\" statement. A rare but "
+                            + "rather evil reason is that you use a \"//\" "
+                            + "comment, and Ant eats the line-breaks, so you "
+                            + "comment out everything after the \"//\".)");
+                }
+                if (!(bres instanceof BeansWrapper)) {
+                    throw new SettingException("Failed to apply the value of the "
+                            + StringUtil.jQuote(NAME_OBJECT_WRAPPER)
+                            + " setting: the class of the resulting object must "
+                            + "extend " + BeansWrapper.class.getName()
+                            + ", but the " + bres.getClass().getName()
+                            + " class doesn't extend it.");
+                }
+                ow = (BeansWrapper) bres;
+            } else {
+                ow = null;
+            }
+        }
         
+        final Engine eng = new Engine(ow, fmIcI);
+        
+        String s;
         Boolean b;
         List ls;
         Map m;
@@ -2095,7 +2118,7 @@ public class Settings {
     }
 
     /**
-     * Convers legacy dashed setting names to the standard format, as
+     * Converts legacy dashed setting names to the standard format, as
      * <code>source-root</code> to <code>sourceRoot</code>.
      * 
      * @param props the <code>Properties</code> object to convert.
@@ -3306,16 +3329,10 @@ public class Settings {
     
     private static class DataList extends ArrayList {
         
-        public DataList() {
-            super();
-        }
+        private static final long serialVersionUID = 1L;
 
         public DataList(int initialCapacity) {
             super(initialCapacity);
-        }
-
-        public DataList(Collection c) {
-            super(c);
         }
 
     } 
