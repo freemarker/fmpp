@@ -206,12 +206,18 @@ import java.util.Set;
  * <p>For more information please read the documentation of methods.
  */
 public class ArgsParser implements java.io.Serializable {
-    private static final Comparator CMPRTR_OP_KEY =
-            new OptionDefinitionKeyComparator();
-    private static final Comparator CMPRTR_OP_SNAME =
-            new OptionDefinitionShortNameComparator();
-    private static final Comparator CMPRTR_OP_LNAME =
-            new OptionDefinitionLongNameComparator();
+    
+    private static final int WRAP_INDENT = 2;
+
+    private static final int COL_DISTANCE = 3;
+
+    private static final int MAX_LEFT_COL_WIDTH = 30;
+
+    private static final long serialVersionUID = 1L;
+
+    private static final Comparator CMPRTR_OP_KEY = new OptionDefinitionKeyComparator();
+    private static final Comparator CMPRTR_OP_SNAME = new OptionDefinitionShortNameComparator();
+    private static final Comparator CMPRTR_OP_LNAME = new OptionDefinitionLongNameComparator();
 
     // Settings:
     private Properties defaultProperties;
@@ -835,7 +841,7 @@ public class ArgsParser implements java.io.Serializable {
         int i = Collections.binarySearch(odsByKey, name, CMPRTR_OP_KEY);
         return i < 0 ? null : (OptionDefinition) odsByKey.get(i);
     }
-
+    
     /**
      * Generates options help for the defined options.
      * @param screenWidth the (minimum) width of the console screen.
@@ -844,26 +850,27 @@ public class ArgsParser implements java.io.Serializable {
         int i, ln;
         String s;
 
-        int maxlw = 0;
-        ArrayList lcols = new ArrayList();
+        int lColW = 0;
+        ArrayList lCols = new ArrayList();
         ArgsParser.OptionDefinition od;
         StringBuffer res = new StringBuffer();
 
+        // Collect the left column contents:
         Iterator it = getOptionDefintions();
         while (it.hasNext()) {
             od = (ArgsParser.OptionDefinition) it.next();
             if (!od.hidden) {
                 s = createOptionLeftColumn(od);
-                lcols.add(s);
-                int w = s.length();
-                if (w > maxlw) {
-                    maxlw = w;
+                lCols.add(s);
+                int width = s.length();
+                if (width > lColW) {
+                    lColW = width <= MAX_LEFT_COL_WIDTH ? width : MAX_LEFT_COL_WIDTH;
                 }
             }
         }
 
-        if (screenWidth - 1 - (maxlw + 3 + 2) < 16) {
-            if (screenWidth - 1 < maxlw) {
+        if (screenWidth - 1 - (lColW + 3 + 2) < 16) {
+            if (screenWidth - 1 < lColW) {
                 return StringUtil.wrap("Unable to display option help: "
                     + "Screen is too narrow.", screenWidth);
             } else {
@@ -871,9 +878,9 @@ public class ArgsParser implements java.io.Serializable {
                         "Warning: Unable to display option descriptions: "
                         + "Screen is too narrow.", screenWidth))
                                 .append(StringUtil.LINE_BREAK);
-                ln = lcols.size();
+                ln = lCols.size();
                 for (i = 0; i < ln; i++) {
-                    res.append((String) lcols.get(i));
+                    res.append((String) lCols.get(i));
                     if (i != ln - 1) {
                         res.append(StringUtil.LINE_BREAK);
                     }
@@ -886,16 +893,28 @@ public class ArgsParser implements java.io.Serializable {
             while (it.hasNext()) {
                 od = (ArgsParser.OptionDefinition) it.next();
                 if (!od.hidden) {
-                    String lc = (String) lcols.get(i);
+                    String lCol = (String) lCols.get(i);
                     i++;
                     if (od.getDescription() != null) {
-                        StringBuffer desc = StringUtil.wrap(
-                                new StringBuffer(od.getDescription()),
-                                screenWidth, maxlw + 3, maxlw + 3 + 2);
-                        desc.replace(0, lc.length(), lc);
-                        res.append(desc);
+                        final int lColWithPaddingW = lColW + COL_DISTANCE;
+                        if (lCol.length() <= lColW) {  // Has space to use two columns
+                            StringBuffer desc = StringUtil.wrap(
+                                    new StringBuffer(od.getDescription()),
+                                    screenWidth,
+                                    lColWithPaddingW, lColWithPaddingW + WRAP_INDENT);
+                            desc.replace(0, lCol.length(), lCol);
+                            res.append(desc);
+                        } else {  // No space for two columns, use a single line
+                            String lColAndSep= lCol.length() >= lColWithPaddingW
+                                    ? lCol + " "
+                                    : freemarker.template.utility.StringUtil.rightPad(lCol, lColWithPaddingW); 
+                            res.append(StringUtil.wrap(
+                                    new StringBuffer(lColAndSep + od.getDescription()),
+                                    screenWidth,
+                                    0, lColWithPaddingW + WRAP_INDENT));
+                        }
                     } else {
-                        res.append(lc);
+                        res.append(lCol);
                     }
                     if (it.hasNext()) {
                         res.append(StringUtil.LINE_BREAK);
