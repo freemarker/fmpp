@@ -340,65 +340,62 @@
     <fail unless="dependency.xmlResolver.version">dependency.xmlResolver.version wasn't set; check build.properties</fail>
     <fail unless="dependency.imageinfo.version">dependency.imageinfo.version wasn't set; check build.properties</fail>
 
-    <echo file="build/pom.xml">
-      <![CDATA[<?xml version="1.0" encoding="utf-8"?>
-      <project xmlns="http://maven.apache.org/POM/4.0.0"
+    <echo file="build/pom.xml"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-        <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-        <parent>
-          <groupId>org.sonatype.oss</groupId>
-          <artifactId>oss-parent</artifactId>
-          <version>9</version>
-        </parent>
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>9</version>
+  </parent>
 
-        <groupId>net.sourceforge.fmpp</groupId>
-        <artifactId>fmpp</artifactId>
-        <version>${mavenVersion}</version>
+  <groupId>net.sourceforge.fmpp</groupId>
+  <artifactId>fmpp</artifactId>
+  <version>${mavenVersion}</version>
 
-        <packaging>jar</packaging>
+  <packaging>jar</packaging>
 
-        <name>FMPP</name>
-        <description>
-    General-purpose text file preprocessor tool that uses FreeMarker templates.
-  </description>
-        <url>http://fmpp.sourceforge.net</url>
-        <licenses>
-          <license>
-            <name>Apache License, Version 2.0</name>
-            <url>http://fmpp.sourceforge.net/license.html</url>
-          </license>
-        </licenses>
-        <scm>
-          <connection>scm:git:git@github.com:freemarker/fmpp.git</connection>
-          <developerConnection>scm:git:git@github.com:freemarker/fmpp.git</developerConnection>
-          <url>git@github.com:freemarker/fmpp.git</url>
-        </scm>
+  <name>FMPP</name>
+  <description>General-purpose text file preprocessor tool that uses FreeMarker templates.</description>
+  <url>http://fmpp.sourceforge.net</url>
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://fmpp.sourceforge.net/license.html</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:freemarker/fmpp.git</connection>
+    <developerConnection>scm:git:git@github.com:freemarker/fmpp.git</developerConnection>
+    <url>git@github.com:freemarker/fmpp.git</url>
+  </scm>
 
-        <dependencies>
-          <dependency>
-            <groupId>org.freemarker</groupId>
-            <artifactId>freemarker</artifactId>
-            <version>${dependency.freemarker.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.beanshell</groupId>
-            <artifactId>bsh</artifactId>
-            <version>${dependency.bsh.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>xml-resolver</groupId>
-            <artifactId>xml-resolver</artifactId>
-            <version>${dependency.xmlResolver.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.devlib.schmidt</groupId>
-            <artifactId>imageinfo</artifactId>
-            <version>${dependency.imageinfo.version}</version>
-          </dependency>
-        </dependencies>
-      </project>
+  <dependencies>
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>${dependency.freemarker.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
+      <version>${dependency.bsh.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+      <version>${dependency.xmlResolver.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.devlib.schmidt</groupId>
+      <artifactId>imageinfo</artifactId>
+      <version>${dependency.imageinfo.version}</version>
+    </dependency>
+  </dependencies>
+</project>
 ]]></echo>
   </target>
 
