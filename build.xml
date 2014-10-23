@@ -1,435 +1,425 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
 <project basedir="." default="jar" name="fmpp" xmlns:b="http://fmpp.sourceforge.org/build">
-    <!-- You have to keep these up-to-date manually: -->
-    <property file="src/main/resources/fmpp/version.properties" />
-    <property file="build.properties" />
+  <!-- You have to keep the contents of these up-to-date manually: -->
+  <property file="src/main/resources/fmpp/version.properties" />
+  <property file="build.properties" />
 
-    <property name="bootclasspath.path" value="${sun.boot.class.path}" />
-    <available classpath="${bootclasspath.path}"
-        classname="java.lang.Object" ignoresystemclasses="true" 
-        property="bootclasspath.correct" />
+  <property name="bootclasspath.path" value="${sun.boot.class.path}" />
+  <available classpath="${bootclasspath.path}"
+             classname="java.lang.Object"
+             ignoresystemclasses="true"
+             property="bootclasspath.correct"
+  />
 
-    <property environment="env" />
-    <property name="ant.jar.path" value="${env.ANT_HOME}/lib/ant.jar" />
-    
-    <available property="atLeastJDK8" classname="java.util.function.Predicate"/>
-    
-    <path id="classpath.path">
-        <pathelement path="lib/freemarker.jar" />
-        <pathelement path="lib/bsh.jar" />
-        <pathelement path="lib/resolver.jar" />
-        <pathelement path="lib/imageinfo.jar" />
-        <pathelement path="lib/fmpp.jar" />
-        <pathelement path="${ant.jar.path}" />
-    </path>
+  <property environment="env" />
+  <property name="ant.jar.path" value="${env.ANT_HOME}/lib/ant.jar" />
 
-    <tstamp>
-        <format property="timeStamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC" />
-    </tstamp>
-    <filter token="VERSION" value="${version}" />
-    <filter token="TIMESTAMP" value="${timeStamp}" />
+  <available property="atLeastJDK8" classname="java.util.function.Predicate" />
 
-    <property name="freemarkerDocs.path" value="${freemarkerReleases.path}/freemarker-${dependency.freemarker.version}/documentation/_html" />
-    <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
-    <property name="dist.dir" value="build/dist/fmpp_${version}" />
-    
-    <target name="all" description="Build fmpp.jar and the documentation" depends="jar, docs" />
+  <path id="classpath.path">
+    <pathelement path="lib/freemarker.jar" />
+    <pathelement path="lib/bsh.jar" />
+    <pathelement path="lib/resolver.jar" />
+    <pathelement path="lib/imageinfo.jar" />
+    <pathelement path="lib/fmpp.jar" />
+    <pathelement path="${ant.jar.path}" />
+  </path>
 
-    <target name="jar" depends="compile" description="Re-build fmpp.jar">
-        <mkdir dir="lib" />
-        <jar basedir="build/classes" jarfile="lib/fmpp.jar">
-            <manifest>
-                <attribute name="Main-Class" value="fmpp.tools.CommandLine" />
-                <attribute name="Class-Path" value="freemarker.jar bsh.jar resolver.jar imageinfo.jar" />
-                <attribute name="Extension-name" value="fmpp" />
-                <attribute name="Specification-Title" value="FMPP" />
-                <attribute name="Specification-Version" value="${version}" />
-                <attribute name="Specification-Vendor" value="Dániel Dékány" />
-                <attribute name="Implementation-Title" value="FMPP" />
-                <attribute name="Implementation-Version" value="${version}" />
-                <attribute name="Implementation-Vendor" value="Dániel Dékány" />
-            </manifest>
-        </jar>
-    </target>
+  <tstamp>
+    <format property="timeStamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC" />
+  </tstamp>
+  <filter token="VERSION" value="${version}" />
+  <filter token="TIMESTAMP" value="${timeStamp}" />
 
-    <target name="compile" description="Compile Java files and copy resources">
-        <fail unless="bootclasspath.correct"><!--
+  <property name="freemarkerDocs.path"
+            value="${freemarkerReleases.path}/freemarker-${dependency.freemarker.version}/documentation/_html"
+  />
+  <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
+  <property name="dist.dir" value="build/dist/fmpp_${version}" />
+
+  <target name="all" description="Build fmpp.jar and the documentation" depends="jar, docs" />
+
+  <target name="jar" depends="compile" description="Re-build fmpp.jar">
+    <mkdir dir="lib" />
+    <jar basedir="build/classes" jarfile="lib/fmpp.jar">
+      <manifest>
+        <attribute name="Main-Class" value="fmpp.tools.CommandLine" />
+        <attribute name="Class-Path" value="freemarker.jar bsh.jar resolver.jar imageinfo.jar" />
+        <attribute name="Extension-name" value="fmpp" />
+        <attribute name="Specification-Title" value="FMPP" />
+        <attribute name="Specification-Version" value="${version}" />
+        <attribute name="Specification-Vendor" value="Dániel Dékány" />
+        <attribute name="Implementation-Title" value="FMPP" />
+        <attribute name="Implementation-Version" value="${version}" />
+        <attribute name="Implementation-Vendor" value="Dániel Dékány" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compile" description="Compile Java files and copy resources">
+    <fail unless="bootclasspath.correct">
+      <!--
             -->The "boot.classpath" property value (${bootclasspath.path}) <!--
             -->seems to be an incorrect boot classpath. Please fix it in <!--
             -->the &lt;projectDir>/build.properties file, or wherever you <!--
             -->set it.<!--
-        --></fail>
-      
-        <mkdir dir="build/classes" />
-        <echo>Compling classes using boot classpath ${bootclasspath.path}</echo>
-        <javac
-                bootclasspath="${bootclasspath.path}"
-                includeantruntime="false"
-                srcdir="src/main/java"
-                destdir="build/classes"
-                encoding="utf-8"
-                deprecation="off" debug="on"
-                source="1.4" target="1.4"
-        >
-            <classpath refid="classpath.path" />
-        </javac>
-        <copy toDir="build/classes">
-            <fileset dir="src/main/resources" excludes="fmpp/version.properties" />
-        </copy>
-        <copy toDir="build/classes" filtering="true" overwrite="true">
-            <fileset dir="src/main/resources" includes="fmpp/version.properties" />
-        </copy>
-    </target>
+        -->
+    </fail>
 
-    <target name="docs" depends="docs.preFMPP" description="Generates build/docs directory for offline reading">
-        <b:docs.fmpp online="false" />
-    </target>
+    <mkdir dir="build/classes" />
+    <echo>Compling classes using boot classpath ${bootclasspath.path}</echo>
+    <javac bootclasspath="${bootclasspath.path}"
+           includeantruntime="false"
+           srcdir="src/main/java"
+           destdir="build/classes"
+           encoding="utf-8"
+           deprecation="off"
+           debug="on"
+           source="1.4"
+           target="1.4"
+    >
+      <classpath refid="classpath.path" />
+    </javac>
+    <copy toDir="build/classes">
+      <fileset dir="src/main/resources" excludes="fmpp/version.properties" />
+    </copy>
+    <copy toDir="build/classes" filtering="true" overwrite="true">
+      <fileset dir="src/main/resources" includes="fmpp/version.properties" />
+    </copy>
+  </target>
 
-    <target name="docsOnline" depends="docs.preFMPP" description="Generates build/docs directory for online reading">
-        <b:docs.fmpp online="true" />
-    </target>
-    
-    <macrodef name="docs.fmpp" uri="http://fmpp.sourceforge.org/build">
-        <attribute name="online" />
-        <sequential>
-            <mkdir dir="build/docs" />
-            <!--
+  <target name="docs" depends="docs.preFMPP" description="Generates build/docs directory for offline reading">
+    <b:docs.fmpp online="false" />
+  </target>
+
+  <target name="docsOnline" depends="docs.preFMPP" description="Generates build/docs directory for online reading">
+    <b:docs.fmpp online="true" />
+  </target>
+
+  <macrodef name="docs.fmpp" uri="http://fmpp.sourceforge.org/build">
+    <attribute name="online" />
+    <sequential>
+      <mkdir dir="build/docs" />
+      <!--
                The command-line tool is used instead of FMPP Ant task, in a forked VM,
                because of the class loading issues caused by the exceptional situation that
                we (re)build fmpp.jar in this VM, and also because this task should work
                without installing FMPP for Ant.
             -->
-            <java fork="true" jar="${basedir}/lib/fmpp.jar" failonerror="true">
-                    <sysproperty key="fmpp.home" value="${basedir}" />
-                    <arg value="-C${basedir}/docs.fmpp" />
-                    <arg value='-D online:@{online}' />
-            </java>
-        </sequential>
-    </macrodef>
-    
-    <!-- "jar" is dependency as FMPP will run from fmpp.jar -->
-    <target name="docs.preFMPP" depends="jar, javadoc, docs.examples, docs.freemarker" />
-    
-    <target name="docs.examples">
-        <copy todir="build/docs/examples" includeEmptyDirs="true">
-            <fileset dir="src/docs/examples">
-                <exclude name="*/out/" />
-            </fileset>
-        </copy>
-    </target>
-    
-    <target
-        name="docs.freemarker"
-        depends="docs.freemarker.ifAvailable, docs.freemarker.unlessAvailable"
-        description="Copy FreeMarker documentation into the docs"
-    />
+      <java fork="true" jar="${basedir}/lib/fmpp.jar" failonerror="true">
+        <sysproperty key="fmpp.home" value="${basedir}" />
+        <arg value="-C${basedir}/docs.fmpp" />
+        <arg value='-D online:@{online}' />
+      </java>
+    </sequential>
+  </macrodef>
 
-    <target name="docs.freemarker.ifAvailable" if="freemarkerDocs.available">
-        <mkdir dir="build/docs" />
-        <copy todir="build/docs/freemarker">
-            <fileset dir="${freemarkerDocs.path}" includes="**" />
-        </copy>
-    </target>
+  <!-- "jar" is dependency as FMPP will run from fmpp.jar -->
+  <target name="docs.preFMPP" depends="jar, javadoc, docs.examples, docs.freemarker" />
 
-    <target name="docs.freemarker.unlessAvailable" unless="freemarkerDocs.available">
-        <fail unless="freemarkerReleases.path">freemarkerReleases.path wasn't set; check build.properties</fail>
-        <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
-        <fail>FreeMarker documentation wasn't found here: ${freemarkerDocs.path}</fail>
-    </target>
-    
-    <target name="_confirm">
-        <input
-            message="Do you want to continute? "
-            validargs="y,n"
-            addproperty="_confirm_answer"
-        />
-        <condition property="_confirm_abort">
-            <equals arg1="n" arg2="${_confirm_answer}"/>
-        </condition>
-        <fail if="_confirm_abort">Build aborted by user.</fail>
-    </target>
+  <target name="docs.examples">
+    <copy todir="build/docs/examples" includeEmptyDirs="true">
+      <fileset dir="src/docs/examples">
+        <exclude name="*/out/" />
+      </fileset>
+    </copy>
+  </target>
 
-    <target name="javadoc" depends="_rawJavadoc, _fixJDK8JavadocCSS" description="Build the JavaDocs" />
-    
-    <target name="_rawJavadoc">
-        <mkdir dir="build/docs/api" />
-        <delete includeEmptyDirs="yes">
-            <fileset dir="build/docs/api" includes="**/*" />
-        </delete>
-        <javadoc
-                sourcepath="src/main/java"
-                destdir="build/docs/api"
-                doctitle="FMPP ${version} API"
-                windowtitle="FMPP ${version} API"
-                overview="src/main/java/fmpp/overview.html"
-                classpathref="classpath.path"
-                use="true"
-                charset="UTF-8"
-                docencoding="UTF-8"
-                locale="en_US"
-                failonerror="true"
-        >
-            <link href="http://docs.oracle.com/javase/8/docs/api/"/>
-            <link href="http://freemarker.org/docs/api/"/>
-        </javadoc>
-    </target>
-    
-    <!--
+  <target name="docs.freemarker"
+          depends="docs.freemarker.ifAvailable, docs.freemarker.unlessAvailable"
+          description="Copy FreeMarker documentation into the docs"
+  />
+
+  <target name="docs.freemarker.ifAvailable" if="freemarkerDocs.available">
+    <mkdir dir="build/docs" />
+    <copy todir="build/docs/freemarker">
+      <fileset dir="${freemarkerDocs.path}" includes="**" />
+    </copy>
+  </target>
+
+  <target name="docs.freemarker.unlessAvailable" unless="freemarkerDocs.available">
+    <fail unless="freemarkerReleases.path">freemarkerReleases.path wasn't set; check build.properties</fail>
+    <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
+    <fail>FreeMarker documentation wasn't found here: ${freemarkerDocs.path}</fail>
+  </target>
+
+  <target name="javadoc" depends="_rawJavadoc, _fixJDK8JavadocCSS" description="Build the JavaDocs" />
+
+  <target name="_rawJavadoc">
+    <mkdir dir="build/docs/api" />
+    <delete includeEmptyDirs="yes">
+      <fileset dir="build/docs/api" includes="**/*" />
+    </delete>
+    <javadoc sourcepath="src/main/java"
+             destdir="build/docs/api"
+             doctitle="FMPP ${version} API"
+             windowtitle="FMPP ${version} API"
+             overview="src/main/java/fmpp/overview.html"
+             classpathref="classpath.path"
+             use="true"
+             charset="UTF-8"
+             docencoding="UTF-8"
+             locale="en_US"
+             failonerror="true"
+    >
+      <link href="http://docs.oracle.com/javase/8/docs/api/" />
+      <link href="http://freemarker.org/docs/api/" />
+    </javadoc>
+  </target>
+
+  <!--
       DO NOT EDIT: This was copied from FreeMarker's build.xml. If you fix anything in it,
       please do it there, then copy it back here. EXCEPT that the file property value is
       different here.
-    -->
-    <target name="_fixJDK8JavadocCSS" depends="_rawJavadoc" if="atLeastJDK8">
-        <property name="file" value="build/docs/api/stylesheet.css" />
-        
-        <available file="${file}" property="stylesheet.available"/>
-        <fail unless="stylesheet.available">CSS file not found: ${file}</fail>
-        <echo>Fixing JDK 8 CSS in ${file}</echo>
-        
-        <!-- Tell that it's modified: -->
-        <replaceregexp
-            file="${file}" flags="gs" encoding="utf-8"
-            match="/\* (Javadoc style sheet) \*/" replace="/\* \1 - JDK 8 usability fix regexp substitutions applied \*/"
-        />
-        
-        <!-- Font family fixes: -->
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="['&quot;]DejaVu Sans['&quot;]" replace="Arial"
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="['&quot;]DejaVu Sans Mono['&quot;]" replace="'Courier New'"
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="['&quot;]DejaVu Serif['&quot;]" replace="Arial"
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="(?&lt;=[\s,:])serif\b" replace="sans-serif"
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="(?&lt;=[\s,:])Georgia,\s*" replace=""
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="['&quot;]Times New Roman['&quot;],\s*" replace=""
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="(?&lt;=[\s,:])Times,\s*" replace=""
-        />
-        <replaceregexp
-            file="${file}" flags="gsi" encoding="utf-8"
-            match="(?&lt;=[\s,:])Arial\s*,\s*Arial\b" replace="Arial"
-        />
-        
-        <!-- "Parameters:", "Returns:", "Throws:", "Since:", "See also:" etc. fixes: -->
-        <property name="ddSelectorStart" value="(?:\.contentContainer\s+\.(?:details|description)|\.serializedFormContainer)\s+dl\s+dd\b.*?\{[^\}]*\b" />
-        <property name="ddPropertyEnd" value="\b.+?;" />
-        <!-- - Put back description (dd) indentation: -->
-        <replaceregexp
-            file="${file}" flags="gs" encoding="utf-8"
-            match="(${ddSelectorStart})margin${ddPropertyEnd}" replace="\1margin: 5px 0 10px 20px;"
-        />
-        <!-- - No monospace font for the description (dd) part: -->
-        <replaceregexp
-            file="${file}" flags="gs" encoding="utf-8"
-            match="(${ddSelectorStart})font-family${ddPropertyEnd}" replace="\1"
-        />
-    </target>
-    
-    <target name="dist"
-            description="Build the distribution (release) archives"
-            depends="all">
-        <fail unless="atLeastJDK8" message="The release should be built with JDK 8+ (you may need to set JAVA_HOME)" />
-        <mkdir dir="${dist.dir}" />
-        <copy todir="${dist.dir}">
-            <fileset dir=".">
-                <exclude name="**/.*" />
-                <exclude name="**/.*/" />
-                <exclude name="build/" />
-                <exclude name="build.properties" />
-                <exclude name="**/.*/" />
-                <exclude name="README.txt" />
-            </fileset>
-        </copy>
-        <copy todir="${dist.dir}" includeEmptyDirs="true">
-            <fileset dir="build" includes="docs/" />
-        </copy>
-        <copy file="README.txt" todir="${dist.dir}" filtering="true" />
+  -->
+  <target name="_fixJDK8JavadocCSS" depends="_rawJavadoc" if="atLeastJDK8">
+    <property name="file" value="build/docs/api/stylesheet.css" />
 
-        <delete file="${dist.dir}.tar.gz" />
-        <tar tarfile="${dist.dir}.tar" longfile="gnu">
-            <tarfileset dir="${dist.dir}" mode="755" prefix="fmpp_${version}">
-                <include name="bin/**" />
-            </tarfileset>
-            <tarfileset dir="${dist.dir}" prefix="fmpp_${version}">
-                <exclude name="bin/" />
-            </tarfileset>
-        </tar>
-        <gzip src="${dist.dir}.tar" zipfile="${dist.dir}.tar.gz" />
-        <delete file="${dist.dir}.tar" />
-        
-        <delete file="${dist.dir}.zip" />
-        <zip destfile="${dist.dir}.zip" encoding="US-ASCII" whenempty="fail">
-            <zipfileset dir="${dist.dir}" filemode="755" prefix="fmpp_${version}">
-                <include name="bin/**" />
-            </zipfileset>
-            <zipfileset dir="${dist.dir}" prefix="fmpp_${version}">
-                <exclude name="bin/" />
-            </zipfileset>
-        </zip>
-    </target>
-    
-    <target name="site" depends="docsOnline"
-            description="Build the WWW site -- requires ${dist.dir}.tar.gz">
-        <mkdir dir="build/site/site_${version}" />
-        <copy todir="build/site/site_${version}">
-            <fileset dir="build/docs">
-                <exclude name="examples/" />
-            </fileset>
-        </copy>
-        <!-- Create a tar.gz for quicker uploading -->
-        <tar tarfile="build/site/site.tar" basedir="build/site/site_${version}" />
-        <gzip src="build/site/site.tar" zipfile="build/site/site.tar.gz" />
-        <delete file="build/site/site.tar" />
-    </target>
+    <available file="${file}" property="stylesheet.available" />
+    <fail unless="stylesheet.available">CSS file not found: ${file}</fail>
+    <echo>Fixing JDK 8 CSS in ${file}</echo>
 
-    <target name="test" depends="jar" description="Run test suite">
-        <mkdir dir="build/test/classes" />
-        <javac
-                bootclasspath="${bootclasspath.path}"
-                includeantruntime="false"
-                srcdir="src/test/java"
-                destdir="build/test/classes"
-                encoding="utf-8"
-                deprecation="on" debug="on"
-                source="1.4"
-                target="1.4"
-        >
-            <classpath refid="classpath.path" />
-        </javac>
-        <copy toDir="build/test/classes">
-            <fileset dir="src/test/resources">
-                <!-- These are read directly from under src/test/resources: -->
-                <exclude name="tests/**" />
-                <exclude name="expected/**" />
-            </fileset>
-        </copy>
-        
-        <property name="fmpp.testcase" value="" />
-        <java fork="true"
-                classname="fmpp.testsuite.TestSuite"
-                classpath="lib/fmpp.jar;build/test/classes"
-                failonerror="true"
-        >
-            <arg value="${basedir}" />
-            <arg value="${fmpp.testcase}" />
-        </java>
-    </target>
+    <!-- Tell that it's modified: -->
+    <replaceregexp file="${file}"
+                   flags="gs"
+                   encoding="utf-8"
+                   match="/\* (Javadoc style sheet) \*/"
+                   replace="/\* \1 - JDK 8 usability fix regexp substitutions applied \*/"
+    />
 
-    <target name="clean" description="Delete all output files">
-        <delete dir="build" />
-        <delete includeEmptyDirs="yes">
-            <fileset dir="src/docs/examples" includes="*/out/"/>
-            <fileset dir="src/docs/examples" includes="*/fmpp.log"/>
-            <fileset dir="src/docs/examples" includes="*/log.fmpp"/>
-            <fileset dir="src/test/resources/tests" includes="*/out/"/>
-            <fileset dir="src/test/resources/tests" includes="*/fmpp.log"/>
-            <fileset dir="src/test/resources/tests" includes="*/log.fmpp"/>
-            <!-- Ant doesn't allow it: <fileset dir="lib" includes="fmpp.jar"/> -->
-        </delete>
-    </target>
+    <!-- Font family fixes: -->
+    <replaceregexp file="${file}" flags="gsi" encoding="utf-8" match="['&quot;]DejaVu Sans['&quot;]" replace="Arial" />
+    <replaceregexp file="${file}"
+                   flags="gsi"
+                   encoding="utf-8"
+                   match="['&quot;]DejaVu Sans Mono['&quot;]"
+                   replace="'Courier New'"
+    />
+    <replaceregexp file="${file}" flags="gsi" encoding="utf-8" match="['&quot;]DejaVu Serif['&quot;]" replace="Arial" />
+    <replaceregexp file="${file}" flags="gsi" encoding="utf-8" match="(?&lt;=[\s,:])serif\b" replace="sans-serif" />
+    <replaceregexp file="${file}" flags="gsi" encoding="utf-8" match="(?&lt;=[\s,:])Georgia,\s*" replace="" />
+    <replaceregexp file="${file}"
+                   flags="gsi"
+                   encoding="utf-8"
+                   match="['&quot;]Times New Roman['&quot;],\s*"
+                   replace=""
+    />
+    <replaceregexp file="${file}" flags="gsi" encoding="utf-8" match="(?&lt;=[\s,:])Times,\s*" replace="" />
+    <replaceregexp file="${file}"
+                   flags="gsi"
+                   encoding="utf-8"
+                   match="(?&lt;=[\s,:])Arial\s*,\s*Arial\b"
+                   replace="Arial"
+    />
 
-    <target name="maven-pom">
-        <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
-        <fail unless="dependency.bsh.version">dependency.bsh.version wasn't set; check build.properties</fail>
-        <fail unless="dependency.xmlResolver.version">dependency.xmlResolver.version wasn't set; check build.properties</fail>
-        <fail unless="dependency.imageinfo.version">dependency.imageinfo.version wasn't set; check build.properties</fail>
-        
-        <echo file="build/pom.xml"><![CDATA[<?xml version="1.0" encoding="utf-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+    <!-- "Parameters:", "Returns:", "Throws:", "Since:", "See also:" etc. fixes: -->
+    <property name="ddSelectorStart"
+              value="(?:\.contentContainer\s+\.(?:details|description)|\.serializedFormContainer)\s+dl\s+dd\b.*?\{[^\}]*\b"
+    />
+    <property name="ddPropertyEnd" value="\b.+?;" />
+    <!-- - Put back description (dd) indentation: -->
+    <replaceregexp file="${file}"
+                   flags="gs"
+                   encoding="utf-8"
+                   match="(${ddSelectorStart})margin${ddPropertyEnd}"
+                   replace="\1margin: 5px 0 10px 20px;"
+    />
+    <!-- - No monospace font for the description (dd) part: -->
+    <replaceregexp file="${file}"
+                   flags="gs"
+                   encoding="utf-8"
+                   match="(${ddSelectorStart})font-family${ddPropertyEnd}"
+                   replace="\1"
+    />
+  </target>
+
+  <target name="dist" description="Build the distribution (release) archives" depends="all">
+    <fail unless="atLeastJDK8" message="The release should be built with JDK 8+ (you may need to set JAVA_HOME)" />
+    <mkdir dir="${dist.dir}" />
+    <copy todir="${dist.dir}">
+      <fileset dir=".">
+        <exclude name="**/.*" />
+        <exclude name="**/.*/" />
+        <exclude name="build/" />
+        <exclude name="build.properties" />
+        <exclude name="**/.*/" />
+        <exclude name="README.txt" />
+      </fileset>
+    </copy>
+    <copy todir="${dist.dir}" includeEmptyDirs="true">
+      <fileset dir="build" includes="docs/" />
+    </copy>
+    <copy file="README.txt" todir="${dist.dir}" filtering="true" />
+
+    <delete file="${dist.dir}.tar.gz" />
+    <tar tarfile="${dist.dir}.tar" longfile="gnu">
+      <tarfileset dir="${dist.dir}" mode="755" prefix="fmpp_${version}">
+        <include name="bin/**" />
+      </tarfileset>
+      <tarfileset dir="${dist.dir}" prefix="fmpp_${version}">
+        <exclude name="bin/" />
+      </tarfileset>
+    </tar>
+    <gzip src="${dist.dir}.tar" zipfile="${dist.dir}.tar.gz" />
+    <delete file="${dist.dir}.tar" />
+
+    <delete file="${dist.dir}.zip" />
+    <zip destfile="${dist.dir}.zip" encoding="US-ASCII" whenempty="fail">
+      <zipfileset dir="${dist.dir}" filemode="755" prefix="fmpp_${version}">
+        <include name="bin/**" />
+      </zipfileset>
+      <zipfileset dir="${dist.dir}" prefix="fmpp_${version}">
+        <exclude name="bin/" />
+      </zipfileset>
+    </zip>
+  </target>
+
+  <target name="site" depends="docsOnline" description="Build the WWW site -- requires ${dist.dir}.tar.gz">
+    <mkdir dir="build/site/site_${version}" />
+    <copy todir="build/site/site_${version}">
+      <fileset dir="build/docs">
+        <exclude name="examples/" />
+      </fileset>
+    </copy>
+    <!-- Create a tar.gz for quicker uploading -->
+    <tar tarfile="build/site/site.tar" basedir="build/site/site_${version}" />
+    <gzip src="build/site/site.tar" zipfile="build/site/site.tar.gz" />
+    <delete file="build/site/site.tar" />
+  </target>
+
+  <target name="test" depends="jar" description="Run test suite">
+    <mkdir dir="build/test/classes" />
+    <javac bootclasspath="${bootclasspath.path}"
+           includeantruntime="false"
+           srcdir="src/test/java"
+           destdir="build/test/classes"
+           encoding="utf-8"
+           deprecation="on"
+           debug="on"
+           source="1.4"
+           target="1.4"
+    >
+      <classpath refid="classpath.path" />
+    </javac>
+    <copy toDir="build/test/classes">
+      <fileset dir="src/test/resources">
+        <!-- These are read directly from under src/test/resources: -->
+        <exclude name="tests/**" />
+        <exclude name="expected/**" />
+      </fileset>
+    </copy>
+
+    <property name="fmpp.testcase" value="" />
+    <java fork="true"
+          classname="fmpp.testsuite.TestSuite"
+          classpath="lib/fmpp.jar;build/test/classes"
+          failonerror="true"
+    >
+      <arg value="${basedir}" />
+      <arg value="${fmpp.testcase}" />
+    </java>
+  </target>
+
+  <target name="clean" description="Delete all output files">
+    <delete dir="build" />
+    <delete includeEmptyDirs="yes">
+      <fileset dir="src/docs/examples" includes="*/out/" />
+      <fileset dir="src/docs/examples" includes="*/fmpp.log" />
+      <fileset dir="src/docs/examples" includes="*/log.fmpp" />
+      <fileset dir="src/test/resources/tests" includes="*/out/" />
+      <fileset dir="src/test/resources/tests" includes="*/fmpp.log" />
+      <fileset dir="src/test/resources/tests" includes="*/log.fmpp" />
+      <!-- Ant doesn't allow it: <fileset dir="lib" includes="fmpp.jar"/> -->
+    </delete>
+  </target>
+
+  <target name="maven-pom">
+    <fail unless="dependency.freemarker.version">dependency.freemarker.version wasn't set; check build.properties</fail>
+    <fail unless="dependency.bsh.version">dependency.bsh.version wasn't set; check build.properties</fail>
+    <fail unless="dependency.xmlResolver.version">dependency.xmlResolver.version wasn't set; check build.properties</fail>
+    <fail unless="dependency.imageinfo.version">dependency.imageinfo.version wasn't set; check build.properties</fail>
+
+    <echo file="build/pom.xml">
+      <![CDATA[<?xml version="1.0" encoding="utf-8"?>
+      <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-              
-  <parent>
-    <groupId>org.sonatype.oss</groupId>
-    <artifactId>oss-parent</artifactId>
-    <version>9</version>
-  </parent>
-              
-  <groupId>net.sourceforge.fmpp</groupId>
-  <artifactId>fmpp</artifactId>
-  <version>${mavenVersion}</version>
-              
-  <packaging>jar</packaging>
-              
-  <name>FMPP</name>
-  <description>
+        <modelVersion>4.0.0</modelVersion>
+
+        <parent>
+          <groupId>org.sonatype.oss</groupId>
+          <artifactId>oss-parent</artifactId>
+          <version>9</version>
+        </parent>
+
+        <groupId>net.sourceforge.fmpp</groupId>
+        <artifactId>fmpp</artifactId>
+        <version>${mavenVersion}</version>
+
+        <packaging>jar</packaging>
+
+        <name>FMPP</name>
+        <description>
     General-purpose text file preprocessor tool that uses FreeMarker templates.
   </description>
-  <url>http://fmpp.sourceforge.net</url>
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>http://fmpp.sourceforge.net/license.html</url>
-    </license>
-  </licenses>
-  <scm>
-    <connection>scm:git:git@github.com:freemarker/fmpp.git</connection>
-    <developerConnection>scm:git:git@github.com:freemarker/fmpp.git</developerConnection>
-    <url>git@github.com:freemarker/fmpp.git</url>
-  </scm>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.freemarker</groupId>
-      <artifactId>freemarker</artifactId>
-      <version>${dependency.freemarker.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.beanshell</groupId>
-      <artifactId>bsh</artifactId>
-      <version>${dependency.bsh.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>xml-resolver</groupId>
-      <artifactId>xml-resolver</artifactId>
-      <version>${dependency.xmlResolver.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>org.devlib.schmidt</groupId>
-        <artifactId>imageinfo</artifactId>
-        <version>${dependency.imageinfo.version}</version>
-    </dependency>
-  </dependencies>
-</project>
+        <url>http://fmpp.sourceforge.net</url>
+        <licenses>
+          <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://fmpp.sourceforge.net/license.html</url>
+          </license>
+        </licenses>
+        <scm>
+          <connection>scm:git:git@github.com:freemarker/fmpp.git</connection>
+          <developerConnection>scm:git:git@github.com:freemarker/fmpp.git</developerConnection>
+          <url>git@github.com:freemarker/fmpp.git</url>
+        </scm>
+
+        <dependencies>
+          <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${dependency.freemarker.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.beanshell</groupId>
+            <artifactId>bsh</artifactId>
+            <version>${dependency.bsh.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+            <version>${dependency.xmlResolver.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.devlib.schmidt</groupId>
+            <artifactId>imageinfo</artifactId>
+            <version>${dependency.imageinfo.version}</version>
+          </dependency>
+        </dependencies>
+      </project>
 ]]></echo>
-    </target>
-    
-    <target name="maven-dist" depends="maven-pom" description="Releases the already built distro to a Maven repository">
-        <jar destfile="build/maven-source-attachment.jar">
-            <fileset dir="${dist.dir}/src/main/java" />
-            <fileset dir="${dist.dir}/src/main/resources" />
-        </jar>
+  </target>
 
-        <jar destfile="build/maven-javadoc-attachment.jar">
-            <fileset dir="${dist.dir}/docs/api" />
-        </jar>
+  <target name="maven-dist" depends="maven-pom" description="Releases the already built distro to a Maven repository">
+    <jar destfile="build/maven-source-attachment.jar">
+      <fileset dir="${dist.dir}/src/main/java" />
+      <fileset dir="${dist.dir}/src/main/resources" />
+    </jar>
 
-        <property name="maven-server-id" value="ossrh" />
-        <property name="maven-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
-        <!--
+    <jar destfile="build/maven-javadoc-attachment.jar">
+      <fileset dir="${dist.dir}/docs/api" />
+    </jar>
+
+    <property name="maven-server-id" value="ossrh" />
+    <property name="maven-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
+    <!--
         Don't deploy to public snapshot repositories here!
         It isn't backward compatible as version ranges will pick them up.
         -->
-        
-        <input validargs="y,n" addproperty="mavenUpload.answer">
+
+    <input validargs="y,n" addproperty="mavenUpload.answer">
   You are about uploading
   ${dist.dir}/lib/fmpp.jar
   and its attachments to this Maven repository:
@@ -437,128 +427,128 @@
   with Maven artifact version number ${mavenVersion}.
   Note that it's assumed that you have run `ant dist` just before this.
   Proceed? </input>
-        <condition property="mavenUpload.yes">
-            <equals arg1="y" arg2="${mavenUpload.answer}"/>
-        </condition>
-        <fail unless="mavenUpload.yes" message="Task aborted by user." />
-        
-        <!-- Sign and deploy the main artifact -->
-        <exec executable="${mvnCommand}">
-            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-            <arg value="-Durl=${maven-repository-url}" />
-            <arg value="-DrepositoryId=${maven-server-id}" />
-            <arg value="-DpomFile=build/pom.xml" />
-            <arg value="-Dfile=${dist.dir}/lib/fmpp.jar" />
-            <arg value="-Pgpg" />
-        </exec>
+    <condition property="mavenUpload.yes">
+      <equals arg1="y" arg2="${mavenUpload.answer}" />
+    </condition>
+    <fail unless="mavenUpload.yes" message="Task aborted by user." />
 
-        <!-- Sign and deploy the sources artifact -->
-        <exec executable="${mvnCommand}">
-            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-            <arg value="-Durl=${maven-repository-url}" />
-            <arg value="-DrepositoryId=${maven-server-id}" />
-            <arg value="-DpomFile=build/pom.xml" />
-            <arg value="-Dfile=build/maven-source-attachment.jar" />
-            <arg value="-Dclassifier=sources" />
-            <arg value="-Pgpg" />
-        </exec>
+    <!-- Sign and deploy the main artifact -->
+    <exec executable="${mvnCommand}">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+      <arg value="-Durl=${maven-repository-url}" />
+      <arg value="-DrepositoryId=${maven-server-id}" />
+      <arg value="-DpomFile=build/pom.xml" />
+      <arg value="-Dfile=${dist.dir}/lib/fmpp.jar" />
+      <arg value="-Pgpg" />
+    </exec>
 
-        <!-- Sign and deploy the javadoc artifact -->
-        <exec executable="${mvnCommand}">
-            <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
-            <arg value="-Durl=${maven-repository-url}" />
-            <arg value="-DrepositoryId=${maven-server-id}" />
-            <arg value="-DpomFile=build/pom.xml" />
-            <arg value="-Dfile=build/maven-javadoc-attachment.jar" />
-            <arg value="-Dclassifier=javadoc" />
-            <arg value="-Pgpg" />
-        </exec>
-        
-        <echo>*****************************************************************</echo>
-        <echo>Check the above lines for any Maven errors!</echo>
-        <echo>Now you have to release the staged repo on</echo>
-        <echo>https://oss.sonatype.org/.</echo>
-        <echo>*****************************************************************</echo>
-    </target>
+    <!-- Sign and deploy the sources artifact -->
+    <exec executable="${mvnCommand}">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+      <arg value="-Durl=${maven-repository-url}" />
+      <arg value="-DrepositoryId=${maven-server-id}" />
+      <arg value="-DpomFile=build/pom.xml" />
+      <arg value="-Dfile=build/maven-source-attachment.jar" />
+      <arg value="-Dclassifier=sources" />
+      <arg value="-Pgpg" />
+    </exec>
 
-    <target name="install"
-            description="Copy the required jar-s into the Ant lib directory.">
-        <fail unless="env.ANT_HOME" message="Environment variable ANT_HOME is not set, so I don't know where to copy the .jar-s." />
+    <!-- Sign and deploy the javadoc artifact -->
+    <exec executable="${mvnCommand}">
+      <arg value="org.apache.maven.plugins:maven-gpg-plugin:1.3:sign-and-deploy-file" />
+      <arg value="-Durl=${maven-repository-url}" />
+      <arg value="-DrepositoryId=${maven-server-id}" />
+      <arg value="-DpomFile=build/pom.xml" />
+      <arg value="-Dfile=build/maven-javadoc-attachment.jar" />
+      <arg value="-Dclassifier=javadoc" />
+      <arg value="-Pgpg" />
+    </exec>
 
-        <input validargs="y,n" addproperty="_install_answer"><!--
-            -->This will copy the .jar files required for FMPP ${version} from the <!--
-            -->${basedir}/lib directory into the ${env.ANT_HOME}/lib directory. <!--
-            -->Note that if the same java packages <!--
-            -->are already installed, but with different jar file names as in the FMPP lib <!--
-            -->directory (like freemarker-2.3.21.jar instead of freemarker.jar), then it's <!--
-            -->indeterminable if the newly installed or old classes will be visible, <!--
-            -->so you must delete the old .jar-s manually. Do you want to continue? <!--
-        --></input>
-        <condition property="_install_abort">
-            <equals arg1="n" arg2="${_install_answer}"/>
-        </condition>
-        <fail if="_install_abort">Installation aborted by user.</fail>
+    <echo>*****************************************************************</echo>
+    <echo>Check the above lines for any Maven errors!</echo>
+    <echo>Now you have to release the staged repo on</echo>
+    <echo>https://oss.sonatype.org/.</echo>
+    <echo>*****************************************************************</echo>
+  </target>
 
-        <antcall target="_install_jar_doit">
-            <param name="jarName" value="fmpp.jar" />
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
+  <target name="install" description="Copy the required jar-s into the Ant lib directory.">
+    <fail unless="env.ANT_HOME"
+          message="Environment variable ANT_HOME is not set, so I don't know where to copy the .jar-s."
+    />
 
-        <antcall target="_install_jar">
-            <param name="jarName" value="freemarker.jar" />
-        </antcall>
+    <input validargs="y,n" addproperty="_install_answer"><!--
+        -->This will copy the .jar files required for FMPP ${version} from the <!--
+        -->${basedir}/lib directory into the ${env.ANT_HOME}/lib directory. <!--
+        -->Note that if the same java packages <!--
+        -->are already installed, but with different jar file names as in the FMPP lib <!--
+        -->directory (like freemarker-2.3.21.jar instead of freemarker.jar), then it's <!--
+        -->indeterminable if the newly installed or old classes will be visible, <!--
+        -->so you must delete the old .jar-s manually. Do you want to continue? <!--
+    --></input>
+    <condition property="_install_abort">
+      <equals arg1="n" arg2="${_install_answer}" />
+    </condition>
+    <fail if="_install_abort">Installation aborted by user.</fail>
 
-        <antcall target="_install_jar">
-            <param name="jarName" value="bsh.jar" />
-        </antcall>
+    <antcall target="_install_jar_doit">
+      <param name="jarName" value="fmpp.jar" />
+      <param name="_install_reallyDoIt" value="true" />
+    </antcall>
 
-        <antcall target="_install_jar">
-            <param name="jarName" value="resolver.jar" />
-        </antcall>
-        
-        <antcall target="_install_jar">
-            <param name="jarName" value="imageinfo.jar" />
-        </antcall>
-    </target>
+    <antcall target="_install_jar">
+      <param name="jarName" value="freemarker.jar" />
+    </antcall>
 
-    <target name="_install_jar">
-        <available
-                file="${env.ANT_HOME}/lib/${jarName}"
-                property="_install_theJarIsAlreadyThere"
-        />
-        <antcall target="_install_jar_firstinstall" />
-        <antcall target="_install_jar_overwrite" />
-    </target>
-    
-    <target name="_install_jar_overwrite" if="_install_theJarIsAlreadyThere">
-        <input validargs="y,n" addproperty="_install_jar_overwrite_answer"><!--
+    <antcall target="_install_jar">
+      <param name="jarName" value="bsh.jar" />
+    </antcall>
+
+    <antcall target="_install_jar">
+      <param name="jarName" value="resolver.jar" />
+    </antcall>
+
+    <antcall target="_install_jar">
+      <param name="jarName" value="imageinfo.jar" />
+    </antcall>
+  </target>
+
+  <target name="_install_jar">
+    <available file="${env.ANT_HOME}/lib/${jarName}" property="_install_theJarIsAlreadyThere" />
+    <antcall target="_install_jar_firstinstall" />
+    <antcall target="_install_jar_overwrite" />
+  </target>
+
+  <target name="_install_jar_overwrite" if="_install_theJarIsAlreadyThere">
+    <input validargs="y,n" addproperty="_install_jar_overwrite_answer">
+      <!--
             -->${jarName} already exists in the Ant lib directory. <!--
             -->Do you want to overwrite it with the version in the FMPP lib directory? <!--
-        --></input>
-        <condition property="_install_reallyDoIt">
-            <equals arg1="y" arg2="${_install_jar_overwrite_answer}"/>
-        </condition>
-        <antcall target="_install_jar_doit" />
-        <antcall target="_install_jar_dontdoit" />
-    </target>
+        -->
+    </input>
+    <condition property="_install_reallyDoIt">
+      <equals arg1="y" arg2="${_install_jar_overwrite_answer}" />
+    </condition>
+    <antcall target="_install_jar_doit" />
+    <antcall target="_install_jar_dontdoit" />
+  </target>
 
-    <target name="_install_jar_firstinstall" unless="_install_theJarIsAlreadyThere">
-        <antcall target="_install_jar_doit">
-            <param name="_install_reallyDoIt" value="true" />
-        </antcall>
-    </target>
+  <target name="_install_jar_firstinstall" unless="_install_theJarIsAlreadyThere">
+    <antcall target="_install_jar_doit">
+      <param name="_install_reallyDoIt" value="true" />
+    </antcall>
+  </target>
 
-    <target name="_install_jar_doit" if="_install_reallyDoIt">
-        <echo>*************************************************************</echo>
-        <echo>  Copying ${jarName} into the Ant lib directory...</echo>
-        <echo>*************************************************************</echo>
-        <copy file="lib/${jarName}" todir="${env.ANT_HOME}/lib" overwrite="yes" />
-    </target>
+  <target name="_install_jar_doit" if="_install_reallyDoIt">
+    <echo>*************************************************************</echo>
+    <echo>  Copying ${jarName} into the Ant lib directory...</echo>
+    <echo>*************************************************************</echo>
+    <copy file="lib/${jarName}" todir="${env.ANT_HOME}/lib" overwrite="yes" />
+  </target>
 
-    <target name="_install_jar_dontdoit" unless="_install_reallyDoIt">
-        <echo>*************************************************************</echo>
-        <echo>  You have skipped the copying of ${jarName}.</echo>
-        <echo>*************************************************************</echo>
-    </target>
+  <target name="_install_jar_dontdoit" unless="_install_reallyDoIt">
+    <echo>*************************************************************</echo>
+    <echo>  You have skipped the copying of ${jarName}.</echo>
+    <echo>*************************************************************</echo>
+  </target>
 
 </project>
