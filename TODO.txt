@@ -38,7 +38,6 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
- . [!!!] Promote --long-help
  . [!!!] Support all FreeMarker settings up to 2.3.21
  . [!!!] Now that error messages are longer and contain FTL stack trace, long message
    snipping is annoying. It should shouldn't snip before the end of the FreeMarker error

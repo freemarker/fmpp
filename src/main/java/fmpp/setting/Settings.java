@@ -864,7 +864,7 @@ public class Settings {
         } catch (IOException e) {
             throw new SettingException(
                     "Can't bring base path to canonical form: "
-                    + baseDir.getPath());
+                    + baseDir.getPath(), e);
         }
         defs = STD_DEFS;
         cmdLineNames = STD_STDCMDL;
@@ -922,7 +922,7 @@ public class Settings {
      * Adds a setting value. If a setting value already exists, it will be
      * either replaced or merged with the new value, depending on the
      * definition of the setting. When merging, the new value has higher
-     * priorty than the old value.
+     * priority than the old value.
      */
     public void add(String name, Object value) throws SettingException {
         addOrSet(values, name, value, false);

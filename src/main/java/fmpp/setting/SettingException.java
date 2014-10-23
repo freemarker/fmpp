@@ -19,11 +19,13 @@ package fmpp.setting;
 import fmpp.util.ExceptionCC;
 
 /**
- * Bad setting or setting combination, or faliure when trying to setup the
+ * Bad setting or setting combination, or failure when trying to setup the
  * engine with the settings.
  */
 public class SettingException extends ExceptionCC {
     
+    private static final long serialVersionUID = 1L;
+
     public SettingException(String s) {
         super(s);
     }

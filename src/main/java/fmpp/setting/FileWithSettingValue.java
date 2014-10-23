@@ -19,11 +19,14 @@ package fmpp.setting;
 import java.io.File;
 
 /**
- * <code>File</code> that stores the original setting value (string) it was
+ * {@link File} that stores the original setting value (string) it was
  * constructed from. This extra information is needed, for example, to
  * display the content of a loaded configuration file for the user.
  */
 public class FileWithSettingValue extends File {
+    
+    private static final long serialVersionUID = 1L;
+    
     private final String settingValue;
     
     public FileWithSettingValue(
@@ -36,8 +39,8 @@ public class FileWithSettingValue extends File {
         this.settingValue = settingValue;
     }
 
-    public FileWithSettingValue(String pathname, String settingValue) {
-        super(pathname);
+    public FileWithSettingValue(String path, String settingValue) {
+        super(path);
         if (settingValue == null) {
             throw new IllegalArgumentException(
                     "Parameter settingValue can't be null");
