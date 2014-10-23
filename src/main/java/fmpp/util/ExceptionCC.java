@@ -16,28 +16,16 @@
 
 package fmpp.util;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 
 /**
- * <code>Exception</code> that emulates J2SE 1.4+ cause-chains if it runs on
- * earlier versions. Furthermore, in FMPP error messages, the message of this
- * exception is trusted (i.e. no need to print the class name), as it is inside
- * an <tt>fmpp.*</tt> package.
+ * This was used for emulating cause-chains on Java earlier than 1.4, but as FMPP now requires 1.4, it just dispatches
+ * to {@link Exception}.
+ * Not that in FMPP error messages, the message of this exception is trusted (i.e. no need to print the class name), as
+ * it is inside an {@code fmpp} package.
  */
 public class ExceptionCC extends Exception {
-    private Throwable cause;
 
-    private static final boolean BEFORE_1_4 = before14();
-    private static boolean before14() {
-        Class ec = Exception.class;
-        try {
-            ec.getMethod("getCause", new Class[]{});
-        } catch (NoSuchMethodException e) {
-            return true;
-        }
-        return false;
-    }
+    private static final long serialVersionUID = 1L;
 
     public ExceptionCC() {
         super();
@@ -48,41 +36,11 @@ public class ExceptionCC extends Exception {
     }
 
     public ExceptionCC(Throwable cause) {
-        super();
-        this.cause = cause;
+        super(cause);
     }
 
     public ExceptionCC(String s, Throwable cause) {
-        super(s);
-        this.cause = cause;
+        super(s, cause);
     }
     
-    public Throwable getCause() {
-        return cause;
-    }
-    
-    public void printStackTrace() {
-        super.printStackTrace();
-        if (BEFORE_1_4 && cause != null) {
-            System.err.print("Caused by: ");
-            cause.printStackTrace();
-        }
-    }
-
-    public void printStackTrace(PrintStream s) {
-        super.printStackTrace(s);
-        if (BEFORE_1_4 && cause != null) {
-            s.print("Caused by: ");
-            cause.printStackTrace(s);
-        }
-    }
-
-    public void printStackTrace(PrintWriter s) {
-        super.printStackTrace(s);
-        if (BEFORE_1_4 && cause != null) {
-            s.print("Caused by: ");
-            cause.printStackTrace(s);
-        }
-    }
-
 }
