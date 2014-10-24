@@ -5,6 +5,9 @@
 /archive/
 /lib/fmpp.jar
 /docs/
+fmpp.log
+log.fmpp
+out/
 
 src/manual/book.xml~
 
