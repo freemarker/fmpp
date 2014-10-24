@@ -2,9 +2,14 @@ sourceRoot: src
 outputRoot: out
 
 timeZone: UTC
+sqlDateAndTimeTimeZone: 'GMT+01'
 
 booleanFormat: 'Y,N'
 numberFormat: '0.00'
 datetimeFormat: 'iso nz'
 timeFormat: 'iso s nz'
 dateFormat: yyyyMMdd
+
+data: {
+  sqlTime: eval('new java.sql.Time(802538177000L)')
+}

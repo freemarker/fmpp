@@ -30,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.Vector;
 
 import bsh.EvalError;
@@ -125,6 +124,7 @@ public class Settings {
     public static final String NAME_TIME_FORMAT = "timeFormat";
     public static final String NAME_DATETIME_FORMAT = "datetimeFormat";
     public static final String NAME_TIME_ZONE = "timeZone";
+    public static final String NAME_SQL_DATE_AND_TIME_TIME_ZONE = "sqlDateAndTimeTimeZone";
     public static final String NAME_TAG_SYNTAX = "tagSyntax";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
@@ -800,6 +800,7 @@ public class Settings {
         stdDef(NAME_TIME_FORMAT, TYPE_STRING, false, true);
         stdDef(NAME_DATETIME_FORMAT, TYPE_STRING, false, true);
         stdDef(NAME_TIME_ZONE, TYPE_STRING, false, true);
+        stdDef(NAME_SQL_DATE_AND_TIME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_TAG_SYNTAX, TYPE_STRING, false, true);
         stdDef(NAME_CASE_SENSITIVE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_STOP_ON_ERROR, TYPE_BOOLEAN, false, false);
@@ -1298,7 +1299,12 @@ public class Settings {
 
         s = (String) get(NAME_TIME_ZONE);
         if (s != null) {
-            eng.setTimeZone(TimeZone.getTimeZone(s));
+            eng.setTimeZone(s);
+        }
+
+        s = (String) get(NAME_SQL_DATE_AND_TIME_TIME_ZONE);
+        if (s != null) {
+            eng.setSQLDateAndTimeTimeZone(s);
         }
 
         s = (String) get(NAME_TAG_SYNTAX);

@@ -249,6 +249,10 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(Settings.NAME_TIME_ZONE, timeZone);
     }
 
+    public void setSQLDateAndTimeTimeZone(String timeZone) {
+        initialOps.setProperty(Settings.NAME_SQL_DATE_AND_TIME_TIME_ZONE, timeZone);
+    }
+    
     public void setTagSyntax(String tagSyntax) {
         initialOps.setProperty(Settings.NAME_TAG_SYNTAX, tagSyntax);
     }

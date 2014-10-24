@@ -1534,14 +1534,50 @@ public class Engine {
     }
 
     /**
-     * Sets the time zone used to display time values. 
-     * By default, the time zone where you are, will be used.
+     * Sets the time zone used to display date/time/date-time values. 
+     * See FreeMarker's {@link Configuration#setTimeZone(TimeZone)} for more information.
      */
     public void setTimeZone(TimeZone zone) {
         checkParameterLock();
         fmCfg.setTimeZone(zone);
     }
 
+    /**
+     * Same as {@link #setTimeZone(TimeZone)}, but lets FreeMarker parse the value to time zone. If the value comes
+     * from a string source anyway, it's recommended to use this instead of the other overload.
+     */
+    public void setTimeZone(String zone) {
+        checkParameterLock();
+        try {
+            fmCfg.setSetting(Configuration.TIME_ZONE_KEY, zone);
+        } catch (TemplateException e) {
+            throw new RuntimeException("Failed to set timeZone in FreeMarker Configuration", e);
+        }
+    }
+    
+    /**
+     * Sets the time zone used when dealing with {@link java.sql.Date java.sql.Date} and
+     * {@link java.sql.Time java.sql.Time} values. 
+     * See FreeMarker's {@link Configuration#setSQLDateAndTimeTimeZone(TimeZone)} for more information.
+     */
+    public void setSQLDateAndTimeTimeZone(TimeZone zone) {
+        checkParameterLock();
+        fmCfg.setSQLDateAndTimeTimeZone(zone);
+    }
+
+    /**
+     * Same as {@link #setSQLDateAndTimeTimeZone(TimeZone)}, but lets FreeMarker parse the value to time zone. If
+     * the value comes from a string source anyway, it's recommended to use this instead of the other overload.
+     */
+    public void setSQLDateAndTimeTimeZone(String zone) {
+        checkParameterLock();
+        try {
+            fmCfg.setSetting(Configuration.SQL_DATE_AND_TIME_TIME_ZONE_KEY, zone);
+        } catch (TemplateException e) {
+            throw new RuntimeException("Failed to set timeZone in FreeMarker Configuration", e);
+        }
+    }
+    
     /**
      * @see #setTimeZone
      */

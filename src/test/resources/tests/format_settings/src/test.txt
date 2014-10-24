@@ -4,3 +4,4 @@ ${true}/${false}
 ${dt}
 ${dt?date}
 ${dt?time}
+${sqlTime}

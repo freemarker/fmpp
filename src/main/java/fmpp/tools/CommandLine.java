@@ -333,18 +333,20 @@ public class CommandLine {
                     .desc("The format used to show date-time values. "
                             + "The default is locale dependent.");
             ap.addOption(null, cln(Settings.NAME_TIME_ZONE) + "=ZONE")
-                    .desc("Sets the time zone used to show time. "
+                    .desc("Sets the time zone in which date/time/date-time values are shown. "
                             + "The default is the time zone of the host "
                             + "machine. Example: GMT+02");
+            ap.addOption(null, cln(Settings.NAME_SQL_DATE_AND_TIME_TIME_ZONE) + "=ZONE")
+                    .desc("Sets a different time zone for java.sql.Date and java.sql.Time only.");
             ap.addOption(null, cln(Settings.NAME_TAG_SYNTAX) + "=WHAT")
-            .desc("Sets the tag syntax for templates that doesn't start "
-                    + "with the ftl directive. Possible values are: "
-                    + Settings.VALUE_TAG_SYNTAX_ANGLE_BRACKET + ", "
-                    + Settings.VALUE_TAG_SYNTAX_SQUARE_BRACKET + ", "
-                    + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT + ". The default "
-                    + "depends on the FreeMarker version. The recommended "
-                    + "value is " + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT
-                    + ".");
+                    .desc("Sets the tag syntax for templates that doesn't start "
+                            + "with the ftl directive. Possible values are: "
+                            + Settings.VALUE_TAG_SYNTAX_ANGLE_BRACKET + ", "
+                            + Settings.VALUE_TAG_SYNTAX_SQUARE_BRACKET + ", "
+                            + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT + ". The default "
+                            + "depends on the FreeMarker version. The recommended "
+                            + "value is " + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT
+                            + ".");
             ap.addOption(null, cln(Settings.NAME_CASE_SENSITIVE))
                     .propertyValue("true")
                     .desc("Upper- and lower-case letters are considered as "
