@@ -546,25 +546,32 @@ return res;
 <@sect title="Boolean format">
 <@setting name="booleanFormat" type="string" default="true,false" merging=false />
 
-<p>This specifies the default format of boolean when FreeMarker has to convert boolean to string. By default doing something like <@c>${'$'}{myBoolean}</@c> is an error, as FreeMarker will deny using <@c>true,false</@c> there. But if you set this setting to, for example, <@c>"Yes,No"</@> (or anything but <@c>true,false</@c>), then that will print <@c>Yes</@c> or <@c>No</@c>.</p>
+<p>This setting specifies how boolean values will be converted to text or from text inside FreeMarker templates (not in <@a href="dataloader.html">data loaders</@a>). Note that by default doing something like <@c>${'$'}{myBoolean}</@c> is an error, because FreeMarker denies using <@c>"true,false"</@c> for implicit boolean to text conversion; write <@c>${'$'}{myBoolean?c}</@c> where you want <@c>true</@> and <@c>false</@> as is in the output.</p>
 
-<p>The setting value has to contain a comma, and the left side of it will be the textual form of boolean <@c>true</@c>, and the right side will be the value for boolean <@c>false</@c>. Note that no white space is removed, so you should not put space after the comma.</p>
+<p>This setting directly correspond to the FreeMarker setting with similar name, so find the full documentation there:
+<@fma "ref_directive_setting.html#topic_date_format_settings">FreeMarker settings</@fma>.</p>
 
-<p>There's no format that will output <@c>true</@c> and <@c>false</@c> as is. On places where that's needed, you have to write <@c>${'$'}{myBoolean?c}</@c>.</p>
+<p>Example: <@c>"Yes,No"</@> means that <@c>${'$'}{myBoolean?c}</@c> will print <@c>Yes</@c> or <@c>No</@c>.
 
 </@sect>
 
 
-<@sect title="Date/time issues">
+<@sect title="Date/time format">
 <@setting name="dateFormat" type="string" default="" merging=false />
 <@setting name="timeFormat" type="string" default="" merging=false />
 <@setting name="datetimeFormat" type="string" default="" merging=false />
 <@setting name="timeZone" type="string" default="" merging=false />
 
-<p>These settings are directly the settings of FreeMarker; see the <@fma>FreeMarker Manual</@fma> for more details. Also, about the format patterns <@a href="datetimepattern.html">read this</@a>.</p>
+<p>These settings specify how date/time/date-time values will be converted to text or from text inside FreeMarker templates (not in <@a href="dataloader.html">data loaders</@a>, unless said otherwise).</p>
 
-<p>If the formats are not defined, then the default format for the current locale will be used (which is specified by the Java platform implementation you run FMPP on). If the time zone is not defined, then the time zone of the host computer will be used.</p>
+<p>These settings directly correspond to the FreeMarker settings with similar name, so find their full documentation there:
+<@fma "ref_directive_setting.html#topic_date_format_settings">FreeMarker settings</@fma>.</p>
 
+<p>Examples of <@s>datetimeFormat</@s>-s: <@c>"dd.MM.yyyy HH:mm:ss"</@c> (where <@c>HH</@c> means 0-23 hours) or <@c>"MM/dd/yyyy hh:mm:ss a"</@c> (where <@c>a</@c> means AM or PM, if the current language is English), <@c>"iso"</@c> (ISO 8601:2004 format), <@c>"xs"</@c> (XML Schema format).
+
+<p>Examples of <@s>timeZone</@s>-s: <@c>"GMT"</@c>, <@c>"GMT+2"</@c>, <@c>"GMT-1:30"</@c>, <@c>"CET"</@c>, <@c>"PST"</@c>, <@c>"America/Los_Angeles"</@c>, <@c>"JVM default"</@c>
+
+<p>When a format setting isn't set, the default format of the current locale (country) will be used, which are specified by the Java installation you run FMPP on. If the <@s>timeZone</@s> isn't set, the time zone of the host computer will be used (specified by the Operating System).</p>
 
 </@sect>
 

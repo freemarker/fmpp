@@ -68,7 +68,6 @@ data: {
             ftl.html
             bsh.html
             properties.html
-            datetimepattern.html
         ]
         [{title:Miscellaneous, file:miscellaneous.html}
             tips.html
