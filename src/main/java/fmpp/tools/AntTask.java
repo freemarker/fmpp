@@ -120,6 +120,11 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                 Settings.NAME_SOURCE_ROOT, sourceRoot.getAbsolutePath());
     }
 
+    public void setFreemarkerIncompatibleImprovements(String fmIcI) {
+        initialOps.setProperty(
+                Settings.NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS, fmIcI);
+    }
+    
     public void setObjectWrapper(String objectWrapper) {
         initialOps.setProperty(
                 Settings.NAME_OBJECT_WRAPPER, objectWrapper);
@@ -610,6 +615,9 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
      * result of <code>getMessage</code>. 
      */
     class CausePrinterBuildException extends BuildException {
+        
+        private static final long serialVersionUID = 1L;
+
         public CausePrinterBuildException(String message) {
             super(message);
         }
