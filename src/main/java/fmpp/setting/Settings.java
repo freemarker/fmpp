@@ -120,6 +120,7 @@ public class Settings {
     public static final String NAME_URL_ESCAPING_CHARSET = "urlEscapingCharset";
     public static final String NAME_LOCALE = "locale";
     public static final String NAME_NUMBER_FORMAT = "numberFormat";
+    public static final String NAME_BOOLEAN_FORMAT = "booleanFormat";
     public static final String NAME_DATE_FORMAT = "dateFormat";
     public static final String NAME_TIME_FORMAT = "timeFormat";
     public static final String NAME_DATETIME_FORMAT = "datetimeFormat";
@@ -794,6 +795,7 @@ public class Settings {
         stdDef(NAME_URL_ESCAPING_CHARSET, TYPE_STRING, false, true);
         stdDef(NAME_LOCALE, TYPE_STRING, false, true);
         stdDef(NAME_NUMBER_FORMAT, TYPE_STRING, false, true);
+        stdDef(NAME_BOOLEAN_FORMAT, TYPE_STRING, false, true);
         stdDef(NAME_DATE_FORMAT, TYPE_STRING, false, true);
         stdDef(NAME_TIME_FORMAT, TYPE_STRING, false, true);
         stdDef(NAME_DATETIME_FORMAT, TYPE_STRING, false, true);
@@ -1274,6 +1276,11 @@ public class Settings {
             eng.setNumberFormat(s);
         }
 
+        s = (String) get(NAME_BOOLEAN_FORMAT);
+        if (s != null) {
+            eng.setBooleanFormat(s);
+        }
+        
         s = (String) get(NAME_DATE_FORMAT);
         if (s != null) {
             eng.setDateFormat(s);

@@ -543,6 +543,18 @@ return res;
 
 </@sect>
 
+<@sect title="Boolean format">
+<@setting name="booleanFormat" type="string" default="true,false" merging=false />
+
+<p>This specifies the default format of boolean when FreeMarker has to convert boolean to string. By default doing something like <@c>${'$'}{myBoolean}</@c> is an error, as FreeMarker will deny using <@c>true,false</@c> there. But if you set this setting to, for example, <@c>"Yes,No"</@> (or anything but <@c>true,false</@c>), then that will print <@c>Yes</@c> or <@c>No</@c>.</p>
+
+<p>The setting value has to contain a comma, and the left side of it will be the textual form of boolean <@c>true</@c>, and the right side will be the value for boolean <@c>false</@c>. Note that no white space is removed, so you should not put space after the comma.</p>
+
+<p>There's no format that will output <@c>true</@c> and <@c>false</@c> as is. On places where that's needed, you have to write <@c>${'$'}{myBoolean?c}</@c>.</p>
+
+</@sect>
+
+
 <@sect title="Date/time issues">
 <@setting name="dateFormat" type="string" default="" merging=false />
 <@setting name="timeFormat" type="string" default="" merging=false />

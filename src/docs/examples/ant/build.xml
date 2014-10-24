@@ -8,6 +8,7 @@
                 sourceroot="src" outputroot="out"
                 data="antProperties(), proj:antProject(), task:antTask()"
                 logfile="log.fmpp"
+                booleanFormat="Y,N"
         />
     </target>
 </project>

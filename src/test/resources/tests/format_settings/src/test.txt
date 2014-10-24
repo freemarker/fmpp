@@ -1,0 +1,6 @@
+<#assign dt = "1995-06-07T15:16:17Z"?datetime>
+${1}
+${true}/${false}
+${dt}
+${dt?date}
+${dt?time}

@@ -229,6 +229,10 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(Settings.NAME_NUMBER_FORMAT, numberFormat);
     }
 
+    public void setBooleanFormat(String booleanFormat) {
+        initialOps.setProperty(Settings.NAME_BOOLEAN_FORMAT, booleanFormat);
+    }
+    
     public void setDateFormat(String dateFormat) {
         initialOps.setProperty(Settings.NAME_DATE_FORMAT, dateFormat);
     }

@@ -1452,6 +1452,16 @@ public class Engine {
         checkParameterLock();
         fmCfg.setNumberFormat(format);
     }
+
+    /**
+     * Sets the boolean format used to convert boolean to strings, as defined
+     * by {@link Configuration#setBooleanFormat(String)}. Note that it can't be {@code "true,false"}; for that you have
+     * to print the boolean value with <code>${foo?c}</code>. 
+     */
+    public void setBooleanFormat(String format) {
+        checkParameterLock();
+        fmCfg.setBooleanFormat(format);
+    }
     
     /**
      * @see #setNumberFormat

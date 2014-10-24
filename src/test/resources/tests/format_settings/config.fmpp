@@ -1,0 +1,10 @@
+sourceRoot: src
+outputRoot: out
+
+timeZone: UTC
+
+booleanFormat: 'Y,N'
+numberFormat: '0.00'
+datetimeFormat: 'iso nz'
+timeFormat: 'iso s nz'
+dateFormat: yyyyMMdd

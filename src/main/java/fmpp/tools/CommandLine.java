@@ -320,6 +320,9 @@ public class CommandLine {
             ap.addOption(null, cln(Settings.NAME_NUMBER_FORMAT) + "=FORMAT")
                     .desc("The number format used to show numerical values. "
                             + "The default is 0.############");
+            ap.addOption(null, cln(Settings.NAME_BOOLEAN_FORMAT) + "=FORMAT")
+                    .desc("The boolean format used to show boolean values, like \"Yes,No\". Not \"true,false\"; "
+                            + "use ${myBool?c} for that. The default is error on ${myBool}.");
             ap.addOption(null, cln(Settings.NAME_DATE_FORMAT) + "=FORMAT")
                     .desc("The format used to show date (year+month+day) "
                             + "values. The default is locale dependent.");
