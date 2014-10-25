@@ -69,6 +69,7 @@
         -ms-text-size-adjust: 100%;
         text-size-adjust: 100%;
         line-height: 1.42857143;
+        background-color: #eee;
       }
 
       body {
@@ -193,6 +194,7 @@
       .page-wrapper {
         padding-top: 12px;
         padding-bottom: 12px;
+        background-color: #FFF;
       }
 
       .toc-header {
@@ -329,37 +331,38 @@
       </div>
     </div>
 
-    <div class="page-wrapper site-width">
-      <#local needHr = false>
-      <#if toc>
-        <#local content>
+    <div class="page-wrapper">
+      <div class="site-width">
+        <#local needHr = false>
+        <#if toc>
+          <#local content>
+            <#nested>
+          </#local>
+          <#if P_sects?size != 0>
+            <@.namespace.toc title="Page contents">
+            <#list P_sects as sect>
+              <@toci href="#" + sect.id title=sect.title/>
+            </#list>
+            </@>
+            <#local needHr = true>
+          </#if>
+          <#if P_index?size != 0>
+            <p class="toc-header">Alphabetical index of keys:</p>
+            <ul class="table-of-contents">
+            <#list P_index?sort_by("title") as e>
+              <li><a href="#${e.id}">${e.title}</a>
+            </#list>
+            </ul>
+            <#local needHr = true>
+          </#if>
+          <#if needHr>
+            <@hr/>
+          </#if>
+          <#noescape>${content}</#noescape>
+        <#else>
           <#nested>
-        </#local>
-        <#if P_sects?size != 0>
-          <@.namespace.toc title="Page contents">
-          <#list P_sects as sect>
-            <@toci href="#" + sect.id title=sect.title/>
-          </#list>
-          </@>
-          <#local needHr = true>
         </#if>
-        <#if P_index?size != 0>
-          <p class="toc-header">Alphabetical index of keys:</p>
-          <ul class="table-of-contents">
-          <#list P_index?sort_by("title") as e>
-            <li><a href="#${e.id}">${e.title}</a>
-          </#list>
-          </ul>
-          <#local needHr = true>
-        </#if>
-        <#if needHr>
-          <@hr/>
-        </#if>
-        <#noescape>${content}</#noescape>
-      <#else>
-        <#nested>
-      </#if>
-
+      </div>
     </div>
 
     <div class="site-footer">
