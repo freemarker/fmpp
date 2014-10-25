@@ -226,11 +226,31 @@
         margin-left: 9px;
       }
 
+      pre,
       tt,
       code {
         font-size: 14px;
         font-family: Courier, Monaco, Consolas, "Courier New", monospace;
         -webkit-font-smoothing: antialiased;
+      }
+
+      pre {
+        display: block;
+        padding: 9px;
+        margin: 0 0 9px;
+        word-break: break-all;
+        word-wrap: break-word;
+        overflow: auto;
+        background-color: #f5f5f5;
+        1px solid #ccc;
+        line-height: 1.42857143;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+
+      tt,
+      code {
         background-color: #f9f9f9;
         border-radius: 4px;
         padding: 1px 3px;
@@ -478,57 +498,14 @@
 </#macro>
 
 <#macro prg escape=true>
-<div align="left"><#t>
-  <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="0" border="0"><#t>
-   <tr valign="top"><#t>
-     <td height="1" width="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-     <td height="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-     <td height="1" width="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-   </tr><#t>
-   <tr><#t>
-     <td width="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-     <td><#t>
-       <table bgcolor="#FFFFFF" cellspacing="0" cellpadding="4" border="0" width="100%" style="margin: 0px"><#t>
-         <tr><#t>
-           <td><#t>
-             <pre style="margin: 0px"><#t>
-               <#local body><#nested></#local>
-               <#if !escape>
-                 <#noescape>${body?chop_linebreak}</#noescape><#t>
-               <#else>
-                 ${body?chop_linebreak}<#t>
-               </#if>
-               <span style="font-size: 1pt"> </span><#t>
-             </pre><#t>
-           </td><#t>
-         </tr><#t>
-       </table><#t>
-     </td><#t>
-     <td width="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-   </tr><#t>
-   <tr valign="top"><#t>
-     <td height="1" width="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-     <td height="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-     <td height="1" width="1" bgcolor="black"><#t>
-       <img src="img/none.gif" width="1" height="1" alt="" hspace="0" vspace="0" border="0"><#t>
-     </td><#t>
-   </tr><#t>
-  </table><#t>
-</div><#t>
+  <#local body><#nested></#local>
+  <pre><#t>
+    <#if !escape>
+      <#noescape>${body?chop_linebreak}</#noescape><#t>
+    <#else>
+      ${body?chop_linebreak}<#t>
+    </#if>
+  </pre><#t>
 </#macro>
 
 <#macro toc title=''>
