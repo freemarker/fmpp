@@ -460,19 +460,6 @@
   <hr>
 </#macro>
 
-<#macro _ht_rows colspan=1>
-  <#if colspan != 1>
-    <#local cs = "colspan=" + colspan>
-  <#else>
-    <#local cs = "">
-  </#if>
-  <tr><td ${cs} height=1 bgcolor="#000000"><img src="img/none.gif" width=1 height=1 alt=""></td></tr>
-  <tr><td ${cs} height=1 bgcolor="#808080"><img src="img/none.gif" width=1 height=1 alt=""></td></tr>
-  <tr><td ${cs} height=1 bgcolor="#C0C0C0"><img src="img/none.gif" width=1 height=1 alt=""></td></tr>
-  <tr><td ${cs} height=1 bgcolor="#E0E0E0"><img src="img/none.gif" width=1 height=1 alt=""></td></tr>
-  <tr><td ${cs} height=1 bgcolor="#F0F0F0"><img src="img/none.gif" width=1 height=1 alt=""></td></tr>
-</#macro>
-
 <#macro c><code><#nested></code></#macro>
 
 <#macro r><em><#nested></em></#macro>
