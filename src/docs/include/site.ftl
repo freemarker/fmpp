@@ -10,7 +10,7 @@
   <#assign P_sects = pp.newWritableSequence()>
   <#assign P_index = pp.newWritableSequence()>
   <#assign P_settings_in_context = pp.newWritableSequence()>
-  
+
   <#local isTheIndexPage = (pp.outputFileName = "index.html")>
   <#local isContentsPage = (pp.outputFileName = "manual.html")>
   <#local tocLink = "">
@@ -35,168 +35,285 @@
       <#break>
     </#if>
   </#list>
-  
+
   <@pp.restartOutputFile />
-  <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-  
-  <head>
+  <!doctype html>
+  <html lang="en">
+  <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
     <meta name="Keywords" content="FMPP, preprocessor, FreeMarker, template, templates, HTML, HTML template, HTML templates, text, macro, macros, text preprocessor, HTML preprocessor, static HTML, HTML generator, static HTML generator, Java, free, open source, open-source, ${keywords}">
     <#if !isTheIndexPage>
       <title>FMPP - ${title}</title>
+      <meta property="og:title" content="FMPP - ${title}">
     <#else>
+      <meta property="og:description" content="Command-line/Ant-task/embeddable text file preprocessor. Macros, flow control, expressions. Recursive directory processing. Extendable in Java to display data from any data sources (as database). Can generate complete homepages (tree of HTML-s, images).">
       <meta name="Description" content="Command-line/Ant-task/embeddable text file preprocessor. Macros, flow control, expressions. Recursive directory processing. Extendable in Java to display data from any data sources (as database). Can generate complete homepages (tree of HTML-s, images).">
       <title>FMPP: Text file preprocessor (HTML preprocessor)</title>
+      <meta property="og:title" content="FMPP: Text file preprocessor (HTML preprocessor)">
     </#if>
+    <meta property="og:locale" content="en_US">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
     <style type="text/css">
-      P {font-family: ${P_font}}
-      UL {font-family: ${P_font}}
-      LI {font-family: ${P_font}}
-      TH {font-family: ${P_font}}
-      TD {font-family: ${P_font}}
-      H1 {font-family: ${P_font}}
-      H2 {font-family: ${P_font}}
-      H3 {font-family: ${P_font}}
-      H4 {font-family: ${P_font}}
+      * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      html {
+        font-size: 10px;
+        font-family: sans-serif;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        line-height: 1.42857143;
+      }
+
+      body {
+        font-size: 14px;
+        margin: 0;
+      }
+
+      a {
+        color: #168316;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      a img {
+        border: 0;
+      }
+
+      hr {
+        height: 0;
+        margin-top: 18px;
+        margin-bottom: 18px;
+        border: 0;
+        border-top: 1px solid #ddd;
+      }
+
+      .site-header {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        background-color: #eee;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .site-header h1 {
+        margin: 0;
+      }
+
+      .site-header .home-header {
+        text-align: center;
+      }
+
+      .site-header .pagers {
+        float: right;
+      }
+
+      .pagers a img {
+        transition: opacity ease-in-out .2s;
+      }
+
+      .pagers a:hover img {
+        opacity: .5;
+      }
+
+      .site-width {
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      @media (min-width: 768px) {
+        .site-width {
+          width: 720px;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .site-width {
+          width: 944px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .site-width {
+          width: 1152px;
+        }
+      }
+
+      .page-wrapper {
+        padding-top: 12px;
+
+      }
+
+      .toc-header {
+        font-weight: bold;
+        font-size: 18px;
+      }
+
+      .table-of-contents a {
+        display: block;
+      }
+
+      .site-footer {
+        padding-top: 24px;
+        padding-bottom: 24px;
+        background-color: #eee;
+        border-top: 1px solid #ddd;
+      }
+
+      .site-footer .pagers {
+        float: left;
+      }
+
+      .site-footer .generated {
+        text-align: right;
+      }
+
+      .site-footer .external-links {
+        text-align: right;
+        margin-top: 15px;
+      }
+
+      .site-footer .external-links a {
+        display: inline-block;
+        margin-left: 9px;
+      }
+<#-->
       A.toc{color: #0000CC; text-decoration:none}
       A.toc:hover{text-decoration: underline}
       A.toc:visited{color: #800080}
       A.s{color: #30D000}
-      A.s:visited{color: #30D000}
+      A.s:visited{color: #30D000}-->
       TT {font-size: 1em; font-family: "Courier New", monospace}
       CODE {font-size: 1em; font-family: "Courier New", monospace}
     </style>
   </head>
 
-  <body background="img/background.png" bgcolor="#FFFFFF" text="#000000" style="font-family: ${P_font}">
-    <table border=0 cellspacing=0 cellpadding=0 width="100%">
-      <tr>
-	<#if isTheIndexPage>
-          <td valign="middle" align="center">
-            <img src="img/fmpptitle.png" alt="FMPP">
-            <br>FreeMarker-based text file PreProcessor
-	    <br>Version ${pp.version}<br>&nbsp;	
-	<#else>
-          <td valign="middle" align="left">
-	    <h1 style="font-family: ${P_font}"><font color="${P_titleColor}">${title}</font></h1>
-	</#if>
-        <td valign="middle" align="right">&nbsp;&nbsp;
-        <td valign="middle" align="right">
-        &nbsp;<br><#t>
-        <#if showPagerButtons>
-          &nbsp;&nbsp;<#t>
-          <#if prevLink != "">
-            <a href="${prevLink}"><@img 'prev.png', 'Prev' /></a><#t>
-          <#else>
-            <@img 'prev_gray.png', '-' /><#t>
-          </#if>
-          &nbsp;&nbsp;<#t>
-          <#if nextLink != "">
-            <a href="${nextLink}"><@img 'next.png', 'Next' /></a><#t>
-          <#else>
-            <@img 'next_gray.png', '-' /><#t>
-          </#if>
-          &nbsp;&nbsp;<#t>
-          <#if !isContentsPage && tocLink != "">
-            <a href="${tocLink}"><@img 'contents.png', 'Contents' /></a><#t>
-          <#else>
-            <@img 'contents_gray.png', '-' /><#t>
-          </#if>
-        </#if>
-        <#if !isTheIndexPage>
-          &nbsp;&nbsp;<a href="${pp.home}index.html"><@img 'home.png', 'Home' /></a><#t>
-        </#if>
-        <br>&nbsp;<#t>
-        <@_ht_rows colspan=3/>
-    </table>
+  <body itemscope itemtype="http://schema.org/Article">
 
-    <#local needHr = false>
-    <#if toc>
-      <#local content>
-        <#nested>
-      </#local>
-      <#if P_sects?size != 0>
-        <@.namespace.toc title="Page contents">
-        <#list P_sects as sect>
-          <@toci href="#" + sect.id title=sect.title/>
-        </#list>
-        </@>
-        <#local needHr = true>
-      </#if>
-      <#if P_index?size != 0>
-        <p><b>Alphabetical index of keys:</b></p>
-        <ul>
-        <#list P_index?sort_by("title") as e>
-          <li><a href="#${e.id}" class=toc>${e.title}</a>
-        </#list>
-        </ul>
-        <#local needHr = true>
-      </#if>
-      <#if needHr>
-        <@hr/>
-      </#if>
-      <#noescape>${content}</#noescape>
-    <#else>
-      <#nested>
-    </#if>
-    
-    <@hr/>
-    <table border=0 cellspacing=4 cellpadding=0 width="100%">
-      <tr>
-        <td valign="top" align="right">
-          <table border=0 cellspacing=0 cellpadding=0 width="100%">
-            <tr>
-              <td align="left" valign="top"><#rt>
-                <#if showPagerButtons>
-                  <#if prevLink != "">
-                    <a href="${prevLink}"><@img 'prev.png', 'Prev' /></a><#t>
-                  <#else>
-                    <@img 'prev_gray.png', '-' /><#t>
-                  </#if>
-                  &nbsp;&nbsp;<#t>
-                  <#if nextLink != "">
-                    <a href="${nextLink}"><@img 'next.png', 'Next' /></a><#t>
-                  <#else>
-                    <@img 'next_gray.png', '-' /><#t>
-                  </#if>
-                  &nbsp;&nbsp;<#t>
-                  <#if !isContentsPage && tocLink != "">
-                    <a href="${tocLink}"><@img 'contents.png', 'Contents' /></a><#t>
-                  <#else>
-                    <@img 'contents_gray.png', '-' /><#t>
-                  </#if>
-                  &nbsp;&nbsp;<#t>
-                </#if>
-                <#if !isTheIndexPage>
-                  <@a href="${pp.home}index.html"><@img 'home.png', 'Home' /></@a>&nbsp;&nbsp;<#t>
-                  &nbsp;&nbsp;&nbsp;&nbsp;<#t>
-                </#if>
-                <#if !P_reportBugPrinted?default(false)>
-                    <@a href="${pp.home}reportbug.html"><@img 'reportbug.png', 'Report bug' /></@a>&nbsp;&nbsp;<#t>
-                </#if>
-              </td><#lt>
-              <td align="right" valign="top">
-                <i>
-                  Generated&nbsp;on&nbsp;${pp.now?string("MMM d, yyyy hh:mm a zzz")}<br>
-                  For&nbsp;FMPP&nbsp;version&nbsp;${pp.version}
-                </i>
-              </td>
-            </tr>
-          </table>
-        </td>
-      <tr>
-        <td valign="middle" align="right"><#t>
-          <#if online && isTheIndexPage>
-            <a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=74591&amp;type=1" border="0" alt="SourceForge Logo"></a><#t>
-          <#else>
-            <a href="http://sourceforge.net"><@img "sflogo.png", "SourceForge Logo"/></a><#t>
+    <div class="site-header">
+      <div class="site-width">
+        <div class="pagers">
+          <#if showPagerButtons>
+            <#if prevLink != "">
+              <a href="${prevLink}"><@img 'prev.png', 'Prev' /></a><#t>
+            <#else>
+              <@img 'prev_gray.png', '-' /><#t>
+            </#if>
+            <#t>
+            <#if nextLink != "">
+              <a href="${nextLink}"><@img 'next.png', 'Next' /></a><#t>
+            <#else>
+              <@img 'next_gray.png', '-' /><#t>
+            </#if>
+            <#if !isContentsPage && tocLink != "">
+              <a href="${tocLink}"><@img 'contents.png', 'Contents' /></a><#t>
+            <#else>
+              <@img 'contents_gray.png', '-' /><#t>
+            </#if>
           </#if>
-          &nbsp;&nbsp;<#t>
+          <#if !isTheIndexPage>
+            <a href="${pp.home}index.html"><@img 'home.png', 'Home' /></a><#t>
+          </#if>
+        </div>
+
+        <#if isTheIndexPage>
+          <div class="home-header">
+            <img src="img/fmpptitle.png" alt="FMPP">
+            <br><span itemprop="name">FreeMarker-based text file PreProcessor</span>
+            <br>Version ${pp.version}
+          </div>
+        <#else>
+          <h1 itemprop="name">${title}</h1>
+        </#if>
+      </div>
+    </div>
+
+    <div class="page-wrapper site-width">
+      <#local needHr = false>
+      <#if toc>
+        <#local content>
+          <#nested>
+        </#local>
+        <#if P_sects?size != 0>
+          <@.namespace.toc title="Page contents">
+          <#list P_sects as sect>
+            <@toci href="#" + sect.id title=sect.title/>
+          </#list>
+          </@>
+          <#local needHr = true>
+        </#if>
+        <#if P_index?size != 0>
+          <p><b>Alphabetical index of keys:</b></p>
+          <ul>
+          <#list P_index?sort_by("title") as e>
+            <li><a href="#${e.id}" class=toc>${e.title}</a>
+          </#list>
+          </ul>
+          <#local needHr = true>
+        </#if>
+        <#if needHr>
+          <@hr/>
+        </#if>
+        <#noescape>${content}</#noescape>
+      <#else>
+        <#nested>
+      </#if>
+
+    </div>
+
+    <div class="site-footer">
+      <div class="site-width">
+        <div class="pagers">
+          <#if showPagerButtons>
+            <#if prevLink != "">
+              <a href="${prevLink}"><@img 'prev.png', 'Prev' /></a><#t>
+            <#else>
+              <@img 'prev_gray.png', '-' /><#t>
+            </#if>
+            <#if nextLink != "">
+              <a href="${nextLink}"><@img 'next.png', 'Next' /></a><#t>
+            <#else>
+              <@img 'next_gray.png', '-' /><#t>
+            </#if>
+            <#if !isContentsPage && tocLink != "">
+              <a href="${tocLink}"><@img 'contents.png', 'Contents' /></a><#t>
+            <#else>
+              <@img 'contents_gray.png', '-' /><#t>
+            </#if>
+          </#if>
+          <#if !isTheIndexPage>
+            <@a href="${pp.home}index.html"><@img 'home.png', 'Home' /></@a>
+          </#if>
+          <#if !P_reportBugPrinted?default(false)>
+              <@a href="${pp.home}reportbug.html"><@img 'reportbug.png', 'Report bug' /></@a>
+          </#if>
+        </div>
+
+        <div class="generated">
+          Generated on <time itemprop="dateModified" datetime="${pp.now?iso_utc}" title="${pp.now?string.long}">${pp.now?string("MMM d, yyyy hh:mm a zzz")}</time><br>
+          For FMPP version ${pp.version}
+        </div>
+
+        <div class="external-links">
+          <#if online && isTheIndexPage>
+            <a href="http://sourceforge.net" rel="nofollow"><img src="http://sourceforge.net/sflogo.php?group_id=74591&amp;type=1" alt="SourceForge Logo"></a><#t>
+          <#else>
+            <a href="http://sourceforge.net" rel="nofollow"><@img "sflogo.png", "SourceForge Logo"/></a><#t>
+          </#if>
           <a href="http://freemarker.org"><@img "poweredby_sq_simple.png", "Powered by FreeMarker" /></a><#t>
-        </td><#t>
-      </tr>
-    </table>
+        </div>
+      </div>
+    </div>
   </body>
   </html>
   <#assign P_reportBugPrinted = false>
@@ -207,7 +324,7 @@
   <#if label?length != 0>
     <p align=center>
   </#if>
-  <@html.img src="${pp.home}img/${src}" alt=alt border=0/><#t>
+  <@html.img src="${pp.home}img/${src}" alt=alt /><#t>
   <#if label?length != 0>
     <br><#lt>
     <br><b>Figure:</b> <i><#noescape>${label}</#noescape></i>
@@ -261,10 +378,7 @@
 
 <#-- Draws a 100% width horizontal line with the given color. Do not use inside another table (IE 5)... -->
 <#macro hr>
-    <p>
-    <table border=0 cellspacing=0 cellpadding=0 width="100%">
-      <@_ht_rows/>
-    </table>
+  <hr>
 </#macro>
 
 <#macro _ht_rows colspan=1>
@@ -367,9 +481,9 @@
 
 <#macro toc title=''>
   <#if title != ''>
-    <p><font color="${P_titleColor}"><b>${title}</b></font>
+    <p class="toc-header">${title}</p>
   </#if>
-  <ul>
+  <ul class="table-of-contents">
     <#nested>
   </ul>
 </#macro>
@@ -412,10 +526,10 @@
       <i>Merging: ${merging?string('yes', 'no')}</i><br><#lt>
       -->
       <#if !merging>
-      	<#stop "The \"Merging\" field was hidden because all collection-like types "
-      	    + "were merged till now. If it has changed, you have to review the "
-      	    + "documentation and this part of site.ftl. The problematic setting was: "
-      	    + name>
+        <#stop "The \"Merging\" field was hidden because all collection-like types "
+            + "were merged till now. If it has changed, you have to review the "
+            + "documentation and this part of site.ftl. The problematic setting was: "
+            + name>
       </#if>
     </#if>
     <#if clShort != ''>
@@ -432,7 +546,7 @@
   <@_index name />
   <@sect title=name anchor=anchor>
     <#if deprecated != ''>
-      <b><i>Deprecated:</i></b> <@deprecated?interpret /><br> 
+      <b><i>Deprecated:</i></b> <@deprecated?interpret /><br>
     </#if>
     <i>Type:</i> ${type}
     <#assign P_params = pp.newWritableSequence()>
@@ -443,27 +557,27 @@
         <#else>
           <br><i>Result type:</i> ${result}
         </#if>
-    	<br><i>Parameters:</i>
-    	<#if P_params?size != 0>
+      <br><i>Parameters:</i>
+      <#if P_params?size != 0>
           <#if type="directive">
-	        <ul>
-	          <#list P_params as param>
+          <ul>
+            <#list P_params as param>
               <li><b>${param.name}</b><#if param.default != ''>=${param.default}</#if>:
                 ${param.type}.
-	            <#noescape>${param.desc}</#noescape>
-	          </#list>
-	        </ul>
-	   	  <#else>
-	        <ol>
-	          <#list P_params as param>
-	          <li><b>${param.name}</b>: ${param.type}<#if param.optional>, optional</#if>.
-	            <#noescape>${param.desc}</#noescape>
-	          </#list>
+              <#noescape>${param.desc}</#noescape>
+            </#list>
+          </ul>
+         <#else>
+          <ol>
+            <#list P_params as param>
+            <li><b>${param.name}</b>: ${param.type}<#if param.optional>, optional</#if>.
+              <#noescape>${param.desc}</#noescape>
+            </#list>
             </ol>
-    	  </#if>
-    	<#else>
-    	  none
-    	</#if>
+        </#if>
+      <#else>
+        none
+      </#if>
     </#if>
     <#noescape>${body}</#noescape>
   </@sect>
@@ -474,17 +588,17 @@
   <@sect title=name>
     <#assign P_params = pp.newWritableSequence()>
     <#local body><#nested></#local>
-	<i>Parameters:</i>
-	<#if P_params?size != 0>
+  <i>Parameters:</i>
+  <#if P_params?size != 0>
       <ol>
         <#list P_params as param>
         <li><b>${param.name}</b>: ${param.type}<#if param.optional>, optional</#if>.
           <#noescape>${param.desc}</#noescape>
         </#list>
       </ol>
-	<#else>
-	  none<BR>
-	</#if>
+  <#else>
+    none<BR>
+  </#if>
     <#noescape>${body}</#noescape>
   </@sect>
 </#macro>
@@ -551,7 +665,7 @@
     <td align="left" valign="middle"><@img "bug.png", "bug" /></td>
     <td align="left" valign="middle">
       <font color=red size="+1"><b>Please report bugs you find!</b> Any programming, documentation content or grammatical mistakes, even minor typos. Thank you!</font><br>
-      Use the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=74591&amp;atid=541453">bug reporting Web page</a>,<br> 
+      Use the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=74591&amp;atid=541453">bug reporting Web page</a>,<br>
       or e-mail: <@myEmail /><br>
     </td>
   </tr>
@@ -559,7 +673,7 @@
     <td></td>
     <td>
       Please report FreeMarker bugs at the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=794&amp;atid=100794">FreeMarker bug reporting Web page</a>, not for me.
-      If you are not sure if you have found a FreeMarker or an FMPP bug, just report it as FMPP bug.      
+      If you are not sure if you have found a FreeMarker or an FMPP bug, just report it as FMPP bug.
     </td>
   </tr>
   <tr>
