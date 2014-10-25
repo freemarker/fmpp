@@ -109,6 +109,10 @@
         border-top: 1px solid #ddd;
       }
 
+      .deprecated {
+        color: #B00;
+      }
+
       .logo-banner {
         background-color: #e5e5e5;
         border-bottom: 1px solid #CFCFCF;
@@ -121,6 +125,7 @@
 
       .logo-banner img {
         width: 100px;
+        height: 29px;
         display: block;
       }
 
@@ -374,7 +379,7 @@
   <@html.img src="${pp.home}img/${src}" alt=alt /><#t>
   <#if label?length != 0>
     <br><#lt>
-    <br><b>Figure:</b> <i><#noescape>${label}</#noescape></i>
+    <br><strong>Figure:</strong> <em><#noescape>${label}</#noescape></em>
     </p>
   </#if>
 </#macro>
@@ -550,12 +555,12 @@
   <@_index name />
   <@pp.add seq=P_settings_in_context value=name />
   <p>
-    <i>Name:</i> <b>${name}</b><br>
+    <em>Name:</em> <strong>${name}</strong><br>
     <#if deprecated?length != 0>
-      <i><font color=red>Deprecated!</font></i> <@deprecated?interpret /><br>
+      <em class="deprecated">Deprecated!</em> <@deprecated?interpret /><br>
     </#if>
-    <i>Type:</i> ${type}<br>
-    <i>Default:</i> <#rt>
+    <em>Type:</em> ${type}<br>
+    <em>Default:</em> <#rt>
     <#if default != ''>
       <#if default?starts_with('ex:')>
         <@default[3..(default?length - 1)]?interpret /><br><#lt>
@@ -580,10 +585,10 @@
       </#if>
     </#if>
     <#if clShort != ''>
-      <i>Command-line short name: </i><tt>${clShort}</tt><br><#lt>
+      <em>Command-line short name: </em><code>${clShort}</code><br><#lt>
     </#if>
     <#if antAltAtt != ''>
-      <i>Ant task attribute name alternative: </i><tt>${antAltAtt}</tt><br><#lt>
+      <em>Ant task attribute name alternative: </em><code>${antAltAtt}</code><br><#lt>
     </#if>
   </p>
 </#macro>
@@ -593,23 +598,23 @@
   <@_index name />
   <@sect title=name anchor=anchor>
     <#if deprecated != ''>
-      <b><i>Deprecated:</i></b> <@deprecated?interpret /><br>
+      <strong><em>Deprecated:</em></strong> <@deprecated?interpret /><br>
     </#if>
-    <i>Type:</i> ${type}
+    <em>Type:</em> ${type}
     <#assign P_params = pp.newWritableSequence()>
     <#local body><#nested></#local>
     <#if (type = 'directive' || type = 'method')>
         <#if type="directive">
-          <br><i>Supports nested content:</i> ${nestedContent?string("yes", "no")}
+          <br><em>Supports nested content:</em> ${nestedContent?string("yes", "no")}
         <#else>
-          <br><i>Result type:</i> ${result}
+          <br><em>Result type:</em> ${result}
         </#if>
-      <br><i>Parameters:</i>
+      <br><em>Parameters:</em>
       <#if P_params?size != 0>
           <#if type="directive">
           <ul>
             <#list P_params as param>
-              <li><b>${param.name}</b><#if param.default != ''>=${param.default}</#if>:
+              <li><strong>${param.name}</strong><#if param.default != ''>=${param.default}</#if>:
                 ${param.type}.
               <#noescape>${param.desc}</#noescape>
             </#list>
@@ -617,7 +622,7 @@
          <#else>
           <ol>
             <#list P_params as param>
-            <li><b>${param.name}</b>: ${param.type}<#if param.optional>, optional</#if>.
+            <li><strong>${param.name}</strong>: ${param.type}<#if param.optional>, optional</#if>.
               <#noescape>${param.desc}</#noescape>
             </#list>
             </ol>
@@ -635,16 +640,16 @@
   <@sect title=name>
     <#assign P_params = pp.newWritableSequence()>
     <#local body><#nested></#local>
-  <i>Parameters:</i>
+  <em>Parameters:</em>
   <#if P_params?size != 0>
       <ol>
         <#list P_params as param>
-        <li><b>${param.name}</b>: ${param.type}<#if param.optional>, optional</#if>.
+        <li><strong>${param.name}</strong>: ${param.type}<#if param.optional>, optional</#if>.
           <#noescape>${param.desc}</#noescape>
         </#list>
       </ol>
   <#else>
-    none<BR>
+    none<br>
   </#if>
     <#noescape>${body}</#noescape>
   </@sect>
@@ -761,9 +766,9 @@
   </table>
 </#macro>
 
-<#macro nbc><font color=red><b>Warning!</b> Incompatible change!</font> </#macro>
+<#macro nbc><span class="deprecated"><strong>Warning!</strong> Incompatible change!</span> </#macro>
 
-<#macro nbca><font color=red><b>Warning!</b> Incompatible Java API change!</font> </#macro>
+<#macro nbca><span class="deprecated"><strong>Warning!</strong> Incompatible Java API change!</span> </#macro>
 
 <#macro url href><a href="${href}">${href}</a></#macro>
 
