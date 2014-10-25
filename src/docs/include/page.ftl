@@ -61,7 +61,6 @@
               <@page_breadcrumbs navCtx />
             </div>
             <@page_pagers navCtx, false />
-            <div class="clear"></div>
           </nav>
         </#if>
       </div>

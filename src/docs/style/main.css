@@ -120,18 +120,6 @@ hr {
   }
 }
 
-/*
-.inner-site-header .logoAndBreadcrumbs {
-  float: left;
-}
-
-@media (max-width: 768px) {
-  .inner-site-header .logoAndBreadcrumbs {
-    float: none;
-  }
-}
-*/
-
 .pagers a img {
   transition: opacity ease-in-out .2s;
 }
