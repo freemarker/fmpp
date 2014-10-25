@@ -6,9 +6,9 @@
 
 <p>The high-level method is to create an <@c>fmpp.setting.Settings</@c> object, and fill it with the setting values. This object can load configuration files, and its API uses a higher level approach in general. This is the object where <@a href="settings.html">FMPP settings</@a> are implemented. After you set the setting values (and also you have added progress listeners and engine attributes you wanted), invoke <@c>Settings.execute()</@c> to execute a processing session.</p>
 
-<@img src="fmpparch.png" alt="FMPP architecture">
+<@figure src="fmpparch.png" alt="FMPP architecture">
   The components involved in typical FMPP usage. Red arrow shows direct method invocation (or constructor invocation, or static field access) between the components. The arrow points from the caller towards the called. Dashed lines indicate unimportant or occasional access.
-</@img>
+</@figure>
 
 <p>Note that some settings are not implemented by <@c>Settings</@c> (as <@s>echoFormat</@s>, <@s>logFile</@s>, ...etc.), and should be implemented by the front-end.</p>
 

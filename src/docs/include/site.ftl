@@ -56,9 +56,9 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="format-detection" content="telephone=no">
     
-    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="${pp.home}style/main.css" />
     <!--[if lt IE 9]>
-      <link rel="stylesheet" type="text/css" href="css/main-ie8-or-less.css" />
+      <link rel="stylesheet" type="text/css" href="${pp.home}style/main-ie8-or-less.css" />
     <![endif]-->
   </head>
 
@@ -66,7 +66,7 @@
     <#if !isTheIndexPage>
       <div class="logo-banner"><#t>
         <div class="site-width"><#t>
-          <a href="${pp.home}index.html" role="banner"><img src="img/fmpptitle.png" alt="FMPP"></a><#t>
+          <a href="${pp.home}index.html" role="banner"><img src="${pp.home}style/fmpptitle.png" alt="FMPP"></a><#t>
         </div><#t>
       </div><#t>
     </#if>
@@ -76,30 +76,30 @@
         <div class="pagers">
           <#if showPagerButtons>
             <#if prevLink != "">
-              <a href="${prevLink}"><@img 'prev.png', 'Prev' /></a><#t>
+              <a href="${prevLink}"><@html.img src='${pp.home}style/prev.png' alt='Prev' /></a><#t>
             <#else>
-              <@img 'prev_gray.png', '-' /><#t>
+              <@html.img src='${pp.home}style/prev_gray.png' alt='-' /><#t>
             </#if>
             <#t>
             <#if nextLink != "">
-              <a href="${nextLink}"><@img 'next.png', 'Next' /></a><#t>
+              <a href="${nextLink}"><@html.img src='${pp.home}style/next.png' alt='Next' /></a><#t>
             <#else>
-              <@img 'next_gray.png', '-' /><#t>
+              <@html.img src='${pp.home}style/next_gray.png' alt='-' /><#t>
             </#if>
             <#if !isContentsPage && tocLink != "">
-              <a href="${tocLink}"><@img 'contents.png', 'Contents' /></a><#t>
+              <a href="${tocLink}"><@html.img src='${pp.home}style/contents.png' alt='Contents' /></a><#t>
             <#else>
-              <@img 'contents_gray.png', '-' /><#t>
+              <@html.img src='${pp.home}style/contents_gray.png' alt='-' /><#t>
             </#if>
           </#if>
           <#if !isTheIndexPage>
-            <a href="${pp.home}index.html"><@img 'home.png', 'Home' /></a><#t>
+            <a href="${pp.home}index.html"><@html.img src='${pp.home}style/home.png' alt='Home' /></a><#t>
           </#if>
         </div>
 
         <#if isTheIndexPage>
           <div class="home-header">
-            <img src="img/fmpptitle.png" alt="FMPP">
+            <img src="${pp.home}style/fmpptitle.png" alt="FMPP">
             <span itemprop="name">FreeMarker-based text file PreProcessor</span>
             <br>Version ${pp.version}
           </div>
@@ -148,26 +148,26 @@
         <div class="pagers">
           <#if showPagerButtons>
             <#if prevLink != "">
-              <a href="${prevLink}"><@img 'prev.png', 'Prev' /></a><#t>
+              <a href="${prevLink}"><@html.img src='${pp.home}style/prev.png' alt='Prev' /></a><#t>
             <#else>
-              <@img 'prev_gray.png', '-' /><#t>
+              <@html.img src='${pp.home}style/prev_gray.png' alt='-' /><#t>
             </#if>
             <#if nextLink != "">
-              <a href="${nextLink}"><@img 'next.png', 'Next' /></a><#t>
+              <a href="${nextLink}"><@html.img src='${pp.home}style/next.png' alt='Next' /></a><#t>
             <#else>
-              <@img 'next_gray.png', '-' /><#t>
+              <@html.img src='${pp.home}style/next_gray.png' alt='-' /><#t>
             </#if>
             <#if !isContentsPage && tocLink != "">
-              <a href="${tocLink}"><@img 'contents.png', 'Contents' /></a><#t>
+              <a href="${tocLink}"><@html.img src='${pp.home}style/contents.png' alt='Contents' /></a><#t>
             <#else>
-              <@img 'contents_gray.png', '-' /><#t>
+              <@html.img src='${pp.home}style/contents_gray.png' alt='-' /><#t>
             </#if>
           </#if>
           <#if !isTheIndexPage>
-            <@a href="${pp.home}index.html"><@img 'home.png', 'Home' /></@a>
+            <@a href="${pp.home}index.html"><@html.img src='${pp.home}style/home.png' alt='Home' /></@a>
           </#if>
           <#if !P_reportBugPrinted?default(false)>
-              <@a href="${pp.home}reportbug.html"><@img 'reportbug.png', 'Report bug' /></@a>
+              <@a href="${pp.home}reportbug.html"><@html.img src='${pp.home}style/reportbug.png' alt='Report bug' /></@a>
           </#if>
         </div>
 
@@ -180,9 +180,9 @@
           <#if online && isTheIndexPage>
             <a href="http://sourceforge.net" rel="nofollow"><img src="http://sourceforge.net/sflogo.php?group_id=74591&amp;type=1" alt="SourceForge Logo"></a><#t>
           <#else>
-            <a href="http://sourceforge.net" rel="nofollow"><@img "sflogo.png", "SourceForge Logo"/></a><#t>
+            <a href="http://sourceforge.net" rel="nofollow"><@html.img src="${pp.home}style/sflogo.png" alt="SourceForge Logo"/></a><#t>
           </#if>
-          <a href="http://freemarker.org"><@img "poweredby_sq_simple.png", "Powered by FreeMarker" /></a><#t>
+          <a href="http://freemarker.org"><@html.img src="${pp.home}style/poweredby_sq_simple.png" alt="Powered by FreeMarker" /></a><#t>
         </div>
       </div>
     </div>
@@ -191,12 +191,12 @@
   <#assign P_reportBugPrinted = false>
 </#macro>
 
-<#macro img src alt>
+<#macro figure src alt>
   <#local label><#nested></#local>
   <#if label?length != 0>
     <p align=center>
   </#if>
-  <@html.img src="${pp.home}img/${src}" alt=alt /><#t>
+  <@html.img src="${pp.home}figures/${src}" alt=alt /><#t>
   <#if label?length != 0>
     <br><#lt>
     <br><strong>Figure:</strong> <em><#noescape>${label}</#noescape></em>
@@ -507,14 +507,6 @@
   <#else>
     <@fmppPath path="docs/examples" />
   </#if>
-</#macro>
-
-<#macro uc>
-  <table border=0 cellspacing=0 cellpadding=4>
-    <tr>
-      <td align="left" valign="middle"><@img "underconstrucion.gif", "Under construction"/>
-      <td align="left" valign="middle"><b>The documentation is under construction...</b>
-  </table>
 </#macro>
 
 <#macro nbc><span class="warning"><strong>Warning!</strong> Incompatible change!</span> </#macro>

@@ -8,7 +8,7 @@
 
 <p>To see an example, go to the <@example 'qtour_step1' /> directory. Here we have a directory called <@c>src</@>:</p>
 
-<p><@img src="qtour_step1_src.png" alt="Quick tour step 1 src" /></p>
+<p><@figure src="qtour_step1_src.png" alt="Quick tour step 1 src" /></p>
 
 <p>Also, you will find <@c>config.fmpp</@c> in the <@c>qtour_step1</@c> directory. This file contains the settings for FMPP, and now contains this:</p>
 
@@ -34,7 +34,7 @@ Time elapsed: 0.234 seconds
 
 <p>and the newly created <@c>out</@> directory will contain exactly the same files and subdirectories as <@c>src</@>.
 
-<p align="center"><@img src="qtour_step1.png" alt="Quick tour step 1 diagram" /></p>
+<p align="center"><@figure src="qtour_step1.png" alt="Quick tour step 1 diagram" /></p>
 
 <p>The above messages suggest that the PNG file was copied, while the two HTML-s were executed:</p>
 <ul>
@@ -73,7 +73,7 @@ data: tdd(data/style.tdd)
 
 <p>If you issue an <@c>fmpp</@c> command in the <@c>qtour_step2</@> directory, and look into the result in the <@c>out</@> directory, then you will see that the <@c>${"$"}{<@r>...</@>}</@>-s in the HTML files are replaced with the actual colors.</p>
 
-<p align="center"><@img src="qtour_step2.png" alt="Quick tour step 2 diagram" /></p>
+<p align="center"><@figure src="qtour_step2.png" alt="Quick tour step 2 diagram" /></p>
 
 <p>It is important that the <@c>data</@> directory was not copied into the output (the files in it were not "executed" or "copied"). This is because <@c>src/data</@> contains a file with name <@c>ignoredir.fmpp</@>, and the presence of this file instructs FMPP not to process the directory.</p>
 
@@ -128,7 +128,7 @@ data: {
 
 <p>Let's say you want to create separate HTML pages for each birds, rather than listing all information about them on the index page, and you want only link to those pages on <@c>index.html</@>. <@example 'qtour_step4'/> does this. The index page had trivial changes to generate the links. The interesting is that we have a new file, <@c>bird.html</@>. This single file is the template for all bird pages, and will generate a separate HTML file for each birds:</p>
 
-<p align="center"><@img src="qtour_step4.png" alt="Quick tour step 4 diagram" /></p>
+<p align="center"><@figure src="qtour_step4.png" alt="Quick tour step 4 diagram" /></p>
 
 <p>The <@c>bird.html</@c> looks as this:</p>
 

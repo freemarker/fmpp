@@ -58,6 +58,7 @@ hr {
 
 .logo-banner {
   background-color: #e5e5e5;
+  /* background-image: url(logo-banner-background.png); */
   border-bottom: 1px solid #CFCFCF;
   padding: 6px 0;
 }
@@ -76,6 +77,7 @@ hr {
   padding-top: 24px;
   padding-bottom: 24px;
   background-color: #eee;
+  /* background-image: url(header-footer-background.png); */
   border-bottom: 1px solid #ddd;
 }
 
@@ -152,6 +154,7 @@ hr {
   padding-top: 24px;
   padding-bottom: 24px;
   background-color: #eee;
+  /* background-image: url(header-footer-background.png); */
   border-top: 1px solid #ddd;
 }
 
@@ -214,7 +217,7 @@ code a {
 }
 
 .report-bugs {
-  background: url(img/bug.png) no-repeat;
+  background: url(bug.png) no-repeat;
   padding-left: 40px;
 }
 
