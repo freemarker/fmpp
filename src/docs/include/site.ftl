@@ -144,6 +144,13 @@
         text-align: center;
       }
 
+      .site-header .home-header img {
+        width: 243px;
+        height: 70px;
+        display: block;
+        margin: 0 auto;
+      }
+
       @media (min-width: 768px) {
         .site-header .pagers {
           float: right;
@@ -301,7 +308,7 @@
         <#if isTheIndexPage>
           <div class="home-header">
             <img src="img/fmpptitle.png" alt="FMPP">
-            <br><span itemprop="name">FreeMarker-based text file PreProcessor</span>
+            <span itemprop="name">FreeMarker-based text file PreProcessor</span>
             <br>Version ${pp.version}
           </div>
         <#else>
