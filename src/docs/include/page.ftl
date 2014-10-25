@@ -42,18 +42,26 @@
   </head>
 
   <body itemscope itemtype="http://schema.org/Article">
-    <div class="site-header">
+    <div class="site-header ${navCtx.isTheIndexPage?string('home', 'inner')}-site-header">
       <div class="site-width">
         <#if navCtx.isTheIndexPage>
-          <div class="home-header">
-            <@html.img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
+          <div scope class="home-header">
+            <div class="logo">
+              <@html.img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
+            </div>
             <span itemprop="name">${title}</span>
             <br>Version ${pp.version}
           </div>
         <#else>
           <nav>
+            <div class="logoAndBreadcrumbs">
+              <a href="${pp.home}index.html" class="logo">
+                <@html.img src="${pp.home}style/fmpptitle.png" alt="&lt;@FMPP/&gt;" />
+              </a>
+              <@page_breadcrumbs navCtx />
+            </div>
             <@page_pagers navCtx, false />
-            <@page_breadcrumbs navCtx />
+            <div class="clear"></div>
           </nav>
         </#if>
       </div>

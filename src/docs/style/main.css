@@ -12,6 +12,7 @@ html {
   text-size-adjust: 100%;
   line-height: 1.42857143;
   background-color: #eee;
+  overflow-y: scroll;
 }
 
 body {
@@ -75,7 +76,6 @@ hr {
 }
 
 .site-header {
-  padding: 24px 0;
   background-color: #eee;
   background-image: url(header-footer-background.png);
   border-bottom: 1px solid #ddd;
@@ -85,22 +85,52 @@ hr {
   margin: 0;
 }
 
-.site-header .home-header {
+.home-site-header {
   text-align: center;
+  padding: 24px 0;
 }
 
-.site-header .home-header img {
+.inner-site-header {
+  padding: 12px 0;
+}
+
+.home-site-header .logo img {
   width: 243px;
   height: 70px;
   display: block;
   margin: 0 auto;
 }
 
-@media (min-width: 768px) {
-  .site-header .pagers {
-    float: right;
+.inner-site-header .logo  img {
+  width: 121px;
+  height: 35px;
+  display: block;
+  margin: 0;
+}
+
+.site-header  .pagers {
+  position: absolute;
+  right: 0;
+  bottom: 6px;
+}
+
+@media (max-width: 800px) {
+  .site-header  .pagers {
+    position: relative;
   }
 }
+
+/*
+.inner-site-header .logoAndBreadcrumbs {
+  float: left;
+}
+
+@media (max-width: 768px) {
+  .inner-site-header .logoAndBreadcrumbs {
+    float: none;
+  }
+}
+*/
 
 .pagers a img {
   transition: opacity ease-in-out .2s;
@@ -115,6 +145,7 @@ hr {
   margin-right: auto;
   padding-left: 24px;
   padding-right: 24px;
+  position: relative;
 }
 
 @media (min-width: 768px) {
