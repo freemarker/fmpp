@@ -66,7 +66,7 @@
     <#if !isTheIndexPage>
       <div class="logo-banner"><#t>
         <div class="site-width"><#t>
-          <a href="${pp.home}index.html" role="banner"><img src="${pp.home}style/fmpptitle.png" alt="FMPP"></a><#t>
+          <@breadcrumbs />
         </div><#t>
       </div><#t>
     </#if>
@@ -521,6 +521,51 @@
   </#if>
   <@a href="${pp.home}freemarker/${href}"><#nested></@a><#t>
 </#macro>
+
+<#macro breadcrumbs>
+  <#local path = getBreadcrumbsTo(pp.outputFileName)>
+  <#if path?size == 0>
+    <#stop "Couldn't find breadcrumbs path to: " + pp.outputFileName>
+  </#if>
+  <nav>
+    <ul class="breadcrumbs" itemtype="http://data-vocabulary.org/Breadcrumb">
+      <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+        <a href="${pp.home}index.html" class="logo">
+          <data itemprop="title" value="FMPP Home"><img src="${pp.home}style/fmpptitle.png" alt="FMPP Home"></data>
+        </a>
+      </li>
+      <#list path as step>
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+          >
+          <a href="${pp.home + step.file}" itemprop="url"><span itemprop="title">${step.title}</span></a>
+        </li>
+      </#list>
+    </ul>
+  </nav>
+</#macro>
+
+<#function getBreadcrumbsTo targetFile cur=manualFiles parentPath=[]>
+  <#if !cur?is_sequence> <#-- leaf node -->
+    <#if cur == targetFile>
+      <#return parentPath + [ { 'file': cur, 'title': pp.s.manualFileTitles[cur] } ]>
+    <#else>
+      <#-- Not found under cur: -->
+      <#return []>
+    </#if>
+  <#elseif cur[0].file == targetFile> <#-- non-leaf node == target -->
+    <#return parentPath + [ cur[0] ]>
+  </#if>
+  
+  <#list cur[1..] as child>
+      <#local path = getBreadcrumbsTo(targetFile, child, parentPath + [ cur[0] ])>
+      <#if path?size != 0>
+        <#-- Found it: -->
+        <#return path>
+      </#if>
+  </#list>
+  <#-- Not found under cur: -->
+  <#return []>
+</#function>
 
 </#escape>
 </@pp.ignoreOutput>

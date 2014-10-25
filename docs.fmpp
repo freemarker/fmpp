@@ -72,7 +72,9 @@ data: {
         [{title:Miscellaneous, file:miscellaneous.html}
             tips.html
             knownproblems.html
+            reportbug.html
             versions.html
+            license.html
         ]
     ]
     

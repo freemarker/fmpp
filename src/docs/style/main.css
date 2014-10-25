@@ -63,14 +63,24 @@ hr {
   padding: 6px 0;
 }
 
-.logo-banner a {
-  display: block;
-}
-
 .logo-banner img {
   width: 100px;
   height: 29px;
-  display: block;
+  vertical-align: middle;
+}
+
+.breadcrumbs {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 29px;
+}
+
+.breadcrumbs li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
 }
 
 .site-header {
