@@ -109,7 +109,7 @@
         border-top: 1px solid #ddd;
       }
 
-      .deprecated {
+      .warning {
         color: #B00;
       }
 
@@ -201,6 +201,7 @@
 
       .table-of-contents a {
         display: block;
+        max-width: 400px;
       }
 
       .site-footer {
@@ -265,8 +266,19 @@
       }
 
       code a {
-        color: #900;
+        color: #c00;
       }
+
+      .report-bugs {
+        background: url(img/bug.png) no-repeat;
+        padding-left: 40px;
+      }
+
+      .report-bugs .strong {
+        color: #c00;
+        font-size: 16px;
+      }
+
     </style>
   </head>
 
@@ -528,7 +540,7 @@
   <p>
     <em>Name:</em> <strong>${name}</strong><br>
     <#if deprecated?length != 0>
-      <em class="deprecated">Deprecated!</em> <@deprecated?interpret /><br>
+      <em class="warning">Deprecated!</em> <@deprecated?interpret /><br>
     </#if>
     <em>Type:</em> ${type}<br>
     <em>Default:</em> <#rt>
@@ -569,7 +581,7 @@
   <@_index name />
   <@sect title=name anchor=anchor>
     <#if deprecated != ''>
-      <strong><em>Deprecated:</em></strong> <@deprecated?interpret /><br>
+      <strong class="warning"><em>Deprecated:</em></strong> <@deprecated?interpret /><br>
     </#if>
     <em>Type:</em> ${type}
     <#assign P_params = pp.newWritableSequence()>
@@ -684,28 +696,15 @@
 </#macro>
 
 <#macro reportBugs>
-  <table border=0 cellspacing=0 cellpadding=4><tr>
-    <td align="left" valign="middle"><@img "bug.png", "bug" /></td>
-    <td align="left" valign="middle">
-      <font color=red size="+1"><b>Please report bugs you find!</b> Any programming, documentation content or grammatical mistakes, even minor typos. Thank you!</font><br>
-      Use the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=74591&amp;atid=541453">bug reporting Web page</a>,<br>
-      or e-mail: <@myEmail /><br>
-    </td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>
-      Please report FreeMarker bugs at the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=794&amp;atid=100794">FreeMarker bug reporting Web page</a>, not for me.
-      If you are not sure if you have found a FreeMarker or an FMPP bug, just report it as FMPP bug.
-    </td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>
-      Also, note the <@a href="knownproblems.html">Known Problems</@a> page.
-    </td>
-  </tr>
-  </table>
+  <div class="report-bugs">
+    <p class="strong"><strong>Please report bugs you find!</strong> Any programming, documentation content or grammatical mistakes, even minor typos. Thank you!</p>
+    <p>Use the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=74591&amp;atid=541453">bug reporting Web page</a>,<br>
+      or e-mail: <@myEmail /></p>
+
+    <p>Please report FreeMarker bugs at the <a rel="nofollow" href="http://sourceforge.net/tracker/?func=add&amp;group_id=794&amp;atid=100794">FreeMarker bug reporting Web page</a>, not for me. If you are not sure if you have found a FreeMarker or an FMPP bug, just report it as FMPP bug.</p>
+    <p>Also, note the <@a href="knownproblems.html">Known Problems</@a> page.</p>
+  </div>
+
   <#assign P_reportBugPrinted = true>
 </#macro>
 
@@ -737,9 +736,9 @@
   </table>
 </#macro>
 
-<#macro nbc><span class="deprecated"><strong>Warning!</strong> Incompatible change!</span> </#macro>
+<#macro nbc><span class="warning"><strong>Warning!</strong> Incompatible change!</span> </#macro>
 
-<#macro nbca><span class="deprecated"><strong>Warning!</strong> Incompatible Java API change!</span> </#macro>
+<#macro nbca><span class="warning"><strong>Warning!</strong> Incompatible Java API change!</span> </#macro>
 
 <#macro url href><a href="${href}">${href}</a></#macro>
 
