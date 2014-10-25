@@ -89,12 +89,39 @@
         border: 0;
       }
 
+      h1, h2, h3, h4, h5, h6 {
+        font-weight: normal;
+        line-height: 1.42857143;
+      }
+
+      h1 { font-size: 27px; }
+      h2 { font-size: 24px; }
+      h3 { font-size: 21px; }
+      h4 { font-size: 18px; }
+      h5 { font-size: 16px; }
+      h6 { font-size: 14px; }
+
       hr {
         height: 0;
         margin-top: 18px;
         margin-bottom: 18px;
         border: 0;
         border-top: 1px solid #ddd;
+      }
+
+      .logo-banner {
+        background-color: #e5e5e5;
+        border-bottom: 1px solid #CFCFCF;
+        padding: 6px 0;
+      }
+
+      .logo-banner a {
+        display: block;
+      }
+
+      .logo-banner img {
+        width: 100px;
+        display: block;
       }
 
       .site-header {
@@ -112,8 +139,10 @@
         text-align: center;
       }
 
-      .site-header .pagers {
-        float: right;
+      @media (min-width: 768px) {
+        .site-header .pagers {
+          float: right;
+        }
       }
 
       .pagers a img {
@@ -151,11 +180,10 @@
 
       .page-wrapper {
         padding-top: 12px;
-
+        padding-bottom: 12px;
       }
 
       .toc-header {
-        font-weight: bold;
         font-size: 18px;
       }
 
@@ -174,6 +202,11 @@
         float: left;
       }
 
+      .site-footer .pagers a:last-child {
+        margin-left: 12px;
+
+      }
+
       .site-footer .generated {
         text-align: right;
       }
@@ -187,18 +220,32 @@
         display: inline-block;
         margin-left: 9px;
       }
-<#-->
-      A.toc{color: #0000CC; text-decoration:none}
-      A.toc:hover{text-decoration: underline}
-      A.toc:visited{color: #800080}
-      A.s{color: #30D000}
-      A.s:visited{color: #30D000}-->
-      TT {font-size: 1em; font-family: "Courier New", monospace}
-      CODE {font-size: 1em; font-family: "Courier New", monospace}
+
+      tt,
+      code {
+        font-size: 14px;
+        font-family: Courier, Monaco, Consolas, "Courier New", monospace;
+        -webkit-font-smoothing: antialiased;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        padding: 1px 3px;
+        color: #6D180B;
+      }
+
+      code a {
+        color: #900;
+      }
     </style>
   </head>
 
   <body itemscope itemtype="http://schema.org/Article">
+    <#if !isTheIndexPage>
+      <div class="logo-banner"><#t>
+        <div class="site-width"><#t>
+          <a href="${pp.home}index.html" role="banner"><img src="img/fmpptitle.png" alt="FMPP"></a><#t>
+        </div><#t>
+      </div><#t>
+    </#if>
 
     <div class="site-header">
       <div class="site-width">
@@ -253,10 +300,10 @@
           <#local needHr = true>
         </#if>
         <#if P_index?size != 0>
-          <p><b>Alphabetical index of keys:</b></p>
-          <ul>
+          <p class="toc-header">Alphabetical index of keys:</p>
+          <ul class="table-of-contents">
           <#list P_index?sort_by("title") as e>
-            <li><a href="#${e.id}" class=toc>${e.title}</a>
+            <li><a href="#${e.id}">${e.title}</a>
           </#list>
           </ul>
           <#local needHr = true>
@@ -341,24 +388,24 @@
   <#if P_sectLevel = 1>
      <@pp.add seq=P_sects value={"title":title, "id":anchor} />
      <@.namespace.anchor anchor />
-     <h2><font color="${P_titleColor}"><#rt>
+     <h2><#rt>
      <#if title?starts_with('ex:')>
        <@title[3..(title?length-1)]?interpret /><#t>
      <#else>
        ${title}<#t>
      </#if>
-     </font></h2><#lt>
+     </h2><#lt>
      <#nested>
      <@pp.clear seq=P_settings_in_context />
   <#elseif P_sectLevel = 2>
      <@.namespace.anchor anchor />
-     <h3><font color="${P_titleColor}"><#rt>
+     <h3><#rt>
      <#if title?starts_with('ex:')>
        <@title[3..(title?length-1)]?interpret /><#t>
      <#else>
        ${title}<#t>
      </#if>
-     </font></h3><#lt>
+     </h3><#lt>
      <#nested>
   <#else>
     <#stop "@sect is nested too deeply.">
@@ -394,13 +441,13 @@
   <tr><td ${cs} height=1 bgcolor="#F0F0F0"><img src="img/none.gif" width=1 height=1 alt=""></td></tr>
 </#macro>
 
-<#macro c><code><font color="#017D01"><#nested></font></code></#macro>
+<#macro c><code><#nested></code></#macro>
 
-<#macro r><i><#nested></i></#macro>
+<#macro r><em><#nested></em></#macro>
 
-<#macro e><b><#nested></b></#macro>
+<#macro e><strong><#nested></strong></#macro>
 
-<#macro note><p><i><b>Note:</b> <#nested></i></p></#macro>
+<#macro note><p><em><strong>Note:</strong> <#nested></em></p></#macro>
 
 <#macro s check=true>
   <#local name>
@@ -420,8 +467,8 @@
   <#else>
     <#local link = false>
   </#if>
-  <code><#if link><a href="${pp.pathTo('/settings.html')}#key_${name}" class=s></#if><#t>
-  <font color="#20C000">${name}</font><#t>
+  <code><#if link><a href="${pp.pathTo('/settings.html')}#key_${name}"></#if><#t>
+    ${name}<#t>
   <#if link></a></#if></code><#t>
 </#macro>
 
@@ -492,7 +539,7 @@
   <#if href=''>
     <li>${title}<#nested></li>
   <#else>
-    <li><a href="${href}" class=toc>${title}</a><#nested></li>
+    <li><a href="${href}">${title}</a><#nested></li>
   </#if>
 </#macro>
 
