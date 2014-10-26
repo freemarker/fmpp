@@ -28,11 +28,10 @@ Preparation (needed only once):
      that it pick up the "path" environment variable changes. Adjust it if necessary.
 
 To build the docs: `ant docs`
-The output will be be  in `build/docs`!
+The output will be be in `build/docs`!
 
 To re-build the FMPP generated part only: `fmpp -C docs.fmpp`
 To re-build the Gulp generated part only: `ant docs.gulp`
-
 
 
 Making a release

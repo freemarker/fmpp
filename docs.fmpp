@@ -15,7 +15,12 @@ logFile: build/docs.fmpp.log
 turns: [turn(2, **/*_T2.*), turn(3, **/*_T3.*)]
 removePostfixes: [_T2, _T3]
 modes: [
-  # LESS file handled by LESS to CSS converter before FMPP:
+  # Information for FMPP developers:
+  ignore(**/README-BUILD.txt)
+  # Saved IcoMoon App selection - not used for anything:
+  ignore(style/fonts/selection.json)
+  
+  # LESS file go through LESS to CSS conversion before FMPP:
   ignore(style/*.less)
   
   copy(style/fonts/**)
