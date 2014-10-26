@@ -1,5 +1,4 @@
 .site-header {
-  background-image: url(header-footer-background.png);
   border-bottom: 1px solid @border-gray;
 
   h1 {
@@ -32,7 +31,7 @@
     padding-top: 12px;
     padding-bottom: 12px;
 
-    .modern & {
+    @media (min-width: @screen-sm-min) {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
@@ -45,22 +44,32 @@
     }
 
     .header-left {
-      flex-shrink: 1;
-      flex-grow: 0;
       margin-top: 12px;
-      display: inline-block;
-      width: 50%;
+
+      .ie89 & {
+        display: inline-block;
+        width: 50%;
+      }
     }
 
     .header-right {
-      flex-shrink: 0;
-      flex-grow: 0;
+      text-align: center;
+      margin-top: 18px;
 
-      display: inline-block;
-      width: 50%;
+      nav {
+        display: inline-block;
+      }
 
-      .pagers {
-        float: right;
+      .desktop-and-old-ie({
+        margin-top: 0;
+      });
+
+      .ie89 & {
+        width: 50%;
+
+        .pagers {
+          float: right;
+        }
       }
     }
 

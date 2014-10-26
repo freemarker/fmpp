@@ -18,9 +18,8 @@
   <@pp.restartOutputFile />
   <#compress>
   <!doctype html>
-  <!--[if lte IE 8]><html class="ie8" lang="en"> <![endif]-->
-  <!--[if IE 9]><html class="ie9" lang="en"> <![endif]-->
-  <!--[if gt IE 9]><!--><html class="modern" lang="en"> <!--<![endif]-->
+  <!--[if lte IE 9]><html class="ie89" lang="en"> <![endif]-->
+  <!--[if gt IE 9]><!--><html lang="en"> <!--<![endif]-->
   <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -35,6 +34,7 @@
       <meta property="og:title" content="FMPP: Text file preprocessor (HTML preprocessor)">
     </#if>
     <meta property="og:locale" content="en_US">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="format-detection" content="telephone=no">
 
@@ -49,6 +49,7 @@
     <#if navCtx.nextLink?has_content>
       <link rel="next" href="${baseUrl}/${navCtx.nextLink}">
     </#if>
+
     <!--[if lte IE 8]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->

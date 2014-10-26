@@ -9,7 +9,6 @@ html {
   line-height: @line-height-base;
   text-size-adjust: 100%;
   background-image: url(header-footer-background.png);
-  overflow-y: scroll;
 }
 
 body {
@@ -38,28 +37,49 @@ h5,
 h6 {
   font-family: @font-family-base;
   line-height: @line-height-base;
-  font-weight: normal;
+  font-weight: bold;
+}
+
+h1 {
+  font-size: 24px;
+
+  .desktop-and-old-ie({
+    font-size: 30px;
+  });
+}
+
+h2 {
+  font-size: 21px;
+
+  .desktop-and-old-ie({
+    font-size: 27px;
+  });
 }
 
 h3 {
-  &:before {
-    .icon;
-    content: '\e607';
-    position: relative;
-    top: 2px;
-    color: @link-color;
-    width: 21px;
-    height: 21px;
-    display: inline-block;
-  }
+  font-size: 18px;
+
+  .desktop-and-old-ie({
+    font-size: 21px;
+  });
 }
 
+h4 {
+  font-size: 15px;
 
-h1 { font-size: 30px; font-weight: bold; }
-h2 { font-size: 27px; }
-h3 { font-size: 21px; }
-h4 { font-size: 18px; }
-h5 { font-size: 16px; }
+  .desktop-and-old-ie({
+    font-size: 18px;
+  });
+}
+
+h5 {
+  font-size: 14px;
+
+  .desktop-and-old-ie({
+    font-size: 16px;
+  });
+}
+
 h6 { font-size: 14px; }
 
 hr {
@@ -84,6 +104,7 @@ code {
   border-radius: 4px;
   padding: 1px 3px;
   color: #6D180B;
+  word-break: break-word;
 
   a {
     color: #c00;

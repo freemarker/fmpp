@@ -9,6 +9,18 @@
   }
 }
 
+.desktop-and-old-ie(@rules) {
+
+  .ie89 & {
+    @rules();
+  }
+
+  @media (min-width: @screen-sm-min) {
+    @rules();
+  }
+
+}
+
 
 .list-unstyled() {
   margin: 0;
