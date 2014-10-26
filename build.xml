@@ -122,10 +122,10 @@
   <target name="docs.gulp">
     <mkdir dir="build/docs/style" />
     <exec executable="${nodeJsCommand}" failonerror="true" dir="${basedir}">
-      <arg value="node_modules\gulp\bin\gulp.js"/>
+      <arg value="node_modules${file.separator}gulp${file.separator}bin${file.separator}gulp.js"/>
     </exec>
   </target>
-  
+
   <target name="docs.examples">
     <copy todir="build/docs/examples" includeEmptyDirs="true">
       <fileset dir="src/docs/examples">
