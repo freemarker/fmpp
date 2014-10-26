@@ -19,7 +19,8 @@
   <#compress>
   <!doctype html>
   <!--[if lte IE 8]><html class="ie8" lang="en"> <![endif]-->
-  <!--[if gt IE 8]><!--><html lang="en"> <!--<![endif]-->
+  <!--[if IE 9]><html class="ie9" lang="en"> <![endif]-->
+  <!--[if gt IE 9]><!--><html class="modern" lang="en"> <!--<![endif]-->
   <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -152,15 +153,15 @@
             <br>Version ${pp.version}
           </div>
         <#else>
-          <div class="header-left">
+          <div class="header-left"><#t>
             <a href="${pp.home}index.html" class="logo" role="banner">
               <img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
             </a>
             <@page_breadcrumbs navCtx />
-          </div>
-          <div class="header-right">
+          </div><#t>
+          <div class="header-right"><#t>
             <@page_pagers navCtx, false />
-          </div>
+          </div><#t>
         </#if>
       </div>
     </div>

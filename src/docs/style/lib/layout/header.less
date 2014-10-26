@@ -32,10 +32,12 @@
     padding-top: 12px;
     padding-bottom: 12px;
 
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    flex-wrap: wrap;
+    .modern & {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
 
     .ie8 & {
       display: block;
@@ -46,16 +48,18 @@
       flex-shrink: 1;
       flex-grow: 0;
       margin-top: 12px;
-      .ie8 & {
-        float: left;
-      }
+      display: inline-block;
+      width: 50%;
     }
 
     .header-right {
       flex-shrink: 0;
       flex-grow: 0;
 
-      .ie8 & {
+      display: inline-block;
+      width: 50%;
+
+      .pagers {
         float: right;
       }
     }
