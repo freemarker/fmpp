@@ -1,16 +1,8 @@
 .site-header {
   border-bottom: 1px solid @border-gray;
 
-  h1 {
-    margin: 0;
-  }
-
   .logo {
     display: block;
-
-    img {
-      display: block;
-    }
   }
 
   .home-site-header {
@@ -38,17 +30,14 @@
       flex-wrap: wrap;
     }
 
-    .ie8 & {
+    .ie89 & {
       display: block;
       .clearfix();
     }
 
     .header-left {
-      margin-top: 12px;
-
       .ie89 & {
-        display: inline-block;
-        width: 50%;
+        float: left;
       }
     }
 
@@ -56,16 +45,12 @@
       text-align: center;
       margin-top: 18px;
 
-      nav {
-        display: inline-block;
-      }
-
       .desktop-and-old-ie({
         margin-top: 0;
       });
 
       .ie89 & {
-        width: 50%;
+        .clearfix();
 
         .pagers {
           float: right;

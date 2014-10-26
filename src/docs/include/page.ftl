@@ -19,7 +19,7 @@
   <#compress>
   <!doctype html>
   <!--[if lte IE 9]><html class="ie89" lang="en"> <![endif]-->
-  <!--[if gt IE 9]><!--><html lang="en"> <!--<![endif]-->
+  <!--[if gt IE 9]><!--><html lang="en" class="ie89"> <!--<![endif]-->
   <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
