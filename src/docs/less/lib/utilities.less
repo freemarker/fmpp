@@ -6,6 +6,10 @@
   padding-left: @gutter-width;
   padding-right: @gutter-width;
 
+  .ie8 & {
+    width: @container-md;
+  }
+
   @media (min-width: @screen-sm-min) {
     width: @container-sm;
   }
@@ -31,4 +35,13 @@
   overflow: hidden;
   clip: rect(0,0,0,0);
   border: 0;
+}
+
+
+.warning {
+  color: @text-warning;
+}
+
+.clear {
+    clear: both;
 }

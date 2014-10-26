@@ -8,7 +8,8 @@ html {
   color: @text-color;
   line-height: @line-height-base;
   text-size-adjust: 100%;
-  font-weight: normal;
+  background-image: url(header-footer-background.png);
+  overflow-y: scroll;
 }
 
 body {
@@ -33,43 +34,57 @@ h5,
 h6 {
   font-family: @font-family-base;
   line-height: @line-height-base;
-  font-weight: 400;
+  font-weight: normal;
 }
 
-h1 {
-  font-size: 36px;
-}
+h1 { font-size: 27px; }
+h2 { font-size: 24px; }
+h3 { font-size: 21px; }
+h4 { font-size: 18px; }
+h5 { font-size: 16px; }
+h6 { font-size: 14px; }
 
-h2 {
-  font-size: 21px;
+hr {
+  height: 0;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  border: 0;
+  border-top: 1px solid @border-gray;
 }
 
 code,
+tt, //@ todo: check if <tt> is still used
 pre {
-  font-size: @font-size-base - 1;
+  font-size: @font-size-base;
   font-family: @font-family-monospace;
   -webkit-font-smoothing: antialiased;
 }
 
+tt,
 code {
   background-color: @bg-gray;
-  border: 1px solid @border-gray;
   border-radius: 4px;
   padding: 1px 3px;
   color: #6D180B;
+
+  a {
+    color: #c00;
+  }
 }
 
 pre {
   display: block;
-  border: 1px solid @border-gray;
-  padding: 6px 12px;
-  background-color: @bg-gray;
+  padding: 9px;
+  margin: 0 0 9px;
 
   word-break: normal;
   word-wrap: break-word;
   white-space: pre;
 
-  margin: 0 0 9px;
+  background-color: @bg-gray;
+  line-height: 1.42857143;
+  border: 1px solid @border-gray;
+  border-radius: 4px;
 }
 
 img {

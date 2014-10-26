@@ -16,7 +16,7 @@ gulp.task('styles', function() {
     .pipe( less( ) )
 
     // rename and prefix
-    .pipe( rename( { basename: "styles" } ) )
+    .pipe( rename( { basename: "main" } ) )
     .pipe( prefix( { cascade: false } ) )
     .pipe( gulp.dest( OUT_DIR ) )
 

@@ -18,7 +18,8 @@
   <@pp.restartOutputFile />
   <#compress>
   <!doctype html>
-  <html lang="en">
+  <!--[if lte IE 8]><html class="ie8" lang="en"> <![endif]-->
+  <!--[if gt IE 8]><!--><html lang="en"> <!--<![endif]-->
   <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -36,10 +37,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="format-detection" content="telephone=no">
 
-    <link rel="stylesheet" type="text/css" href="${pp.home}style/main.css" />
-    <!--[if lt IE 9]>
-      <link rel="stylesheet" type="text/css" href="${pp.home}style/main-ie8-or-less.css" />
-    <![endif]-->
+    <#if online>
+      <link rel="stylesheet" type="text/css" href="${pp.home}style/main.min.css" />
+    <#else>
+      <link rel="stylesheet" type="text/css" href="${pp.home}style/main.css" />
+    </#if>
   </head>
 
   <body itemscope itemtype="http://schema.org/Article">
