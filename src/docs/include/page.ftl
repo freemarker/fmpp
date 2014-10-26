@@ -47,38 +47,46 @@
     <div class="page-wrapper">
       <div class="site-width">
   </#compress>
-        <#if !navCtx.isTheIndexPage>
-          <h1 itemprop="name">${title}</h1>
-        </#if>
+        <h1 itemprop="name">${title}</h1>
 
         <#local needHr = false>
         <#if toc>
           <#local content>
             <#nested>
           </#local>
-          <#if P_sects?size != 0>
-            <@.namespace.toc title="Page contents">
-            <#list P_sects as sect>
-              <@toci href="#" + sect.id title=sect.title/>
-            </#list>
-            </@>
-            <#local needHr = true>
-          </#if>
-          <#if P_index?size != 0>
-            <p class="toc-header">Alphabetical index of keys:</p>
-            <ul class="table-of-contents">
-            <#list P_index?sort_by("title") as e>
-              <li><a href="#${e.id}">${e.title}</a>
-            </#list>
-            </ul>
-            <#local needHr = true>
-          </#if>
-          <#if needHr>
-            <@hr/>
-          </#if>
-          <#noescape>${content}</#noescape>
+          <div class="content-inner">
+            <#if (P_index?size != 0 || P_sects?size != 0 || needHr)>
+              <div class="content-left">
+                <#if P_sects?size != 0>
+                  <@.namespace.toc title="Page contents">
+                  <#list P_sects as sect>
+                    <@toci href="#" + sect.id title=sect.title/>
+                  </#list>
+                  </@>
+                  <#local needHr = true>
+                </#if>
+                <#if P_index?size != 0>
+                  <p class="toc-header">Alphabetical index of keys:</p>
+                  <ul class="table-of-contents">
+                    <#list P_index?sort_by("title") as e>
+                      <li><a href="#${e.id}">${e.title}</a>
+                    </#list>
+                  </ul>
+                  <#local needHr = true>
+                </#if>
+                <#if needHr>
+                  <#--><@hr/>-->
+                </#if>
+              </div>
+            </#if>
+            <div class="page-content content-right">
+              <#noescape>${content}</#noescape>
+            </div>
+          </div>
         <#else>
-          <#nested>
+          <div class="page-content">
+            <#nested>
+          </div>
         </#if>
   <#compress>
       </div>
@@ -129,7 +137,7 @@
             <div class="logo">
               <img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
             </div>
-            <span itemprop="name">${title}</span>
+            ${title}
             <br>Version ${pp.version}
           </div>
         <#else>

@@ -117,6 +117,7 @@
   <ul class="table-of-contents">
     <#nested>
   </ul>
+  <div class="clear"></div>
 </#macro>
 
 <#macro toci href title>
