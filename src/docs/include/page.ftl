@@ -150,43 +150,45 @@
 
 
 <#macro page_pagers navCtx bugReportingIcon=true>
-  <nav>
-    <ul class="pagers">
-      <#if navCtx.showPagerButtons>
-        <#if navCtx.prevLink != "">
-          <li>
-            <a class="pager-icon previous" href="${navCtx.prevLink}">Prev</a><#t>
-          </li>
-        <#else>
-          <li class="pager-icon previous">Prev</li><#t>
+  <#if navCtx.showPagerButtons || !navCtx.isTheIndexPage || (bugReportingIcon && !P_reportBugPrinted?default(false))>
+    <nav>
+      <ul class="pagers"><#t>
+        <#if navCtx.showPagerButtons>
+          <#if navCtx.prevLink != "">
+            <li><#t>
+              <a class="pager-icon previous" href="${navCtx.prevLink}">Prev</a><#t>
+            </li><#t>
+          <#else>
+            <li class="pager-icon previous">Prev</li><#t>
+          </#if>
+          <#if navCtx.nextLink != "">
+            <li><#t>
+              <a class="pager-icon next" href="${navCtx.nextLink}">Next</a><#t>
+            </li><#t>
+          <#else>
+            <li class="pager-icon next">Next</li><#t>
+          </#if>
+          <#if !navCtx.isContentsPage && navCtx.tocLink != "">
+            <li><#t>
+              <a class="pager-icon contents" href="${navCtx.tocLink}">Contents</a><#t>
+            </li><#t>
+          <#else>
+            <li class="pager-icon contents">Contents</li><#t>
+          </#if>
         </#if>
-        <#if navCtx.nextLink != "">
+        <#if !navCtx.isTheIndexPage>
           <li><#t>
-            <a class="pager-icon next" href="${navCtx.nextLink}">Next</a><#t>
+            <a class="pager-icon home" href="${pp.home}index.html">Home</a><#t>
           </li><#t>
-        <#else>
-          <li class="pager-icon next">Next</li><#t>
         </#if>
-        <#if !navCtx.isContentsPage && navCtx.tocLink != "">
+        <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
           <li><#t>
-            <a class="pager-icon contents" href="${navCtx.tocLink}">Contents</a><#t>
+            <a class="pager-icon report-bug" href="${pp.home}reportbug.html">Report bug</a><#t>
           </li><#t>
-        <#else>
-          <li class="pager-icon contents">Contents</li><#t>
         </#if>
-      </#if>
-      <#if !navCtx.isTheIndexPage>
-        <li><#t>
-          <a class="pager-icon home" href="${pp.home}index.html">Home</a><#t>
-        </li><#t>
-      </#if>
-      <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
-        <li><#t>
-          <a class="pager-icon report-bug" href="${pp.home}reportbug.html">Report bug</a><#t>
-        </li><#t>
-      </#if>
-    </ul>
-  </nav>
+      </ul>
+    </nav>
+  </#if>
 </#macro>
 
 <#macro page_breadcrumbs navCtx>

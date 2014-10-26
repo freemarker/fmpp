@@ -18,7 +18,8 @@
       display: block;
       transition: color ease-in-out .2s;
 
-      &:hover {
+      &:hover,
+      &:focus {
         text-decoration: none;
         color: @text-color;
       }
@@ -26,6 +27,8 @@
   }
 
   .pager-icon {
+    padding: 0 3px;
+
     &:before {
       .icon();
       display: block;
