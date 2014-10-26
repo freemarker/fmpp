@@ -89,22 +89,27 @@
     </div>
 
     <div class="site-footer">
-      <div class="site-width">
-        <nav>
+      <div class="site-width footer-inner">
+        <div class="footer-left">
           <@page_pagers navCtx />
-        </nav>
-        <div class="generated">
-          Generated on <time itemprop="dateModified" datetime="${pp.now?iso_utc}" title="${pp.now?string.long}">${pp.now?string("MMM d, yyyy hh:mm a zzz")}</time><br>
-          For FMPP version ${pp.version}
         </div>
 
-        <div class="external-links">
-          <#if online>
-            <a href="http://sourceforge.net" rel="nofollow"><img src="http://sourceforge.net/sflogo.php?group_id=74591&amp;type=1" alt="SourceForge Logo"></a><#t>
-          <#else>
-            <a href="http://sourceforge.net" rel="nofollow"><@html.img src="${pp.home}style/sflogo.png" alt="SourceForge Logo"/></a><#t>
-          </#if>
-          <a href="http://freemarker.org"><@html.img src="${pp.home}style/poweredby_sq_simple.png" alt="Powered by FreeMarker" /></a><#t>
+        <div class="footer-right">
+          <div class="generated">
+            Generated on <time itemprop="dateModified" datetime="${pp.now?iso_utc}" title="${pp.now?string.long}">${pp.now?string("MMM d, yyyy hh:mm a zzz")}</time><br>
+            For FMPP version ${pp.version}
+          </div>
+
+          <div class="external-links">
+            <a href="http://sourceforge.net" rel="nofollow">
+              <#if online>
+                <img src="http://sourceforge.net/sflogo.php?group_id=74591&amp;type=1" alt="SourceForge Logo">
+              <#else>
+                <@html.img src="${pp.home}style/sflogo.png" alt="SourceForge Logo"/>
+              </#if>
+            </a>
+            <a href="http://freemarker.org"><@html.img src="${pp.home}style/poweredby_sq_simple.png" alt="Powered by FreeMarker" /></a><#t>
+          </div>
         </div>
       </div>
     </div>

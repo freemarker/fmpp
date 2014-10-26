@@ -3,12 +3,33 @@
   padding-bottom: 24px;
   border-top: 1px solid @border-gray;
 
-  .pagers {
-    float: left;
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
 
+    .ie8 & {
+      display: block;
+      .clearfix();
+    }
+
+    .footer-left {
+      .ie8 & {
+        float: left;
+      }
+    }
+
+    .footer-right {
+      .ie8 & {
+        float: right;
+      }
+    }
+  }
+
+  .pagers {
     a:last-child {
       margin-left: 12px;
-
     }
   }
 
