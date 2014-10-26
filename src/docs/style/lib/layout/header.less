@@ -34,8 +34,8 @@
 
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
-    align-items: flex-end;
+    flex-wrap: wrap-reverse;
+    align-items: flex-start;
 
     .ie8 & {
       display: block;
@@ -43,6 +43,7 @@
     }
 
     .header-left {
+      margin-top: 12px;
       .ie8 & {
         float: left;
       }
@@ -53,8 +54,6 @@
         float: right;
       }
     }
-
-
 
     .logo {
       img {
