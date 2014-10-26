@@ -45,17 +45,25 @@ Report bugs, ask for help, make suggestions, etc.:
 * Author's e-mail:  ddekany at freemail dot hu
 
 
-Building FMPP
--------------
+## Building FMPP
 
 Read BUILD.txt
 
 
-License
--------
+## License
 
 FMPP is Free software released under Apache License 2.0. For more information
 read the LICENSE.txt.
 
+Note that the full FMPP distribution (but not fmpp.jar itself) contains
+components from various copyright owners under different licenses. See
+LICENSE.txt for more information.
+
+
+## Attributions
+
 This product includes software developed by the
 Apache Software Foundation (http://www.apache.org/).
+
+The documentation and Web site of this product uses
+Entypo pictograms by Daniel Bruce (http://www.entypo.com/).

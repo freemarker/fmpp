@@ -48,6 +48,17 @@ inside the distribution archive.
   "lib/freemarker.jar" is a binary distribution of FreeMarker.
   FreeMarker is under Apache License 2.0 (since FreeMarker 2.3.21).
   Read LICENSE_FREEMARKER.txt for more information.
+  
+  The "icomoon" font files (icomoon.eot, icomoon.svg, icomoon.ttf, and
+  icomoon.woff) under "src/docs/style/fonts/" and "docs/style/fonts/" are
+  generated from Entypo pictograms, version 2.0, by Daniel Bruce
+  (www.entypo.com). Each included pictogram is either licensed under
+  Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0), or under
+  SIL Open Font License. For more information about these licenses visit
+  http://creativecommons.org/licenses/by-sa/3.0/legalcode" and
+  http://scripts.sil.org/OFL. Note that the fonts are only used as part of
+  the FMPP documentation and the FMPP Web site, thus aren't needed for the
+  operation of the FMPP application.
 
 "lib/fmpp.jar" doesn't contain parts that belong under a different license or
 to a different copyright owner than the main license and copyright owner of
