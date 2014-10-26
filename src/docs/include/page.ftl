@@ -19,7 +19,7 @@
   <#compress>
   <!doctype html>
   <!--[if lte IE 9]><html class="ie89" lang="en"> <![endif]-->
-  <!--[if gt IE 9]><!--><html lang="en" class="ie89"> <!--<![endif]-->
+  <!--[if gt IE 9]><!--><html lang="en"> <!--<![endif]-->
   <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -53,6 +53,7 @@
     <!--[if lte IE 8]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <link href="http://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
   </head>
 
