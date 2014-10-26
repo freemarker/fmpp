@@ -151,31 +151,41 @@
 
 <#macro page_pagers navCtx bugReportingIcon=true>
   <nav>
-    <div class="pagers">
+    <ul class="pagers">
       <#if navCtx.showPagerButtons>
         <#if navCtx.prevLink != "">
-          <a href="${navCtx.prevLink}"><@html.img src='${pp.home}style/prev.png' alt='Prev' /></a><#t>
+          <li>
+            <a class="pager-icon previous" href="${navCtx.prevLink}">Prev</a><#t>
+          </li>
         <#else>
-          <@html.img src='${pp.home}style/prev_gray.png' alt='-' /><#t>
+          <li class="pager-icon previous">Prev</li><#t>
         </#if>
         <#if navCtx.nextLink != "">
-          <a href="${navCtx.nextLink}"><@html.img src='${pp.home}style/next.png' alt='Next' /></a><#t>
+          <li><#t>
+            <a class="pager-icon next" href="${navCtx.nextLink}">Next</a><#t>
+          </li><#t>
         <#else>
-          <@html.img src='${pp.home}style/next_gray.png' alt='-' /><#t>
+          <li class="pager-icon next">Next</li><#t>
         </#if>
         <#if !navCtx.isContentsPage && navCtx.tocLink != "">
-          <a href="${navCtx.tocLink}"><@html.img src='${pp.home}style/contents.png' alt='Contents' /></a><#t>
+          <li><#t>
+            <a class="pager-icon contents" href="${navCtx.tocLink}">Contents</a><#t>
+          </li><#t>
         <#else>
-          <@html.img src='${pp.home}style/contents_gray.png' alt='-' /><#t>
+          <li class="pager-icon contents">Contents</li><#t>
         </#if>
       </#if>
       <#if !navCtx.isTheIndexPage>
-        <@a href="${pp.home}index.html"><@html.img src='${pp.home}style/home.png' alt='Home' /></@a>
+        <li><#t>
+          <a class="pager-icon home" href="${pp.home}index.html">Home</a><#t>
+        </li><#t>
       </#if>
       <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
-          <@a href="${pp.home}reportbug.html"><@html.img src='${pp.home}style/reportbug.png' alt='Report bug' /></@a>
+        <li><#t>
+          <a class="pager-icon report-bug" href="${pp.home}reportbug.html">Report bug</a><#t>
+        </li><#t>
       </#if>
-    </div>
+    </ul>
   </nav>
 </#macro>
 

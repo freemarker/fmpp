@@ -1,15 +1,66 @@
 .pagers {
-  a {
+
+  list-style-type: none;
+  margin: 0;
+
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 9px 18px 6px;
+  border: 1px solid @border-gray;
+  border-radius: 4px;
+
+  li {
     display: inline-block;
+    color: @text-gray;
+    margin: 0 3px;
+    font-size: 12px;
 
-    img {
-     transition: opacity ease-in-out .2s;
-   }
+    a {
+      display: block;
+      transition: color ease-in-out .2s;
 
-   &:hover {
-     img {
-       opacity: .5;
+      &:hover {
+        text-decoration: none;
+        color: @text-color;
       }
+    }
+  }
+
+  .pager-icon {
+    &:before {
+      .icon();
+      display: block;
+      font-size: @font-size-large;
+      text-align: center;
+      margin-bottom: 1px;
+    }
+
+    &.previous {
+      &:extend(.icon-arrow-left all);
+
+      &:before {
+        text-align: left;
+      }
+    }
+
+    &.next {
+      margin-right: 12px;
+      &:extend(.icon-arrow-right all);
+
+      &:before {
+        text-align: right;
+      }
+    }
+
+    &.contents {
+      &:extend(.icon-folder all);
+    }
+
+    &.home {
+      &:extend(.icon-house all);
+    }
+
+    &.report-bug {
+      &:extend(.icon-new all);
     }
   }
 }
