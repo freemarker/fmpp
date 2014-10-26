@@ -81,7 +81,7 @@
                   <#local needHr = true>
                 </#if>
                 <#if P_index?size != 0>
-                  <p class="toc-header">Alphabetical index of keys:</p>
+                  <p class="toc-header alphabetical-index">Alphabetical index of keys:</p>
                   <ul class="table-of-contents">
                     <#list P_index?sort_by("title") as e>
                       <li><a href="#${e.id}">${e.title}</a>
