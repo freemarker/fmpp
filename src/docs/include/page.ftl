@@ -19,7 +19,8 @@
   <#compress>
   <!doctype html>
   <!--[if lte IE 8]><html class="ie8" lang="en"> <![endif]-->
-  <!--[if gt IE 8]><!--><html lang="en"> <!--<![endif]-->
+  <!--[if IE 9]><html class="ie9" lang="en"> <![endif]-->
+  <!--[if gt IE 9]><!--><html class="modern" lang="en"> <!--<![endif]-->
   <head prefix="og: http://ogp.me/ns#">
     <meta http-equiv="Content-Type" content="text/html; charset=${pp.outputEncoding}">
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -48,6 +49,9 @@
     <#if navCtx.nextLink?has_content>
       <link rel="next" href="${baseUrl}/${navCtx.nextLink}">
     </#if>
+    <!--[if lte IE 8]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
     <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
   </head>
 
@@ -77,7 +81,7 @@
                   <#local needHr = true>
                 </#if>
                 <#if P_index?size != 0>
-                  <p class="toc-header">Alphabetical index of keys:</p>
+                  <p class="toc-header alphabetical-index">Alphabetical index of keys:</p>
                   <ul class="table-of-contents">
                     <#list P_index?sort_by("title") as e>
                       <li><a href="#${e.id}">${e.title}</a>
@@ -152,15 +156,15 @@
             <br>Version ${pp.version}
           </div>
         <#else>
-          <div class="header-left">
+          <div class="header-left"><#t>
             <a href="${pp.home}index.html" class="logo" role="banner">
               <img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
             </a>
             <@page_breadcrumbs navCtx />
-          </div>
-          <div class="header-right">
+          </div><#t>
+          <div class="header-right"><#t>
             <@page_pagers navCtx, false />
-          </div>
+          </div><#t>
         </#if>
       </div>
     </div>

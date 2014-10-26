@@ -17,6 +17,10 @@ body {
   font-size: @font-size-base;
 }
 
+nav {
+  display: block;
+}
+
 a {
   color: @link-color;
   text-decoration: none;
@@ -34,11 +38,7 @@ h5,
 h6 {
   font-family: @font-family-base;
   line-height: @line-height-base;
-}
-
-h1,
-h2 {
-  font-weight: bold;
+  font-weight: normal;
 }
 
 h3 {
@@ -48,25 +48,18 @@ h3 {
     position: relative;
     top: 2px;
     color: @link-color;
-    width: 24px;
-    height: 25px;
+    width: 21px;
+    height: 21px;
     display: inline-block;
   }
 }
 
-h3,
-h4,
-h5,
-h6 {
-  font-weight: normal;
-}
 
-
-h1 { font-size: 30px; margin-bottom: 0; }
+h1 { font-size: 30px; font-weight: bold; }
 h2 { font-size: 27px; }
-h3 { font-size: 24px; }
-h4 { font-size: 21px; }
-h5 { font-size: 18px; }
+h3 { font-size: 21px; }
+h4 { font-size: 18px; }
+h5 { font-size: 16px; }
 h6 { font-size: 14px; }
 
 hr {
