@@ -2,7 +2,34 @@
   font-size: @font-size-large;
 }
 
-.table-of-contents a {
-  display: block;
-  max-width: 400px;
+
+.content-left,
+.content-right {
+  .clearfix();
+
+  > .table-of-contents {
+    float: left;
+    margin: 0 0 0 15px;
+    padding: 0 0 0 15px;
+
+    border-left: 3px solid #7FBB7F;
+    list-style-type: none;
+    min-width: 30%;
+
+    ul {
+      border: 0;
+      list-style-type: disc;
+      float: none;
+    }
+
+    a {
+      display: block;
+
+      &:visited {
+        //color: @link-visited
+      }
+    }
+  }
 }
+
+
