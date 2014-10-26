@@ -25,8 +25,8 @@
     <meta http-equiv="Content-Script-Type" content="text/javascript">
     <meta name="Keywords" content="FMPP, preprocessor, FreeMarker, template, templates, HTML, HTML template, HTML templates, text, macro, macros, text preprocessor, HTML preprocessor, static HTML, HTML generator, static HTML generator, Java, free, open source, open-source, ${keywords}">
     <#if !navCtx.isTheIndexPage>
-      <title>FMPP - ${title}</title>
-      <meta property="og:title" content="FMPP - ${title}">
+      <title>${title} - FMPP</title>
+      <meta property="og:title" content="${title} - FMPP">
     <#else>
       <meta property="og:description" content="Command-line/Ant-task/embeddable text file preprocessor. Macros, flow control, expressions. Recursive directory processing. Extendable in Java to display data from any data sources (as database). Can generate complete homepages (tree of HTML-s, images).">
       <meta name="Description" content="Command-line/Ant-task/embeddable text file preprocessor. Macros, flow control, expressions. Recursive directory processing. Extendable in Java to display data from any data sources (as database). Can generate complete homepages (tree of HTML-s, images).">
