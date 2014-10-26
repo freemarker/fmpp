@@ -16,6 +16,7 @@
   <#local navCtx = page_buildNavigationContext(title)>
 
   <@pp.restartOutputFile />
+  <#compress>
   <!doctype html>
   <html lang="en">
   <head prefix="og: http://ogp.me/ns#">
@@ -68,6 +69,7 @@
 
     <div class="page-wrapper">
       <div class="site-width">
+  </#compress>
         <#if !navCtx.isTheIndexPage>
           <h1 itemprop="name">${title}</h1>
         </#if>
@@ -101,6 +103,7 @@
         <#else>
           <#nested>
         </#if>
+  <#compress>
       </div>
     </div>
 
@@ -126,6 +129,7 @@
     </div>
   </body>
   </html>
+  </#compress>
   <#assign P_reportBugPrinted = false>
 </#macro>
 
