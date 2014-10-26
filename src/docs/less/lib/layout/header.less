@@ -1,0 +1,66 @@
+.site-header {
+  background-image: url(header-footer-background.png);
+  border-bottom: 1px solid @border-gray;
+
+  h1 {
+    margin: 0;
+  }
+
+  .logo {
+    display: block;
+
+    img {
+      display: block;
+    }
+  }
+
+  .home-site-header {
+    text-align: center;
+    padding-top: 24px;
+    padding-bottom: 24px;
+
+    .logo {
+      img {
+        width: 243px;
+        height: 70px;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .inner-site-header {
+    padding-top: 12px;
+    padding-bottom: 12px;
+
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-end;
+
+    .ie8 & {
+      display: block;
+      .clearfix();
+    }
+
+    .header-left {
+      .ie8 & {
+        float: left;
+      }
+    }
+
+    .header-right {
+      .ie8 & {
+        float: right;
+      }
+    }
+
+
+
+    .logo {
+      img {
+        width: 121px;
+        height: 35px;
+      }
+    }
+  }
+}

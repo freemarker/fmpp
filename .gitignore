@@ -8,6 +8,6 @@
 fmpp.log
 log.fmpp
 out/
-
+.DS_Store
 src/manual/book.xml~
-
+node_modules
