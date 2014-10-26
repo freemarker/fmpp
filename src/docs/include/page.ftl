@@ -121,26 +121,26 @@
 -->
 <#macro page_header navCtx title>
   <#compress>
-    <div class="site-header ${navCtx.isTheIndexPage?string('home', 'inner')}-site-header">
-      <div class="site-width">
+    <div class="site-header">
+      <div class="site-width ${navCtx.isTheIndexPage?string('home', 'inner')}-site-header">
         <#if navCtx.isTheIndexPage>
           <div class="home-header">
             <div class="logo">
-              <@html.img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
+              <img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
             </div>
             <span itemprop="name">${title}</span>
             <br>Version ${pp.version}
           </div>
         <#else>
-          <nav>
-            <div class="logoAndBreadcrumbs">
-              <a href="${pp.home}index.html" class="logo">
-                <@html.img src="${pp.home}style/fmpptitle.png" alt="&lt;@FMPP/&gt;" />
-              </a>
-              <@page_breadcrumbs navCtx />
-            </div>
+          <div class="header-left">
+            <a href="${pp.home}index.html" class="logo" role="banner">
+              <img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
+            </a>
+            <@page_breadcrumbs navCtx />
+          </div>
+          <div class="header-right">
             <@page_pagers navCtx, false />
-          </nav>
+          </div>
         </#if>
       </div>
     </div>
@@ -149,39 +149,41 @@
 
 
 <#macro page_pagers navCtx bugReportingIcon=true>
-  <div class="pagers">
-    <#if navCtx.showPagerButtons>
-      <#if navCtx.prevLink != "">
-        <a href="${navCtx.prevLink}"><@html.img src='${pp.home}style/prev.png' alt='Prev' /></a><#t>
-      <#else>
-        <@html.img src='${pp.home}style/prev_gray.png' alt='-' /><#t>
+  <nav>
+    <div class="pagers">
+      <#if navCtx.showPagerButtons>
+        <#if navCtx.prevLink != "">
+          <a href="${navCtx.prevLink}"><@html.img src='${pp.home}style/prev.png' alt='Prev' /></a><#t>
+        <#else>
+          <@html.img src='${pp.home}style/prev_gray.png' alt='-' /><#t>
+        </#if>
+        <#if navCtx.nextLink != "">
+          <a href="${navCtx.nextLink}"><@html.img src='${pp.home}style/next.png' alt='Next' /></a><#t>
+        <#else>
+          <@html.img src='${pp.home}style/next_gray.png' alt='-' /><#t>
+        </#if>
+        <#if !navCtx.isContentsPage && navCtx.tocLink != "">
+          <a href="${navCtx.tocLink}"><@html.img src='${pp.home}style/contents.png' alt='Contents' /></a><#t>
+        <#else>
+          <@html.img src='${pp.home}style/contents_gray.png' alt='-' /><#t>
+        </#if>
       </#if>
-      <#if navCtx.nextLink != "">
-        <a href="${navCtx.nextLink}"><@html.img src='${pp.home}style/next.png' alt='Next' /></a><#t>
-      <#else>
-        <@html.img src='${pp.home}style/next_gray.png' alt='-' /><#t>
+      <#if !navCtx.isTheIndexPage>
+        <@a href="${pp.home}index.html"><@html.img src='${pp.home}style/home.png' alt='Home' /></@a>
       </#if>
-      <#if !navCtx.isContentsPage && navCtx.tocLink != "">
-        <a href="${navCtx.tocLink}"><@html.img src='${pp.home}style/contents.png' alt='Contents' /></a><#t>
-      <#else>
-        <@html.img src='${pp.home}style/contents_gray.png' alt='-' /><#t>
+      <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
+          <@a href="${pp.home}reportbug.html"><@html.img src='${pp.home}style/reportbug.png' alt='Report bug' /></@a>
       </#if>
-    </#if>
-    <#if !navCtx.isTheIndexPage>
-      <@a href="${pp.home}index.html"><@html.img src='${pp.home}style/home.png' alt='Home' /></@a>
-    </#if>
-    <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
-        <@a href="${pp.home}reportbug.html"><@html.img src='${pp.home}style/reportbug.png' alt='Report bug' /></@a>
-    </#if>
-  </div>
+    </div>
+  </nav>
 </#macro>
 
 <#macro page_breadcrumbs navCtx>
   <#if navCtx.page_breadcrumbs?size == 0>
     <#stop "Couldn't find page_breadcrumbs path to: " + pp.outputFileName>
   </#if>
-  <#compress>
-    <ul class="breadcrumbs">
+  <nav><#t>
+    <ul class="breadcrumbs"><#t>
       <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><#t>
         <a href="${pp.home}index.html" itemprop="url"><span itemprop="title">Home</span></a><#t>
       </li><#t>
@@ -192,7 +194,7 @@
         </li><#t>
       </#list>
     </ul><#t>
-  </#compress>
+  </nav><#t>
 </#macro>
 
 <#function page_getBreadcrumbsTo targetFile cur=manualFiles parentPath=[]>
