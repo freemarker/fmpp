@@ -251,6 +251,7 @@
         <exclude name="**/.*/" />
         <exclude name="build/" />
         <exclude name="build.properties" />
+        <exclude name="node_modules/" />
         <exclude name="**/.*/" />
         <exclude name="README.txt" />
       </fileset>

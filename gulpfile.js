@@ -12,11 +12,10 @@ var SRC_DIR = path.join(__dirname, 'src', 'docs', 'style');
 var OUT_DIR  = path.join(__dirname, 'build', 'docs', 'style');
 
 gulp.task('styles', function() {
-  gulp.src(path.join(SRC_DIR, 'styles.less'))
+  gulp.src(path.join(SRC_DIR, 'main.less'))
     .pipe( less( ) )
 
-    // rename and prefix
-    .pipe( rename( { basename: "main" } ) )
+    // prefix
     .pipe( prefix( { cascade: false } ) )
     .pipe( gulp.dest( OUT_DIR ) )
 
