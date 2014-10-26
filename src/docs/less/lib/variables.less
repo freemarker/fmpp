@@ -1,0 +1,44 @@
+// font sizes
+@font-size-small: 12px;
+@font-size-base: 14px;
+@font-size-large: 16px;
+
+// line height
+@line-height-base: 1.428571429; // 20/14
+@line-height-computed: floor((@font-size-base * @line-height-base)); // ~20px
+
+// text colors
+@text-color: #333;
+@text-warning: #f54927;
+
+@link-color: #168316;
+@link-hover-color: @link-color;
+
+// font families
+@font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-serif:      Georgia, "Times New Roman", Times, serif;
+@font-family-monospace:  Courier, Monaco, Consolas, "Courier New", monospace;
+@font-family-base:       @font-family-sans-serif;
+
+// borders
+@border-gray: #e4e4e4;
+
+// bgs
+@bg-gray: #f9f9f9;
+
+// gutter
+@gutter-width: 24px;
+
+// breakpoints
+@screen-sm-min:  768px;
+@screen-md-min:  992px;
+@screen-lg-min:  1200px;
+
+@screen-xs-max: (@screen-sm-min - 1);
+@screen-sm-max: (@screen-md-min - 1);
+@screen-md-max: (@screen-lg-min - 1);
+
+// container widths
+@container-sm:  @screen-sm-min - (@gutter-width * 2);
+@container-md:  @screen-md-min - (@gutter-width * 2);
+@container-lg:  @screen-lg-min - (@gutter-width * 2);
