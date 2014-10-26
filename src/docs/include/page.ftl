@@ -163,16 +163,16 @@
   </#if>
   <#compress>
     <ul class="breadcrumbs">
-      <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-        <a href="${pp.home}index.html" itemprop="url"><span itemprop="title">Home</span></a>
-      </li>
+      <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><#t>
+        <a href="${pp.home}index.html" itemprop="url"><span itemprop="title">Home</span></a><#t>
+      </li><#t>
       <#list navCtx.page_breadcrumbs as step>
-        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-          <span class="icon icon-arrow-right2"></span>
-          <a href="${pp.home + step.file}" itemprop="url"><span itemprop="title">${step.title}</span></a>
-        </li>
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb"><#t>
+          <span class="icon icon-arrow-right2"></span><#t>
+          <a href="${pp.home + step.file}" itemprop="url"><span itemprop="title">${step.title}</span></a><#t>
+        </li><#t>
       </#list>
-    </ul>
+    </ul><#t>
   </#compress>
 </#macro>
 

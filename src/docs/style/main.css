@@ -64,13 +64,22 @@ hr {
 
 .breadcrumbs {
     list-style-type: none;
-    margin: 0;
+    margin: 12px 0 0 0;
     padding: 0;
 }
 
 .breadcrumbs li {
     display: inline-block;
     vertical-align: middle;
+}
+
+.breadcrumbs .icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  margin: 0 3px;
+  position: relative;
+  top: 1px;
 }
 
 .site-header {
@@ -215,7 +224,7 @@ pre {
   word-wrap: break-word;
   overflow: auto;
   background-color: #f5f5f5;
-  1px solid #ccc;
+  border: 1px solid #ccc;
   line-height: 1.42857143;
   border: 1px solid #ccc;
   border-radius: 4px;
