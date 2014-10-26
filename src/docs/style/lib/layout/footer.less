@@ -4,10 +4,13 @@
   border-top: 1px solid @border-gray;
 
   .footer-inner {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    align-items: flex-start;
+
+    .modern & {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
 
     .ie8 &,
     .ie9 & {
