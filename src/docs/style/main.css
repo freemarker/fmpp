@@ -12,6 +12,7 @@ html {
   text-size-adjust: 100%;
   line-height: 1.42857143;
   background-color: #eee;
+  background-image: url(header-footer-background.png);
   overflow-y: scroll;
 }
 
@@ -158,6 +159,7 @@ hr {
   padding-top: 12px;
   padding-bottom: 12px;
   background-color: #FFF;
+  min-height: 300px;
 }
 
 .toc-header {
