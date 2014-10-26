@@ -253,13 +253,13 @@
         <exclude name="build.properties" />
         <exclude name="node_modules/" />
         <exclude name="**/.*/" />
-        <exclude name="README.txt" />
+        <exclude name="README.md" />
       </fileset>
     </copy>
     <copy todir="${dist.dir}" includeEmptyDirs="true">
       <fileset dir="build" includes="docs/" />
     </copy>
-    <copy file="README.txt" todir="${dist.dir}" filtering="true" />
+    <copy file="README.md" todir="${dist.dir}" filtering="true" />
 
     <delete file="${dist.dir}.tar.gz" />
     <tar tarfile="${dist.dir}.tar" longfile="gnu">
