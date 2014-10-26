@@ -34,7 +34,7 @@
     <meta property="og:locale" content="en_US">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="format-detection" content="telephone=no">
-    
+
     <link rel="stylesheet" type="text/css" href="${pp.home}style/main.css" />
     <!--[if lt IE 9]>
       <link rel="stylesheet" type="text/css" href="${pp.home}style/main-ie8-or-less.css" />
@@ -71,7 +71,7 @@
         <#if !navCtx.isTheIndexPage>
           <h1 itemprop="name">${title}</h1>
         </#if>
-          
+
         <#local needHr = false>
         <#if toc>
           <#local content>
@@ -161,17 +161,19 @@
   <#if navCtx.page_breadcrumbs?size == 0>
     <#stop "Couldn't find page_breadcrumbs path to: " + pp.outputFileName>
   </#if>
-  <ul class="breadcrumbs" itemtype="http://data-vocabulary.org/Breadcrumb">
-    <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-      <a href="${pp.home}index.html" itemprop="url"><span itemprop="title">Home</span></a>
-    </li>
-    <#list navCtx.page_breadcrumbs as step>
+  <#compress>
+    <ul class="breadcrumbs">
       <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
-        >
-        <a href="${pp.home + step.file}" itemprop="url"><span itemprop="title">${step.title}</span></a>
+        <a href="${pp.home}index.html" itemprop="url"><span itemprop="title">Home</span></a>
       </li>
-    </#list>
-  </ul>
+      <#list navCtx.page_breadcrumbs as step>
+        <li itemscope itemtype="http://data-vocabulary.org/Breadcrumb">
+          <span class="icon icon-arrow-right2"></span>
+          <a href="${pp.home + step.file}" itemprop="url"><span itemprop="title">${step.title}</span></a>
+        </li>
+      </#list>
+    </ul>
+  </#compress>
 </#macro>
 
 <#function page_getBreadcrumbsTo targetFile cur=manualFiles parentPath=[]>
@@ -185,7 +187,7 @@
   <#elseif cur[0].file == targetFile> <#-- non-leaf node == target -->
     <#return parentPath + [ cur[0] ]>
   </#if>
-  
+
   <#list cur[1..] as child>
       <#local path = page_getBreadcrumbsTo(targetFile, child, parentPath + [ cur[0] ])>
       <#if path?size != 0>
@@ -220,7 +222,7 @@
       <#break>
     </#if>
   </#list>
-  
+
   <#return {
       'isTheIndexPage': pp.outputFileName == "index.html",
       'isContentsPage': pp.outputFileName == "manual.html",
