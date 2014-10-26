@@ -9,19 +9,22 @@
     flex-wrap: wrap;
     align-items: flex-start;
 
-    .ie8 & {
+    .ie8 &,
+    .ie9 & {
       display: block;
       .clearfix();
     }
 
     .footer-left {
-      .ie8 & {
+      .ie8 &,
+      .ie9 & {
         float: left;
       }
     }
 
     .footer-right {
-      .ie8 & {
+      .ie8 &,
+      .ie9 & {
         float: right;
       }
     }

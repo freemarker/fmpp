@@ -49,6 +49,9 @@
     <#if navCtx.nextLink?has_content>
       <link rel="next" href="${baseUrl}/${navCtx.nextLink}">
     </#if>
+    <!--[if lte IE 8]>
+      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
     <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
   </head>
 
