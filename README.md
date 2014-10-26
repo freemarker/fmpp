@@ -1,52 +1,48 @@
-FMPP - FreeMarker-based file PreProcessor
-=========================================
+# FMPP - FreeMarker-based file PreProcessor
 
-This is the README.txt file comes with the FMPP @VERSION@
-distribution.
 
-For the latest version of FMPP visit the FMPP homepage:
+This is the README file that comes with the FMPP @VERSION@ distribution.
+
+For the latest version of FMPP, please visit the FMPP homepage:
 
 http://fmpp.freemarker.net/
 
 
-What is FMPP?
--------------
+## What is FMPP?
 
-FMPP is a general-purpose text file preprocessor tool that uses
+FMPP is a general-purpose text file preprocessing tool that uses
 FreeMarker templates. It is particularly designed for HTML preprocessing,
 for the generation of complete (static) home-pages: directory structure
-that contains HTML-s, image files, etc. But of course it can be used to
-generate source code or whatever text files. FMPP is extendible with
-Java classes to pull data from any data sources (as a database) and
-embed the data into the generated files.
+that contains HTML-s, image files, etc.
 
-FMPP can be used with UN*X-style command-line interface, or as Ant task,
-or you can embed it into your Java application.
+### Features
+* Uses FreeMarker templates
+* Can be used to generate completely static websites
+* Easily parse JSON files to generate documentation
+* Java classes can pull data from any data source (such as a database) and then embed the data into the generated files.
+* Supports UN*X-style command-line interface and Ant tasks
+* Embed into your Java application to generate files as part of your build
+* Generate source code (or any kind of text file)
 
 
-Documentation
--------------
+## Documentation
 
 Open documentation.html (or docs/index.html)
 
 
-Installing FMPP
----------------
+## Installing FMPP
 
 See in the documentation (or just open docs/installing.html)
 
 
-Contact
--------
+## Contact
 
-Report bugs, ask for help, tell suggestions, etc.:
+Report bugs, ask for help, make suggestions, etc.:
 
 * Mailing list:
   http://lists.sourceforge.net/mailman/listinfo/fmpp-open
-
 * Web forum and Bug Tracker:  http://sourceforge.net/projects/fmpp/
-
-* Author's e-mail:  ddekany at freemail dot hu 
+* Author's e-mail:  ddekany at freemail dot hu
 
 
 Building FMPP
