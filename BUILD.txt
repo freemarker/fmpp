@@ -1,13 +1,38 @@
 To build FMPP, you will need JDK (Java Development Kit) and Apache Ant to
 be installed.
 
+
+Building the binary
+-------------------
+
 For reproducible builds, it's recommended to copy build.properties.sample into
 build.properties and edit it.
 
 To build lib/fmpp.jar: `ant`
 To run test suite: `ant test`
-To build the docs: `ant docs` (requires proper build.properties)
 To remove earlier build output: `ant clean`
+
+
+Building the documentation
+--------------------------
+
+Preparation (needed only once):
+1. Ensure that the "For documentation building" section in build.properties
+   is filled properly.
+2. Go to http://nodejs.org/ and install node.js (tried with v0.10.32)
+3. Go to the FMPP project directory and issue `npm install`
+   Possible problems an solutions:
+   - "Error: ENOENT, stat <someDirectoryHere>": create that directory manually,
+     then retry.
+   - If the system doesn't find `npm`: Open a new terminal (command window) so
+     that it pick up the "path" environment variable changes. Adjust it if necessary.
+
+To build the docs: `ant docs`
+The output will be be  in `build/docs`!
+
+To re-build the FMPP generated part only: `fmpp -C docs.fmpp`
+To re-build the Gulp generated part only: `ant docs.gulp`
+
 
 
 Making a release

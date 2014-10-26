@@ -37,11 +37,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="format-detection" content="telephone=no">
 
-    <#if online>
-      <link rel="stylesheet" type="text/css" href="${pp.home}style/main.min.css" />
-    <#else>
-      <link rel="stylesheet" type="text/css" href="${pp.home}style/main.css" />
-    </#if>
+    <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
   </head>
 
   <body itemscope itemtype="http://schema.org/Article">

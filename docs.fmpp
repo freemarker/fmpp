@@ -11,16 +11,19 @@ work without installing FMPP for Ant.
 sourceRoot: src/docs
 outputRoot: build/docs
 logFile: build/docs.fmpp.log
+
 turns: [turn(2, **/*_T2.*), turn(3, **/*_T3.*)]
 removePostfixes: [_T2, _T3]
-skipUnchanged: static
-quiet
+# LESS file handled by LESS to CSS converter before FMPP:
+modes: [ ignore(style/*.less) ]
+
 borders: [
     border(
         '<#include "/include/site.ftl"><#escape x as x?html>', '</#escape>'
         **/*.html
     )
 ]
+
 data: {
     basedir: eval('System.getProperties().getProperty("fmpp.home")')
     html: htmlUtils()
@@ -106,4 +109,7 @@ data: {
         {mfs:get(manualFiles)}
     )
 }
+
+skipUnchanged: static
 timeZone: GMT
+quiet

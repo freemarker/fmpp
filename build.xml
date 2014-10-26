@@ -116,8 +116,16 @@
   </macrodef>
 
   <!-- "jar" is dependency as FMPP will run from fmpp.jar -->
-  <target name="docs.preFMPP" depends="jar, javadoc, docs.examples, docs.freemarker" />
+  <target name="docs.preFMPP" depends="jar, javadoc, docs.examples, docs.freemarker, docs.gulp" />
 
+  <!-- See BUILD.txt about installing node.js and Gulp! -->
+  <target name="docs.gulp">
+    <mkdir dir="build/docs/style" />
+    <exec executable="${nodeJsCommand}" failonerror="true" dir="${basedir}">
+      <arg value="node_modules\gulp\bin\gulp.js"/>
+    </exec>
+  </target>
+  
   <target name="docs.examples">
     <copy todir="build/docs/examples" includeEmptyDirs="true">
       <fileset dir="src/docs/examples">
