@@ -150,33 +150,45 @@
 
 
 <#macro page_pagers navCtx bugReportingIcon=true>
-  <nav>
-    <div class="pagers">
-      <#if navCtx.showPagerButtons>
-        <#if navCtx.prevLink != "">
-          <a href="${navCtx.prevLink}"><@html.img src='${pp.home}style/prev.png' alt='Prev' /></a><#t>
-        <#else>
-          <@html.img src='${pp.home}style/prev_gray.png' alt='-' /><#t>
+  <#if navCtx.showPagerButtons || !navCtx.isTheIndexPage || (bugReportingIcon && !P_reportBugPrinted?default(false))>
+    <nav>
+      <ul class="pagers"><#t>
+        <#if navCtx.showPagerButtons>
+          <#if navCtx.prevLink != "">
+            <li><#t>
+              <a class="pager-icon previous" href="${navCtx.prevLink}">Prev</a><#t>
+            </li><#t>
+          <#else>
+            <li class="pager-icon previous">Prev</li><#t>
+          </#if>
+          <#if navCtx.nextLink != "">
+            <li><#t>
+              <a class="pager-icon next" href="${navCtx.nextLink}">Next</a><#t>
+            </li><#t>
+          <#else>
+            <li class="pager-icon next">Next</li><#t>
+          </#if>
+          <#if !navCtx.isContentsPage && navCtx.tocLink != "">
+            <li><#t>
+              <a class="pager-icon contents" href="${navCtx.tocLink}">Contents</a><#t>
+            </li><#t>
+          <#else>
+            <li class="pager-icon contents">Contents</li><#t>
+          </#if>
         </#if>
-        <#if navCtx.nextLink != "">
-          <a href="${navCtx.nextLink}"><@html.img src='${pp.home}style/next.png' alt='Next' /></a><#t>
-        <#else>
-          <@html.img src='${pp.home}style/next_gray.png' alt='-' /><#t>
+        <#if !navCtx.isTheIndexPage>
+          <li><#t>
+            <a class="pager-icon home" href="${pp.home}index.html">Home</a><#t>
+          </li><#t>
         </#if>
-        <#if !navCtx.isContentsPage && navCtx.tocLink != "">
-          <a href="${navCtx.tocLink}"><@html.img src='${pp.home}style/contents.png' alt='Contents' /></a><#t>
-        <#else>
-          <@html.img src='${pp.home}style/contents_gray.png' alt='-' /><#t>
+        <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
+          <li><#t>
+            <a class="pager-icon report-bug" href="${pp.home}reportbug.html">Report bug</a><#t>
+          </li><#t>
         </#if>
-      </#if>
-      <#if !navCtx.isTheIndexPage>
-        <@a href="${pp.home}index.html"><@html.img src='${pp.home}style/home.png' alt='Home' /></@a>
-      </#if>
-      <#if bugReportingIcon && !P_reportBugPrinted?default(false)>
-          <@a href="${pp.home}reportbug.html"><@html.img src='${pp.home}style/reportbug.png' alt='Report bug' /></@a>
-      </#if>
-    </div>
-  </nav>
+      </ul>
+    </nav>
+  </#if>
 </#macro>
 
 <#macro page_breadcrumbs navCtx>
