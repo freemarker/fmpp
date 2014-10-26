@@ -37,6 +37,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="format-detection" content="telephone=no">
 
+    <#-- @todo: move seo tags to separate macro -->
+    <#local baseUrl = "http://fmpp.sourceforge.net"><#-- @todo: this should come from build settings -->
+    <meta name="og:url" content="${baseUrl}/${pp.outputFileName}">
+    <link rel="canonical" href="${baseUrl}/${pp.outputFileName}">
+
+    <#if navCtx.prevLink?has_content>
+      <link rel="prev" href="${baseUrl}/${navCtx.prevLink}">
+    </#if>
+    <#if navCtx.nextLink?has_content>
+      <link rel="next" href="${baseUrl}/${navCtx.nextLink}">
+    </#if>
     <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
   </head>
 
