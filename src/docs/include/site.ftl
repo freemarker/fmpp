@@ -266,8 +266,8 @@
   </#if>
 </#macro>
 
-<#macro a href>
-  <a href="${href}"><#nested></a><#t>
+<#macro a href rel="">
+  <a href="${href}"<#if rel?has_content> rel="${rel}"</#if>><#nested></a><#t>
   <#if !pp.s.hrefs??>
     <@pp.set hash=pp.s key="hrefs" value=pp.newWritableSequence()/>
   </#if>
@@ -329,13 +329,13 @@
 
 <#macro nbca><span class="warning"><strong>Warning!</strong> Incompatible Java API change!</span> </#macro>
 
-<#macro url href><a href="${href}">${href}</a></#macro>
+<#macro url href rel=""><a href="${href}"<#if rel?has_content> rel="${rel}"</#if>>${href}</a></#macro>
 
 <#macro fma href=''>
   <#if href = ''>
     <#local href='index.html'>
   </#if>
-  <@a href="${pp.home}freemarker/${href}"><#nested></@a><#t>
+  <@a href="${pp.home}freemarker/${href}" rel="nofollow"><#nested></@a><#t>
 </#macro>
 
 </#escape>
