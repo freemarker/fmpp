@@ -40,11 +40,11 @@
       
       <li><@c>emptyValue</@c>: A string or a sequence of strings which define the values that are equal to an empty cell. For example, if this is <@c>["-", "N/A"]</@c>, then cells whose content is a minus sign or N/A will look like they were left empty. The comparison is case-sensitive. The header row is not affected by this option.
       
-      <li><@c>dateFormat</@c>: The <@a href="datetimepattern.html">pattern</@a> used to parse date values. Note that this option has significance only if you use <@c>:d</@c> (or <@c>:date</@c>) in the headers.</li> 
+      <li><@c>dateFormat</@c>: The <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">pattern</a> used  for parsing date-only values. Note that this option has significance only if you use <@c>:d</@c> (or <@c>:date</@c>) in the headers.</li> 
       
-      <li><@c>timeFormat</@c>: The <@a href="datetimepattern.html">pattern</@a> used to parse time values. Note that this option has significance only if you use <@c>:t</@c> (or <@c>:time</@c>) in the headers.</li> 
+      <li><@c>timeFormat</@c>: The <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">pattern</a> used  for parsing time-only values. Note that this option has significance only if you use <@c>:t</@c> (or <@c>:time</@c>) in the headers.</li> 
       
-      <li><@c>dateTimeFormat</@c>: The <@a href="datetimepattern.html">pattern</@a> used to parse date-time values. Note that this option has significance only if you use <@c>:dt</@c> (or <@c>:dateTime</@c>) in the headers.</li> 
+      <li><@c>dateTimeFormat</@c>: The <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">pattern</a> used for parsing date-time values. Note that this option has significance only if you use <@c>:dt</@c> (or <@c>:dateTime</@c>) in the headers.</li> 
 
       <li><@c>normalizeHeaders</@c>: Specifies if the header names coming from the file will be normalized
       or should be left as is (boolean). Normalization means:
@@ -409,10 +409,12 @@ This is the last item.
       <li><@c>locale</@c>: The locale (language) used for displaying the date. It defaults to the "locale" setting of the FMPP engine. The value of the option is a usual java locale strings, such as <@c>en_GB</@c>, <@c>fr</@c>, <@c>ar_SA</@>, ...etc. To see the complete list of locale codes, call the command line FMPP tool:<br><@c>fmpp --print-locales</@>
       <li><@c>date</@c>: The format of the date (year, month, day) part of the date: <@c>short</@c>, <@c>medium</@c>, <@c>long</@c>, <@c>default</@c>. The exact meaning of these formats are locale dependent, and it is defined by the Java platform implementation. You can't use this option together with the <@c>pattern</@c> option.
       <li><@c>time</@c>: The format of the time (hour, minute, second, millisecond) part of the date: <@c>short</@c>, <@c>medium</@c>, <@c>long</@c>, <@c>default</@c>. The exact meaning of these formats are locale dependent, and it is defined by the Java platform implementation. You can't use this option together with the <@c>pattern</@c> option.
-      <li><@c>pattern</@c>: A pattern (mask) that specifies the formatting of the date. For more information <@a href="datetimepattern.html">read this</@a>.
+      <li><@c>pattern</@c>: A <a href="http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html">pattern</a> that specifies the formatting of the date.
       <li><@c>zone</@c>: The time zone you would like to use ford displaying the date. Defaults to the "time zone" FMPP engine setting. The zone is given with a string, for example: <@c>GMT</@c>, <@c>GMT+02</@c>, <@c>GMT-02</@c> or <@c>GMT+02:30</@c>.
     </ul>
   </@param>
+  
+  <p>Note: FreeMarker now has a <@c>.now</@c> variable, so you don't need this data loader any more. You can print the current date and time with <@c>${'$'}{.now}</@c> (or <@c>${'$'}{.now?date}</@c> or <@c>${'$'}{.now?time}</@c>), and the format and zone is specified by the global <@s>datetimeFormat</@s> (or <@s>dateFormat</@s> or <@s>timeFormat</@s>) and <@s>timeZone</@s> FMPP settings.</p>
   
   <p>Examples (with TDD syntax):
   <ul>
