@@ -122,7 +122,7 @@
   <target name="docs.gulp">
     <mkdir dir="build/docs/style" />
     <exec executable="${nodeJsCommand}" failonerror="true" dir="${basedir}">
-      <arg value="node_modules${file.separator}gulp${file.separator}bin${file.separator}gulp.js"/>
+      <arg value="node_modules/gulp/bin/gulp.js"/>
     </exec>
   </target>
 
