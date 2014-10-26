@@ -113,6 +113,7 @@
       <div class="site-width footer-inner">
         <div class="footer-left">
           <@page_pagers navCtx />
+          <@page_social />
         </div>
 
         <div class="footer-right">
@@ -156,6 +157,7 @@
             </div>
             ${title}
             <br>Version ${pp.version}
+            <@page_social />
           </div>
         <#else>
           <div class="header-left"><#t>
@@ -292,6 +294,29 @@
       'page_breadcrumbs': page_getBreadcrumbsTo(pp.outputFileName)
   }>
 </#function>
+
+<#macro page_social>
+  <#local socialLinks = [
+    {
+      "url": "https://github.com/freemarker/fmpp",
+      "class": "github",
+      "title": "Github"
+    }, {
+      "url": "https://twitter.com/freemarker",
+      "class": "twitter",
+      "title": "Twitter"
+    }
+  ]>
+
+  <ul class="social-icons"><#t>
+      <#list socialLinks as link>
+        <li><#t>
+          <a class="${link.class}" href="${link.url}">${link.title}</a><#t>
+        </li><#t>
+      </#list>
+    </ul><#t>
+
+</#macro>
 
 </#escape>
 </@pp.ignoreOutput>

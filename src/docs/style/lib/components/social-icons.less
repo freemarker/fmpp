@@ -1,0 +1,50 @@
+.social-icons {
+  margin: 0 0 12px;
+  padding: 0;
+
+  list-style-type: none;
+
+  text-align: center;
+
+  // hide in print view
+  @media print {
+    display: none;
+  }
+
+  li {
+    display: inline-block;
+
+    &:last-child a {
+      padding-right: 0;
+    }
+
+    a {
+      display: block;
+      padding: 3px 6px;
+
+      &:before {
+        .icon();
+        margin-right: 3px;
+        display: inline-block;
+        width: 15px;
+        height: 14px;
+        position: relative;
+        top: 1px;
+      }
+
+      &.twitter {
+        &:extend(.icon-twitter all);
+      }
+
+      &.github {
+        &:extend(.icon-github all);
+      }
+
+      &:hover {
+        text-decoration: none;
+        color: @text-color;
+      }
+
+    }
+  }
+}
