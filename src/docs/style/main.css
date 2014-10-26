@@ -31,22 +31,52 @@ h5,
 h6 {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   line-height: 1.42857143;
+}
+h1,
+h2 {
+  font-weight: bold;
+}
+h3::before {
+  font-family: FontAwesome;
+  line-height: 100%;
+  box-sizing: border-box;
+  font-family: 'icomoon';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  font-size: inherit;
+  text-rendering: auto;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  content: '\e607';
+  position: relative;
+  top: 2px;
+  color: #168316;
+}
+h3,
+h4,
+h5,
+h6 {
   font-weight: normal;
 }
 h1 {
-  font-size: 27px;
+  font-size: 30px;
 }
 h2 {
-  font-size: 24px;
+  font-size: 27px;
 }
 h3 {
-  font-size: 21px;
+  font-size: 24px;
 }
 h4 {
-  font-size: 18px;
+  font-size: 21px;
 }
 h5 {
-  font-size: 16px;
+  font-size: 18px;
 }
 h6 {
   font-size: 14px;

@@ -34,14 +34,36 @@ h5,
 h6 {
   font-family: @font-family-base;
   line-height: @line-height-base;
+}
+
+h1,
+h2 {
+  font-weight: bold;
+}
+
+h3 {
+  &::before {
+    .icon;
+    content: '\e607';
+    position: relative;
+    top: 2px;
+    color: @link-color;
+  }
+}
+
+h3,
+h4,
+h5,
+h6 {
   font-weight: normal;
 }
 
-h1 { font-size: 27px; }
-h2 { font-size: 24px; }
-h3 { font-size: 21px; }
-h4 { font-size: 18px; }
-h5 { font-size: 16px; }
+
+h1 { font-size: 30px; }
+h2 { font-size: 27px; }
+h3 { font-size: 24px; }
+h4 { font-size: 21px; }
+h5 { font-size: 18px; }
 h6 { font-size: 14px; }
 
 hr {
