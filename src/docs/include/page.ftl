@@ -45,29 +45,8 @@
   </head>
 
   <body itemscope itemtype="http://schema.org/Article">
-    <div class="site-header ${navCtx.isTheIndexPage?string('home', 'inner')}-site-header">
-      <div class="site-width">
-        <#if navCtx.isTheIndexPage>
-          <div scope class="home-header">
-            <div class="logo">
-              <@html.img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
-            </div>
-            <span itemprop="name">${title}</span>
-            <br>Version ${pp.version}
-          </div>
-        <#else>
-          <nav>
-            <div class="logoAndBreadcrumbs">
-              <a href="${pp.home}index.html" class="logo">
-                <@html.img src="${pp.home}style/fmpptitle.png" alt="&lt;@FMPP/&gt;" />
-              </a>
-              <@page_breadcrumbs navCtx />
-            </div>
-            <@page_pagers navCtx, false />
-          </nav>
-        </#if>
-      </div>
-    </div>
+
+    <@page_header navCtx=navCtx title=title />
 
     <div class="page-wrapper">
       <div class="site-width">
@@ -134,6 +113,40 @@
   </#compress>
   <#assign P_reportBugPrinted = false>
 </#macro>
+
+
+<#---
+  @param navCtx
+  @param title
+-->
+<#macro page_header navCtx title>
+  <#compress>
+    <div class="site-header ${navCtx.isTheIndexPage?string('home', 'inner')}-site-header">
+      <div class="site-width">
+        <#if navCtx.isTheIndexPage>
+          <div class="home-header">
+            <div class="logo">
+              <@html.img src="${pp.home}style/fmpptitle.png" alt="FMPP" />
+            </div>
+            <span itemprop="name">${title}</span>
+            <br>Version ${pp.version}
+          </div>
+        <#else>
+          <nav>
+            <div class="logoAndBreadcrumbs">
+              <a href="${pp.home}index.html" class="logo">
+                <@html.img src="${pp.home}style/fmpptitle.png" alt="&lt;@FMPP/&gt;" />
+              </a>
+              <@page_breadcrumbs navCtx />
+            </div>
+            <@page_pagers navCtx, false />
+          </nav>
+        </#if>
+      </div>
+    </div>
+  </#compress>
+</#macro>
+
 
 <#macro page_pagers navCtx bugReportingIcon=true>
   <div class="pagers">
