@@ -63,7 +63,7 @@
        </script>
     <![endif]-->
     <link href="http://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
+    <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}">
   </head>
 
   <body itemscope itemtype="http://schema.org/Article">
