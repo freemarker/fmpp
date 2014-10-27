@@ -17,6 +17,7 @@
 package fmpp.dataloaders;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.Writer;
@@ -119,13 +120,17 @@ public class HtmlUtilsDataLoader implements DataLoader {
             }
         }
         
-        RandomAccessFile raf = new RandomAccessFile(f, "r");
+        RandomAccessFile raf;
+        try {
+            raf = new RandomAccessFile(f, "r");
+        } catch (FileNotFoundException e) {
+            throw new TemplateModelException("Image file not found: " + f.getAbsolutePath(), e);
+        }
         try {
             imageInfo.setCollectComments(false);
             imageInfo.setInput(raf);
             if (!imageInfo.check()) {
-                throw new TemplateModelException(
-                        "Failed to analyse image file: " + cacheKey);
+                throw new TemplateModelException("Failed to analyse image file: " + cacheKey);
             }
         } finally {
             raf.close();

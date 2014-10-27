@@ -27,6 +27,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import freemarker.template.TemplateException;
+
 /**
  * Miscellaneous utility methods. 
  */
@@ -51,17 +53,15 @@ public class MiscUtil {
 
     /**
      * Returns the cause trace of an exception. This is similar to a J2SE 1.4+
-     * stack-trace, but it is shorter, because it does not contain the "at"
+     * stack-trace, but it's shorter, because it does not contain the "at"
      * lines.
      */
     public static String causeTrace(Throwable e) {
         return causeTrace_common(e, false);
     }
 
-    private static final String CAUSED_BY_MSG = "Caused by: ";
-    
     private static String causeTrace_common(
-            Throwable e, boolean looserFriendly) {
+            Throwable e, boolean hideUninterstingClasses) {
         if (e == null) {
             return "??? (the error was described with a null object)";
         }
@@ -75,23 +75,24 @@ public class MiscUtil {
             if (msg != null) {
                 if (lastShownMsg == null || !msg.equals(lastShownMsg)) {
                     if (!first) {
-                        res.append(StringUtil.LINE_BREAK);
-                        res.append(CAUSED_BY_MSG);
+                        appendCausedBy(res);
                     }
                     lastShownMsg = msg;
                     String cn = e.getClass().getName();
-                    if (!looserFriendly || !cn.startsWith("fmpp.")) {
-                        res.append(e.getClass().getName());
-                        res.append(": ");
+                    if (!hideUninterstingClasses || !cn.startsWith("fmpp.")) {
+                        int prevLen = res.length();
+                        appendClassAndLocation(e, hideUninterstingClasses, res);
+                        if (res.length() != prevLen) {
+                            res.append(": ");
+                        }
                     }
                     res.append(msg);
                 }
             } else {
                 if (!first) {
-                    res.append(StringUtil.LINE_BREAK);
-                    res.append(CAUSED_BY_MSG);
+                    appendCausedBy(res);
                 }
-                res.append(e.getClass().getName());
+                appendClassAndLocation(e, false, res);
             }
             e = getCauseException(e);
             if (e == null) {
@@ -101,6 +102,45 @@ public class MiscUtil {
         }
         
         return res.toString();
+    }
+
+    private static void appendCausedBy(StringBuffer res) {
+        res.append(StringUtil.LINE_BREAK);
+        res.append("Caused by:");
+        res.append(StringUtil.LINE_BREAK);
+        res.append('\t');
+    }
+
+    private static void appendClassAndLocation(Throwable e, boolean hideUninterstingClasses, StringBuffer res) {
+        StackTraceElement[] stackTrace = e.getStackTrace();
+        if (stackTrace != null && stackTrace.length >= 1) {
+            StackTraceElement thrower = stackTrace[0];
+            String c = thrower.getClassName();
+            if (!hideUninterstingClasses
+                    || (!c.startsWith("freemarker.core")
+                            && !c.startsWith("freemarker.template")
+                            && !c.startsWith("freemarker.ext.beans")
+                            && !c.startsWith("fmpp."))) {
+                res.append(e.getClass().getName());
+                res.append(" (at ");
+                res.append(c);
+                String m = thrower.getMethodName();
+                if (m != null) {
+                    res.append('.');
+                    res.append(m);
+                }
+                int line = thrower.getLineNumber();
+                if (line > 0) {
+                    res.append(':');
+                    res.append(line);
+                }
+                res.append(")");
+            } else if (e instanceof TemplateException) {
+                res.append("FreeMarker template error");
+            }
+        } else {  // Shouldn't ever occur
+            res.append(e.getClass().getName());
+        }
     }
 
     /**

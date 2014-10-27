@@ -466,7 +466,7 @@ public class TemplateEnvironment {
     }
 
     /**
-     * Calulates the path of another output file relatively to current output
+     * Calculates the path of another output file relatively to current output
      * file, in UN*X format.
      * 
      * @param dst the path of the other output file in UN*X or native format.
@@ -1215,8 +1215,8 @@ public class TemplateEnvironment {
                             (String) arguments.get(0)));
             } catch (IOException exc) {
                 throw new TemplateModelException(
-                        "Failed to transform path"
-                        + StringUtil.jQuote((String) arguments.get(0)),
+                        "Failed to transform path " + StringUtil.jQuote((String) arguments.get(0))
+                        + " to source-root relative.",
                         exc);
             }
         }
@@ -1236,8 +1236,8 @@ public class TemplateEnvironment {
                             (String) arguments.get(0)));
             } catch (IOException exc) {
                 throw new TemplateModelException(
-                        "Failed to transform path"
-                        + StringUtil.jQuote((String) arguments.get(0)),
+                        "Failed to transform path " + StringUtil.jQuote((String) arguments.get(0))
+                        + " to output-root relative.",
                         exc);
             }
         }
@@ -1257,8 +1257,8 @@ public class TemplateEnvironment {
                             (String) arguments.get(0)));
             } catch (IOException exc) {
                 throw new TemplateModelException(
-                        "Failed to transform path"
-                        + StringUtil.jQuote((String) arguments.get(0)),
+                        "Failed to transform path " + StringUtil.jQuote((String) arguments.get(0))
+                        + " to source file relative.",
                         exc);
             }
         }
@@ -1278,8 +1278,8 @@ public class TemplateEnvironment {
                             (String) arguments.get(0)));
             } catch (IOException exc) {
                 throw new TemplateModelException(
-                        "Failed to transform path"
-                        + StringUtil.jQuote((String) arguments.get(0)),
+                        "Failed to transform path " + StringUtil.jQuote((String) arguments.get(0))
+                        + " to output file relative.",
                         exc);
             }
         }
