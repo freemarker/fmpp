@@ -20,7 +20,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 4,
-				"order": 3,
+				"order": 2,
 				"prevSize": 20,
 				"code": 58880,
 				"name": "mail",
@@ -45,7 +45,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 34,
-				"order": 2,
+				"order": 1,
 				"prevSize": 20,
 				"code": 58881,
 				"name": "house",
@@ -70,7 +70,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 53,
-				"order": 9,
+				"order": 6,
 				"prevSize": 20,
 				"code": 58882,
 				"name": "new",
@@ -95,7 +95,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 135,
-				"order": 12,
+				"order": 9,
 				"prevSize": 20,
 				"code": 58883,
 				"name": "warning",
@@ -120,7 +120,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 159,
-				"order": 8,
+				"order": 5,
 				"prevSize": 20,
 				"code": 58884,
 				"name": "folder",
@@ -128,6 +128,32 @@
 			},
 			"setIdx": 0,
 			"iconIdx": 159
+		},
+		{
+			"icon": {
+				"paths": [
+					"M776.806 102.4h-572.006c-56.32 0-102.4 46.080-102.4 102.4v614.4c0 56.32 46.080 102.4 102.4 102.4h614.4c56.32 0 102.4-46.080 102.4-102.4v-556.698l-144.794-160.102zM716.8 409.6c0 28.16-23.040 51.2-51.2 51.2h-307.2c-28.16 0-51.2-23.040-51.2-51.2v-256h409.6v256zM665.6 204.8h-102.4v204.8h102.4v-204.8z"
+				],
+				"attrs": [],
+				"tags": [
+					"disk",
+					"save",
+					"floppy",
+					"store"
+				],
+				"grid": 20
+			},
+			"attrs": [],
+			"properties": {
+				"id": 164,
+				"order": 11,
+				"prevSize": 20,
+				"code": 58888,
+				"name": "disk",
+				"ligatures": ""
+			},
+			"setIdx": 0,
+			"iconIdx": 164
 		},
 		{
 			"icon": {
@@ -145,7 +171,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 193,
-				"order": 6,
+				"order": 3,
 				"prevSize": 20,
 				"code": 58885,
 				"name": "arrow-left",
@@ -170,7 +196,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 196,
-				"order": 7,
+				"order": 4,
 				"prevSize": 20,
 				"code": 58886,
 				"name": "arrow-right",
@@ -195,7 +221,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 208,
-				"order": 13,
+				"order": 10,
 				"prevSize": 20,
 				"code": 58887,
 				"name": "arrow-right2",
@@ -219,7 +245,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 238,
-				"order": 10,
+				"order": 7,
 				"prevSize": 20,
 				"code": 58889,
 				"name": "github",
@@ -243,7 +269,7 @@
 			"attrs": [],
 			"properties": {
 				"id": 244,
-				"order": 11,
+				"order": 8,
 				"prevSize": 20,
 				"code": 58890,
 				"name": "twitter",
@@ -276,7 +302,8 @@
 		"imagePref": {
 			"prefix": "icon-",
 			"png": true,
-			"useClassSelector": true
+			"useClassSelector": true,
+			"classSelector": ".icon"
 		},
 		"historySize": 100,
 		"showCodes": true,

@@ -1,11 +1,23 @@
 
 .report-bugs {
-  background: url(bug.png) no-repeat;
-  padding-left: 40px;
 
   .strong {
     color: @text-warning;
     font-size: 16px;
+    padding-left: 19px;
+
+    &:before {
+      .icon();
+      position: relative;
+      top: 1px;
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-right: 3px;
+      margin-left: -19px; // icon width + margin-right
+    }
+
+    &:extend(.icon-new all);
   }
 }
 
