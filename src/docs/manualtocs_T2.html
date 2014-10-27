@@ -12,9 +12,9 @@
         <@tocDesc.preToc?interpret />
       </#if>
       <#if mainToc>
-        <@recursiveToc seq[1..seq?size - 1], 'Table of Contents' />
+        <@recursiveToc seq[1..], 'Table of Contents' />
       <#else>
-        <@recursiveToc seq[1..seq?size - 1], 'Chapter Contents' />
+        <@recursiveToc seq[1..], 'Chapter Contents' />
       </#if>
       <#if tocDesc.postToc??>
         <@tocDesc.postToc?interpret />

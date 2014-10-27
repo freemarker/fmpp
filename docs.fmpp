@@ -119,6 +119,7 @@ data: {
     )
 }
 
+freemarkerIncompatibleImprovements: 2.3.21
 skipUnchanged: static
 timeZone: GMT
 quiet
