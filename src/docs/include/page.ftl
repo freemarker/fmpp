@@ -50,8 +50,17 @@
       <link rel="next" href="${baseUrl}/${navCtx.nextLink}">
     </#if>
 
-    <!--[if lte IE 8]>
-      <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <!--[if lt IE 9]>
+       <script>
+          document.createElement('nav');
+          <#-- uncomment if we use other html5 elements for ie8
+          document.createElement('header');
+          document.createElement('section');
+          document.createElement('article');
+          document.createElement('aside');
+          document.createElement('footer');
+          -->
+       </script>
     <![endif]-->
     <link href="http://fonts.googleapis.com/css?family=Droid+Sans+Mono" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="${pp.home}style/${online?string('main.min.css', 'main.css')}" />
