@@ -18,9 +18,7 @@ package fmpp.tools;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.PrintWriter;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Iterator;
 import java.util.Locale;
@@ -67,7 +65,7 @@ public class CommandLine {
 
     // Option variables:
     private boolean quiet;
-    private boolean snip;
+    private boolean printStackTrace;
 
     // Misc.:
     private PrintWriter stdout;
@@ -151,7 +149,7 @@ public class CommandLine {
             }
         }
         int impliedEchoFormat = EF_NORMAL;
-        boolean impliedSnip = true;
+        boolean impliedPrintStackTrace = false;
         boolean impliedAppendLogFile = false;
         int impliedColumns = 80;
         int impliedQuiet = 0;
@@ -167,9 +165,12 @@ public class CommandLine {
                         value = (String) fmpprc.get(key);
                         impliedEchoFormat = echoFormatOpToInt(
                                 value, false, key);
-                    } else if (key.equals(Settings.NAME_SNIP)) {
-                        impliedSnip
+                    } else if (key.equals(Settings.NAME_PRINT_STACK_TRACE)) {
+                        impliedPrintStackTrace
                                 = ((Boolean) fmpprc.get(key)).booleanValue();
+                    } else if (key.equals(Settings.NAME_SNIP)) {
+                        impliedPrintStackTrace
+                                = !((Boolean) fmpprc.get(key)).booleanValue();
                     } else if (key.equals(Settings.NAME_APPEND_LOG_FILE)) {
                         impliedAppendLogFile
                                 = ((Boolean) fmpprc.get(key)).booleanValue();
@@ -495,18 +496,24 @@ public class CommandLine {
                     .implied(String.valueOf(impliedColumns))
                     .desc("The number of columns on the console screen. "
                             + "Defaults to " + impliedColumns + ".");
+            od = ap.addOption(null, cln(Settings.NAME_PRINT_STACK_TRACE))
+                    .property(cln(Settings.NAME_PRINT_STACK_TRACE), "true")
+                    .desc("Print stack trace on error.");
+            if (impliedPrintStackTrace) {
+                setAsDefault(od);
+            }
+            od = ap.addOption(null, "dont-" + cln(Settings.NAME_PRINT_STACK_TRACE))
+                    .property(cln(Settings.NAME_PRINT_STACK_TRACE), "false")
+                    .desc("Don't print stack trace on error, just cause chain.");
+            if (!impliedPrintStackTrace) {
+                setAsDefault(od);
+            }
             od = ap.addOption(null, cln(Settings.NAME_SNIP))
-                    .property(cln(Settings.NAME_SNIP), "true")
-                    .desc("Snip (--8<--) long messages.");
-            if (impliedSnip) {
-                setAsDefault(od);
-            }
-            od = ap.addOption(null, "dont-snip")
-                    .property(cln(Settings.NAME_SNIP), "false")
-                    .desc("Don't snip (--8<--) long messages.");
-            if (!impliedSnip) {
-                setAsDefault(od);
-            }
+                    .property(cln(Settings.NAME_PRINT_STACK_TRACE), "false")
+                    .desc("Deprecated; alias of dont-" + Settings.NAME_PRINT_STACK_TRACE + ".");
+            od = ap.addOption(null, "dont-" + cln(Settings.NAME_SNIP))
+                    .property(cln(Settings.NAME_PRINT_STACK_TRACE), "true")
+                    .desc("Deprecated; alias of " + Settings.NAME_PRINT_STACK_TRACE + ".");
             ap.addOption(null, OPTION_PRINT_LOCALES)
                     .desc("Prints the locale codes that Java platform knows.");
             ap.addOption(null, OPTION_VERSION)
@@ -703,8 +710,8 @@ public class CommandLine {
                         new ConsoleProgressListener(eOut, true));
             }
 
-            // - Snip
-            snip = ((Boolean) settings.get(Settings.NAME_SNIP)).booleanValue();
+            // - printStackTrace
+            printStackTrace = ((Boolean) settings.get(Settings.NAME_PRINT_STACK_TRACE)).booleanValue();
 
             // - Stats
             StatisticsProgressListener stats = new StatisticsProgressListener();
@@ -750,56 +757,24 @@ public class CommandLine {
                         + " seconds");
             }
             if (abortingExc != null) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                try { 
-                    pw.println();
-                    pw.println("The cause of aborting was: ");
-                    if (abortingExc instanceof ProcessingException) {
-                        ProcessingException pexc =
-                                (ProcessingException) abortingExc;
-                        if (!singleFileMode && pexc.getSourceFile() != null) {
-                            pw.println("Error when processing this file: "
-                                    + FileUtil.getRelativePath(
-                                            pexc.getSourceRoot(),
-                                            pexc.getSourceFile()));
-                        }
-                        abortingExc = pexc.getCause();
+                pe("");
+                pe("The cause of aborting was: ");
+                if (abortingExc instanceof ProcessingException) {
+                    ProcessingException procExc = (ProcessingException) abortingExc;
+                    if (!singleFileMode && procExc.getSourceFile() != null) {
+                        pe("Error when processing this file: "
+                                + FileUtil.getRelativePath(procExc.getSourceRoot(), procExc.getSourceFile()));
                     }
-                    pw.println(MiscUtil.causeMessages(abortingExc));
-                    pw.println();
-                    pw.println("--- Java stack trace: ---");
-                    StringWriter sw2 = new StringWriter();
-                    PrintWriter pw2 = new PrintWriter(sw2);
-                    abortingExc.printStackTrace(pw2);
-                    pw2.flush();
-                    pw.print(StringUtil.wrapTrace(sw2.toString(), screenCols));
+                    abortingExc = procExc.getCause();
+                }
+                if (printStackTrace) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    abortingExc.printStackTrace(pw);
                     pw.flush();
-                    LineNumberReader pr =
-                        new LineNumberReader(new StringReader(
-                                StringUtil.wrap(sw.toString(), screenCols)));
-                    try {
-                        int maxCnt;
-                        if (snip) {
-                            maxCnt = 15;
-                        } else {
-                            maxCnt = Integer.MAX_VALUE;
-                        }
-                        int lineCnt = 0;
-                        String line = pr.readLine();
-                        while (line != null && lineCnt < maxCnt) {
-                            pe(line);
-                            line = pr.readLine();
-                            lineCnt++;
-                        }
-                        if (line != null) {
-                            pe("---8<--- Long message... Snip! ---8<---");
-                        }
-                    } finally {
-                        pr.close();
-                    }
-                } finally {
-                    pw.close();
+                    pe(sw.toString());
+                } else {
+                    pe(MiscUtil.causeMessages(abortingExc));
                 }
                 exitCode = -2;
             }

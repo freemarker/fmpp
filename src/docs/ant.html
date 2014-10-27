@@ -49,7 +49,7 @@
 <p>About the support and interpretation of FMPP settings:</p>
 <ul>
   <li>The values of settings <@s>ignoreCvsFiles</@s>, <@s>ignoreSvnFiles</@s> and <@s>ignoreTemporaryFiles</@s> are always set to <@c>false</@c>, and there is no Ant task parameter for them. This is so that they don't interfere with Ant's standard <@c>defaultExcludes</@c> parameter.</li>
-  <li>Settings <@s>echoFormat</@s>, <@s>snip</@s> and <@s>columns</@s> are ignored, and there is no Ant task parameter for them.</li>
+  <li>Settings <@s>echoFormat</@s>, <@s>printStackTrace</@s>, <@s>snip</@s> and <@s>columns</@s> are ignored, and there is no Ant task parameter for them.</li>
   <li>The <@s>quiet</@s> setting implements only grades <@c>true</@c> and <@c>false</@c>. <@c>reallyQuiet</@c> is the same as <@c>true</@c>.</li>
   <li>All <@a href="settings.html#logging">logging related settings</@a> are supported.</li>
 </ul>
@@ -63,7 +63,7 @@
 
 <p>The FMPP task accepts the following parameters:</p>
 <ul>
-  <li><@a href="settings.html">All FMPP settings</@a> except <@s>sources</@s>, <@s>ignoreCvsFiles</@s>, <@s>ignoreSvnFiles</@s>, <@s>ignoreTemporaryFiles</@s>, <@s>echoFormat</@s>, <@s>snip</@s> and <@s>columns</@s>. If the setting value is of scalar type (as string, boolean, number) then just enter the value simply with Ant-ish syntax, not with TDD syntax. If the setting value is of more tricky type, as hash or sequence, then use TDD syntax for it. For hash settings the value is hash mode TDD, and for sequence setting it is sequence mode TDD, so the brackets should be omitted. The <@a href="configfile.html#configurationBase">configuration base</@a> for the setting values is the Ant project base directory.</li>
+  <li><@a href="settings.html">All FMPP settings</@a> except <@s>sources</@s>, <@s>ignoreCvsFiles</@s>, <@s>ignoreSvnFiles</@s>, <@s>ignoreTemporaryFiles</@s>, <@s>echoFormat</@s>, <@s>printStackTrace</@s>, <@s>snip</@s> and <@s>columns</@s>. If the setting value is of scalar type (as string, boolean, number) then just enter the value simply with Ant-ish syntax, not with TDD syntax. If the setting value is of more tricky type, as hash or sequence, then use TDD syntax for it. For hash settings the value is hash mode TDD, and for sequence setting it is sequence mode TDD, so the brackets should be omitted. The <@a href="configfile.html#configurationBase">configuration base</@a> for the setting values is the Ant project base directory.</li>
   
   <li>To follow the Ant conventions, <@c>srcdir</@c> and <@c>destdir</@c> attribute names can be optionally used instead of <@c>sourceRoot</@c> and <@c>outputRoot</@c> attribute names. These are just alias names.</li>
   

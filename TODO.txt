@@ -38,22 +38,33 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
- . [!!!] Support all FreeMarker settings up to 2.3.21
- . [!!!] Now that error messages are longer and contain FTL stack trace, long message
-   snipping is annoying. It should shouldn't snip before the end of the FreeMarker error
-   message.
- . [!!!] The "--- Java stack trace: ---" parts repeat the FTL error message
- . [!!!] add support to new FM settings
+ . [!!!] Add locations to "cause chain" messages
  . [!!!] Ugly:
-   [java] Error when processing this file: versions.html
-   [java] freemarker.template.TemplateModelException: Failed to transform
-   [java] path"https://github.com/freemarker/fmpp"
+     [java] Error when processing this file: versions.html
+     [java] freemarker.template.TemplateModelException: Failed to transform
+     [java] path"https://github.com/freemarker/fmpp"
+ . [!!!] html.img lame error:
+
+      The cause of aborting was:
+      Error when processing this file: ant.html
+      java.io.FileNotFoundException: D:\Temp\git_fm\fmpp\src\docs\style\sflogo.png (A
+      rendszer nem talßlja a megadott fßjlt)
+
+      --- Java stack trace: ---
+      java.io.FileNotFoundException: D:\Temp\git_fm\fmpp\src\docs\style\sflogo.png (A
+      rendszer nem talßlja a megadott fßjlt)
+              at java.io.RandomAccessFile.open(Native Method)
+              at java.io.RandomAccessFile.<init>(RandomAccessFile.java:243)
+              at fmpp.dataloaders.HtmlUtilsDataLoader.getImageInfo(
+                 HtmlUtilsDataLoader.java:122)
+              at fmpp.dataloaders.HtmlUtilsDataLoader.access$900(
+                 HtmlUtilsDataLoader.java:46)  
  ---
  . [!!] Add FreeMarker feature for position mapping
  . [!!] Use mountable vfs-es, at least for sources. This would deprecate
    freemarerLinks, and would work not only for #include but for pp too.
    Add zip (jar) vfs.
- . [!!] Add logging via SLF4J as a possible ProressListener.
+ . [!!] Add logging via SLF4J as a possible ProgressListener.
  . [!!] Stream filtering mode
  ---
  . [!!] TDD deep merging

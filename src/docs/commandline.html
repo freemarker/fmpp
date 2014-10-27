@@ -241,12 +241,12 @@ fmpp -Cmycfg.fmpp -- -this-is-a-non-option
     <td><@s>ignoreTemporaryFiles</@s>
     <td><@c>false</@c>
   <tr>
-    <td><@c>--snip</@c>
-    <td><@s>snip</@s>
+    <td><@c>--print-stack-trace</@c>
+    <td><@s>printStackTrace</@s>
     <td><@c>true</@c>
   <tr>
-    <td><@c>--dont-snip</@c>
-    <td><@s>snip</@s>
+    <td><@c>--dont-print-stack-trace</@c>
+    <td><@s>printStackTrace</@s>
     <td><@c>false</@c>
   <tr>
     <td><@c>-x</@c>, <@c>--expert</@c>
@@ -331,8 +331,9 @@ fmpp -Cmycfg.fmpp -- -this-is-a-non-option
   <li><@s>appendLogFile</@s></li>
   <li><@s>columns</@s></li>
   <li><@s>echoFormat</@s></li>
-  <li><@s>snip</@s></li>
+  <li><@s>printStackTrace</@s>
   <li><@s>quiet</@s></li>
+  <li><@s>snip</@s>: Deprecated, now just an inverted alias of <@s>printStackTrace</@s></li>
 </ul>
 
 </@sect>

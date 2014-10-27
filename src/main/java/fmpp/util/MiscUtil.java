@@ -16,7 +16,6 @@
 
 package fmpp.util;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -133,35 +132,16 @@ public class MiscUtil {
     }
 
     public static Throwable getCauseException(Throwable e) {
-        if (e instanceof InvocationTargetException) {
-            return ((InvocationTargetException) e).getTargetException();
-        }
-        
-        if (e instanceof ExceptionCC) {
-            return ((ExceptionCC) e).getCause();
-        }
-
-        if (e instanceof RuntimeExceptionCC) {
-            return ((RuntimeExceptionCC) e).getCause();
-        }
-        
-        Throwable e2;
-
-        try {
-            Method m = e.getClass().getMethod("getCause", EMPTY_CLASS_ARRAY);
-            e2 = (Throwable) m.invoke(e, EMPTY_OBJECT_ARRAY);
-            if (e2 != null) {
-                return e2;
-            }
-        } catch (Throwable exc) {
-            ; // ignore
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            return cause;
         }
         
         try {
             Method m = e.getClass().getMethod("getTarget", EMPTY_CLASS_ARRAY);
-            e2 = (Throwable) m.invoke(e, EMPTY_OBJECT_ARRAY);
-            if (e2 != null) {
-                return e2;
+            Throwable targetE = (Throwable) m.invoke(e, EMPTY_OBJECT_ARRAY);
+            if (targetE != null) {
+                return targetE;
             }
         } catch (Throwable exc) {
             ; // ignore
@@ -170,9 +150,9 @@ public class MiscUtil {
         try {
             Method m = e.getClass().getMethod(
                     "getRootCause", EMPTY_CLASS_ARRAY);
-            e2 = (Throwable) m.invoke(e, EMPTY_OBJECT_ARRAY);
-            if (e2 != null) {
-                return e2;
+            Throwable rootCauseE = (Throwable) m.invoke(e, EMPTY_OBJECT_ARRAY);
+            if (rootCauseE != null) {
+                return rootCauseE;
             }
         } catch (Throwable exc) {
             ; // ignore

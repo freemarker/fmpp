@@ -24,6 +24,9 @@ import fmpp.util.ExceptionCC;
  * Error while performing the processing session. 
  */
 public class ProcessingException extends ExceptionCC {
+    
+    private static final long serialVersionUID = 1L;
+    
     private final File sourceFile;
     private final File sourceRoot;
 
@@ -62,6 +65,6 @@ public class ProcessingException extends ExceptionCC {
      * Returns always the same text: "FMPP processing session failed."
      */
     public String getMessage() {
-        return "FMPP processing session failed.";
+        return "FMPP processing session failed" + (sourceFile != null ? " at " + sourceFile : "");
     }
 }

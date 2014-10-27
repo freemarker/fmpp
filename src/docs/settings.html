@@ -621,7 +621,8 @@ return res;
 <@setting name="quiet" type="string" default="" clShort="q, v, Q" merging=false />
 <@setting name="echoFormat" type="string" default="" clShort="F" merging=false />
 <@setting name="columns" type="integer" default="" merging=false />
-<@setting name="snip" type="string (path)" default="" merging=false />
+<@setting name="printStackTrace" type="boolean" default="false" merging=false />
+<@setting name="snip" type="boolean" default="true" merging=false />
 
 <p>If these settings are supported or not, depends on the front-end you use. If a setting is not supported, the front-end must silently ignore it.</p>
 
@@ -631,7 +632,7 @@ return res;
 
 <p>The <@s>columns</@s> setting specifies the number of columns can be used for textual ouputs, as on the console screen.</p>
 
-<p>The <@s>snip</@s> setting indicates if the front-end should snip too long messages when it prints them to the screen.</p>
+<p>The <@s>printStackTrace</@s> setting specifies if the front-end should print stack trace to the screen on error, or a terser error description. <@s>snip</@s> is deprecated, and now it's just the inverted alias of <@s>printStackTrace</@s>.</p>
 
 <p>Please read the documentation of <@a href="frontends.html">the front-end you use</@a> for the precise behavior of these settings.</p>
 

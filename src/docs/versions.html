@@ -6,6 +6,7 @@
   <ul>
     <li>Fixed an oversight where an <@c>Engine</@c> static field was accidentally initialized in a non-static initializer, causing problems in multi-threaded environment.</li>
     <li>Removed version ranges from Maven dependencies, replacing them with concrete version numbers.</li>
+    <li>Log files now don't contain the stack trace twice when the processing session is aborted by a file processing error.</li>
     <li>Setting values with integer type haven't understood <@c>+</@c> prefix, like in <@c>+1</@c>.</li>
   </ul>
   
@@ -19,6 +20,7 @@
         <li><@s>sqlDateAndTimeTimeZone</@s></li>
       </ul>
     </li>
+    <li>The command line tool doesn't "snip" (<@c>--8<--</@c>) error messages any more, instead, by default, it prints a cause message chain instead of a stack trace on error. This is especially useful as newer FreeMarker versions tend to give more detailed error messages that shouldn't be cut off. Stack traces can be asked with the new <@s>printStackTrace</@s> setting. The <@s>snip</@s> setting is now deprecated, and is only an inverted alias to <@s>printStackTrace</@s>.</li>
     <li>FMPP license has been changed from BSD to Apache License 2.0. The copyright owner has been changed to be the same as the owner of FreeMarker. The two projects now share the same license and Contributor License Agreement.</li>
     <li>
       The dependencies of FMPP has been updated/changed:

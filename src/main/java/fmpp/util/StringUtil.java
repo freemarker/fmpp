@@ -981,7 +981,7 @@ public class StringUtil {
      *     utilize the {@code screenWidth}-th column of the screen to store
      *     characters, except line-breaks (because some terminals/editors
      *     do an automatic line-break when you write visible character there,
-     *     and some doesn't... so it is unpredicalbe if an explicit line-break
+     *     and some doesn't... so it is unpredictable if an explicit line-break
      *     is needed or not.).
      * @param firstIndent The indentation of the first line
      * @param indent The indentation of all lines but the first line
@@ -989,7 +989,7 @@ public class StringUtil {
      * @param traceMode Set this true if the input text is a Java stack
      *     trace. In this mode, all lines starting with
      *     optional indentation + {@code 'at'} + space are treated as location
-     *     lines, and will be indented and wrapped in a silghtly special way. 
+     *     lines, and will be indented and wrapped in a slightly special way. 
      * @throws IllegalArgumentException if the number of columns remaining for
      * the text is less than 2.
      */

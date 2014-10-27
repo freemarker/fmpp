@@ -148,6 +148,7 @@ public class Settings {
     public static final String NAME_QUIET = "quiet";
     public static final String NAME_COLUMNS = "columns";
     public static final String NAME_SNIP = "snip";
+    public static final String NAME_PRINT_STACK_TRACE = "printStackTrace";
     public static final String NAME_XPATH_ENGINE = "xpathEngine";
     public static final String NAME_XML_CATALOG_FILES = "xmlCatalogFiles";
     public static final String NAME_XML_CATALOG_PREFER = "xmlCatalogPrefer";
@@ -818,6 +819,7 @@ public class Settings {
         stdDef(NAME_ECHO_FORMAT, TYPE_STRING, false, true);
         stdDef(NAME_QUIET, TYPE_STRING, false, true);
         stdDef(NAME_COLUMNS, TYPE_INTEGER, false, false);
+        stdDef(NAME_PRINT_STACK_TRACE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_SNIP, TYPE_BOOLEAN, false, false);
         stdDef(NAME_XPATH_ENGINE, TYPE_STRING, false, true);
         stdDef(NAME_XML_CATALOG_FILES, TYPE_CFG_RELATIVE_PATHS, true, false);

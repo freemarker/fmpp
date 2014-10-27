@@ -135,8 +135,7 @@ public class LoggerProgressListener implements ProgressListener {
             warningCount = 0;
             executedCount = 0;
             copiedCount = 0;
-            println("========================================"
-                    + "=======================================");
+            println("===============================================================================");
             println("PROCESSING SESSION STARTED: " + new Date());
             String fmppVersion, freemarkerVersion;
             try {
@@ -149,8 +148,7 @@ public class LoggerProgressListener implements ProgressListener {
             } catch (Throwable e) {
                 freemarkerVersion = "??? (" + e + ")";
             }
-            println("FMPP version: " + fmppVersion
-                    + " (using FreeMarker " + freemarkerVersion + ")");
+            println("FMPP version: " + fmppVersion + " (using FreeMarker " + freemarkerVersion + ")");
             
             int startIndex = 0;
             int dotCount = 0;
@@ -169,23 +167,19 @@ public class LoggerProgressListener implements ProgressListener {
                 } catch (Throwable e) {
                     buildInfo = "??? (" + e + ")";
                 }
-                println("Unreleased \"nightly\" FMPP version! "
-                        + "Version number doesn't reflect changes,");
-                println("so watch the build date too: "
-                        + buildInfo);
+                println("Unreleased \"nightly\" FMPP version! Version number doesn't reflect changes,");
+                println("so watch the build date too: " + buildInfo);
             }
         
             println();
             break;
         case EVENT_WARNING:
             warningCount++;
-            println("----------------------------------------"
-                    + "---------------------------------------");
+            println("-------------------------------------------------------------------------------");
             println("*** WARNING: " + (String) param);
             if (src != null) {
                 try {
-                    println("Source file: " + FileUtil.getRelativePath(
-                            engine.getSourceRoot(), src));
+                    println("Source file: " + FileUtil.getRelativePath(engine.getSourceRoot(), src));
                 } catch (IOException e) {
                     println("???");
                 }
@@ -193,8 +187,7 @@ public class LoggerProgressListener implements ProgressListener {
             println();
             break;
         case EVENT_END_PROCESSING_SESSION:
-            println("========================================"
-                    + "=======================================");
+            println("===============================================================================");
             println("END OF PROCESSING SESSION");
             println();
             
@@ -229,8 +222,7 @@ public class LoggerProgressListener implements ProgressListener {
 
         if (error != null) {
             if (event != EVENT_END_PROCESSING_SESSION) {
-                println("----------------------------------------"
-                        + "---------------------------------------");
+                println("-------------------------------------------------------------------------------");
                 println("!!! ERROR");
             } else {
                 println();
@@ -244,25 +236,31 @@ public class LoggerProgressListener implements ProgressListener {
             if (src != null) {
                 println("> Source file:");
                 try {
-                    println(FileUtil.getRelativePath(
-                            engine.getSourceRoot(),
-                            src));
+                    println(FileUtil.getRelativePath(engine.getSourceRoot(), src));
                 } catch (IOException e) {
                     println("???");
                 }
             }
 
-            println("> Error message:");
-            println(MiscUtil.causeMessages(error));
-            println("> Java stack trace:");
-            error.printStackTrace(out);
+            if (event == EVENT_END_FILE_PROCESSING && engine.getStopOnError()) {
+                out.println("> Error message (see also full stack trace at session end):");
+                out.print(MiscUtil.causeMessages(error));
+            } else {
+                println("> Error message with stack trace:");
+                if (error instanceof ProcessingException) {
+                    final Throwable cause = error.getCause();
+                    if (cause != null) {
+                        error = cause;
+                    }
+                }
+                error.printStackTrace(out);
+            }
             out.flush();
 
             println();
         }
         if (event == EVENT_END_PROCESSING_SESSION) {
-            println("========================================"
-                    + "=======================================");
+            println("===============================================================================");
         }
     }
     
