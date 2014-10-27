@@ -5,14 +5,14 @@
   <a href="http://freemarker.org/">FreeMarker</a> templates. It is particularly designed for HTML preprocessor,
   to generate complete (static) homepages: directory structure that contains HTML-s, image
   files, etc. But of course it can be used to generate source code or whatever text files. FMPP is extendable with Java classes to pull data from any data sources (database, etc.) and embed the data into the generated files.
-  
+
   <p>FMPP can be used with UN*X-style command-line interface, or as <a href="http://ant.apache.org">Ant</a> task,
   or you can embed it into your Java application.
-  
+
   <p>FMPP is 100% Java, thus it runs on all modern platforms (Windows, "Linux", Mac OS X, Solaris, ...etc.).
 
   <p>FMPP is <a href="http://www.fsf.org/philosophy/free-sw.html">Free</a> software. See the license <@a href="license.html">here...</@a>
-  
+
   <p>Some products that were created for similar purpose to FMPP:
     <a href="http://template-toolkit.org/">Template Toolkit</a> (Perl),
     <a href="http://www.labyrinth.net.au/~dbareis/ppwizard.htm">PPWizard</a> (Rexx),
@@ -83,60 +83,60 @@
 <@sect title="Download">
 <#if online>
   <#macro downloadLink fileName>
-    <b><a href="http://prdownloads.sourceforge.net/fmpp/${fileName}">${fileName}</a>
-    <#local rfile=basedir + pp.slash + "build/dist" + pp.slash + fileName />
-    <#if pp.realFileExists(rfile)>
-      (${(pp.realFileSize(rfile)/1024/1024)?string("#0.0")} M)</b>
-    <#else>
-      <#stop 'File to download missing: ${rfile}'>
-    </#if>
+    <strong><#t>
+      <a href="http://prdownloads.sourceforge.net/fmpp/${fileName}">${fileName}</a><#t>
+      <#local rfile=basedir + pp.slash + "build/dist" + pp.slash + fileName />
+      <#if pp.realFileExists(rfile)>
+        (${(pp.realFileSize(rfile)/1024/1024)?string("#0.0")} M)
+      <#else>
+        <#stop 'File to download missing: ${rfile}'>
+      </#if>
+    </strong>
   </#macro>
   <p>The latest released version is FMPP ${pp.version} (comes with <a href="http://freemarker.org">FreeMarker</a> ${pp.freemarkerVersion}, but <@a href="installing.html#updatingFreeMarker">you can replace it with a later version</@a>).</p>
 
-  <table border=0 cellspacing=0 cellpadding=4><tr>
-    <td align=left valign=top>
-      <@html.img src="style/download.png" alt="Download" />
-    <td align=left valign=middle>
-      <@downloadLink "fmpp_" + pp.version + ".tar.gz" /> (GNU tar!)
-      or <@downloadLink "fmpp_" + pp.version + ".zip" />
-      <br>Downloads include "binaries", all documentation, and source code.
-  </tr></table>
-  
+  <p>Downloads include "binaries", all documentation, and source code:</p>
+
+  <ul><#t>
+    <li class="download-options"><@downloadLink "fmpp_" + pp.version + ".tar.gz" /> (GNU tar!)</li><#t>
+    <li class="download-options">or <@downloadLink "fmpp_" + pp.version + ".zip" /></li><#t>
+  </ul><#t>
+
   <p>Installation instructions are <@a href="installing.html">here, in the Manual</@a>.</p>
-  
-  <p>FMPP is a Java application so it <b>requires Java to be installed</b> on your machine (version 1.4 or later).</p>
-      
-  <p>The FMPP <b>Ant task</b> (ignore if you don't know what's Ant) requires Ant 1.5.1 or later.</p>
+
+  <p>FMPP is a Java application so it <strong>requires Java to be installed</strong> on your machine (version 1.4 or later).</p>
+
+  <p>The FMPP <strong>Ant task</strong> (ignore if you don't know what Ant is) requires Ant 1.5.1 or later.</p>
 <#else>
-  <p>To download the latest release, please visit the FMPP homepage : <@url href="http://fmpp.sourceforge.net/" />
+  <p>To download the latest release, please visit the FMPP homepage: <@url href="http://fmpp.sourceforge.net/" />
 </#if>
-  <p>For <@e>text editor and IDE plug-ins</@e>, and for other FreeMarker template related tools, please visit the FreeMarker homepage: <a href="http://freemarker.org/">http://freemarker.org/</a> (mirror: <a href="http://freemarker.sourceforge.net/">http://freemarker.sourceforge.net/)</a></p>
+  <p>For <@e>text editor and IDE plug-ins</@e> and other FreeMarker template-related tools, please visit the FreeMarker homepage: <a href="http://freemarker.org/">http://freemarker.org/</a> (mirror: <a href="http://freemarker.sourceforge.net/">http://freemarker.sourceforge.net/)</a></p>
 </@sect>
 
 <@sect title="Project State">
 
    <p>Unlike most open source projects, I will be honest about it: I (Dániel Dékány) have stopped the active development of the FMPP project with FMPP 0.9.7. I still fix bugs and do other maintenance work (<@a href="versions.html">check it here if I really do</@a>), so the project is <@e>not abandoned</@e>. It's just that I don't plan to develop new features or do serious reworking. However, contributions of proper quality are welcome and will be integrated.</p>
-   
+
    <p>I believe that the project will serve the <a href="http://freemarker.org/">FreeMarker</a> community well even if it remains in its current state forever. After all, it's already a feature rich and stable tool (that is, compared to the alternatives I have seen...).</p>
 
 </@sect>
 
 <@sect title="Contact">
   <@reportBugs />
-  
+
   <p>Ask for <@e>help</@e> or provide suggestions:
   <ul>
-    <li>on the <b>mailing list</b> (The preferred way. Low traffic.):
+    <li>on the <strong>mailing list</strong> (The preferred way. Low traffic.):
       <ul>
         <li>Subscribe/unsubscribe: <@url href="http://lists.sourceforge.net/mailman/listinfo/fmpp-open" /></li>
-        <li>News group interface: <@url href="nntp://news.gmane.org/gmane.comp.text.fmpp" /><br></li>
+        <li>News group interface: <@url href="nntp://news.gmane.org/gmane.comp.text.fmpp" /></li>
         <li>Web interface (read only): <@url href="http://news.gmane.org/thread.php?group=gmane.comp.text.fmpp" /></li>
       </ul>
     </li>
     <li>on the SourceForge.net Web forum: <@url href="http://sourceforge.net/forum/forum.php?forum_id=254571" /></li>
     <li>with private e-mail: <@myEmail /></li>
   </ul>
-  
+
   <p>Home page: <@url href="http://fmpp.sourceforge.net/" />
 </@sect>
 
