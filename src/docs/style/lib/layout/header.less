@@ -1,25 +1,27 @@
 .site-header {
-  background-image: url(header-footer-background.png);
   border-bottom: 1px solid @border-gray;
-
-  h1 {
-    margin: 0;
-  }
 
   .logo {
     display: block;
-
-    img {
-      display: block;
-    }
   }
 
   .home-site-header {
     text-align: center;
     padding-top: 24px;
-    padding-bottom: 24px;
+
+    .social-icons {
+
+      background-color: rgba(255, 255, 255, 0.5);
+      padding: 3px 6px;
+      border: 1px solid @border-gray;
+      border-radius: 4px;
+      width: 200px;
+      margin: 12px auto;
+    }
 
     .logo {
+      margin-bottom: 12px;
+
       img {
         width: 243px;
         height: 70px;
@@ -32,35 +34,35 @@
     padding-top: 12px;
     padding-bottom: 12px;
 
-    .modern & {
+    @media (min-width: @screen-sm-min) {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       flex-wrap: wrap;
     }
 
-    .ie8 & {
+    .ie89 & {
       display: block;
       .clearfix();
     }
 
     .header-left {
-      flex-shrink: 1;
-      flex-grow: 0;
-      margin-top: 12px;
-      display: inline-block;
-      width: 50%;
+      .ie89 & {
+        float: left;
+      }
     }
 
     .header-right {
-      flex-shrink: 0;
-      flex-grow: 0;
+      text-align: center;
+      margin-top: 18px;
 
-      display: inline-block;
-      width: 50%;
+      .ie89 & {
+        margin-top: 0;
+        .clearfix();
 
-      .pagers {
-        float: right;
+        .pagers {
+          float: right;
+        }
       }
     }
 

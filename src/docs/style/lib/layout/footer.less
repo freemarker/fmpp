@@ -5,51 +5,55 @@
 
   .footer-inner {
 
-    .modern & {
+    @media (min-width: @screen-sm-min) {
       display: flex;
       justify-content: space-between;
       flex-wrap: wrap;
       align-items: flex-start;
     }
 
-    .pagers {
-      float: left;
-    }
-
-    .ie8 &,
-    .ie9 & {
+    .ie89 & {
       display: block;
       .clearfix();
     }
 
     .footer-left {
-      .ie8 &,
-      .ie9 & {
+      .ie89 & {
         float: left;
       }
     }
 
     .footer-right {
-      .ie8 &,
-      .ie9 & {
+      .ie89 & {
         float: right;
       }
     }
   }
 
   .pagers {
+    text-align: center;
+    margin-bottom: 12px;
+
     li:last-child a {
       margin-left: 12px;
     }
   }
 
   .generated {
-    text-align: right;
+    text-align: center;
+
+    .desktop-and-old-ie({
+      text-align: right;
+    });
   }
 
   .external-links {
-    text-align: right;
     margin-top: 15px;
+    text-align: center;
+
+    .desktop-and-old-ie({
+      text-align: right;
+    });
 
     a {
       display: inline-block;
