@@ -4,65 +4,69 @@
   <p>FMPP is a general-purpose text file preprocessor tool that uses
   <a href="http://freemarker.org/">FreeMarker</a> templates. It is particularly designed for HTML preprocessor,
   to generate complete (static) homepages: directory structure that contains HTML-s, image
-  files, etc. But of course it can be used to generate source code or whatever text files. FMPP is extendable with Java classes to pull data from any data sources (database, etc.) and embed the data into the generated files.
+  files, etc. But of course it can be used to generate source code or whatever text files. FMPP is extendable with Java classes to pull data from any data sources (database, etc.) and embed the data into the generated files.</p>
 
-  <p>FMPP can be used with UN*X-style command-line interface, or as <a href="http://ant.apache.org">Ant</a> task,
-  or you can embed it into your Java application.
+  <p>FMPP can be used with UN*X-style command-line interface, as an <a href="http://ant.apache.org">Ant</a> task,
+  or embedded into a Java application.</p>
 
-  <p>FMPP is 100% Java, thus it runs on all modern platforms (Windows, "Linux", Mac OS X, Solaris, ...etc.).
+  <p>FMPP is 100% Java, thus it runs on all modern platforms (Windows, "Linux", Mac OS X, Solaris, ...etc.).</p>
 
-  <p>FMPP is <a href="http://www.fsf.org/philosophy/free-sw.html">Free</a> software. See the license <@a href="license.html">here...</@a>
+  <p>FMPP is <a href="http://www.fsf.org/philosophy/free-sw.html">Free</a> software. See the license <@a href="license.html">here...</@a></p>
 
   <p>Some products that were created for similar purpose to FMPP:
     <a href="http://template-toolkit.org/">Template Toolkit</a> (Perl),
     <a href="http://www.labyrinth.net.au/~dbareis/ppwizard.htm">PPWizard</a> (Rexx),
-    <a href="http://vpp.sourceforge.net/">VPP</a> (Java, Velocity)
+    <a href="http://vpp.sourceforge.net/">VPP</a> (Java, Velocity)</p>
 </@sect>
 
 <@sect title="Features">
-  <p>This is a quick list of FMPP capabilities:
+  <p>This is a quick list of FMPP capabilities:</p>
   <ul>
     <li>Preprocessor language (it is the <a href="http://freemarker.org/">FreeMarker</a> Template Language):
       <ul>
-        <li>All the usual template constructs, such as include, if/else/elseif, loop.
-        <li>Macros with named arguments and nested content (body).
-        <li>Variables (global, or local for a macro call)
-        <li>Complex expressions using string, arithmetical and logical operations.
-            Extensible with custom functions.
-        <li>Automatic and manual escaping (HTML, XML, custom function)
-        <li>Transforming (filtering) blocks of output; extensible with custom transformations in Java.
-        <li>Capturing block of output into a variable.
-        <li>Charset aware, internally uses UNICODE.
-        <li>Number and date/time formatting with masks (patterns). Locale sensitive number and date/time formatting.
+        <li>All the usual template constructs, such as include, if/else/elseif, loop.</li>
+        <li>Macros with named arguments and nested content (body).</li>
+        <li>Variables (global, or local for a macro call)</li>
+        <li>Complex expressions using string, arithmetical and logical operations.</li>
+            Extensible with custom functions.</li>
+        <li>Automatic and manual escaping (HTML, XML, custom function)</li>
+        <li>Transforming (filtering) blocks of output; extensible with custom transformations in Java.</li>
+        <li>Capturing block of output into a variable.</li>
+        <li>Charset aware, internally uses UNICODE.</li>
+        <li>Number and date/time formatting with masks (patterns). Locale sensitive number and date/time formatting.</li>
       </ul>
+    </li>
     <li>Bulk file processing:
       <ul>
-        <li>Process entire directories recursively.
-        <li>Different file processing mode can be chosen for each file, based on path patterns (as file extension): execute file as template, or parse it as XML and then render it to output with a template, or binary-copy it, or ignore it.
-        <li>Can ignore bad source files and log the error message into a text file.
-        <li>Can guarantee that certain files will be processed later than others.
+        <li>Process entire directories recursively.</li>
+        <li>Different file processing mode can be chosen for each file, based on path patterns (as file extension): execute file as template, or parse it as XML and then render it to output with a template, or binary-copy it, or ignore it.</li>
+        <li>Can ignore bad source files and log the error message into a text file.</li>
+        <li>Can guarantee that certain files will be processed later than others.</li>
       </ul>
+    </li>
     <li>You can expose data from arbitrary data sources be writing extensions in Java.
         Currently out-of-the-box supported data sources:
           <ul>
-            <li>XML file
-            <li>CSV and tab-separated text files
-            <li>Java "properties" file
-            <li>Ant properties, Ant project and target information
-            <li>System clock
-            <li>Plain text file
+            <li>XML file</li>
+            <li>CSV and tab-separated text files</li>
+            <li>Java "properties" file</li>
+            <li>Ant properties, Ant project and target information</li>
+            <li>System clock</li>
+            <li>Plain text file</li>
           </ul>
+    </li>
     <li>Other highlighted features:
       <ul>
-        <li>Output splitting: a single source file can generate multiple output files (including 0 output files).
-        <li>Automatic file inclusion, automatic escaping, and whatnot that can be done with automatically inserted headers and footers, chosen based on path patterns.
-        <li>Generate HTML &lt;img>-s with calculated width and height.
-        <li>Calculate the relative path to the home directory, or to any other file.
-        <li>Rendering (transforming) XML files with FreeMarker templates. (Similar to the typical XSLT usage pattern.)
-        <li>Query the size/existence of source files.
-        <li>Query output encoding (charset).
-        <li>URL-escaping (with the actual output charset).
+        <li>Output splitting: a single source file can generate multiple output files (including 0 output files).</li>
+        <li>Automatic file inclusion, automatic escaping, and whatnot that can be done with automatically inserted headers and footers, chosen based on path patterns.</li>
+        <li>Generate HTML &lt;img>-s with calculated width and height.</li>
+        <li>Calculate the relative path to the home directory, or to any other file.</li>
+        <li>Rendering (transforming) XML files with FreeMarker templates. (Similar to the typical XSLT usage pattern.)</li>
+        <li>Query the size/existence of source files.</li>
+        <li>Query output encoding (charset).</li>
+        <li>URL-escaping (with the actual output charset).</li>
       </ul>
+    </li>
   </ul>
 </@sect>
 
@@ -72,11 +76,11 @@
     The full documentation of the version you are using can be found in the <@c>docs</@c> directory of the installed FMPP.</p>
   </#if>
   <ul>
-    <li><@a href="manual.html"><@e>FMPP Manual</@e></@a>
-    <li><@a href="api/index.html">FMPP Java API</@a>
+    <li><@a href="manual.html"><@e>FMPP Manual</@e></@a></li>
+    <li><@a href="api/index.html">FMPP Java API</@a></li>
     <#--<li><@a href="FAQ.html">FAQ</@a>-->
-    <li><@fma>FreeMarker Manual</@fma>
-    <li><@fma href="api/index.html">FreeMarker Java API</@fma>
+    <li><@fma>FreeMarker Manual</@fma></li>
+    <li><@fma href="api/index.html">FreeMarker Java API</@fma></li>
   </ul>
 </@sect>
 
@@ -108,7 +112,7 @@
 
   <p>The FMPP <strong>Ant task</strong> (ignore if you don't know what Ant is) requires Ant 1.5.1 or later.</p>
 <#else>
-  <p>To download the latest release, please visit the FMPP homepage: <@url href="http://fmpp.sourceforge.net/" />
+  <p>To download the latest release, please visit the FMPP homepage: <@url href="http://fmpp.sourceforge.net/" /></p>
 </#if>
   <p>For <@e>text editor and IDE plug-ins</@e> and other FreeMarker template-related tools, please visit the FreeMarker homepage: <a href="http://freemarker.org/">http://freemarker.org/</a> (mirror: <a href="http://freemarker.sourceforge.net/">http://freemarker.sourceforge.net/)</a></p>
 </@sect>
@@ -124,9 +128,9 @@
 <@sect title="Contact">
   <@reportBugs />
 
-  <p>Ask for <@e>help</@e> or provide suggestions:
+  <p>Ask for <@e>help</@e> or provide suggestions:</p>
   <ul>
-    <li>on the <strong>mailing list</strong> (The preferred way. Low traffic.):
+    <li>on the <strong>mailing list</strong> (The preferred way. Low traffic.):</li>
       <ul>
         <li>Subscribe/unsubscribe: <@url href="http://lists.sourceforge.net/mailman/listinfo/fmpp-open" /></li>
         <li>News group interface: <@url href="nntp://news.gmane.org/gmane.comp.text.fmpp" /></li>
@@ -137,7 +141,7 @@
     <li>with private e-mail: <@myEmail /></li>
   </ul>
 
-  <p>Home page: <@url href="http://fmpp.sourceforge.net/" />
+  <p>Home page: <@url href="http://fmpp.sourceforge.net/" /></p>
 </@sect>
 
 </@page>
