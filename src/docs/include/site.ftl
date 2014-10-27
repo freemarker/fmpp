@@ -294,7 +294,7 @@
 
 <#macro reportBugs>
   <div class="report-bugs">
-    <p class="strong"><strong>Please report bugs you find!</strong> Any programming, documentation content or grammatical mistakes, even minor typos. Thank you!</p>
+    <p class="strong"><strong>Please report bugs you find!</strong> Any programming, documentation content or grammatical mistakes (even minor typos.) Thank you!</p>
     <p>Use the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=74591&amp;atid=541453">bug reporting Web page</a>,<br>
       or e-mail: <@myEmail /></p>
 
