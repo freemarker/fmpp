@@ -44,11 +44,17 @@
     .ie89 & {
       display: block;
       .clearfix();
+      height: 92px;
     }
 
     .header-left {
       .ie89 & {
         float: left;
+        width: 600px;
+
+        .breadcrumbs {
+          width: 600px;
+        }
       }
     }
 
@@ -58,10 +64,17 @@
 
       .ie89 & {
         margin-top: 0;
+        float: right;
         .clearfix();
 
+        nav {
+          .clearfix();
+        }
+
         .pagers {
-          float: right;
+          height: 55px;
+          width: 250px;
+          margin-top: 10px;
         }
       }
     }
