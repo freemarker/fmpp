@@ -35,6 +35,7 @@ borders: [
 
 data: {
     basedir: eval('System.getProperties().getProperty("fmpp.home")')
+    license: text(../../LICENSE.txt)
     html: htmlUtils()
     stdSettings: eval('
         Map res = new HashMap();

@@ -1,15 +1,25 @@
-.download-options {
+ul.download-options {
 
-  &:before {
-    .icon();
-    display: inline-block;
-    position: relative;
-    top: 1px;
-    margin-right: 3px;
-    width: 14px;
-    height: 14px;
+  list-style-type: none;
+  padding-left: 0;
+  margin-left: 0;
+
+  li {
+    padding-left: 2em;
+    margin-left: 0;
+  
+    &:before {
+      .icon();
+      display: inline-block;
+      position: relative;
+      top: 1px;
+      margin-right: 7px;
+      width: 14px;
+      height: 14px;
+    }
+    
+    &:extend(.icon-download all);
+    
   }
-
-  &:extend(.icon-download all);
 
 }
