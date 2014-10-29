@@ -690,7 +690,7 @@ public class ArgsParser implements java.io.Serializable {
          * Ensures that the option will be seemingly present with the given
          * argument value if args[] does not contains this option, or any
          * other option that mutually excludes this option.
-         * This version of the method applyes only for options that support
+         * This version of the method applies only for options that support
          * argument.
          * 
          * @throws IllegalArgumentException if the option has no argument.

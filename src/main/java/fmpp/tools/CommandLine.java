@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Properties;
@@ -46,10 +48,22 @@ import freemarker.template.Version;
 
 /**
  * Command-line tool for preprocessing single files or entire directories.
- * 
- * <p>Report bugs and send suggestions to: ddekany at freemail dot hu.
  */
 public class CommandLine {
+
+    /**
+     * The number of console (terminal) columns can be passed in with this environment variable, supposedly by the
+     * OS-specific starter executable (shell script). Note that if the {@link Settings#NAME_COLUMNS} is set, that will
+     * override this (but by default it isn't set). The value of the environment variable should be just an integer
+     * (with possible white space around it), however, if it's not a number, {@link CommandLine} will attempt to parse
+     * it as the output of the Windows {@code mode con /status} command (also then {@code [BR]} can be used instead of
+     * real line-breaks, to ease bat programming). On UN*X-es usually this should be the output of {@code tput cols}.
+     */
+    public static final String FMPP_CONSOLE_COLS = "FMPP_CONSOLE_COLS";
+
+    /** Use only as last resort! */
+    private static final int DEFAULT_CONSOLE_COLS = 80;
+    
     // Option keys:
     private static final String OPTION_CONFIGURATION = "configuration";
     private static final String OPTION_PRINT_LOCALES = "print-locales";
@@ -72,12 +86,14 @@ public class CommandLine {
     private PrintWriter stderr;
     private PrintWriter tOut;
     private PrintWriter eOut;
-    private int screenCols = 80;
+    private Integer screenCols;
     private boolean loggingStarted = false;
     private LoggerProgressListener logListener;
 
     /**
-     * Main method.
+     * Runs the command line interface.
+     * 
+     * @see #FMPP_CONSOLE_COLS
      */
     public static void main(String[] args) {
         int exitCode = execute(args, null, null);
@@ -87,7 +103,7 @@ public class CommandLine {
     }
 
     /**
-     * Emulates command-line invocation of the tool.
+     * Emulates the command-line invocation of the tool.
      *  
      * @param args the command line arguments
      * @param stdout the <code>PrintWriter</code> used as stdout.
@@ -105,10 +121,75 @@ public class CommandLine {
         tool.stderr =
                 stderr == null ? new PrintWriter(System.err, true) : stderr;
         tool.tOut = tool.stdout;
-        tool.eOut = tool.tOut; 
+        tool.eOut = tool.tOut;
+        
+        tool.screenCols = getScreenColsFromEnvVar();
+        
         return tool.run(args);
     }
     
+    /**
+     * Returns the number of console columns passed in environment variable, or {@code null}.
+     * 
+     * @see #FMPP_CONSOLE_COLS
+     */
+    private static Integer getScreenColsFromEnvVar() {
+        String colsStr = System.getenv(FMPP_CONSOLE_COLS);
+        if (colsStr == null) return null;
+        colsStr = StringUtil.normalizeLinebreaks(colsStr);
+        colsStr = StringUtil.replace(colsStr, "[BR]", "\n");
+        colsStr = colsStr.trim();
+        if (colsStr.startsWith("CON:")) {  // This is probably Windows `mode con /status` output.
+            String[] rows = StringUtil.split(colsStr, '\n');
+            int cols = 0;
+            boolean colsFoundByName = false;
+            int rowsWithNumValue = 0;
+            findColumnsRow: for (int i = 0; i < rows.length; i++) {
+                String row = rows[i];
+                int colonIdx = row.indexOf(':');
+                if (colonIdx > 0) {
+                    String rowValueStr = row.substring(colonIdx + 1).trim();
+                    Integer rowValue;
+                    try {
+                        rowValue = Integer.valueOf(rowValueStr);
+                    } catch (NumberFormatException e) {
+                        rowValue = null;
+                    }
+                    if (rowValue != null) {
+                        rowsWithNumValue++;
+                        
+                        String rowLabel = row.substring(0, colonIdx).trim().toLowerCase();
+                        if ("columns".equals(rowLabel) || "cols".equals(rowLabel) || "spalten".equals(rowLabel) 
+                                || "colonnes".equals(rowLabel) || "columnas".equals(rowLabel)
+                                || "\uF99C".equals(rowLabel)) {
+                            cols = rowValue.intValue();
+                            colsFoundByName = true;
+                            break findColumnsRow;
+                        }
+                        
+                        // The 2nd column with numerical value used to be the number of columns:
+                        if (rowsWithNumValue == 2) {
+                            cols = rowValue.intValue();
+                        }
+                    }
+                }
+            }
+            // If not found by name, some heuristics to decide if the output of "mode con" has changed too much for
+            // safe parsing.
+            if (colsFoundByName || (rowsWithNumValue >= 4 && cols >= 20 && cols < 800)) {
+                return new Integer(cols);
+            } else {
+                return null;
+            }
+        } else {
+            try {
+                return Integer.valueOf(colsStr);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+    }
+
     private int run(String[] args) {
         String s;
         int i;
@@ -151,7 +232,6 @@ public class CommandLine {
         int impliedEchoFormat = EF_NORMAL;
         boolean impliedPrintStackTrace = false;
         boolean impliedAppendLogFile = false;
-        int impliedColumns = 80;
         int impliedQuiet = 0;
         if (rcFile != null) {
             try {
@@ -175,8 +255,7 @@ public class CommandLine {
                         impliedAppendLogFile
                                 = ((Boolean) fmpprc.get(key)).booleanValue();
                     } else if (key.equals(Settings.NAME_COLUMNS)) {
-                        impliedColumns = ((Integer) fmpprc.get(key)).intValue();
-                        screenCols = impliedColumns; 
+                        screenCols = (Integer) fmpprc.get(key); 
                     } else if (key.equals(Settings.NAME_QUIET)) {
                         value = (String) fmpprc.get(key);
                         impliedQuiet
@@ -188,8 +267,8 @@ public class CommandLine {
                     }
                 }
             } catch (SettingException e) {
-                pt("Error loading .fmpprc.");
-                pt(MiscUtil.causeMessages(e));
+                p("Error loading .fmpprc.");
+                p(MiscUtil.causeMessages(e));
                 return -1;
             }
         }
@@ -493,9 +572,7 @@ public class CommandLine {
                             + "The default is "
                             + echoFormatToString(impliedEchoFormat) + ".");
             ap.addOption(null, cln(Settings.NAME_COLUMNS) + "=COLS")
-                    .implied(String.valueOf(impliedColumns))
-                    .desc("The number of columns on the console screen. "
-                            + "Defaults to " + impliedColumns + ".");
+                    .desc("The number of columns on the console screen. Use when auto-detection gives bad result.");
             od = ap.addOption(null, cln(Settings.NAME_PRINT_STACK_TRACE))
                     .property(cln(Settings.NAME_PRINT_STACK_TRACE), "true")
                     .desc("Print stack trace on error.");
@@ -554,9 +631,12 @@ public class CommandLine {
                 quiet = false;
             }
             
-            screenCols = opToInt(
+            final int screenColsOr0 = opToInt(
                     ops.getProperty(cln(Settings.NAME_COLUMNS)),
                     cln(Settings.NAME_COLUMNS));
+            if (screenColsOr0 != 0) {
+                screenCols = new Integer(screenColsOr0);
+            }
 
             // -----------------------------------------------------------------
             // Do a special task instead of processing?
@@ -567,23 +647,41 @@ public class CommandLine {
             }
 
             if (ops.containsKey(OPTION_VERSION)) {
-                pt("FMPP version " + Engine.getVersionNumber()
+                p("FMPP version " + Engine.getVersionNumber()
                         + ", build " + Engine.getBuildInfo());
-                pt("Currently using FreeMarker version "
+                p("Currently using FreeMarker version "
                         + Engine.getFreeMarkerVersionNumber());
-                pt("For the latest version visit: "                        + "http://fmpp.sourceforge.net/");
+                p("For the latest version visit: "                        + "http://fmpp.sourceforge.net/");
                 throw FinishedException.INSTANCE;
             }
 
             if (ops.containsKey(OPTION_PRINT_LOCALES)) {
-                Locale[] ls = Locale.getAvailableLocales();
+                Locale[] locales = Locale.getAvailableLocales();
+                Arrays.sort(locales, new Comparator() {
+                    
+                    public int compare(Object o1, Object o2) {
+                        Locale loc1 = (Locale) o1;
+                        Locale loc2 = (Locale) o2;
+                        int r = ("" + loc1.getLanguage()).compareTo("" + loc2.getLanguage());
+                        if (r != 0) {
+                            return r;
+                        }
+                        r = ("" + loc1.getCountry()).compareTo("" + loc2.getCountry());
+                        if (r != 0) {
+                            return r;
+                        }
+                        return ("" + loc1.getVariant()).compareTo("" + loc2.getVariant());
+                    }
+                    
+                });
+                
                 StringBuffer sb = new StringBuffer();
-                for (i = 0; i < ls.length; i++) {
+                for (i = 0; i < locales.length; i++) {
                     sb.setLength(0);
 
-                    String la = ls[i].getLanguage();
-                    String co = ls[i].getCountry();
-                    String va = ls[i].getVariant();
+                    String la = locales[i].getLanguage();
+                    String co = locales[i].getCountry();
+                    String va = locales[i].getVariant();
 
                     sb.append(la);
                     if (co.length() != 0) {
@@ -595,19 +693,18 @@ public class CommandLine {
                         }
                     }
                     sb.append(" (");
-                    sb.append(ls[i].getDisplayLanguage());
+                    sb.append(locales[i].getDisplayLanguage());
                     if (co.length() != 0) {
                         sb.append(", ");
-                        sb.append(ls[i].getDisplayCountry());
+                        sb.append(locales[i].getDisplayCountry());
                         if (va.length() != 0) {
                             sb.append(", ");
-                            sb.append(ls[i].getDisplayVariant());
+                            sb.append(locales[i].getDisplayVariant());
                         }
                     }
                     sb.append(")");
 
-                    tOut.println(StringUtil.wrap(
-                            sb.toString(), screenCols, 0, 7));
+                    p(sb.toString(), 0, 3);
                 }
                 throw FinishedException.INSTANCE;
             }
@@ -634,7 +731,7 @@ public class CommandLine {
                 cfgToLoad = !opCfg.equals(Settings.VALUE_NONE) ? new File(opCfg) : null;
             } else if (defaultCfg != null) {
                 cfgToLoad = defaultCfg;
-                pt("Note: Using the " + cfgToLoad.getName() + " in the working directory.");
+                p("Note: Using the " + cfgToLoad.getName() + " in the working directory.");
             } else {
                 cfgToLoad = null;
             }
@@ -665,8 +762,10 @@ public class CommandLine {
                 quiet = false;
             }
 
-            screenCols = ((Integer) settings.get(Settings.NAME_COLUMNS))
-                    .intValue();
+            final Integer colsOrNull = (Integer) settings.get(Settings.NAME_COLUMNS);
+            if (colsOrNull != null) {
+                screenCols = colsOrNull;
+            }
             
             // -----------------------------------------------------------------
             // Tool specific setup
@@ -733,26 +832,26 @@ public class CommandLine {
             }
 
             if (!singleFileMode) {
-                pt();
+                p();
             }
             if (abortingExc != null) {
                 pe(">>> ABORTED! <<<");
             } else {
                 if (stats.getFailed() == 0) {
-                    pt("*** DONE ***");
+                    p("*** DONE ***");
                 } else {
-                    pt(">>> DONE WITH ERRORS <<<");
+                    p(">>> DONE WITH ERRORS <<<");
                 }
             }
             if (!singleFileMode) {
-                pt();
-                pt(stats.getExecuted() + " executed + "
+                p();
+                p(stats.getExecuted() + " executed + "
                         + stats.getXmlRendered() + " rendered + "
                         + stats.getCopied() + " copied = "
                         + stats.getSuccesful() + " successfully processed\n"
                         + stats.getFailed() + " failed, "
                         + stats.getWarnings() + " warning(s) ");
-                pt("Time elapsed: "
+                p("Time elapsed: "
                         + (stats.getProcessingTime()) / 1000.0
                         + " seconds");
             }
@@ -807,7 +906,7 @@ public class CommandLine {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             pw.close();
-            peTrace(sw.toString());
+            pTrace(sw.toString());
             
             pl(">>> TERMINATED WITH INTERNAL ERROR <<<");
             if (logListener != null) {
@@ -827,30 +926,32 @@ public class CommandLine {
     }
 
     private void printHelp(ArgsParser ap) {
-        tOut.println(StringUtil.wrap(
-                "Typical usages:\n"
-                + "fmpp -C configfile\n"
-                + "fmpp -S sourcedir -O outputdir\n"
-                + "fmpp sourcefile -o outputfile\n",
-                screenCols, 0, 3));
-        pt("For more examples: http://fmpp.sourceforge.net/commandline.html");
+        p("Typical usages:");
+        p("fmpp -C configfile", 3);
+        p("fmpp -S sourcedir -O outputdir", 3);
+        p("fmpp sourcefile -o outputfile", 3);
+        p("For more examples: http://fmpp.sourceforge.net/commandline.html");
         if (ap == null) {
-            pt("To see all options: fmpp -h");
+            p("To see all options: fmpp -h");
         } else {
-            pt();
-            pt("Options:");
-            tOut.println(ap.getOptionsHelp(screenCols));
-            pt();
-            pt(
+            p();
+            p("Options:");
+            tOut.println(ap.getOptionsHelp(getScreenColumnsOrDefault()));
+            p();
+            p(
                     "Most options above directly correspond to FMPP settings. "
                     + "See their full descriptions here: "
                     + "http://fmpp.sourceforge.net/settings.html");
         }
-        pt();
+        p();
         tOut.flush();
     }
     
-    private void pt() {
+    private int getScreenColumnsOrDefault() {
+        return screenCols != null ? screenCols.intValue() : DEFAULT_CONSOLE_COLS;
+    }
+    
+    private void p() {
         tOut.println();
     }
 
@@ -860,14 +961,23 @@ public class CommandLine {
     }
     */
     
-    private void pt(String text) {
-        pt(text, 0);
+    private void p(String text) {
+        p(text, 0);
     }
 
-    private void pt(String text, int indent) {
-        tOut.println(StringUtil.wrap(text, screenCols, indent));
+    private void p(String text, int indent) {
+        p(text, indent, indent);
     }
 
+    private void p(String text, int firstIndent, int furtherIndent) {
+        if (screenCols == null && (furtherIndent == firstIndent || furtherIndent == 0)) {
+            // Fall back to printing without wrapping
+            tOut.println(StringUtil.repeat(" ", firstIndent) + text);
+        } else {
+            tOut.println(StringUtil.wrap(text, getScreenColumnsOrDefault(), firstIndent, furtherIndent));
+        }
+    }
+    
     private void pe(Object obj) {
         pe(obj.toString());
     }
@@ -876,22 +986,17 @@ public class CommandLine {
         pe(text, 0);
     }
 
-    private void peTrace(String text) {
-        eOut.println(StringUtil.wrapTrace(text, screenCols));
+    private void pTrace(String text) {
+        tOut.println(StringUtil.wrapTrace(text, getScreenColumnsOrDefault()));
     }
 
     private void pe(String text, int indent) {
-        eOut.println(StringUtil.wrap(text, screenCols, indent));
-    }
-
-    /*unused
-    private void pl() {
-        if (logListener == null) {
-            return;
+        if (screenCols == null) {
+            eOut.println(StringUtil.repeat(" ", indent) + text);
+        } else {
+            eOut.println(StringUtil.wrap(text, screenCols.intValue(), indent));
         }
-        logListener.println();
     }
-    */
 
     private void pl(Object obj) {
         if (logListener == null) {

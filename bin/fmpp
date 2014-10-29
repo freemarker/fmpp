@@ -153,6 +153,8 @@ if $cygwin; then
   CYGHOME=`cygpath --path --windows "$HOME"`
 fi
 
+export FMPP_CONSOLE_COLS="`tput cols`"
+
 if [ -n "$CYGHOME" ]; then
   "$JAVACMD" -classpath "$LOCALCLASSPATH" -Dfmpp.home="${FMPP_HOME}" -Dcygwin.user.home="$CYGHOME" $FMPP_OPTS fmpp.tools.CommandLine $FMPP_ARGS "$@"
 else

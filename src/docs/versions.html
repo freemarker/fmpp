@@ -21,6 +21,7 @@
       </ul>
     </li>
     <li>The command line tool doesn't "snip" (<@c>--8<--</@c>) error messages any more, instead, by default, it prints a cause message chain instead of a stack trace on error. This is especially useful as newer FreeMarker versions tend to give more detailed error messages that shouldn't be cut off. Stack traces can be asked with the new <@s>printStackTrace</@s> setting. The <@s>snip</@s> setting is now deprecated, and is only an inverted alias to <@s>printStackTrace</@s>.</li>
+    <li>The command line tool now detects the actual number of console (terminal) columns and wraps lines accordingly. Earlier it has used 80 columns. This only works if you invoke FMPP with the provided shell script (<@c>bin/fmpp</@c> or <@c>bin/fmpp.bat</@c>). Also, it won't work if you have explicitly set the <@s>columns</@s> setting (like in <@c>~/.fmpprc</@c>) as then that will take precedence.</li>
     <li>FMPP license has been changed from BSD to Apache License 2.0. The copyright owner has been changed to be the same as the owner of FreeMarker. The two projects now share the same license and Contributor License Agreement.</li>
     <li>
       The dependencies of FMPP has been updated/changed:

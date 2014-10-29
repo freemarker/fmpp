@@ -630,7 +630,7 @@ return res;
 
 <p>The <@s>echoFormat</@s> setting specifies how to display the progress of the processing session on the screen. The meaning of values and the set of understood values are front-end specific, but values <@c>verbose</@c>, <@c>normal</@c>, <@c>terse</@c> and <@c>quiet</@c> should be understood, also the shorthands of them: <@c>v</@c>, <@c>n</@c>, <@c>t</@c> and  <@c>q</@c>. The front-end must not stop with error if it doesn't understand the value that comes from a configuration file.</p>
 
-<p>The <@s>columns</@s> setting specifies the number of columns can be used for textual ouputs, as on the console screen.</p>
+<p>The <@s>columns</@s> setting specifies the number of columns on the console (terminal), which is used for text wrapping. This is only applicable if you are using a command line interface for FMPP (or something similar). If you are using the provided shell script to invoke the command line interface, that will try to auto-detect the actual value (since 0.9.15), so you shouldn't set this setting, unless the auto-detection gives incorrect result.</p>
 
 <p>The <@s>printStackTrace</@s> setting specifies if the front-end should print stack trace to the screen on error, or a terser error description. <@s>snip</@s> is deprecated, and now it's just the inverted alias of <@s>printStackTrace</@s>.</p>
 

@@ -1520,4 +1520,17 @@ public class StringUtil {
                     cause);
         }
     }
+
+    public static String repeat(String s, int n) {
+        if (n == 0) return "";
+        if (n == 1) return s;
+        if (n < 0) {
+            throw new IllegalArgumentException("Negative repeat count: " + n);
+        }
+        StringBuffer sb = new StringBuffer(s.length() * n);
+        for (int i = 0; i < n; i++) {
+            sb.append(s);
+        }
+        return sb.toString();
+    }
 }

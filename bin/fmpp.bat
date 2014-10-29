@@ -189,6 +189,23 @@ if exist "%JAVA_HOME%\lib\tools.jar" call "%FMPP_LCP_CMD%" %JAVA_HOME%\lib\tools
 if "%FMPP_BAT_DEBUG%" == "on" echo [DEBUG] LOCALCLASSPATH: %LOCALCLASSPATH%
 
 rem --------------------------------
+rem Set FMPP_CONSOLE_COLS env var
+rem --------------------------------
+
+2>NUL call :setConColsVar
+goto :afterSetConColsVar
+
+:setConColsVar
+setlocal EnableDelayedExpansion
+FOR /F "delims=" %%i IN ('mode con /status') DO if ("!out!"=="") (set out=%%i) else (set out=!out![BR]%%%i)
+( endlocal
+  set "FMPP_CONSOLE_COLS=%out%"
+)
+exit /b
+
+:afterSetConColsVar
+
+rem --------------------------------
 rem Call FMPP
 rem --------------------------------
 "%FMPP_JAVA_CMD%" -classpath "%LOCALCLASSPATH%" "-Dfmpp.home=%FMPP_HOME_ADJ%" "-Dfmpp.userHome=%HOME%" %FMPP_OPTS% fmpp.tools.CommandLine %FMPP_CMD_LINE_ARGS%

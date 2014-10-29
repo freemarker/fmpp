@@ -313,7 +313,7 @@ public class FileUtil {
     
     public static String loadString(InputStream in, String charset)
             throws IOException {
-        Reader r = new InputStreamReader(in, charset);
+        Reader r = charset != null ? new InputStreamReader(in, charset) : new InputStreamReader(in);
         StringBuffer sb = new StringBuffer(1024);
         try {
             char[] buf = new char[4096];
