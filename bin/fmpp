@@ -153,7 +153,7 @@ if $cygwin; then
   CYGHOME=`cygpath --path --windows "$HOME"`
 fi
 
-if type tput > /dev/null; then
+if type tput > /dev/null 2>&1; then
   export FMPP_CONSOLE_COLS="`tput cols`"
 fi
 
