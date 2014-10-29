@@ -38,19 +38,14 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
- . [!!!] Console width detection: 
-   - Win: ANSICON=200x300, or `mode`
-   - Linux: `tput cols`
- . [!!!] Console charset detection on Windows: 
-   - `mode`
- ---
+ . [!!] Console charset detection on Windows (extract from `mode con` output)
  . [!!] Add FreeMarker feature for position mapping
+ . [!!] Stream filtering mode
  . [!!] Use mountable vfs-es, at least for sources. This would deprecate
    freemarerLinks, and would work not only for #include but for pp too.
    Add zip (jar) vfs.
- . [!!] Add logging via SLF4J as a possible ProgressListener.
  . [!!] Post-filters (for Markdown, Haml, Jade to HTML conversation)
- . [!!] Stream filtering mode
+ . [!!] Add logging via SLF4J as a possible ProgressListener.
  ---
  . [!!] TDD deep merging
    - Idea for the solution: "merger hash" type should be introduced. In TDD
