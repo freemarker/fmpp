@@ -1,22 +1,18 @@
 <@page title="FMPP - FreeMarker-based file PreProcessor" keywords="homepage">
 
 <@sect title="What is FMPP?">
-  <p>FMPP is a general-purpose text file preprocessor tool that uses
-  <a href="http://freemarker.org/">FreeMarker</a> templates. It was originally designed for HTML preprocessor,
-  to generate complete static websites: directory structure that contains HTML-s, image
-  files, etc. But of course it can be used to generate source code, configuration files, or whatever text files. FMPP is extendible with Java classes to pull data from any data sources (Excel, database, etc.) and embed the data into the generated files. <@a href="qtour.html">See the Tutorial for a concrete example...</@a></p>
+  <p>FMPP is a general-purpose text file preprocessing tool that uses <a href="http://freemarker.org/">FreeMarker</a> templates. It process entire directories recursively. It can be used  for generating complete static websites, source code, configuration files, etc. It can insert data from sources like CSV and XML into the generated files. (You can add new kind of data sources in Java.) <@a href="qtour.html">See the Tutorial</@a> for a more concrete introduction.</p>
+  
+  <p>FMPP can be used with UN*X-style command-line interface, or as <a href="http://ant.apache.org">Ant</a> task, or can be embedded into your application using its Java API.</p>
 
-  <p>FMPP can be used with UN*X-style command-line interface, as an <a href="http://ant.apache.org">Ant</a> task,
-  or embedded into a Java application.</p>
+  <p>FMPP was written in Java, thus it runs on all modern platforms (Windows, "Linux", OS X, etc.).</p>
 
-  <p>FMPP is 100% Java, thus it runs on all modern platforms (Windows, "Linux", OS X, etc.).</p>
-
-  <p>FMPP is <a href="http://www.fsf.org/philosophy/free-sw.html">Free</a> software. See the license <@a href="license.html">here...</@a></p>
+  <p>FMPP is Free software under Apache License 2.0. <@a href="license.html">See license...</@a></p>
   
   <@sect title="Features">
-    <p>This is a quick list of FMPP capabilities:</p>
+    <p>A quick list of FMPP capabilities:</p>
     <ul>
-      <li>Preprocessor language (it is the <a href="http://freemarker.org/">FreeMarker</a> Template Language):
+      <li>FreeMarker as the preprocessor language:
         <ul>
           <li>All the usual template constructs, such as include, if/else/elseif, loop.</li>
           <li>Macros with named arguments and nested content (body).</li>
@@ -27,7 +23,7 @@
           <li>Transforming (filtering) blocks of output; extensible with custom transformations in Java.</li>
           <li>Capturing block of output into a variable.</li>
           <li>Charset aware, internally uses UNICODE.</li>
-          <li>Number and date/time formatting with masks (patterns). Locale sensitive number and date/time formatting.</li>
+          <li>Number and date/time formatting with masks (patterns). Locale sensitive formatting.</li>
         </ul>
       </li>
       <li>Bulk file processing:
