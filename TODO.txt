@@ -18,17 +18,17 @@
 
 Misc:
  . [!!!] Before release:
-   . Increase version number
    . Re-run test on Java 1.4
    . Run FMPP manually on some projects
    . Test Maven artifact
+ --- 0.9.15
  . [!] Native Windows exe instead of fmpp.bat+lcp.bat.
-   Bat-s has idiotic limitations.
- . Add a GUI front-end
+ . GUI front-end
 
 Data loaders:
+ . [!!!] True JSON data loader - TDD almost does that...
+ --- 0.9.15
  . [!!] More convenient way of putting OS environment variables into the data-model
- . [!!] True JSON data loader - TDD almost does that...
  . [!!] Excel and Calc data loader
  . [!!] sql(...) data-loader. See below in the Drafts section...
  . [!] DB schema data source
@@ -38,6 +38,7 @@ Data loaders:
  . Add bsh(...) data loader: Evaluates a BSH file.
 
 Core:
+ --- 0.9.15
  . [!!] Console charset detection on Windows (extract from `mode con` output)
  . [!!] Add FreeMarker feature for position mapping
  . [!!] Stream filtering mode
