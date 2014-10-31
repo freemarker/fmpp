@@ -1521,6 +1521,9 @@ public class StringUtil {
         }
     }
 
+    /**
+     * @since 0.9.15
+     */
     public static String repeat(String s, int n) {
         if (n == 0) return "";
         if (n == 1) return s;
@@ -1532,5 +1535,14 @@ public class StringUtil {
             sb.append(s);
         }
         return sb.toString();
+    }
+
+    /**
+     * @since 0.9.15
+     */
+    public static String capitalizeFirst(String s) {
+        if (s == null || s.length() == 0) return s;
+        char c = s.charAt(0);
+        return Character.isLowerCase(c) ? Character.toUpperCase(c) + s.substring(1) : s;
     }
 }
