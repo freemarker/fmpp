@@ -1086,7 +1086,7 @@ public class Engine {
     public void setDataRoot(File dataRoot)
             throws IOException {
         checkParameterLock();
-        if (dataRoot == null || dataRoot.equals(PARAMETER_VALUE_SOURCE)) {
+        if (dataRoot == null) {
             this.dataRoot = null;
         } else {
             this.dataRoot = dataRoot.getCanonicalFile();
