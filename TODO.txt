@@ -10,7 +10,8 @@
     - Visitor pattern traversal
     - array OOB
     - Pairs as seq, OOB
-  - Unwrapping support
+    - BOM
+  - Unwrapping support?
 . Re-run test on Java 1.4
 . Run FMPP manually on some projects
 . Test Maven artifact

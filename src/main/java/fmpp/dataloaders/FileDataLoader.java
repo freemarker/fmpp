@@ -27,7 +27,7 @@ import fmpp.tdd.DataLoader;
 /**
  * Ancestor of data loaders that create the result based on a file.
  * The first argument of the data loader will be the path of the file.
- * If the path is a realtive path, then it will be realative to the data root
+ * If the path is a relative path, then it will be relative to the data root
  * directory (an engine level setting), or if data root is null, then relative
  * to the working directory (OS facility). The path can use slash (/) instead
  * of the OS specific separator char.

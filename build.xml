@@ -18,12 +18,18 @@
   <available property="atLeastJDK8" classname="java.util.function.Predicate" />
 
   <path id="classpath.path">
-    <pathelement path="lib/freemarker.jar" />
-    <pathelement path="lib/bsh.jar" />
-    <pathelement path="lib/resolver.jar" />
-    <pathelement path="lib/imageinfo.jar" />
-    <pathelement path="lib/fmpp.jar" />
-    <pathelement path="${ant.jar.path}" />
+    <fileset dir="lib">
+      <include name="*.jar"/>
+      <exclude name="fmpp.jar"/>
+    </fileset>  
+    <pathelement path="${ant.jar.path}" />    
+  </path>
+
+  <path id="testClasspath.path">
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+    </fileset>  
+    <pathelement path="build/test/classes"/>
   </path>
 
   <tstamp>
@@ -253,13 +259,13 @@
         <exclude name="build.properties" />
         <exclude name="node_modules/" />
         <exclude name="**/.*/" />
-        <exclude name="README.md" />
+        <exclude name="README.*" />
       </fileset>
     </copy>
     <copy todir="${dist.dir}" includeEmptyDirs="true">
       <fileset dir="build" includes="docs/" />
     </copy>
-    <copy file="README.md" todir="${dist.dir}" filtering="true" />
+    <copy file="README.*" todir="${dist.dir}" filtering="true" />
 
     <delete file="${dist.dir}.tar.gz" />
     <tar tarfile="${dist.dir}.tar" longfile="gnu">
@@ -309,7 +315,7 @@
            source="1.4"
            target="1.4"
     >
-      <classpath refid="classpath.path" />
+      <classpath refid="testClasspath.path" />
     </javac>
     <copy toDir="build/test/classes">
       <fileset dir="src/test/resources">
@@ -319,6 +325,21 @@
       </fileset>
     </copy>
 
+    <mkdir dir="build/junit-reports" />
+    <junit haltonfailure="on" fork="true" forkmode="once">
+      <classpath refid="testClasspath.path" />
+      <formatter type="plain" />
+      <formatter type="xml" />
+      <batchtest todir="build/junit-reports">
+        <fileset dir="src/test/java">
+          <include name="**/*Test.java" />
+          <include name="**/*TestSuite.java" />
+          <exclude name="fmpp/testsuite/**" /> <!-- Not JUnit -->
+        </fileset>
+      </batchtest>
+    </junit>
+    
+    <!-- This wasn't yet converted to JUnit test: -->
     <property name="fmpp.testcase" value="" />
     <java fork="true"
           classname="fmpp.testsuite.TestSuite"
