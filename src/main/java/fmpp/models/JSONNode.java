@@ -23,7 +23,7 @@ public abstract class JSONNode implements TemplateNodeModel, Serializable {
      * Returns the FTL node name for a node that has otherwise no name.
      */
     protected static String nodeTypeToDefaultNodeName(String nodeType) {
-        return "nameless" + StringUtil.capitalizeFirst(nodeType);        
+        return "unnamed" + StringUtil.capitalizeFirst(nodeType);        
     }
 
     /**

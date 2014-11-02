@@ -125,7 +125,8 @@ public class JSONParser {
         }
         
         throw newParseException(
-                "Invalid JSON keyword: " + keyword + ". Should be one of: true, false, null", startP);
+                "Invalid JSON keyword: " + keyword + ". Should be one of: true, false, null. "
+                        + "If it meant to be a string then it must be quoted.", startP);
     }
 
     private Number tryConsumeNumber() throws JSONParseException {

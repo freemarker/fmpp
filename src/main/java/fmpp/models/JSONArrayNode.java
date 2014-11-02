@@ -71,7 +71,7 @@ public class JSONArrayNode extends JSONNode implements TemplateSequenceModel {
         
         JSONNode r = wrappedChildren[idx];
         if (r == null) {
-            r = wrap(elements.get(idx));
+            r = wrap(elements.get(idx), this, null);
             if (r == null) {
                 r = JSON_NULL_MARK;
             }

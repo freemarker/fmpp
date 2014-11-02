@@ -1,0 +1,20 @@
+﻿{
+  "aString": "árvíztűrő",
+  "aNumber": 1.23E2,
+  "aBoolean": true,
+  "anArray": [
+    1.5,
+    "foo",
+    null,
+    true,
+    false,
+    [11, 22],
+    { "a": 111, "b": 222 }
+  ],
+  "anObject": {
+    "u": "U",
+    "n": null,
+    "a": [1111, 2222],
+    "o": { "a": 11111, "b": 22222 }
+  }
+}
