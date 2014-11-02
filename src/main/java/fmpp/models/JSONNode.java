@@ -59,19 +59,37 @@ public abstract class JSONNode implements TemplateNodeModel, Serializable {
      * into a {@link JSONNode}. The values in the {@link List} or {@link Map} must be also be one of the previously
      * listed types. The resulting object is NOT thread safe. Also, the wrapped objects shouldn't be changed after the
      * wrapping. The wrapping of the contained values is possibly lazy.
+     * @throws TemplateModelException If {@code obj} can't be wrapped into JSON node. 
      */
-    public static JSONNode wrap(Object jsonPOJO) {
+    public static JSONNode wrap(Object jsonPOJO) throws TemplateModelException {
         return wrap(jsonPOJO, null, null); 
     }
     
     /**
      * @param parentNode Same as the similar parameter of {@link #JSONNode(JSONNode, String)}.
      * @param nodeName Same as the similar parameter of {@link #JSONNode(JSONNode, String)}.
+     * @throws TemplateModelException If {@code obj} can't be wrapped into JSON node. 
      */
-    protected static JSONNode wrap(Object obj, JSONNode parentNode, String nodeName) {
+    protected static JSONNode wrap(Object obj, JSONNode parentNode, String nodeName) throws TemplateModelException {
         if (obj == null) return null;
         
-        return null;  // TODO
+        if (obj instanceof String) {
+            return new JSONStringNode(parentNode, nodeName, (String) obj);
+        }
+        if (obj instanceof Number) {
+            return new JSONNumberNode(parentNode, nodeName, (Number) obj);
+        }
+        if (obj instanceof Boolean) {
+            return new JSONBooleanNode(parentNode, nodeName, ((Boolean) obj).booleanValue());
+        }
+        if (obj instanceof List) {
+            return new JSONArrayNode(parentNode, nodeName, (List) obj);
+        }
+        if (obj instanceof Map) {
+            return new JSONObjectNode(parentNode, nodeName, (Map) obj);
+        }
+        throw new TemplateModelException("Can't warp an object of this class as JSON node: "
+                + obj.getClass().getName());
     }
 
 }

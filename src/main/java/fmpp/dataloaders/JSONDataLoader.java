@@ -42,7 +42,7 @@ public class JSONDataLoader extends FileDataLoader {
     /**
      * Converts the POJO created from the JSON to its final form.
      */
-    protected Object finalizeResult(Object jsonPOJO) {
+    protected Object finalizeResult(Object jsonPOJO) throws Exception {
         return JSONNode.wrap(jsonPOJO);
     }
     

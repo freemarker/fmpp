@@ -106,9 +106,9 @@ public class MiscUtil {
 
     private static void appendCausedBy(StringBuffer res) {
         res.append(StringUtil.LINE_BREAK);
+        res.append(StringUtil.LINE_BREAK);
         res.append("Caused by:");
         res.append(StringUtil.LINE_BREAK);
-        res.append('\t');
     }
 
     private static void appendClassAndLocation(Throwable e, boolean hideUninterstingClasses, StringBuffer res) {

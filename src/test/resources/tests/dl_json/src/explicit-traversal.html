@@ -1,0 +1,42 @@
+<#escape x as x?html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+
+<table border="1">
+  <tr>
+    <th>Name</th>
+    <th>Age</th>
+    <th>Skills</th>
+    <th>Test results</th>
+    <th>Decided</th>
+  </tr>
+<#list test1 as applicant>
+  <tr>
+    <td>
+      ${applicant.name}
+      <#if applicant.maidenName??>(m.n.: ${applicant.maidenName})</#if>
+    </td>
+    <td>${applicant.age}</td>
+    <td>
+      <#list applicant.skills as s>
+        ${s}<#if s_has_next>,</#if>
+      </#list>
+    </td>
+    <td>
+      <#list applicant.testResults?keys as testName>
+        ${testName}: ${applicant.testResults[testName]?string("0.0")}<#if testName_has_next>,</#if>
+      </#list>
+    </td>
+    <td>
+      ${applicant.decided?string('Y', 'N')}
+    </td>
+  </tr>
+</#list>
+</table>
+
+</body>
+</html>
+</#escape>

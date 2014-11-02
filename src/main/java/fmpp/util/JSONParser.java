@@ -18,6 +18,12 @@ import freemarker.template.utility.NumberUtil;
  */
 public class JSONParser {
 
+    private static final String UNCLOSED_OBJECT_MESSAGE
+            = "This {...} was still unclosed when the end of the file was reached. (Look for a missing \"}\")";
+
+    private static final String UNCLOSED_ARRAY_MESSAGE
+            = "This [...] was still unclosed when the end of the file was reached. (Look for a missing \"]\")";
+
     private static final Object JSON_NULL = new Object();
     
     private static final BigDecimal MIN_INT_AS_BIGDECIMAL = BigDecimal.valueOf(Integer.MIN_VALUE);
@@ -63,7 +69,10 @@ public class JSONParser {
 
     private Object consumeValue(String eofErrorMessage, int eofBlamePosition) throws JSONParseException {
         if (p == ln) {
-            throw newParseException(eofErrorMessage, eofBlamePosition);
+            throw newParseException(
+                    eofErrorMessage == null
+                            ? "A value was expected here, but end-of-file was reached." : eofErrorMessage,
+                    eofBlamePosition == -1 ? p : eofBlamePosition);
         }
         
         Object result;
@@ -90,8 +99,9 @@ public class JSONParser {
         }
         
         throw newParseException(
-                "Expected either the beginnig of a (negative) number or the beginning of one of these: "
-                + "{...}, [...], \"...\", true, false, null");
+                "Expected either the beginning of a (negative) number or the beginning of one of these: "
+                + "{...}, [...], \"...\", true, false, null. Found character " + StringUtil.jQuote(src.charAt(p))
+                + " instead.");
     }
 
     private Object tryConsumeTrueFalseNull() throws JSONParseException {
@@ -257,14 +267,15 @@ public class JSONParser {
         skipWS();
         if (tryConsumeChar(']')) return Collections.EMPTY_LIST;
         
+        boolean afterComma = false;
         List elements = new ArrayList();
         do {
             skipWS();
-            elements.add(consumeValue("Array was still unclosed when the end of the file was reached. "
-                    + "(Look for a missing \"]\")", startP));
+            elements.add(consumeValue(afterComma ? null : UNCLOSED_ARRAY_MESSAGE, afterComma ? -1 : startP));
             
             skipWS();
-        } while (consumeChar(',', ']') == ',');
+            afterComma = true;
+        } while (consumeChar(',', ']', UNCLOSED_ARRAY_MESSAGE, startP) == ',');
         return elements;
     }
 
@@ -275,23 +286,25 @@ public class JSONParser {
         skipWS();
         if (tryConsumeChar('}')) return Collections.EMPTY_MAP;
         
+        boolean afterComma = false;
         Map map = new LinkedHashMap();  // Must keeps original order!
         do {
             skipWS();
-            Object key = tryConsumeString();
-            if (key == null) {
-                throw newParseException("Expected a quoted string literal for key value.");
+            int keyStartP = p;
+            Object key = consumeValue(afterComma ? null : UNCLOSED_OBJECT_MESSAGE, afterComma ? -1 : startP);
+            if (!(key instanceof String)) {
+                throw newParseException("Wrong key type. JSON only allows string keys inside {...}.", keyStartP);
             }
             
             skipWS();
             consumeChar(':');
             
             skipWS();
-            map.put(key, consumeValue("Object was still unclosed when the end of the file was reached. "
-                    + "(Look for a missing \"}\")", startP));
+            map.put(key, consumeValue(null, -1));
             
             skipWS();
-        } while (consumeChar(',', '}') == ',');
+            afterComma = true;
+        } while (consumeChar(',', '}', UNCLOSED_OBJECT_MESSAGE, startP) == ',');
         return map;
     }
 
@@ -334,17 +347,17 @@ public class JSONParser {
             p++;
             return consumeAfterBackslashU(); 
         }
-        throw newParseException("Unsupported this escape: \\" + c);
+        throw newParseException("Unsupported escape: \\" + c);
     }
 
     private char consumeAfterBackslashU() throws JSONParseException {
-        if (p + 3 < ln) {
+        if (p + 3 >= ln) {
             throw newParseException("\\u must be followed by exactly 4 hexadecimal digits");
         }
         final String hex = src.substring(p, p + 4);
         try {
             char r = (char) Integer.parseInt(hex, 16);
-            p =+ 4;
+            p += 4;
             return r;
         } catch (NumberFormatException e) {
             throw newParseException("\\u must be followed by exactly 4 hexadecimal digits, but was followed by "
@@ -362,14 +375,17 @@ public class JSONParser {
     }
 
     private void consumeChar(char expected) throws JSONParseException {
-        consumeChar(expected, (char) 0);
+        consumeChar(expected, (char) 0, null, -1);
     }
     
-    private char consumeChar(char expected1, char expected2) throws JSONParseException {
+    private char consumeChar(char expected1, char expected2, String eofErrorHint, int eofErrorP) throws JSONParseException {
         if (p >= ln) {
-            throw newParseException("Expected " + StringUtil.jQuote(expected1)
-                    + ( expected2 != 0 ? " or " + StringUtil.jQuote(expected2) : "")
-                    + " character, but reached end-of-file.");
+            throw newParseException(eofErrorHint == null
+                    ? "Expected " + StringUtil.jQuote(expected1)
+                            + ( expected2 != 0 ? " or " + StringUtil.jQuote(expected2) : "")
+                            + " character, but reached end-of-file. "
+                    : eofErrorHint,
+                    eofErrorP == -1 ? p : eofErrorP);
         }
         char c = src.charAt(p);
         if (c == expected1 || (expected2 != 0 && c == expected2)) {

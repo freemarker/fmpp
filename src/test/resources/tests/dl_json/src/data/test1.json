@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Jean Test",
+    "maidenName": "Jean Test",
+    "age": 20,
+    "skills": [ "HTML", "CSS" ],
+    "testResults": {
+      "a": 10.5, "b": 20, "c": 30
+    },
+    "decided": true
+  },
+  {
+    "name": "José Test",
+    "maidenName": null,
+    "age": 30,
+    "skills": [ "Ruby", "C++", "Cuda" ],
+    "testResults": {
+      "a": 20, "b": 30, "c": 40
+    },
+    "decided": false
+  }
+]

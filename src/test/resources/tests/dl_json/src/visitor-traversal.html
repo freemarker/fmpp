@@ -1,0 +1,63 @@
+<#escape x as x?html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+<body>
+  <#visit test1>
+</body>
+</html>
+
+<#macro @array>
+  <table border="1">
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+      <th>Skills</th>
+      <th>Test results</th>
+      <th>Decided</th>
+    </tr>
+    <#recurse>
+  </table>
+</#macro>
+
+<#macro @object>
+  <tr>
+    <#recurse>
+  </tr>
+</#macro>
+
+<#macro name>
+  <td>
+    ${.node}
+    <#if .node?parent.maidenName??>(m.n.: ${.node?parent.maidenName})</#if>
+  </td>
+</#macro>
+
+<#macro maidenName><#-- Already extracted in the "name" macro --></#macro>
+
+<#macro age>
+  <td>${.node}</td>
+</#macro>
+
+<#macro skills>
+  <td>
+    <#list .node as s>
+      ${s}<#if s_has_next>,</#if>
+    </#list>
+  </td>
+</#macro>
+
+<#macro testResults>
+  <td>
+    <#list .node?keys as testName>
+      ${testName}: ${.node[testName]?string("0.0")}<#if testName_has_next>,</#if>
+    </#list>
+  </td>
+</#macro>
+
+<#macro decided>
+  <td>${.node?string('Y', 'N')}</td>
+</#macro>
+
+</#escape>

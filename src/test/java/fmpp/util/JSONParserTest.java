@@ -2,8 +2,12 @@ package fmpp.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -44,6 +48,12 @@ public class JSONParserTest extends TestCase {
         assertJSONEquals("\n", "\"\\n\"");
         
         assertJSONEquals("a", "  \"a\"  ");
+        
+        assertJSONEquals("a", "  \"a\"  ");
+        
+        assertJSONEquals("\f", "  \"\\u000c\"  ");
+        assertJSONEquals("\f", "  \"\\u000C\"  ");
+        assertJSONEquals(" AB3", "  \"\\u0020\\u0041\\u00423\"  ");
     }
 
     public void testMalformedStrings() throws JSONParseException {
@@ -52,7 +62,15 @@ public class JSONParserTest extends TestCase {
         assertJSONParsingFails("LF", "\"\n\"");
         assertJSONParsingFails("CR", "\"\r\"");
         assertJSONParsingFails("tab", "\"\t\"");
-        assertJSONParsingFails("12", "\"\f\"");
+
+        assertJSONParsingFails("unsupported escape", "\"\\x\"");
+        assertJSONParsingFails("unsupported escape", "\"\\U0000\"");
+        
+        assertJSONParsingFails("4 hex", "\"\\u\"");
+        assertJSONParsingFails("4 hex", "\"\\uc\"");
+        assertJSONParsingFails("4 hex", "\"\\u0c\"");
+        assertJSONParsingFails("4 hex", "\"\\u00c\"");
+        assertJSONParsingFails("4 hex", "\"\\u00q0\"");
     }
     
     public void testPlainWholeNumbers() throws JSONParseException {
@@ -161,6 +179,7 @@ public class JSONParserTest extends TestCase {
 
     public void testArray() throws JSONParseException {
         assertJSONEquals(Collections.EMPTY_LIST, "[]");
+        assertJSONEquals(Collections.EMPTY_LIST, "[ \r\n\t ]");
         
         ArrayList list = new ArrayList();
         list.add(new Integer(1));
@@ -174,15 +193,16 @@ public class JSONParserTest extends TestCase {
     }
     
     public void testMalformedArray() throws JSONParseException {
-        assertJSONParsingFails("array was still unclosed", "[");
-        assertJSONParsingFails("expected ','", "[1");
-        assertJSONParsingFails("array was still unclosed", "[1,");
+        assertJSONParsingFails("[...] was still unclosed", "[");
+        assertJSONParsingFails("[...] was still unclosed", "[1");
+        assertJSONParsingFails("value was expected", "[1,");
         assertJSONParsingFails("beginning of", "[1,,");
         assertJSONParsingFails("expected ','", "[1 2");
     }
 
     public void testObject() throws JSONParseException {
         assertJSONEquals(Collections.EMPTY_MAP, "{}");
+        assertJSONEquals(Collections.EMPTY_MAP, "{ \r\n\t }");
         
         LinkedHashMap map = new LinkedHashMap();
         map.put("a", new Integer(1));
@@ -192,6 +212,76 @@ public class JSONParserTest extends TestCase {
         map.put("e", Boolean.TRUE);
         assertJSONEquals(map, "{\"a\":1,\"k2\":\"x\",\"ccc\":null,\"\":-1.4e2,\"e\":true}");
         assertJSONEquals(map, "{\n\t\"a\": 1, \"k2\" : \"x\" , \"ccc\"  :null  , \"\" : -1.4e2 , \"e\" :true\n}");
+        
+        // Source order must be kept:
+        Map jm = (Map) JSONParser.parse("{\"a\":\"1\", \"x\":\"2\", \"c\":\"3\", \"y\":\"4\"}", null);
+        assertEquals(Arrays.asList(new Object[] { "a", "x", "c", "y" }), new ArrayList(jm.keySet()));
+        assertEquals(Arrays.asList(new Object[] { "1", "2", "3", "4" }), new ArrayList(jm.values()));
+    }
+
+    public void testMalformedObject() throws JSONParseException {
+        assertJSONParsingFails("{...} was still unclosed", "{");
+        assertJSONParsingFails("expected ':'", "{\"x\"");
+        assertJSONParsingFails("value was expected", "{\"x\":");
+        assertJSONParsingFails("{...} was still unclosed", "{\"x\":1");
+        assertJSONParsingFails("value was expected", "{\"x\":1, ");
+
+        assertJSONParsingFails("wrong key type", "{1:2}");
+    }
+
+    public void testComposites1() throws JSONParseException {
+        Map subM = new HashMap();
+        subM.put("u", new Integer(100));
+        subM.put("v", new Integer(200));
+
+        Map subM2 = new HashMap();
+        subM2.put("i", Arrays.asList(new Object[] { "i1", "i2" }));
+        subM2.put("j", Arrays.asList(new Object[] { "j1", "j2" }));
+        
+        Map rootM = new HashMap();
+        rootM.put("a", new BigDecimal("0.5"));
+        rootM.put("b", Arrays.asList(new Object[] {
+                new Integer(11),
+                Arrays.asList(new Object[] { "x", "y" }),
+                Arrays.asList(new Object[] { "X", "Y" }),
+                new Integer(22),
+                subM
+        }));
+        rootM.put("c", null);
+        rootM.put("d", subM);
+        rootM.put("e", subM2);
+        rootM.put("f", Collections.EMPTY_LIST);
+        rootM.put("g", Collections.EMPTY_MAP);
+        rootM.put("h", Collections.singletonList(Collections.EMPTY_LIST));
+        rootM.put("i", Collections.singletonMap("", Collections.EMPTY_MAP));
+        
+        assertJSONEquals(rootM,
+                "{"
+                + "  \"a\": 0.5,"
+                + "  \"b\": [11, [\"x\", \"y\"], [\"X\", \"Y\"], 22, {\"u\": 100, \"v\": 200}],"
+                + "  \"c\": null,"
+                + "  \"d\": {\"u\": 100, \"v\": 200},"
+                + "  \"e\": {\"i\": [\"i1\", \"i2\"], \"j\": [\"j1\", \"j2\"]},"
+                + "  \"f\": [],"
+                + "  \"g\": {},"
+                + "  \"h\": [[]],"
+                + "  \"i\": {\"\":{}}"
+                + "}");
+    }
+    
+    public void testComposites2() throws JSONParseException {
+        Map subM = new HashMap();
+        subM.put("u", new Integer(100));
+        subM.put("v", new Integer(200));
+        
+        List list = Arrays.asList(new Object[] {
+                subM,
+                Arrays.asList(new Object[] { "x", "y" }),
+                Collections.EMPTY_LIST,
+                Collections.EMPTY_LIST,
+                null
+        });
+        assertJSONEquals(list, "[{\"u\": 100, \"v\": 200}, [\"x\", \"y\"], [], [], null]");
     }
     
     public void testEmptyFile() throws JSONParseException {

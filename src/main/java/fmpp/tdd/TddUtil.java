@@ -17,7 +17,16 @@
 package fmpp.tdd;
 
 import fmpp.Engine;
+import fmpp.dataloaders.CsvDataLoader;
+import fmpp.dataloaders.EvalDataLoader;
 import fmpp.dataloaders.HtmlUtilsDataLoader;
+import fmpp.dataloaders.JSONDataLoader;
+import fmpp.dataloaders.NowDataLoader;
+import fmpp.dataloaders.PropertiesDataLoader;
+import fmpp.dataloaders.SlicedTextDataLoader;
+import fmpp.dataloaders.TddDataLoader;
+import fmpp.dataloaders.TddSequenceDataLoader;
+import fmpp.dataloaders.TextDataLoader;
 import fmpp.util.InstallationException;
 import fmpp.util.MiscUtil;
 
@@ -37,28 +46,30 @@ public class TddUtil {
         DataLoader dl;
         // Hard-linked data loaders
         if (dlName.equals("properties")) {
-            return new fmpp.dataloaders.PropertiesDataLoader();
+            return new PropertiesDataLoader();
+        } else if (dlName.equals("json")) {
+            return new JSONDataLoader();
         } else if (dlName.equals("tdd")) {
-            return new fmpp.dataloaders.TddDataLoader();
+            return new TddDataLoader();
         } else if (dlName.equals("tddSequence")) {
-            return new fmpp.dataloaders.TddSequenceDataLoader();
+            return new TddSequenceDataLoader();
         } else if (dlName.equals("text")) {
-            return new fmpp.dataloaders.TextDataLoader();
+            return new TextDataLoader();
         } else if (dlName.equals("slicedText")) {
-            return new fmpp.dataloaders.SlicedTextDataLoader();
+            return new SlicedTextDataLoader();
         } else if (dlName.equals("csv")) {
-            return new fmpp.dataloaders.CsvDataLoader();
+            return new CsvDataLoader();
         } else if (dlName.equals("eval")) {
-            return new fmpp.dataloaders.EvalDataLoader();
+            return new EvalDataLoader();
         } else if (dlName.equals("htmlUtils")) {
-            return new fmpp.dataloaders.HtmlUtilsDataLoader();
+            return new HtmlUtilsDataLoader();
         } else if (dlName.equals("xhtmlUtils")) {
             HtmlUtilsDataLoader f
-                    = new fmpp.dataloaders.HtmlUtilsDataLoader();
+                    = new HtmlUtilsDataLoader();
             f.setXHtml(true);
             return f;
         } else if (dlName.equals("now")) {
-            return new fmpp.dataloaders.NowDataLoader();
+            return new NowDataLoader();
         // On-demand linked data loaders:
         } else if (dlName.equals("antProperty")) {
             dlName = "fmpp.dataloaders.AntPropertyDataLoader";
