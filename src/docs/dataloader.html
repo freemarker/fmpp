@@ -26,7 +26,7 @@
     <ul>
       <li><@c>separator</@c>: The character that separates the columns. Defaults to <@c>";"</@c>. It can be any character. It also understands the string <@c>"tab"</@c>, which means that the separtor character will be the tab character.</li>
       
-      <li><@c>encoding</@c>: The charset used for the CSV file. Defaults to the value of the <@s>sourceEncoding</@s> setting.</li>
+      <li><@c>encoding</@c>: The charset used for reading CSV file. Defaults to the value of the <@s>sourceEncoding</@s> setting.</li>
 
       <li><@c>trimCells</@c>: Specifies if all cells will be trimmed (boolean). Trimming means the removal of all leading and trailing white-space. Defaults to no trimming (in which case only header cells are trimmed). <@e>For tables directly entered by humans (like in Excel) it is strongly recommended to turn this on.</@e>
       
@@ -161,9 +161,78 @@ tulip;white;6
 
 </@dataLoader>
 
+<@dataLoader name="json">
+  <@param name="path" type="string">The path of the JSON file.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for reading the JSON file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  
+  <p>Examples (with TDD syntax):</p>
+  <ul>
+    <li><@c>json(data/foo.json)</@c>
+    <li><@c>json(data/foo.json, UTF-8)</@c>
+  </ul>
+  
+  <p>This data loader parses a JSON file. The JSON file must contain a single top-level JSON value of any type, like a JSON array, or a JSON object, or a JSON string, etc. Example file content (this contains a JSON array on the top-level):</p>
+  
+<@prg>
+[
+  {
+    "name": "Jean Test",
+    "maidenName": "Jean Test",
+    "age": 20,
+    "skills": [ "HTML", "CSS" ],
+    "testResults": { "a": 10.5, "b": 20, "c": 30 },
+    "decided": true
+  },
+  {
+    "name": "José Test",
+    "maidenName": null,
+    "age": 30,
+    "skills": [ "Ruby", "C++", "Cuda" ],
+    "testResults": { "a": 20, "b": 30, "c": 40 },
+    "decided": false
+  }
+]
+</@prg>
+  
+  <p>Assuming you have loaded the above JSON into the <@c>applicants</@c> variable, you could print the name and age of all applicants, and print their skills in nested listing like this:</p>
+
+<@prg><#noparse>
+<#list applicants as applicant>
+  ${applicant.name} (age: ${applicant.age})
+  <#list applicant.skills as skill>
+    - ${skill}
+  </#list>
+</#list>
+</#noparse></@prg>
+  
+  <p>That is, JSON arrays will be FTL (FreeMarker Template Language) sequences, JSON objects will be FTL hashes, JSON strings will be FTL strings, JSON numbers will be FTL numbers, JSON boolean will be FTL boolean. JSON null-s will be FTL undefined variables (Java <@c>null</@c>-s), so for <@c>applicants[1].maindenName</@c> FreeMarker would give an undefined variable error, and you need to write something like <@c>applicants[1].maindenName!'N/A'</@c> instead.</p>
+
+  <p>The loaded JSON will also act as an FTL node tree (and advanced FreeMarker feature), similarly to an XML. This means, among others, that you can get the parent of a value. The parent of a value is its containing array or object:</p>
+
+<@prg><#noparse>
+<#-- We just pick some skill for the example below: -->
+<#assign skill = applicants[0].skills[0]>
+<#-- Now let's say we only have the skill variable, and we don't know
+     how was it get. We can still get whose skill it was: -->
+${skill} is the skill of ${skill?parent?parent.name},
+<#-- skill?parent is the array, the parent of that is the JSON object -->
+</#noparse></@prg>
+
+  <p>More details about the node nature:</p>
+  <ul>
+    <li>The <@c>?node_type</@c> of a value will be the name of the JSON type, like <@c>"string"</@c>, <@c>"array"</@c>, <@c>"object"</@c>, etc.</li>
+    <li>If a value is the right-side of a key-value pair in a JSON object, its <@c>?node_name</@c> will be the value of the key (like <@c>"name"</@c>, <@c>"age"</@c>, etc.). Otherwise, it will be <@c>"unnamed"</@c> + capital node type, like <@c>"unnamedString"</@c>.</li>
+    <li>When traversing the tree with <@c>&lt;#visit <@r>...</@r>></@c>/<@c>&lt;#recurse></@c>, or using <@c>?children</@c>, JSON <@c>null</@c>-s will appear as existing nodes with <@c>?node_type</@c> <@c>"null"</@c> and no FTL type other than node (thus they are unprintable, uncomparable, unlistable, etc.).</li>
+  </ul>
+
+<p>See <@fma>the FreeMarker Manual</@fma> for more about nodes and the related directives and built-ins!</p>
+
+</@dataLoader>
+
+
 <@dataLoader name="text">
   <@param name="path" type="string">The path of the text file.</@param>
-  <@param name="charset" type="string" optional=true>The charset used for the text file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for reading text file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
   
   <p>Examples (with TDD syntax):</p>
   <ul>
@@ -181,7 +250,7 @@ tulip;white;6
       <li><@c>separator</@c>: The string that slices the text file into items, that is, the string between two adjoining items. It defaults to <@c>"\n"</@c>, so each line of the text will be an item. Examples: If you want the items to be separated with empty lines, then you should write <@c>"\n\n"</@c> (this is what is between two items if you imagine it). Of course in this case the items can contain single line-breaks (but not multiple consequent line breaks), not like in the default case. If you want to separate the items with a <@c>"---"</@c> that is considered as separator only if it's alone in a line (not in the middle of a line) then the separator should be <@c>"\n---\n"</@c>. If you simply want to separate the items with semicolon then the separator should be <@c>";"</@c> (in this case you certainly want to use the <@c>trim</@c> option described below). There is some "magic" involved in the handling of line-breaks: 1.: no mater if you are using UN*X, DOS/Windows or Mac line-breaks in the <@c>separator</@c> option and in the text file, they will be considered to be equal, 2.: when the text file is searched for a multi-line separator string, those evil invisible extra spaces and tabs at the end of the lines will be tolerated.</li> 
       <li><@c>trim</@c>: If it's <@c>true</@c>, then each item will be trimmed individually, that is, the leading and trailing white space will be removed from them. Defaults to <@c>false</@c>.</li>
       <li><@c>dropEmptyLastItem</@c>: If it's <@c>true</@c> then the last item will be removed from the result if it's a 0 length string (after trimming, if the <@c>trim</@c> option is <@c>true</@c>). Defaults to <@c>true</@c>, so if the text file ends with a separator or the text file is empty, you will not get a needless empty item.</li>
-      <li><@c>encoding</@c>: The charset used for the text file. Defaults to the value of the <@s>sourceEncoding</@s> setting.</li>
+      <li><@c>encoding</@c>: The charset used for reading text file. Defaults to the value of the <@s>sourceEncoding</@s> setting.</li>
     </ul>
   </@param>
   
@@ -261,7 +330,7 @@ This is the last item.
 
 <@dataLoader name="tdd">
   <@param name="path" type="string">The path of the TDD file.</@param>
-  <@param name="charset" type="string" optional=true>The charset used for the TDD file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for reading TDD file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
   
   <p>Examples (with TDD syntax):</p>
   <ul>
@@ -277,7 +346,7 @@ This is the last item.
 
 <@dataLoader name="tddSequence">
   <@param name="path" type="string">The path of the TDD file.</@param>
-  <@param name="charset" type="string" optional=true>The charset used for the TDD file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
+  <@param name="charset" type="string" optional=true>The charset used for reading TDD file. Defaults to the <@s>sourceEncoding</@> setting.</@param>
   
   <p>This is like the <@a href="#key_tdd"><@c>tdd</@c> dataloader</@a>, except that it interprets the file as a <@a href="tdd.html">TDD</@a> sequence (TDD "sequence mode"), rather than as a TDD hash. So the result will be a sequence (a list), not a hash.</p>
 </@dataLoader>

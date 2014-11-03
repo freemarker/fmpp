@@ -1,7 +1,7 @@
 <@page title="FMPP - FreeMarker-based file PreProcessor" keywords="homepage">
 
 <@sect title="What is FMPP?">
-  <p>FMPP is a general-purpose text file preprocessing tool that uses <a href="http://freemarker.org/">FreeMarker</a> templates. It process entire directories recursively. It can be used  for generating complete static websites, source code, configuration files, etc. It can insert data from sources like CSV and XML into the generated files. (You can add new kind of data sources in Java.) <@a href="qtour.html">See the Tutorial</@a> for a more concrete introduction.</p>
+  <p>FMPP is a general-purpose text file preprocessing tool that uses <a href="http://freemarker.org/">FreeMarker</a> templates. It process entire directories recursively. It can be used  for generating complete static websites, source code, configuration files, etc. It can insert data from sources like CSV, XML, and JSON into the generated files. (You can add new kind of data sources in Java.) <@a href="qtour.html">See the Tutorial</@a> for a more concrete introduction.</p>
   
   <p>FMPP can be used with UN*X-style command-line interface, or as <a href="http://ant.apache.org">Ant</a> task, or can be embedded into your application using its Java API.</p>
 
@@ -38,7 +38,8 @@
           Currently out-of-the-box supported data sources:
             <ul>
               <li>XML file</li>
-              <li>CSV and tab-separated text files</li>
+              <li>CSV and tab-separated text file</li>
+              <li>JSON file</li>
               <li>Java "properties" file</li>
               <li>Ant properties, Ant project and target information</li>
               <li>System clock</li>

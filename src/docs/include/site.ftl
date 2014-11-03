@@ -329,6 +329,8 @@
 
 <#macro nbca><span class="warning"><strong>Warning!</strong> Incompatible Java API change!</span> </#macro>
 
+<#macro attc><span class="warning"><strong>Attention!</strong> </span> </#macro>
+
 <#macro url href rel=""><a href="${href}"<#if rel?has_content> rel="${rel}"</#if>>${href}</a></#macro>
 
 <#macro fma href=''>

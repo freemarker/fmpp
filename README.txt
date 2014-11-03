@@ -13,8 +13,8 @@ What is FMPP?
 FMPP is a general-purpose text file preprocessing tool that uses FreeMarker
 templates. It process entire directories recursively. It can be used for
 generating complete static websites, source code, configuration files, etc.
-It can insert data from sources like CSV and XML into the generated files.
-You can add new kind of data sources in Java.
+It can insert data from sources like CSV, XML, and JSON into the generated
+files. You can add new kind of data sources in Java.
   
 FMPP can be used with UN*X-style command-line interface, or as Ant task, or
 can be embedded into your application using its Java API.

@@ -1,7 +1,7 @@
 <@page title="Version History" keywords="verions, version history">
 
 <@sect title="0.9.15">
-  <p>Date of release: FIXME</p>
+  <p>Date of release: 2014-11-05</p>
   <p>Bug fixes:</p>
   <ul>
     <li>Fixed an oversight where an <@c>Engine</@c> static field was accidentally initialized in a non-static initializer, causing problems in multi-threaded environment.</li>
@@ -12,8 +12,9 @@
   
   <p>New features, improvements:</p>
   <ul>
+    <li>Added <@a href="dataloader.html#key_json">JSON data loader</@a>.
     <li>
-      Exposed FreeMarker settings new since 2.3.15 as FMPP settings:
+      Exposed relevant FreeMarker settings added since 2.3.15:
       <ul>
         <li><@s>freemarkerIncompatibleImprovements</@s> (also exposed to <@s>objectWrapper</@s> scripts as a global variable with the same name)</li>
         <li><@s>booleanFormat</@s></li>
@@ -21,13 +22,14 @@
       </ul>
     </li>
     <li>The command line tool doesn't "snip" (<@c>--8<--</@c>) error messages any more, instead, by default, it prints a cause message chain instead of a stack trace on error. This is especially useful as newer FreeMarker versions tend to give more detailed error messages that shouldn't be cut off. Stack traces can be asked with the new <@s>printStackTrace</@s> setting. The <@s>snip</@s> setting is now deprecated, and is only an inverted alias to <@s>printStackTrace</@s>.</li>
+    <li>Improved console error output quality in general.</li>
     <li>The command line tool now detects the actual number of console (terminal) columns and wraps lines accordingly. Earlier it has used 80 columns. This only works if you invoke FMPP with the provided shell script (<@c>bin/fmpp</@c> or <@c>bin/fmpp.bat</@c>). Also, it won't work if you have explicitly set the <@s>columns</@s> setting (like in <@c>~/.fmpprc</@c>) as then that will take precedence.</li>
-    <li>FMPP license has been changed from BSD to Apache License 2.0. The copyright owner has been changed to be the same as the owner of FreeMarker. The two projects now share the same license and Contributor License Agreement.</li>
+    <li>FMPP license has been changed from BSD to Apache License 2.0. The copyright owner has been changed to be the same as the owners of FreeMarker. The two projects now share the same license and Contributor License Agreement.</li>
     <li>
       The dependencies of FMPP has been updated/changed:
       <ul>
-        <li>The minimum required Java version has been increased from 1.2. to 1.4.</li>
-        <li>The minimum required FreeMarker version has been increased from 2.3.15 to 2.3.21.</li>
+        <li><@attc/> The minimum required Java version has been increased from 1.2 to 1.4.</li>
+        <li><@attc/> The minimum required FreeMarker version has been increased from 2.3.15 to 2.3.21.</li>
         <li>Removed Oro dependency (<@c>lib/oro.jar</@c>) as regular expression support is included in Java 1.4.</li>
         <li>Updated FreeMarker dependency from 2.3.15 to 2.3.21 (<@c>lib/freemarker.jar</@c> and FreeMarker Manual).</li>
         <li>Updated <@c>ImageInfo</@c> to version 1.9. It isn't included in <@c>fmpp.jar</@c> any more, instead it's a regular dependency (<@c>lib/imageinfo.jar</@c>).</li>
@@ -36,9 +38,9 @@
     </li>
     <li>Added new constructor, <@c>Engine(BeansWrapper beansWrapper, Version fmIncompImprovements)</@c>, deprecated the earlier <@c>Version</@c>-less overload.</li>
     <li>Removed long deprecated method: <@c>Settings.execute(Engine eng)</@c>.
-    <li>The project source code was moved from SourceForge.net to GitHub: <@url href="https://github.com/freemarker/fmpp" /></li>
-    <li>Overall source code structure and Ant build improvements</li>
-    <li>Updated web site and documentation design and cleaned up content a bit</li>
+    <li>The project source code was moved from SourceForge.net to GitHub: <@url href="https://github.com/freemarker/fmpp" />.</li>
+    <li>Overall source code structure and Ant build improvements.</li>
+    <li>Updated Web site and documentation design, also cleaned up the content a bit.</li>
   </ul>
   
 </@sect>
