@@ -27,7 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import freemarker.core.ParseException;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateModelException;
 
 /**
  * Miscellaneous utility methods. 
@@ -115,15 +117,11 @@ public class MiscUtil {
         StackTraceElement[] stackTrace = e.getStackTrace();
         if (stackTrace != null && stackTrace.length >= 1) {
             StackTraceElement thrower = stackTrace[0];
-            String c = thrower.getClassName();
-            if (!hideUninterstingClasses
-                    || (!c.startsWith("freemarker.core")
-                            && !c.startsWith("freemarker.template")
-                            && !c.startsWith("freemarker.ext.beans")
-                            && !c.startsWith("fmpp."))) {
+            String throwerC = thrower.getClassName();
+            if (!hideUninterstingClasses || !technicalDetailsNeedNotBeShown(throwerC, e)) {
                 res.append(e.getClass().getName());
                 res.append(" (at ");
-                res.append(c);
+                res.append(throwerC);
                 String m = thrower.getMethodName();
                 if (m != null) {
                     res.append('.');
@@ -141,6 +139,22 @@ public class MiscUtil {
         } else {  // Shouldn't ever occur
             res.append(e.getClass().getName());
         }
+    }
+
+    private static boolean technicalDetailsNeedNotBeShown(String throwerClassName, Throwable thrownExc) {
+        return
+                (
+                    thrownExc instanceof ExceptionCC
+                    || thrownExc instanceof RuntimeExceptionCC
+                    || thrownExc instanceof TemplateException
+                    || thrownExc instanceof ParseException
+                    || thrownExc instanceof TemplateModelException
+                )
+                &&
+                (
+                    throwerClassName.startsWith("freemarker.")
+                    || throwerClassName.startsWith("fmpp.")
+                );
     }
 
     /**
