@@ -31,7 +31,7 @@ public class JSONObjectNode extends JSONNode implements TemplateHashModelEx {
      *          {@link JSONNode#wrap(Object)} can wrap. 
      */
     public JSONObjectNode(JSONNode parentNode, String nodeName, Map/*<String, Object>*/ map) {
-        super(parentNode, nodeName != null ? nodeName : DEFAULT_NODE_NAME);
+        super(parentNode, nodeName);
         this.map = map;
     }
 
@@ -39,8 +39,12 @@ public class JSONObjectNode extends JSONNode implements TemplateHashModelEx {
         return NODE_TYPE;
     }
 
+    /**
+     * Returns the {@link JSONNode} for the given key from this JSON object, using a Java {@code null} for JSON
+     * {@code null}-s. Note that {@link #getChildNodes()} treats JSON {@code null}-s differently.
+     */
     public TemplateModel get(String key) throws TemplateModelException {
-        return wrap(map.get(key), this, key);
+        return wrap(map.get(key), this, key, false);
     }
 
     public boolean isEmpty() throws TemplateModelException {
@@ -56,11 +60,15 @@ public class JSONObjectNode extends JSONNode implements TemplateHashModelEx {
     }
     
     public TemplateCollectionModel keys() throws TemplateModelException {
-        return new JSONJavaValueCollection(map.keySet());
+        return new JSONKeyCollection(map.keySet());
     }
 
+    /**
+     * Returns the values from the key-value pairs of this JSON object, returning Java {@code null} for JSON
+     * {@code null}-s. Note that {@link #getChildNodes()} treats JSON {@code null}-s differently.
+     */
     public TemplateCollectionModel values() throws TemplateModelException {
-        return new JSONJavaValueCollection(map.values());
+        return new JSONValueCollection(map.entrySet());
     }
 
     private class JSONChildNodeSequence implements TemplateSequenceModel, TemplateCollectionModel {
@@ -111,7 +119,7 @@ public class JSONObjectNode extends JSONNode implements TemplateHashModelEx {
             int dstIdx = 0;
             for (Iterator it = entries.iterator(); it.hasNext();) {
                 final Map.Entry/*<String, Object>*/ entry = (Entry) it.next();
-                wrappedValues[dstIdx++] = wrap(entry.getValue(), JSONObjectNode.this, (String) entry.getKey());
+                wrappedValues[dstIdx++] = wrap(entry.getValue(), JSONObjectNode.this, (String) entry.getKey(), true);
             }
             return this.wrappedValues = wrappedValues;
         }
@@ -122,11 +130,11 @@ public class JSONObjectNode extends JSONNode implements TemplateHashModelEx {
         
     }
     
-    private class JSONJavaValueCollection implements TemplateCollectionModel {
+    private class JSONKeyCollection implements TemplateCollectionModel {
 
         private final Collection/*<String>*/ values;
         
-        private JSONJavaValueCollection(Collection/*<String>*/ values) {
+        private JSONKeyCollection(Collection/*<String>*/ values) {
             this.values = values; 
         }
 
@@ -140,12 +148,43 @@ public class JSONObjectNode extends JSONNode implements TemplateHashModelEx {
                 }
 
                 public TemplateModel next() throws TemplateModelException {
-                    return wrap(it.next(), JSONObjectNode.this, null);
+                    return wrap(it.next(), JSONObjectNode.this, null, false);
                 }
                 
             };
         }
         
+    }
+
+    private class JSONValueCollection implements TemplateCollectionModel {
+
+        private final Collection/*<Map.Entry<String,Object>>*/ values;
+        
+        private JSONValueCollection(Collection/*<Map.Entry<String,Object>>*/ values) {
+            this.values = values; 
+        }
+
+        public TemplateModelIterator iterator() throws TemplateModelException {
+            return new TemplateModelIterator() {
+                
+                Iterator it = values.iterator();
+
+                public boolean hasNext() throws TemplateModelException {
+                    return it.hasNext();
+                }
+
+                public TemplateModel next() throws TemplateModelException {
+                    final Map.Entry/*<String,Object>*/ entry = (Entry) it.next();
+                    return wrap(entry.getValue(), JSONObjectNode.this, (String) entry.getKey(), false);
+                }
+                
+            };
+        }
+        
+    }
+    
+    protected String getDefaultNodeName() {
+        return DEFAULT_NODE_NAME;
     }
     
 }

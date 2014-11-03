@@ -17,7 +17,7 @@ public class JSONStringNode extends JSONNode implements TemplateScalarModel {
     private final String value;
 
     public JSONStringNode(JSONNode parentNode, String nodeName, String value) {
-        super(parentNode, nodeName != null ? nodeName : DEFAULT_NODE_NAME);
+        super(parentNode, nodeName);
         this.value = value;
     }
 
@@ -39,4 +39,8 @@ public class JSONStringNode extends JSONNode implements TemplateScalarModel {
         return value;
     }
 
+    protected String getDefaultNodeName() {
+        return DEFAULT_NODE_NAME;
+    }
+    
 }

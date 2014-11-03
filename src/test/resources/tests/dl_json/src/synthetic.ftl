@@ -74,9 +74,15 @@
 
 <#assign childTypes = "">
 <#list arr?children as child>
-  <#assign childTypes = childTypes + ((child?node_type)!'?') + ";">
+  <#assign childTypes = childTypes + child?node_type + ";">
 </#list>
-<@assert childTypes == "number;string;?;boolean;boolean;array;object;", childTypes />
+<@assert childTypes == "number;string;null;boolean;boolean;array;object;", childTypes />
+
+<#assign values = "">
+<#list arr as value>
+  <#assign values = values + ((value?node_type)!'?') + ";">
+</#list>
+<@assert values == "number;string;?;boolean;boolean;array;object;", values />
 
 <#assign anObject = synthetic.anObject>
 <@assert anObject?size == 4 />
@@ -114,9 +120,26 @@
 
 <#assign childNames = "">
 <#list anObject?children as child>
-  <#assign childNames = childNames + ((child?node_name)!'?') + ";">
+  <#assign childNames = childNames + child?node_name + ";">
 </#list>
-<@assert childNames == "u;?;a;o;", childNames />
+<@assert childNames == "u;n;a;o;", childNames />
+
+<#assign values = "">
+<#list anObject?values as value>
+  <#assign values = values + ((value?node_name)!'?') + ";">
+</#list>
+<@assert values == "u;?;a;o;", values />
+<@assert anObject?values[2]?node_type == 'array' />
+<@assert anObject?values[2]?parent.u == 'U' />
+
+<@assert anObject?keys?join(";", "?") == "u;n;a;o" />
+<#assign keys = "">
+<#list anObject?keys as key>
+  <#assign keys = keys + ((key?node_name)!'?') + ";">
+</#list>
+<@assert keys == "unnamedString;unnamedString;unnamedString;unnamedString;", keys />
+<@assert anObject?keys[2]?node_type == 'string' />
+<@assert anObject?keys[2]?parent.u == 'U' />
 
 <#macro assert bool actual="">
   <#if !bool>

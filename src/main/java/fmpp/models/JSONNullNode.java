@@ -1,42 +1,30 @@
 package fmpp.models;
 
 import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateNumberModel;
+import freemarker.template.TemplateNodeModel;
 import freemarker.template.TemplateSequenceModel;
 
 /**
- * JSON "number" value; see http://www.json.org/.
+ * JSON "null" value; see http://www.json.org/. Instances of this can only be found through traversing the FTL node
+ * tree ({@link TemplateNodeModel} tree), not as normal FTL sequence or FTL hash items.
  */
-public class JSONNumberNode extends JSONNode implements TemplateNumberModel {
+public class JSONNullNode extends JSONNode {
 
     private static final long serialVersionUID = 1L;
     
-    public static final String NODE_TYPE = "number";
+    public static final String NODE_TYPE = "null";
     public static final String DEFAULT_NODE_NAME = nodeTypeToDefaultNodeName(NODE_TYPE);
     
-    private final Number value;
-    
-    public JSONNumberNode(JSONNode parentNode, String nodeName, Number value) {
+    public JSONNullNode(JSONNode parentNode, String nodeName) {
         super(parentNode, nodeName);
-        this.value = value;
     }
 
-    /**
-     * Always returns {@code null}.
-     */
     public TemplateSequenceModel getChildNodes() throws TemplateModelException {
         return null;
     }
 
-    /**
-     * Returns {@link #NODE_TYPE}.
-     */
     public String getNodeType() throws TemplateModelException {
         return NODE_TYPE;
-    }
-
-    public Number getAsNumber() throws TemplateModelException {
-        return value;
     }
     
     protected String getDefaultNodeName() {

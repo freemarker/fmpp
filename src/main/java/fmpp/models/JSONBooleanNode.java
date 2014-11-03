@@ -17,7 +17,7 @@ public class JSONBooleanNode extends JSONNode implements TemplateBooleanModel {
     private final boolean value;   
     
     public JSONBooleanNode(JSONNode parentNode, String nodeName, boolean value) {
-        super(parentNode, nodeName != null ? nodeName : DEFAULT_NODE_NAME);
+        super(parentNode, nodeName);
         this.value = value;
     }
 
@@ -39,4 +39,8 @@ public class JSONBooleanNode extends JSONNode implements TemplateBooleanModel {
         return value;
     }
 
+    protected String getDefaultNodeName() {
+        return DEFAULT_NODE_NAME;
+    }
+    
 }
