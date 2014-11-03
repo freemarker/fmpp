@@ -1,17 +1,7 @@
 ﻿Before next release
 -------------------
 
-. True JSON data loader
-  - Models
-  - Parser
-    - Test
-  - Test:
-    - Explicit traversal
-    - Visitor pattern traversal
-    - array OOB
-    - Pairs as seq, OOB
-    - BOM
-  - Unwrapping support?
+. True JSON data loader: Document
 . Re-run test on Java 1.4
 . Run FMPP manually on some projects
 . Test Maven artifact

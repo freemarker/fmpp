@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 import junit.framework.TestCase;
+import fmpp.models.JSONNode;
+import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateNodeModel;
+import freemarker.template.TemplateSequenceModel;
 
 public class JSONParserTest extends TestCase {
 
@@ -287,6 +291,52 @@ public class JSONParserTest extends TestCase {
     public void testEmptyFile() throws JSONParseException {
         assertJSONParsingFails("Empty JSON", "");
         assertJSONParsingFails("Empty JSON", "   \n  ");
+    }
+
+    public void testIOOBMessages() throws JSONParseException, TemplateModelException {
+        {
+            TemplateNodeModel node = JSONNode.wrap(Arrays.asList(new String[] { "a", "b", "c" }));
+            try {
+                node.getChildNodes().get(-1);
+            } catch (TemplateModelException e) {
+                assertTrue(e.getMessage().indexOf("0..2") != -1);
+            }
+            try {
+                node.getChildNodes().get(3);
+            } catch (TemplateModelException e) {
+                assertTrue(e.getMessage().indexOf("0..2") != -1);
+            }
+            
+            TemplateSequenceModel seq = (TemplateSequenceModel) node;
+            try {
+                seq.get(-1);
+            } catch (TemplateModelException e) {
+                assertTrue(e.getMessage().indexOf("0..2") != -1);
+            }
+            try {
+                seq.get(3);
+            } catch (TemplateModelException e) {
+                assertTrue(e.getMessage().indexOf("0..2") != -1);
+            }
+        }
+        
+        {
+            Map m = new HashMap();
+            m.put("a", "A");
+            m.put("b", "B");
+            m.put("c", "C");
+            TemplateNodeModel node = JSONNode.wrap(m);
+            try {
+                node.getChildNodes().get(-1);
+            } catch (TemplateModelException e) {
+                assertTrue(e.getMessage().indexOf("0..2") != -1);
+            }
+            try {
+                node.getChildNodes().get(3);
+            } catch (TemplateModelException e) {
+                assertTrue(e.getMessage().indexOf("0..2") != -1);
+            }
+        }
     }
     
     private static void assertJSONEquals(Object expected, String json) throws JSONParseException {
