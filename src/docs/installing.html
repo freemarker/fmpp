@@ -14,7 +14,7 @@
 </@sect>
 
 <@sect title="Extracting">
-<p>Extract the downloaded archive file (<@c>fmpp_<@r>X</@r>.<@r>X</@r>.<@r>X</@r>.tar.gz</@c> or <@c>fmpp_<@r>X</@r>.<@r>X</@r>.<@r>X</@r>.zip</@c>) into the directory where you prefer to store FMPP. For Windows users it is typically <@c>C:\fmpp</@> or  <@c>C:\Program Files\fmpp</@>, for UN*X users it is typically <@c>~/opt/fmpp</@> or <@c>/opt/fmpp</@> (where <@c>fmpp</@c> is the extracted <@c>fmpp_<@r>X</@r>.<@r>X</@r>.<@r>X</@r></@c> directory after renaming). From now I will refer to this directory as <@c><@r>&lt;FMPP></@></@>.</p>
+<p>Extract the downloaded archive file (<@c>fmpp_<@r>X</@r>.<@r>X</@r>.<@r>X</@r>.tar.gz</@c> or <@c>fmpp_<@r>X</@r>.<@r>X</@r>.<@r>X</@r>.zip</@c>) into the directory where you prefer to store FMPP. For Windows users it is typically <@c>C:\fmpp</@> or <@c>C:\Program Files\fmpp</@>, for UN*X users it is typically <@c>~/opt/fmpp</@> or <@c>/opt/fmpp</@> or <@c>/usr/lib/fmpp</@c> (where <@c>fmpp</@c> is the extracted <@c>fmpp_<@r>X</@r>.<@r>X</@r>.<@r>X</@r></@c> directory after renaming). From now on I will refer to this directory as <@c><@r>&lt;FMPP_HOME></@></@>.</p>
 
 <p>
 
@@ -22,52 +22,37 @@
 
 <@sect title="Setup the command-line tool" anchor="commandLineTool">
 
-<@sect title="Windows (95/98/Me, NT/2000/XP, ...etc.)">
-
-<p>Quickly and simply: If you have unpacked FMPP into the <@c>C:\Program Files\fmpp</@c> (or <@c>C:\Programme\fmpp</@c>) or the <@c>C:\fmpp</@c> directory, then just copy <@c><@r>&lt;FMPP></@>\bin\fmpp.bat</@c> into <@c>C:\Windows</@c> (if that's the Windows directory on your installation... some systems use <@c>C:\WinNT</@c> or <@c>C:\Win_ME</@c>). Now you can use the <@c>fmpp</@c> command in the command-line anywhere. That's all.</p>
-
-<p>Note the <@c>java.exe</@c> (this comes with Java) must be in the path, or the <@c>JAVA_HOME</@c> environment variable must be correctly set. Otherwise <@c>fmpp.bat</@c> will fail when it tries to invoke <@c>java.exe</@c>.
-
-<p><i>If the above was not good for you, or you run into some problems, then read on...</i></p>
-
-<p>To run FMPP from command-line, execute <@c><@r>&lt;FMPP></@>\bin\fmpp.bat</@>. You should put the <@c><@r>&lt;FMPP></@>\bin</@> into the path, so you can issue an <@c>fmpp</@> command from anywhere. Or, just drop <@c>fmpp.bat</@c> into a directory which is already in the path (say, into the Windows directory), if <@c><@r>&lt;FMPP></@></@> is <@c><@r>&lt;SystemDrive></@r>:\fmpp</@> or <@c><@r>&lt;SystemDrive></@r>:\Progra<@r>&lt;AnythingLongerThan2Characters></@r>\fmpp</@> (e.g. <@c>C:\Program Files\fmpp</@>). 
-
-<p>For those of you who don't know how to set the path: To set the path in Windows NT/2K/XP, use Control Panel/System/Advanced/Environment variables, and edit the <@c>PATH</@c> variable (upper/lower-case differences doesn't matter). To set the path in Win9x, add line <br>
-<@c>set PATH=%PATH%;<@r>&lt;FMPP></@r>\bin</@c><br>
-to the end of <@c>C:\autoexec.bat</@c>. You should restart Windows if the changes do not take effect.</p>
-
-<p>Because of the limitations of <@c>.bat</@c> files, you may get error messages as 
-"The input line is too long.". To solve this, install FMPP in a more "shallow" directory, so that the path to the FMPP related files is shorter.</p>
-
-<p><b>Windows 95/98/Me users please note</b>: Because of the deficiencies of the shell, there are limitations regarding <@c>fmpp.bat</@c>:
+<@sect title="On Windows">
+<p>The steps are as follow:</p>
 <ul>
-  <li><@c><@r>&lt;FMPP></@r></@c> must be <@c>C:\fmpp</@> or  <@c>C:\Progra<@r>&lt;AnythingLongerThan2Characters></@r>\fmpp</@>, or you have to set the <@c>FMPP_HOME</@c> environment variable to point to <@c><@r>&lt;FMPP></@r></@c>. You can set environment variables in the same way as <@c>PATH</@c> above (since <@c>PATH</@c> is an environment variable too).
-  <li>If you set some environment variables (such as <@c>FMPP_HOME</@c>): the path stored by the environment variable can't contain spaces. Also, the <@c>FMPP_HOME</@c> can't contain directory names longer than 8 characters, so instead of <@c>C:/Progidamina/fmpp</@c> you have to write something like <@c>C:/PROGID~1/fmpp</@c>, that is, you have to use the DOS 8.3 equivalent of the long names. 
-  <li>It can happen that the size of "environment" that Windows gives be default is too small. In this case <@c>fmpp.bat</@c> will print error messages about the "environment", and probably will malfunction. To solve this, please add this line to the <@c>config.sys</@c>:
-  <br><@c>SHELL=C:\COMMAND.COM /E:4096 /P</@c>
-  <br>or find the Microsoft Knowledge Base artice with title "Out of Environment Space Error Message in MS-DOS Programs" (KB230205) on the Internet. 
-</ul> 
+  <li>Extract the downloaded archive file (<@c>fmpp_${pp.version}.tar.gz</@c> or <@c>fmpp_${pp.version}.zip</@c>) into <@c>C:\Program Files\fmpp</@c> (note that "Program Files" may be shown in a localized form, like "Programme") or <@c>C:\fmpp</@c> or wherever you prefer to. From now on I will refer to this directory as <@c><@r>&lt;FMPP_HOME></@></@></li>
+  <li>For convenience, add <@c><@r>&lt;FMPP_HOME></@>/bin</@> to the <@c>PATH</@c> environment variable. (How? Google: set path windows)</li>
+  <li>Check if <@c>fmpp.bat</@> isn't present in <@c>C:\Windows</@c> (or in another directory in the <@c>PATH</@c>) from an earlier installation. Delete it if it does.</li>
+  <li>Check if the <@c>JAVA_HOME</@c> environment variable is set correctly (should point to your Java installation directory, not it's <@c>bin</@c> subdirectory), or else that the intended version of the <@c>java</@c> executable is in the <@c>PATH</@c>.</li>
+  <li>To check that everything works, open a command line window and issue: <@c>fmpp --version</@c></li>
+</ul>
 
-<p>Anybody contributes with a good convenient installer ("setup.exe" built with Install Shield Wizard or something) is welcome.</p>
+<p>Note: Because of the limitations of <@c>.bat</@c> files, you may get error messages as "The input line is too long". To solve this, install FMPP in a more "shallow" directory, so that the path to the FMPP related files will be shorter.</p>
 
 </@sect>
 
-<@sect title="UN*X (Linux, FreeBSD, Solaris, OS X, ..., etc.)">
-<p>To run FMPP from command-line, execute <@c><@r>&lt;FMPP></@>/bin/fmpp</@>.
-You may want to create a soft link in a directory that is in the common <@c>PATH</@c>, such as <@c>/bin</@c>, so users can issue an <@c>fmpp</@> command from anywhere:<br>
-<@c>ln -s <@r>&lt;FMPP></@>/bin/fmpp /bin/fmpp</@c>
-</@sect>
-
-<@sect title="Other operation systems">
-  <p>Unfortunatelly, there is no shell script written for you. But you can still use the command-line tool. You will have to execute <@c><@r>&lt;FMPP></@r>/lib/fmpp.jar</@c> with Java. Please refer to the documentation of the Java implementation you are using for more details. If it can't execute <@c>jar</@c>-s, then you have to execute the <@c>fmpp.tools.CommandLine</@> class with Java. For this, <@c><@r>&lt;FMPP></@r>/lib/fmpp.jar</@c> must be in the so called "class path". Again, please refer to the documentation of the Java implementation you are using.</p>
-</@sect>
-
-<@sect title="Notes for all operating systems">
+<@sect title="On UN*X (Linux, FreeBSD, OS X, etc.)">
+<p>The steps are as follow:</p>
 <ul>
-  <li>The <@c>JAVA_HOME</@> environment variable must be correctly set, or <@c>java.exe</@c> (<@c>java</@c> on UN*X) must be in the <@c>PATH</@c>.</li>
-  <li>You can move <@c>fmpp.bat</@c> or (<@c>fmpp</@c> on UN*X) into any directory.</li>
+  <li>Extract the downloaded archive file (<@c>fmpp_${pp.version}.tar.gz</@c> or <@c>fmpp_${pp.version}.zip</@c>) into the <@c>/usr/lib/fmpp</@c> or  <@c>/opt/fmpp</@c> directory (conventions vary by distribution), or wherever you prefer to. From now on I will refer to this directory as <@c><@r>&lt;FMPP_HOME></@r></@c>.
+  </li>
+  <li>For convenience, create a soft link somewhere in the <@c>PATH</@c>, like <@c>sudo ln -s <@r>&lt;FMPP_HOME></@r>/bin/fmpp /usr/bin/fmpp</@c>.</li>
+  <li>Issue <@c>which fmpp</@c> to see if it's not shadowed by an earlier installation elsewhere.</li>
+  <li>Check if the <@c>JAVA_HOME</@c> environment variable is set correctly (should point to your Java installation directory, not it's <@c>bin</@c> subdirectory), or else that the intended version of the <@c>java</@c> executable is in the <@c>PATH</@c>.</li>
+  <li>To check that everything works, open a command line window and issue: <@c>fmpp --version</@c></li>
+</ul>
+</@sect>
+
+<@sect title="Notes">
+<ul>
+  <li>If there's a <@c>FMPP_HOME</@c> environment variable, it <@c><@r>&lt;FMPP_HOME></@r>\bin\fmpp.bat</@c> and <@c><@r>&lt;FMPP_HOME></@r>\bin\fmpp</@c> will use that directory instead of its own grandparent directory.</li>
+  <li>You can run FMPP without the provided shell scripts directly with the <@c>java</@c> command, like <@c>java -jar <@r>&lt;FMPP_HOME></@r>/lib/fmpp.jar</@c>. (You can also put all required jar-s and class directories into the <@c>CLASSPATH</@> and then issue <@c>java fmpp.tools.CommandLine</@c>.) Note though that you will lose console width detection with these approaches.</li>
   <li>You can move the jars into the <@c>lib</@c> subdirectory of Ant (if you want to use the Ant task anyway). If you do this, the command line tool need Ant be installed on a "standard" location (like <@c>C:\Program Files\ant</@c>), or <@c>ANT_HOME</@c> must be correctly set.</li>
-  <li>If these shell scripts are not good for you somehow, just call the <@c>fmpp.tools.CommandLine</@> class with <@c>java</@>; of course <@c>fmpp.jar</@c>, and optional jars/classes (if any) and extension jars/classes (if any) must be in the <@c>CLASSPATH</@>. Also, at least with Sun's Java implementations, you can run <@c>fmpp.jar</@c> directly with <@c>java -jar <@r>&lt;FMPP></@>/lib/fmpp.jar</@>.</li>
 </ul>
 </@sect>
   
@@ -76,7 +61,7 @@ You may want to create a soft link in a directory that is in the common <@c>PATH
 
 <@sect title="Setup the Ant task">
 
-<p>If you want to use FMPP as Ant task, copy the required jar files from <@c><@r>&lt;FMPP></@>/lib</@> into the <@c>lib</@> directory of your Ant installation (issuing <@c>ant&nbsp;install</@c> from <@c><@r>&lt;FMPP></@></@> will do this for you), or ensure that the jars are in the <@c>CLASSPATH</@> environment variable. Then, whenever you need the FMPP task in a project, add this line to your <@c>build.xml</@c>:</p>
+<p>If you want to use FMPP as Ant task, copy the required jar files from <@c><@r>&lt;FMPP_HOME></@>/lib</@> into the <@c>lib</@> directory of your Ant installation (issuing <@c>ant&nbsp;install</@c> from <@c><@r>&lt;FMPP_HOME></@></@> will do this for you), or ensure that the jars are in the <@c>CLASSPATH</@> environment variable. Then, whenever you need the FMPP task in a project, add this line to your <@c>build.xml</@c>:</p>
 
 <@prg><taskdef name="fmpp" classname="fmpp.tools.AntTask"/></@prg>
 
@@ -86,13 +71,13 @@ You may want to create a soft link in a directory that is in the common <@c>PATH
 
 <@sect title="Installing optional parts and custom extensions">
 
-<p>For the command-line tool, simply drop the jar file that contains the required classes into the <@c><@r>&lt;FMPP></@>/lib</@> directory (or, into the Ant <@c>lib</@c> directory, if you store <@c>fmpp.jar</@c> there only). For the Ant task, either ensure that the required jars are in the <@c>CLASSPATH</@c>, or drop the jars into the <@c>lib</@c> directory of your Ant installation.</p>
+<p>For the command-line tool, simply drop the jar file that contains the required classes into the <@c><@r>&lt;FMPP_HOME></@>/lib</@> directory (or, into the Ant <@c>lib</@c> directory, if you store <@c>fmpp.jar</@c> there only). For the Ant task, either ensure that the required jars are in the <@c>CLASSPATH</@c>, or drop the jars into the <@c>lib</@c> directory of your Ant installation.</p>
 
 </@sect>
 
 <@sect title="Updating FreeMarker" anchor="updatingFreeMarker">
 
-<p>FMPP comes with FreeMarker just for the sake of simplicity. You can replace FreeMarker with a later version as far as it is backward compatible with the version that FMPP comes with. For this, <a href="http://freemarker.org/freemarkerdownload.html">download the latest backward compatible FreeMarker release</a>, and overwrite the <@c><@r>&lt;FMPP></@>/lib/freemarker.jar</@c> with the <@c>lib/freemarker.jar</@c> of the FreeMarker release. (Of course, if you are using the FMPP Ant task, you may need to replace the <@c>freemarker.jar</@c> in the <@c>lib</@c> directory of the Ant installation too.)</p>
+<p>FMPP comes with FreeMarker just for the sake of simplicity. You can replace FreeMarker with a later version as far as it is backward compatible with the version that FMPP comes with. For this, <a href="http://freemarker.org/freemarkerdownload.html">download the latest backward compatible FreeMarker release</a>, and overwrite the <@c><@r>&lt;FMPP_HOME></@>/lib/freemarker.jar</@c> with the <@c>lib/freemarker.jar</@c> of the FreeMarker release. (Of course, if you are using the FMPP Ant task, you may need to replace the <@c>freemarker.jar</@c> in the <@c>lib</@c> directory of the Ant installation too.)</p>
 
 </@sect>
 
