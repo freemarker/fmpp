@@ -115,8 +115,8 @@ fi
  
 if [ ! -x "$JAVACMD" ] ; then
   echo "Java executable not found! Tried: $JAVACMD"
-  echo "Install Java, or if it's already installed, ensure that either:
-  echo "- a link to <JAVA_HOME>/bin/java is in the PATH,
+  echo "Install Java, or if it's already installed, ensure that either:"
+  echo "- a link to <JAVA_HOME>/bin/java is in the PATH,"
   echo "- or that the JAVA_HOME environment variable is set."
   exit 1
 fi
