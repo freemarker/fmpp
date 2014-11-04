@@ -271,10 +271,10 @@
 
     <delete file="${dist.dir}.tar.gz" />
     <tar tarfile="${dist.dir}.tar" longfile="gnu">
-      <tarfileset dir="${dist.dir}" mode="755" prefix="fmpp_${version}">
+      <tarfileset dir="${dist.dir}" mode="755" prefix="fmpp">
         <include name="bin/**" />
       </tarfileset>
-      <tarfileset dir="${dist.dir}" prefix="fmpp_${version}">
+      <tarfileset dir="${dist.dir}" prefix="fmpp">
         <exclude name="bin/" />
       </tarfileset>
     </tar>
@@ -283,10 +283,10 @@
 
     <delete file="${dist.dir}.zip" />
     <zip destfile="${dist.dir}.zip" encoding="US-ASCII" whenempty="fail">
-      <zipfileset dir="${dist.dir}" filemode="755" prefix="fmpp_${version}">
+      <zipfileset dir="${dist.dir}" filemode="755" prefix="fmpp">
         <include name="bin/**" />
       </zipfileset>
-      <zipfileset dir="${dist.dir}" prefix="fmpp_${version}">
+      <zipfileset dir="${dist.dir}" prefix="fmpp">
         <exclude name="bin/" />
       </zipfileset>
     </zip>
