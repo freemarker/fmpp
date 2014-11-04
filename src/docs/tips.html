@@ -2,33 +2,31 @@
 
 <@sect title="Finding out the reasons of errors">
 
-<p>Error messages (especially FreeMarker error messages) are often not too helpful or simply bad, and it is hard to find out what the actual problem is. But if you use a log file (see: <@s>logFile</@s>), that will contain the full error stack trace. You often find helpful information there, such as the FTL stack strace. Also, if you are really lost, you may use temporary <@c>pp.warning</@c>-s as a poor man's debugger: you can see if a certain line in the template is reached, also you can print the current values of variables.</p>
+<p>Use a log file (see: <@s>logFile</@s>) as that will contain the full error stack trace. Also, if you are really lost, you may use temporary <@c>pp.warning</@c>-s as a poor man's debugger: you can see if a certain line in the template is reached, also you can print the current values of variables.</p>
 
 </@sect>
 
 
 <@sect title="Speeding up processing when you have many files">
 
-<p>There are 3 main tricks:</p>
+<p>Some tricks:</p>
 <ul>
   <li>Try to use <@s>skipUnchanged</@s> setting. For most applications you can safely use it with the <@c>static</@c> value, and it speeds up things a lot if you have many images or other static files.
   
-  <li>Try to set the <@s>quiet</@s> setting to <@c>true</@c> or <@c>reallyQuiet</@c>, or set <@s>echoFormat</@s> to <@c>terse</@c> for the command-line tool. Surprising enough, some terminals (at least Windows 2000 command line window) scrolls screen slowly, so FMPP has to wait until it can print the next line to the screen, and this can even double the total session time. Funny...
+  <li>Try to set the <@s>quiet</@s> setting to <@c>true</@c> or <@c>reallyQuiet</@c>, or set <@s>echoFormat</@s> to <@c>terse</@c> for the command-line tool. Surprising enough, some terminals scrolls screen slowly, so FMPP has to wait until it can print the next line to the screen.
   
   <li>Process only the files/directories that actually need reprocessing. You don't have to process the whole source root directory; you can select the set of files and directories that you want to process inside the source root, with the <@s>sources</@s> setting.
 </ul>
 
 </@sect>
 
-<@sect title="Prevent too much programming logic in templates">
-<p>Some of your FreeMarker templates can become so complicated, that they are rather programs than templates. Implementing complex programming logic in FTL (FreeMarker Template Language) is not only cumbersome, but defeats the original purpose of templates: to be simple, almost the same as the output.</p>
-
-<p>To prevent this, pair BeanShell scripts with the problematic templates, and do the complex calculations in the script file, and then pass the results to the template for displaying. BeanShell is good in calculating data (and in whatever complex algorithms), FTL is good in displaying data. So you use the adequate languages for the subtasks. This can be implemented with the <@s>localData</@s> setting and its <@c>bsh</@c> function.</p>
+<@sect title="Avoid too much programming logic in templates">
+<p>FTL (FreeMarker Template Language) is not a general purpose programming language, just a template language. Implementing complex programming logic in it is cumbersome, and defeats the original purpose of templates: to be simple, almost the same as the output. To avoid this, pair BeanShell scripts with the problematic templates, and do the complex calculations in the script file, and then pass the results to the template for displaying. BeanShell is good in calculating data (and in whatever complex algorithms), FTL is good in displaying data. So you use the adequate languages for the subtasks. This can be implemented with the <@s>localData</@s> setting and its <@c>bsh</@c> function.</p>
 </@sect>
 
 <@sect title="Showing information about something that will be generated further down">
 
-<p>For example, you have to show a Table of Contents at the top of the page, but the list of headings is not known until the page generation reaches the bottom of the page. In this case, generate the section that contains the headings first, but capture the output in a variable with an assignment directive (as <@c>&lt;#local <@r>var</@r>><@r>...</@r>&lt;/#local></@>). Then print the top of the page, and then the captured output. Check <@example 'capture' /> to see a working example.</p>
+<p>For example, you have to show a Table of Contents at the top of the page, but the list of headings is not known until the page generation reaches the bottom of the page. In this case, generate the section that contains the headings first, but capture the output in a variable with an assignment directive (as <@c>&lt;#assign <@r>var</@r>><@r>...</@r>&lt;/#assign></@>). Then print the top of the page, and then the captured output. Check <@example 'capture' /> to see a working example.</p>
 
 </@sect>
 

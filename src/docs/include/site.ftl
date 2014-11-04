@@ -299,7 +299,6 @@
       or e-mail: <@myEmail /></p>
 
     <p>Please report FreeMarker bugs at the <a rel="nofollow" href="http://sourceforge.net/tracker/?func=add&amp;group_id=794&amp;atid=100794">FreeMarker bug reporting Web page</a>, not for me. If you are not sure if you have found a FreeMarker or FMPP bug, just report it as an FMPP bug.</p>
-    <p>Also, note the <@a href="knownproblems.html">Known Problems</@a> page.</p>
   </div>
 
   <#assign P_reportBugPrinted = true>

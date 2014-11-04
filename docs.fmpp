@@ -83,10 +83,9 @@ data: {
             properties.html
         ]
         [{title:Miscellaneous, file:miscellaneous.html}
-            tips.html
-            knownproblems.html
-            reportbug.html
             versions.html
+            reportbug.html
+            tips.html
             license.html
         ]
     ]
