@@ -23,29 +23,29 @@
 <@sect title="Setup the command-line tool" anchor="commandLineTool">
 
 <@sect title="On Windows">
-<p>The steps are as follow:</p>
-<ul>
+<p>The steps are:</p>
+<ol>
   <li>Extract the downloaded archive file (<@c>fmpp_${pp.version}.tar.gz</@c> or <@c>fmpp_${pp.version}.zip</@c>) into <@c>C:\Program Files\fmpp</@c> (note that "Program Files" may be shown in a localized form, like "Programme") or <@c>C:\fmpp</@c> or wherever you prefer to. From now on I will refer to this directory as <@c><@r>&lt;FMPP_HOME></@></@></li>
   <li>For convenience, add <@c><@r>&lt;FMPP_HOME></@>/bin</@> to the <@c>PATH</@c> environment variable. (How? Google: set path windows)</li>
   <li>Check if <@c>fmpp.bat</@> isn't present in <@c>C:\Windows</@c> (or in another directory in the <@c>PATH</@c>) from an earlier installation. Delete it if it does.</li>
   <li>Check if the <@c>JAVA_HOME</@c> environment variable is set correctly (should point to your Java installation directory, not its <@c>bin</@c> subdirectory), or else that the intended version of the <@c>java</@c> executable is in the <@c>PATH</@c>.</li>
   <li>To check that everything works, open a command line window and issue: <@c>fmpp --version</@c></li>
-</ul>
+</ol>
 
 <p>Note: Because of the limitations of <@c>.bat</@c> files, you may get error messages as "The input line is too long". To solve this, install FMPP in a more "shallow" directory, so that the path to the FMPP related files will be shorter.</p>
 
 </@sect>
 
 <@sect title="On UN*X (Linux, FreeBSD, OS X, etc.)">
-<p>The steps are as follow:</p>
-<ul>
+<p>The steps are:</p>
+<ol>
   <li>Extract the downloaded archive file (<@c>fmpp_${pp.version}.tar.gz</@c> or <@c>fmpp_${pp.version}.zip</@c>) into the <@c>/usr/lib/fmpp</@c> or  <@c>/opt/fmpp</@c> directory (conventions vary by distribution), or wherever you prefer to. From now on I will refer to this directory as <@c><@r>&lt;FMPP_HOME></@r></@c>.
   </li>
   <li>For convenience, create a soft link somewhere in the <@c>PATH</@c>, like <@c>sudo ln -s <@r>&lt;FMPP_HOME></@r>/bin/fmpp /usr/bin/fmpp</@c>.</li>
   <li>Issue <@c>which fmpp</@c> to see if it's not shadowed by an earlier installation elsewhere.</li>
   <li>Check if the intended version of the <@c>java</@c> executable is in the <@c>PATH</@c>, or else that the <@c>JAVA_HOME</@c> environment variable is set correctly (should point to your Java installation directory, not its <@c>bin</@c> subdirectory).</li>
   <li>To check that everything works, open a command line window and issue: <@c>fmpp --version</@c></li>
-</ul>
+</ol>
 </@sect>
 
 <@sect title="Notes">
@@ -77,7 +77,7 @@
 
 <@sect title="Updating FreeMarker" anchor="updatingFreeMarker">
 
-<p>FMPP comes with FreeMarker just for the sake of simplicity. You can replace FreeMarker with a later version as far as it is backward compatible with the version that FMPP comes with. For this, <a href="http://freemarker.org/freemarkerdownload.html">download the latest backward compatible FreeMarker release</a>, and overwrite the <@c><@r>&lt;FMPP_HOME></@>/lib/freemarker.jar</@c> with the <@c>lib/freemarker.jar</@c> of the FreeMarker release. (Of course, if you are using the FMPP Ant task, you may need to replace the <@c>freemarker.jar</@c> in the <@c>lib</@c> directory of the Ant installation too.)</p>
+<p>You can replace the included FreeMarker version with a later version. <a href="http://freemarker.org/freemarkerdownload.html">Download the latest backward compatible FreeMarker release</a>, and overwrite <@c><@r>&lt;FMPP_HOME></@>/lib/freemarker.jar</@c> with the <@c>freemarker.jar</@c> of the FreeMarker release. (Of course, if you are using the FMPP Ant task, you may need to replace the <@c>freemarker.jar</@c> in the <@c>lib</@c> directory of the Ant installation too.)</p>
 
 </@sect>
 
