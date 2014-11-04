@@ -265,7 +265,9 @@
     <copy todir="${dist.dir}" includeEmptyDirs="true">
       <fileset dir="build" includes="docs/" />
     </copy>
-    <copy file="README.*" todir="${dist.dir}" filtering="true" />
+    <copy todir="${dist.dir}" filtering="true">
+      <fileset dir="." includes="README.*" />
+    </copy>
 
     <delete file="${dist.dir}.tar.gz" />
     <tar tarfile="${dist.dir}.tar" longfile="gnu">
