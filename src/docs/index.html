@@ -91,7 +91,7 @@
   </#macro>
   <p>The latest released version is FMPP ${pp.version} (comes with <a href="http://freemarker.org">FreeMarker</a> ${pp.freemarkerVersion}, but <@a href="installing.html#updatingFreeMarker">you can replace it with a later version</@a>).</p>
 
-  <p>Downloads include "binaries", all documentation, and source code:</p>
+  <p>Downloads include "binaries", all documentation, and source code.</p>
 
   <ul class="download-options"><#t>
     <li><@downloadLink "fmpp_" + pp.version + ".tar.gz" /></li><#t>
@@ -103,9 +103,12 @@
   <p>FMPP is a Java application so it <strong>requires Java to be installed</strong> on your machine (version 1.4 or later).</p>
 
   <p>The FMPP <strong>Ant task</strong> (ignore if you don't know what Ant is) requires Ant 1.5.1 or later.</p>
+  
+  <p><@a href="versions.html">Change log (version history)...</@a></p>
 <#else>
   <p>To download the latest release, please visit the FMPP homepage: <@url href="http://fmpp.sourceforge.net/" /></p>
 </#if>
+  
   <p>For <@e>text editor and IDE plug-ins</@e> and other FreeMarker template-related tools, please visit the FreeMarker homepage: <a href="http://freemarker.org/">http://freemarker.org/</a> (mirror: <a href="http://freemarker.sourceforge.net/">http://freemarker.sourceforge.net/)</a></p>
 </@sect>
 
