@@ -39,15 +39,14 @@
     <meta name="format-detection" content="telephone=no">
 
     <#-- @todo: move seo tags to separate macro -->
-    <#local baseUrl = "http://fmpp.sourceforge.net"><#-- @todo: this should come from build settings -->
-    <meta name="og:url" content="${baseUrl}/${pp.outputFileName}">
-    <link rel="canonical" href="${baseUrl}/${pp.outputFileName}">
+    <meta name="og:url" content="${fmppWebsite}${pp.outputFileName}">
+    <link rel="canonical" href="${fmppWebsite}${pp.outputFileName}">
 
     <#if navCtx.prevLink?has_content>
-      <link rel="prev" href="${baseUrl}/${navCtx.prevLink}">
+      <link rel="prev" href="${fmppWebsite}${navCtx.prevLink}">
     </#if>
     <#if navCtx.nextLink?has_content>
-      <link rel="next" href="${baseUrl}/${navCtx.nextLink}">
+      <link rel="next" href="${fmppWebsite}${navCtx.nextLink}">
     </#if>
 
     <!--[if lt IE 9]>
@@ -139,7 +138,7 @@
                 <@html.img src="${pp.home}style/sflogo.png" alt="SourceForge Logo"/>
               </#if>
             </a>
-            <a href="http://freemarker.org"><@html.img src="${pp.home}style/poweredby_sq_simple.png" alt="Powered by FreeMarker" /></a><#t>
+            <a href="${freemarkerWebsite}"><@html.img src="${pp.home}style/poweredby_sq_simple.png" alt="Powered by FreeMarker" /></a><#t>
           </div>
         </div>
       </div>

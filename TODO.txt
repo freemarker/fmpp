@@ -1,9 +1,7 @@
 ﻿Before next release
 -------------------
 
-. Re-run test on Java 1.4
-. Run FMPP manually on some projects
-. Test Maven artifact
+- Add IcI to examples
 
 
 Roadmap

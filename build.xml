@@ -297,6 +297,7 @@
     <copy todir="build/site/site_${version}">
       <fileset dir="build/docs">
         <exclude name="examples/" />
+        <exclude name="freemarker/" />
       </fileset>
     </copy>
     <!-- Create a tar.gz for quicker uploading -->

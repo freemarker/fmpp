@@ -294,11 +294,13 @@
 
 <#macro reportBugs>
   <div class="report-bugs">
-    <p class="strong"><strong>Please report bugs you find!</strong> Any programming, documentation content or grammatical mistakes (even minor typos). Thank you!</p>
-    <p>Use the <a href="http://sourceforge.net/tracker/?func=add&amp;group_id=74591&amp;atid=541453">bug reporting Web page</a>,<br>
-      or e-mail: <@myEmail /></p>
+    <p class="strong">
+      Please report bugs and documentation mistakes you find
+      on the <a href="${fmppBugTracker}">bug tracker</a>
+      or to <@myEmail />!
+    </p>
 
-    <p>Please report FreeMarker bugs at the <a rel="nofollow" href="http://sourceforge.net/tracker/?func=add&amp;group_id=794&amp;atid=100794">FreeMarker bug reporting Web page</a>, not for me. If you are not sure if you have found a FreeMarker or FMPP bug, just report it as an FMPP bug.</p>
+    <p>Report FreeMarker bugs on the <a rel="nofollow" href="${freemarkerBugTracker}">FreeMarker bug tracker</a>, not on the FMPP bug tracker. (If you are not sure which is it, then just report on any of them.)</p>
   </div>
 
   <#assign P_reportBugPrinted = true>
@@ -336,7 +338,11 @@
   <#if href = ''>
     <#local href='index.html'>
   </#if>
-  <@a href="${pp.home}freemarker/${href}" rel="nofollow"><#nested></@a><#t>
+  <#if online>
+    <a href="${freemarkerManualUrl}${href}"><#nested></a><#t>
+  <#else>
+    <@a href="${pp.home}freemarker/${href}"><#nested></@a><#t>
+  </#if>
 </#macro>
 
 </#escape>

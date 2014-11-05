@@ -46,6 +46,13 @@ data: {
         return res;
     ')
     online: false
+    
+    # If you modify "fmppWebsite", also check src/main/ for references!
+    fmppWebsite: 'http://fmpp.sourceforge.net/'
+    fmppBugTracker: 'https://sourceforge.net/p/fmpp/bugs/'
+    freemarkerWebsite: 'http://freemarker.org/'
+    freemarkerManualUrl: 'http://freemarker.org/docs/'
+    freemarkerBugTracker: 'https://sourceforge.net/p/freemarker/bugs/'
 
     # Files described with hashes are auto-generated Table of Contents pages.
     # Other entries are already existing HTML pages, that must use <@page> directive.

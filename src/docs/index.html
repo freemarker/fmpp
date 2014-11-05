@@ -1,7 +1,7 @@
 <@page title="FMPP - FreeMarker-based file PreProcessor" keywords="homepage">
 
 <@sect title="What is FMPP?">
-  <p>FMPP is a general-purpose text file preprocessing tool that uses <a href="http://freemarker.org/">FreeMarker</a> templates. It process entire directories recursively. It can be used  for generating complete static websites, source code, configuration files, etc. It can insert data from sources like CSV, XML, and JSON into the generated files. (You can add new kind of data sources in Java.) <@a href="qtour.html">See the Tutorial</@a> for a more concrete introduction.</p>
+  <p>FMPP is a general-purpose text file preprocessing tool that uses <a href="${freemarkerWebsite}">FreeMarker</a> templates. It process entire directories recursively. It can be used  for generating complete static websites, source code, configuration files, etc. It can insert data from sources like CSV, XML, and JSON into the generated files. (You can add new kind of data sources in Java.) <@a href="qtour.html">See the Tutorial</@a> for a more concrete introduction.</p>
   
   <p>FMPP can be used with UN*X-style command-line interface, or as <a href="http://ant.apache.org">Ant</a> task, or can be embedded into your application using its Java API.</p>
 
@@ -89,7 +89,7 @@
       </#if>
     </strong>
   </#macro>
-  <p>The latest released version is FMPP ${pp.version} (comes with <a href="http://freemarker.org">FreeMarker</a> ${pp.freemarkerVersion}, but <@a href="installing.html#updatingFreeMarker">you can replace it with a later version</@a>).</p>
+  <p>The latest released version is FMPP ${pp.version} (comes with <a href="${freemarkerWebsite}">FreeMarker</a> ${pp.freemarkerVersion}, but <@a href="installing.html#updatingFreeMarker">you can replace it with a later version</@a>).</p>
 
   <p>Downloads include "binaries", all documentation, and source code.</p>
 
@@ -98,35 +98,25 @@
     <li>or <@downloadLink "fmpp_" + pp.version + ".zip" /></li><#t>
   </ul><#t>
 
-  <p>Installation instructions are <@a href="installing.html">here, in the Manual</@a>.</p>
-
+  <p><@a href="installing.html">Installation instructions...</@a></p>
+  
+  <p><@a href="versions.html">Change log (version history)...</@a></p>
+  
   <p>FMPP is a Java application so it <strong>requires Java to be installed</strong> on your machine (version 1.4 or later).</p>
 
   <p>The FMPP <strong>Ant task</strong> (ignore if you don't know what Ant is) requires Ant 1.5.1 or later.</p>
   
-  <p><@a href="versions.html">Change log (version history)...</@a></p>
 <#else>
-  <p>To download the latest release, please visit the FMPP homepage: <@url href="http://fmpp.sourceforge.net/" /></p>
+  <p>To download the latest release, please visit the FMPP website: <@url href=fmppWebsite /></p>
 </#if>
   
-  <p>For <@e>text editor and IDE plug-ins</@e> and other FreeMarker template-related tools, please visit the FreeMarker homepage: <a href="http://freemarker.org/">http://freemarker.org/</a> (mirror: <a href="http://freemarker.sourceforge.net/">http://freemarker.sourceforge.net/)</a></p>
+  <p>For <@e>text editor and IDE plug-ins</@e> and other FreeMarker template-related tools, please visit the FreeMarker homepage: <@url href=freemarkerWebsite /></p>
 </@sect>
 
 <@sect title="Contact">
 
-  <p>Ask for <@e>help</@e> or provide suggestions:</p>
-  <ul>
-    <li>on the <strong>mailing list</strong> (The preferred way. Low traffic.):</li>
-      <ul>
-        <li>Subscribe/unsubscribe: <@url href="http://lists.sourceforge.net/mailman/listinfo/fmpp-open" /></li>
-        <li>News group interface: <@url href="nntp://news.gmane.org/gmane.comp.text.fmpp" /></li>
-        <li>Web interface (read only): <@url href="http://news.gmane.org/thread.php?group=gmane.comp.text.fmpp" /></li>
-      </ul>
-    </li>
-    <li>on the SourceForge.net Web forum: <@url href="http://sourceforge.net/forum/forum.php?forum_id=254571" /></li>
-    <li>with private e-mail: <@myEmail /></li>
-  </ul>
-
+  <p>Help: <a href="http://stackoverflow.com/questions/ask?tags=fmpp">Ask on Stack Overflow with "fmpp" tag</a>.</p>
+  <p>Suggestions: Use the <a href="https://sourceforge.net/p/fmpp/feature-requests/">Feature Request tracker</a>, or write to <@myEmail /></p>
   <@reportBugs />
   
 </@sect>
