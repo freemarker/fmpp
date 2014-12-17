@@ -27,10 +27,17 @@ Roadmap
   - Smart/safe output directory cleaning (only deletes files created by FMPP)
 
 
-Sideband
---------
+Side-band
+---------
 
 These are the things that aren't on the road map and usually can be fixed in any order.
+
+RFE-s:
+- EVENT_END_FILE_PROCESSING event should get the output file as its paramter. (Or,
+  maybe an event object that thus can be later extended?)
+- Option fort his: Don't overwrite the output file if its content haven't changed.
+  Thus, tools that work with the FMPP output (like compilers) won't detect it as a
+  change.
 
 Tooling (most efficient places for contributions!):
 - Check existing Maven task, contribute/fork if necessary
