@@ -2,6 +2,8 @@
 -------------------
 
 - Add IcI to examples
+- Somehow promote the usage of DOW with 2.3.22
+- Setting to enable ?api
 
 
 Roadmap
@@ -33,9 +35,9 @@ Side-band
 These are the things that aren't on the road map and usually can be fixed in any order.
 
 RFE-s:
-- EVENT_END_FILE_PROCESSING event should get the output file as its paramter. (Or,
+- EVENT_END_FILE_PROCESSING event should get the output file as its parameter. (Or,
   maybe an event object that thus can be later extended?)
-- Option fort his: Don't overwrite the output file if its content haven't changed.
+- Option fort this: Don't overwrite the output file if its content haven't changed.
   Thus, tools that work with the FMPP output (like compilers) won't detect it as a
   change.
 
@@ -46,12 +48,14 @@ Tooling (most efficient places for contributions!):
   (This actually belongs to the FreeMarker project.)
 
 High:
+- Inserting env vars into the config file (not just into the dataModel part)
 - emptyOutputRootAfterCheckingIfExists=<rootRelativePath> // "." for no check
-- Allow UN*X tools to be invoked as FreeMarke transforms
+- Allow UN*X tools to be invoked as FreeMarker transforms
 - More convenient way of putting OS environment variables into the data-model
 - Excel and Calc data loader
 - sql(...) data-loader. See below in the Drafts section...
 - Add logging via SLF4J as a possible ProgressListener.
+- pp.log should use FM 2.3.22 DirectiveCallPlace to report correct position
 - TDD inheritance deep-merging:
   - Idea for the solution: "merging hash" type should be introduced. In TDD
      a merging hash should be constructed with ~ prefix (~exp) when exp is a hash.
