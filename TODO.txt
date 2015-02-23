@@ -4,7 +4,9 @@
 - Add IcI to examples
 - Somehow promote the usage of DOW with 2.3.22
 - Setting to enable ?api
-
+- Cygwin issue (can't convert empty path)
+- Cygwin ncurses needed
+- Check: Progress logger's path shorting doesn't account for terminal width?
 
 Roadmap
 -------
