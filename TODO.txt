@@ -19,7 +19,9 @@ Roadmap
   - `copyPermissions` setting (copies mod+owner+group)
   - Symlink handling (follow symlinks without confusing source paths, copy symlinks)
 
-- Stream filtering mode
+- Stream filtering
+  - Output to stdout
+  - Input from stdin
 
 - Filters
   - On output (for Markdown, Haml, Jade to HTML conversation, LESS, minification, etc.)
