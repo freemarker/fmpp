@@ -194,7 +194,19 @@ tulip;white;6
 ]
 </@prg>
   
-  <p>Assuming you have loaded the above JSON into the <@c>applicants</@c> variable, you could print the name and age of all applicants, and print their skills in nested listing like this:</p>
+  <p>Let's loaded the above JSON array into the <@c>applicants</@c>:</p>
+
+<@prg>
+data: {
+  ...
+  applicants: json(applicants.json)
+  ...
+}  
+</@prg>
+  
+  <@note>Above, the <@c>applicants:</@c> label is required because this file defines a JSON array, so we need a name with which we can refer to it from the templates. If a JSON file defines a JSON object instead (like <@c>{ "applicants": [ <@r>...</@r> ], "otherStuff": <@r>...</@r> }</@c>), then, if you omit the label, the top-level name-value pairs from the JSON object will be added to the data-model directly.</@note>
+  
+  <p>Now you could print the name and age of all applicants, and print their skills in nested listing like this:</p>
 
 <@prg><#noparse>
 <#list applicants as applicant>
@@ -207,10 +219,10 @@ tulip;white;6
   
   <p>That is, JSON arrays will be FTL (FreeMarker Template Language) sequences, JSON objects will be FTL hashes, JSON strings will be FTL strings, JSON numbers will be FTL numbers, JSON boolean will be FTL boolean. JSON null-s will be FTL undefined variables (Java <@c>null</@c>-s), so for <@c>applicants[1].maindenName</@c> FreeMarker would give an undefined variable error, and you need to write something like <@c>applicants[1].maindenName!'N/A'</@c> instead.</p>
 
-  <p>The loaded JSON will also act as an FTL node tree (and advanced FreeMarker feature), similarly to an XML. This means, among others, that you can get the parent of a value. The parent of a value is its containing array or object:</p>
+  <p>The loaded JSON will also act as an FTL node tree (an advanced FreeMarker feature), similarly to an XML. This means, among others, that you can get the parent of a value. The parent of a value is its containing array or object:</p>
 
 <@prg><#noparse>
-<#-- We just pick some skill for the example below: -->
+<#-- We just pick some skill for this example: -->
 <#assign skill = applicants[0].skills[0]>
 <#-- Now let's say we only have the skill variable, and we don't know
      how was it get. We can still get whose skill it was: -->
