@@ -553,7 +553,7 @@ data: {
 </@dataLoader>
 
 <@dataLoader name="antProperty">
-  <@param name="properyName" type="string">The name of the Ant property.</@param>
+  <@param name="propertyName" type="string">The name of the Ant property.</@param>
   <@param name="defaultValue" type="any" optional=true>The value returned if the Ant property does not exist.</@param>
 
   <p>This data loader returns the value of an Ant property. If no Ant property with the given name exists, it will return nothing (i.e. will not add new variable to the shared data model), or it will return the value of the second parameter if you use that. 
@@ -575,15 +575,15 @@ data: {
 </@dataLoader>
 
 <@dataLoader name="antProperites">
-  <@param name="properyName1" type="string" optional=true>The name of an Ant property to expose.</@param>
-  <@param name="properyName2" type="string" optional=true>The name of another Ant property to expose.</@param>
-  <@param name="properyNameN" type="string" optional=true>...etc. You can specify any number of Ant parameters.</@param>
+  <@param name="propertyName1" type="string" optional=true>The name of an Ant property to expose.</@param>
+  <@param name="propertyName2" type="string" optional=true>The name of another Ant property to expose.</@param>
+  <@param name="propertyNameN" type="string" optional=true>...etc. You can specify any number of Ant parameters.</@param>
   
   <p>Returns the set of all Ant properties, or the set of selected ant properties, as a hash.
 
   <p>If you use this data loader without parameters, then it returns the hash of <@e>all</@e> Ant properties. To see a concrete example, look at <@example 'ant' />.</p>
 
-  <p>You can also give the name of properties to expose as parameters. For example if you want to put only the Ant properties <@c>foo</@c> and <@c>bar</@c> into the shared data model, then you write: <@c>antProperties(foo, bar)</@c>. Parameters that refer to not existing Ant properties will be silently ignored. The same postfixes (as <@c>?n</@c>) are supported as with <@a href="#key_antProperty"><@c>antProperty</@c></@a>.</p>
+  <p>You can also give the name of properties to expose as parameters. For example if you want to put only the Ant properties <@c>foo</@c> and <@c>bar</@c> into the shared data model, then you write: <@c>antProperties(foo, bar)</@c>. Parameters that refer to non-existing Ant properties will be silently ignored. The same postfixes (as <@c>?n</@c>) are supported as with <@a href="#key_antProperty"><@c>antProperty</@c></@a>.</p>
   
   <p>To see a concrete example, look at <@example 'ant2' />.</p>
 
