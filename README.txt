@@ -4,7 +4,7 @@ FMPP - FreeMarker-based file PreProcessor
 This is the README file that comes with the FMPP @VERSION@ distribution.
 
 For the latest version, visit the FMPP website:
-http://fmpp.freemarker.net/
+http://fmpp.sourceforge.net/
 
 
 What is FMPP?
