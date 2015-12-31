@@ -44,6 +44,9 @@ RFE-s:
 - Option fort this: Don't overwrite the output file if its content haven't changed.
   Thus, tools that work with the FMPP output (like compilers) won't detect it as a
   change.
+- Option for interpreting source file names as templates. For example, for a source
+  file like "foo/${bar}/${baaz}.txt", substitute the interpolations to get the output
+  file name.
 
 Tooling (most efficient places for contributions!):
 - Check existing Maven task, contribute/fork if necessary
@@ -91,6 +94,8 @@ Medium:
 - Add FreeMarker feature for position mapping
 - Console charset detection on Windows (extract from `mode con` output)
 - Ant task: The "logger" setting is missing (it should be like objectWrapper).
+- Data loader for exposing (and renaming) environment variables
+- Data loader for exposing (and renaming) Java system properties
 
 Low:
 - Native Windows exe instead of fmpp.bat+lcp.bat
