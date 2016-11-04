@@ -11,6 +11,10 @@
 Roadmap
 -------
 
+- Update to FM 2.3.25
+  - FM outputFormat setting
+  - templateConfigurations setting
+
 - Use mountable vfs-es, at least for sources. This would deprecate
   freemarerLinks, and would work not only for #include but for pp too.
   - Add zip (jar) vfs.
@@ -39,6 +43,7 @@ Side-band
 These are the things that aren't on the road map and usually can be fixed in any order.
 
 RFE-s:
+- TDD should allow merging in a JSONObjectNode as a Map. (Should add some interface that contains `toMap()`.)
 - EVENT_END_FILE_PROCESSING event should get the output file as its parameter. (Or,
   maybe an event object that thus can be later extended?)
 - Option fort this: Don't overwrite the output file if its content haven't changed.
