@@ -1,12 +1,12 @@
 /*
  * Copyright 2014 Attila Szegedi, Daniel Dekany, Jonathan Revusky
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,8 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.devlib.schmidt.imageinfo.ImageInfo;
+import javax.imageio.ImageIO;
 
 import fmpp.Engine;
 import fmpp.tdd.DataLoader;
@@ -42,20 +41,19 @@ import freemarker.template.TemplateTransformModel;
  * <ul>
  *   <li>img: Same as HTML img, but automatically calculates the width and/or
  *       height attributes if they are missing.
- * </ul> 
+ * </ul>
  */
 public class HtmlUtilsDataLoader implements DataLoader {
     private boolean xHtml = false;
     private String eTagClose;
 
     private Engine engine;
-    
+
     private static final int MAX_CACHE_SIZE = 100;
     private Map imageInfoCache = new HashMap();
     private CachedImageInfo first;
     private CachedImageInfo last;
-    private ImageInfo imageInfo = new ImageInfo();
-    
+
     public Object load(Engine e, List args) throws Exception {
         if (args.size() != 0) {
             throw new IllegalArgumentException(
@@ -67,22 +65,22 @@ public class HtmlUtilsDataLoader implements DataLoader {
         } else {
             eTagClose = ">";
         }
-        
+
         Map map = new HashMap();
-        
+
         map.put("img", new ImgTransform());
-        
+
         return map;
     }
-    
+
     public void setXHtml(boolean xHtml) {
         this.xHtml = xHtml;
     }
-    
+
     private CachedImageInfo getImageInfo(File f)
             throws IOException, TemplateModelException {
         String cacheKey = f.getCanonicalPath();
-        
+
         CachedImageInfo inf = (CachedImageInfo) imageInfoCache.get(cacheKey);
         if (inf != null) {
             long lmd = new File(cacheKey).lastModified();
@@ -98,7 +96,7 @@ public class HtmlUtilsDataLoader implements DataLoader {
                     } else {
                         last = inf.prev;
                     }
-                    
+
                     inf.prev = last;
                     inf.next = null;
                     last = inf;
@@ -119,26 +117,21 @@ public class HtmlUtilsDataLoader implements DataLoader {
                 }
             }
         }
-        
-        RandomAccessFile raf;
+
+	int width = 0;
+	int height = 0;
+
         try {
-            raf = new RandomAccessFile(f, "r");
-        } catch (FileNotFoundException e) {
-            throw new TemplateModelException("Image file not found: " + f.getAbsolutePath(), e);
-        }
-        try {
-            imageInfo.setCollectComments(false);
-            imageInfo.setInput(raf);
-            if (!imageInfo.check()) {
-                throw new TemplateModelException("Failed to analyse image file: " + cacheKey);
-            }
-        } finally {
-            raf.close();
+	    java.awt.image.BufferedImage img = ImageIO.read(f);
+	    width = img.getWidth();
+	    height = img.getHeight();
+	} catch(Exception e) {
+	    throw new TemplateModelException("Failed to analyse image file:" + cacheKey);
         }
         inf = new CachedImageInfo();
         inf.lmd = f.lastModified();
-        inf.width = imageInfo.getWidth();
-        inf.height = imageInfo.getHeight();
+        inf.width = width;
+        inf.height = height;
         inf.path = cacheKey;
         if (last != null) {
             last.next = inf;
@@ -155,7 +148,7 @@ public class HtmlUtilsDataLoader implements DataLoader {
             first.next.prev = null;
             first = first.next;
         }
-        
+
         return inf;
     }
 
@@ -174,9 +167,9 @@ public class HtmlUtilsDataLoader implements DataLoader {
             boolean detectHeight = true;
             boolean detectWidth = true;
             String src = null;
-            
+
             out.write("<img");
-        
+
             Iterator it = args.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry e = (Map.Entry) it.next();
@@ -184,7 +177,7 @@ public class HtmlUtilsDataLoader implements DataLoader {
                 Object obj = e.getValue();
                 String pvalue;
                 if (obj instanceof TemplateScalarModel) {
-                    pvalue = ((TemplateScalarModel) obj).getAsString(); 
+                    pvalue = ((TemplateScalarModel) obj).getAsString();
                 } else if (obj instanceof TemplateNumberModel) {
                     pvalue = ((TemplateNumberModel) obj).getAsNumber()
                             .toString();
@@ -195,7 +188,7 @@ public class HtmlUtilsDataLoader implements DataLoader {
                     }
                 } else {
                     throw new TemplateModelException(
-                            "Argument to img must be string, "                             + "number or boolean"); 
+                            "Argument to img must be string, "	                             + "number or boolean");
                 }
                 if (pvalue != null) {
                     pname = pname.toLowerCase();
@@ -227,7 +220,7 @@ public class HtmlUtilsDataLoader implements DataLoader {
             }
 
             out.write(eTagClose);
-            
+
             return null;
         }
     }
