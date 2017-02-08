@@ -1,12 +1,12 @@
 /*
  * Copyright 2014 Attila Szegedi, Daniel Dekany, Jonathan Revusky
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -59,12 +59,12 @@ import freemarker.template.Version;
 /**
  * Stores FMPP settings, loads configuration files, provides other setting
  * handling related utilities.
- * 
+ *
  * <p>Settings are typed variables identified with their case-sensitive name.
  * When you set the value of a setting, the value object you supply must be
  * of the correct type. See the description of the <code>TYPE_...</code>
  * to see the available setting types.
- * 
+ *
  * <p>Methods that change setting values have a variation
  * that require <code>String</code> value(s) instead of <code>Object</code>(s).
  * These methods should be used when you get the setting values from text-only
@@ -76,7 +76,7 @@ import freemarker.template.Version;
  * try to use the same value with the string version of the same method, it
  * will interpret the string as a list of length 3, that stores 3 strings,
  * <code>"a"</code>, <code>"b"</code>, and <code>"c"</code>.
- * 
+ *
  * <p>Notes:
  * <ul>
  *   <li>All settings you want to set/get must be defined. See {@link #define}.
@@ -126,6 +126,7 @@ public class Settings {
     public static final String NAME_TIME_ZONE = "timeZone";
     public static final String NAME_SQL_DATE_AND_TIME_TIME_ZONE = "sqlDateAndTimeTimeZone";
     public static final String NAME_TAG_SYNTAX = "tagSyntax";
+    public static final String NAME_OLD_SYNTAX = "oldSyntax";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
     public static final String NAME_REMOVE_EXTENSIONS = "removeExtensions";
@@ -158,7 +159,7 @@ public class Settings {
     public static final String NAME_XML_RENDERINGS = "xmlRenderings";
 
     // Values of standard settings:
-    
+
     public static final String VALUE_SOURCE = Engine.PARAMETER_VALUE_SOURCE;
     public static final String VALUE_HOST = Engine.PARAMETER_VALUE_HOST;
     public static final String VALUE_OUTPUT = Engine.PARAMETER_VALUE_OUTPUT;
@@ -175,12 +176,12 @@ public class Settings {
     public static final String VALUE_GLOBAL_DEFAULT = "globalDefault";
 
     // File names:
-    
+
     /**
      * Primary default file name.
      */
     public static final String DEFAULT_CFG_FILE_NAME = "config.fmpp";
-    
+
     /**
      * Secondary (legacy) default file name.
      */
@@ -251,7 +252,7 @@ public class Settings {
                     "Settings of type \"string\" can't be merged.");
         }
     };
-    
+
     /**
      * Integer setting type.
      * <p>Input type: <code>Number</code> that can be converted to
@@ -284,7 +285,7 @@ public class Settings {
                             + "on 32 bits.");
                     }
                 }
-                return new Integer(i);                
+                return new Integer(i);
             }
             throw new SettingException(
                     "The setting value should be an integer number, but now "
@@ -312,7 +313,7 @@ public class Settings {
                     "Settings of type \"integer\" can't be merged.");
         }
     };
-    
+
     /**
      * Boolean setting type.
      * <p>Input type: <code>Boolean</code>.
@@ -354,7 +355,7 @@ public class Settings {
                     "Settings of type \"boolean\" can't be merged.");
         }
     };
-    
+
     /**
      * Sequence setting type.
      * <p>Input type: <code>List</code>, any array, <code>Vector</code>. No
@@ -383,7 +384,7 @@ public class Settings {
      * you set the setting value with Java, the last parameter to the
      * <tt>case</tt> {@link fmpp.tdd.FunctionCall} must be a
      * {@link fmpp.tdd.Fragment} instead of <code>Map</code>, if you want to use
-     * data loaders in it. 
+     * data loaders in it.
      */
     public static final SettingType TYPE_LOCAL_DATA_MODEL
             = new SequenceSettingType() {
@@ -431,7 +432,7 @@ public class Settings {
                     }
                     return null;
                 }
-                
+
             };
         }
     };
@@ -481,7 +482,7 @@ public class Settings {
             return m;
         }
     };
-    
+
     /**
      * "Configuration relative path" setting type.
      * <p>Input type: <code>String</code>, {@link FileWithSettingValue}.
@@ -504,7 +505,7 @@ public class Settings {
                     return new FileWithSettingValue(
                             settings.baseDir, (String) value, (String) value);
                 }
-                
+
             } else if (value instanceof FileWithSettingValue) {
                 return value;
             } else {
@@ -552,7 +553,7 @@ public class Settings {
                     settings,
                     (List) super.convertString(settings, value, forceStr));
         }
-        
+
         private List convertList(Settings settings, List ls)
                 throws SettingException {
             int ln = ls.size();
@@ -608,7 +609,7 @@ public class Settings {
                     settings,
                     (List) super.convertString(settings, value, forceStr));
         }
-        
+
         private List convertList(Settings settings, List ls)
                 throws SettingException {
             int ln = ls.size();
@@ -642,7 +643,7 @@ public class Settings {
      *      <code>Map</code>, <code>String</code>, {@link fmpp.tdd.Fragment}.
      * <p>String input: TDD expression, starting in hash mode.
      * <p>Merging: The tow lists are concatenated.
-     * 
+     *
      * <p>This type is used for the "data" setting. The hash value of that
      * setting can't be generated until the final value of all other setting is
      * set (because data loaders may use the other settings). This way, the
@@ -650,7 +651,7 @@ public class Settings {
      * changes made on the setting, and not a <code>Map</code>. The
      * <code>Map</code> will be built internally based on the list when you call
      * {@link #execute()}.
-     */  
+     */
     public static final SettingType TYPE_DATA_MODEL = new SettingType() {
 
         public Object convert(Settings settings, Object value)
@@ -767,7 +768,7 @@ public class Settings {
             return mMerged;
         }
     };
-    
+
     // -------------------------------------------------------------------------
     // Standard defs
 
@@ -803,6 +804,7 @@ public class Settings {
         stdDef(NAME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_SQL_DATE_AND_TIME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_TAG_SYNTAX, TYPE_STRING, false, true);
+        stdDef(NAME_OLD_SYNTAX, TYPE_BOOLEAN, false, false);
         stdDef(NAME_CASE_SENSITIVE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_STOP_ON_ERROR, TYPE_BOOLEAN, false, false);
         stdDef(NAME_REMOVE_EXTENSIONS, TYPE_SEQUENCE, true, true);
@@ -832,14 +834,14 @@ public class Settings {
 
     // -------------------------------------------------------------------------
     // Other constants
-    
+
     private static final String FUNCTION_LAYER = "layer";
     private static final String FUNCTION_CASE = "case";
     private static final String LOCAL_DATA_BUILDER_BSH = "bsh";
 
     // -------------------------------------------------------------------------
     // State
-    
+
     private File baseDir;
     private Map defs;
     private Map values = new HashMap();
@@ -848,14 +850,14 @@ public class Settings {
     private List progressListeners = new ArrayList();
     private Map engineAttributes = new HashMap();
     private boolean dontTraverseDirs;
-    
+
     // -------------------------------------------------------------------------
     // Public menthods
-    
+
     /**
      * Creates a new instance. The standard settings will be already defined
      * in the new instance.
-     * 
+     *
      * @param baseDir the base directory used to resolve relative paths in
      *     setting names. When you load settings from a configuration file, the
      *     parent directory of the file will be used instenad, for the settings
@@ -876,7 +878,7 @@ public class Settings {
         defs = STD_DEFS;
         cmdLineNames = STD_STDCMDL;
     }
-    
+
     /**
      * Defines a new setting. No setting with the same name already exists.
      * @param name the name of the setting
@@ -911,15 +913,15 @@ public class Settings {
     /**
      * Returns if a setting with the given name is defined (do not mix it up
      * with being set).
-     * 
-     * @see #define 
+     *
+     * @see #define
      */
     public boolean isDefined(String name) {
         return defs.containsKey(name);
     }
 
     /**
-     * Returns if the given name is the name of a standard setting. 
+     * Returns if the given name is the name of a standard setting.
      */
     public static Iterator getStandardSettingNames() {
         return Collections.unmodifiableSet(STD_DEFS.keySet()).iterator();
@@ -946,7 +948,7 @@ public class Settings {
     }
 
     /**
-     * Same as {@link #add(String, Object)}, but uses string value. 
+     * Same as {@link #add(String, Object)}, but uses string value.
      */
     public void addWithString(String name, String value)
             throws SettingException {
@@ -954,7 +956,7 @@ public class Settings {
     }
 
     /**
-     * Same as {@link #addDefault(String, Object)}, but uses string value. 
+     * Same as {@link #addDefault(String, Object)}, but uses string value.
      */
     public void addDefaultWithString(String name, String value)
             throws SettingException {
@@ -963,15 +965,15 @@ public class Settings {
 
     /**
      * Adds all name-value pairs stored in the map with
-     * {@link #add(String, Object)}. 
+     * {@link #add(String, Object)}.
      */
     public void add(Map settingMap) throws SettingException {
         addOrSet(settingMap, false);
     }
-    
+
     /**
      * Adds all entries stored in the map with
-     * {@link #addDefault(String, Object)}. 
+     * {@link #addDefault(String, Object)}.
      */
     public void addDefaults(Map settingMap) throws SettingException {
         addOrSetDefaults(settingMap, false);
@@ -979,15 +981,15 @@ public class Settings {
 
     /**
      * Same as {@link #add(Map)}, but uses a <code>Properties</code> object,
-     * so the values are strings. 
+     * so the values are strings.
      */
     public void addWithStrings(Properties props) throws SettingException {
         addOrSetWithStrings(props, false);
     }
-    
+
     /**
      * Same as {@link #addDefaults(Map)}, but uses a <code>Properties</code>
-     * object, so the values are strings. 
+     * object, so the values are strings.
      */
     public void addDefaultsWithStrings(Properties props)
             throws SettingException {
@@ -1055,15 +1057,15 @@ public class Settings {
 
     /**
      * Sets all name-value pairs stored in the map with
-     * {@link #set(String, Object)}. 
+     * {@link #set(String, Object)}.
      */
     public void set(Map settingMap) throws SettingException {
         addOrSet(settingMap, true);
     }
-    
+
     /**
      * Sets all name-value pairs stored in the map with
-     * {@link #setDefault(String, Object)}. 
+     * {@link #setDefault(String, Object)}.
      */
     public void setDefaults(Map settingMap) throws SettingException {
         addOrSetDefaults(settingMap, true);
@@ -1071,40 +1073,40 @@ public class Settings {
 
     /**
      * Same as {@link #set(Map)}, but uses a <code>Properties</code> object,
-     * so the values are strings. 
+     * so the values are strings.
      */
     public void setWithStrings(Properties props) throws SettingException {
         addOrSetWithStrings(props, true);
     }
-    
+
     /**
      * Same as {@link #setDefaults(Map)}, but uses a <code>Properties</code>
-     * object, so the values are strings. 
+     * object, so the values are strings.
      */
     public void setDefaultsWithStrings(Properties props)
             throws SettingException {
         addOrSetDefaultsWithStrings(props, true);
     }
-    
+
     /**
      * Loads settings from a configuration file. The file will be interpreted
      * as legacy properties file if its extension is <tt>cfg</tt> or
      * <tt>properties</tt>, otherwise it will be interpreted as TDD file.
      * The settings stored in the configuration file will be added
      * to the this object with {@link #add(Map)}.
-     * 
+     *
      * <p>Note that meta-settings ("configurationBase" and
      * "inheritConfiguration") will not be added to the settings object.
-     * 
+     *
      * <p>If the setting "configurationBase" or "inheritConfiguration" is
      * set in this setting object, then they will override the
      * meta-settings in the file directly loaded with this method. Files
      * inherited by the directly loaded file, however, are not affected.
-     *  
+     *
      * @param cfgFile the configuration file, or the directory of the
      *     configuration file if its file name is one of the
      *     default configuration file names.
-     * 
+     *
      * @see #loadDefaults(File)
      */
     public void load(File cfgFile) throws SettingException  {
@@ -1114,7 +1116,7 @@ public class Settings {
     /**
      * Same as {@link #load(File) load}, except that it adds the settings with
      * {@link #addDefaults(Map)}.
-     * 
+     *
      * @see #load(File)
      */
     public void loadDefaults(File cfgFile) throws SettingException  {
@@ -1130,7 +1132,7 @@ public class Settings {
     public Object get(String name) {
         return values.get(name);
     }
-    
+
     /**
      * Removes a setting value.
      * @return the removed value, or <code>null</code> if there was no
@@ -1139,9 +1141,9 @@ public class Settings {
     public Object remove(String name) {
         return values.remove(name);
     }
-    
+
     /**
-     * Lists the names of settings that were set. 
+     * Lists the names of settings that were set.
      */
     public Iterator getNames() {
         return values.keySet().iterator();
@@ -1154,20 +1156,20 @@ public class Settings {
      * its <code>process</code> method will be called. The method automatically
      * chooses between bulk and single-file processing, based on the presence of
      * the "outputFile" setting.
-     * 
+     *
      * <p>Settings will go throught semantical checks that are not done when
      * you call other methods. For example, it will be checked if setting
      * "modes" contains valid mode setter function calls, if "sourceRoot" and
      * "outputRoot" are defined for bulk mode, if exactly 1 "sources" is defined
      * for single-file mode, etc.
-     * 
+     *
      * <p>This method ignores the following settings:
      * "logFile", "appendLogFile", "echoFormat", "quiet", "snip".
      * It's the task of the embedding software (the front-end) to interpret
      * these settings, at least the ones it is interested in.
      * It usually involves adding progress listeners with
-     * {@link #addProgressListener(ProgressListener)}. 
-     * 
+     * {@link #addProgressListener(ProgressListener)}.
+     *
      * <p>This method can be called for multiple times, but be aware of
      * that for each call of this method, a new {@link fmpp.Engine}
      * object will be created and initialized, even if you didn't changed the
@@ -1176,7 +1178,7 @@ public class Settings {
      * times within the same {@link #execute()} call, by overriding the
      * {@link #doProcessing(Engine, File[], File, File)} method.
      * Also, you can do extra engine initalization there.
-     * 
+     *
      * @throws SettingException if the settings are not correct, or can't be
      *     applied because of some errors occured. This exception, when thrown,
      *     is always thrown before the execution of the processing session is
@@ -1205,7 +1207,7 @@ public class Settings {
                 fmIcI = null;
             }
         }
-        
+
         final BeansWrapper ow;
         {
             String s = (String) get(NAME_OBJECT_WRAPPER);
@@ -1247,18 +1249,18 @@ public class Settings {
                 ow = null;
             }
         }
-        
+
         final Engine eng = new Engine(ow, fmIcI);
-        
+
         String s;
         Boolean b;
         List ls;
         Map m;
         File f;
         int i;
-        
+
         eng.setDontTraverseDirectories(dontTraverseDirs);
-        
+
         b = (Boolean) get(NAME_EXPERT);
         if (b != null) {
             eng.setExpertMode(b.booleanValue());
@@ -1283,7 +1285,7 @@ public class Settings {
         if (s != null) {
             eng.setBooleanFormat(s);
         }
-        
+
         s = (String) get(NAME_DATE_FORMAT);
         if (s != null) {
             eng.setDateFormat(s);
@@ -1327,7 +1329,12 @@ public class Settings {
                         + "\". Value " + StringUtil.jQuote(s) + " is invalid.");
             }
         }
-        
+
+        b = (Boolean) get(NAME_OLD_SYNTAX);
+        if (b != null) {
+            eng.setOldTemplateSyntax(b.booleanValue());
+        }
+
         s = (String) get(NAME_SOURCE_ENCODING);
         if (s != null) {
             eng.setSourceEncoding(s);
@@ -1337,7 +1344,7 @@ public class Settings {
         if (s != null) {
             eng.setOutputEncoding(s);
         }
-        
+
         s = (String) get(NAME_URL_ESCAPING_CHARSET);
         if (s != null) {
             eng.setUrlEscapingCharset(s);
@@ -1357,7 +1364,7 @@ public class Settings {
         if (b != null) {
             eng.setAlwaysCreateDirectories(b.booleanValue());
         }
-        
+
         b = (Boolean) get(NAME_IGNORE_CVS_FILES);
         if (b != null) {
             eng.setIgnoreCvsFiles(b.booleanValue());
@@ -1394,7 +1401,7 @@ public class Settings {
         } else {
             xmlCatalogPreferPublic = Boolean.TRUE;
         }
-        
+
         /*
         Boolean xmlCatalogAllowPi;
         s = (String) get(NAME_XML_CATALOG_ALLOW_PI);
@@ -1417,7 +1424,7 @@ public class Settings {
             xmlCatalogAllowPi = null;
         }
         */
-        
+
         ls = (List) get(NAME_XML_CATALOG_FILES);
         if (ls != null) {
             try {
@@ -1428,7 +1435,7 @@ public class Settings {
                 throw new SettingException("Failed to setup XML catalogs.", e);
             }
         }
-        
+
         b = (Boolean) get(NAME_VALIDATE_XML);
         if (b != null) {
             eng.setValidateXml(b.booleanValue());
@@ -1457,7 +1464,7 @@ public class Settings {
                         e);
             }
         }
-            
+
         ls = (List) get(NAME_TURNS);
         if (ls != null) {
             try {
@@ -1505,7 +1512,7 @@ public class Settings {
                         e);
             }
         }
-            
+
         s = (String) get(NAME_SKIP_UNCHANGED);
         if (s != null) {
             if (s.equalsIgnoreCase("none")) {
@@ -1530,7 +1537,7 @@ public class Settings {
         if (sources != null) {
             sources = new ArrayList(sources);
         }
-        File sourceFile; 
+        File sourceFile;
         if (outputFile != null) {
             try {
                 outputFile = outputFile.getCanonicalFile();
@@ -1560,7 +1567,7 @@ public class Settings {
                 sourceFile = new File(
                         ((FileWithConfigurationBase) sourceFile)
                                 .getConfigurationBase(),
-                        sourceFile.getPath()); 
+                        sourceFile.getPath());
             }
             try {
                 sourceFile = sourceFile.getCanonicalFile();
@@ -1645,7 +1652,7 @@ public class Settings {
                 }
             }
         }
-            
+
         // - output root:
         f = (File) get(NAME_OUTPUT_ROOT);
         if (f == null) {
@@ -1662,7 +1669,7 @@ public class Settings {
                 throw new SettingException(
                         "The \"" + NAME_OUTPUT_ROOT + "\" setting was not set. "
                         + "FMPP can't start working without that.");
-            } 
+            }
         } else {
             if (f.exists() && !f.isDirectory()) {
                 throw new SettingException(
@@ -1700,7 +1707,7 @@ public class Settings {
                         e);
             }
         }
-        
+
         // Safety checks
         if (!eng.getExpertMode()) {
             try {
@@ -1712,7 +1719,7 @@ public class Settings {
                                 + "root directories are identical. If this is "
                                 + "intentional, use expert mode to allow "
                                 + "this. (Set the \"" + NAME_EXPERT
-                                + "\" setting to true.)"); 
+                                + "\" setting to true.)");
                     }
                 } else {
                     if (sourceFile == null) {
@@ -1725,7 +1732,7 @@ public class Settings {
                                 + "files are identical. If this is "
                                 + "intentional, use expert mode to allow "
                                 + "this. (Set the \"" + NAME_EXPERT
-                                + "\" setting to true.)"); 
+                                + "\" setting to true.)");
                     }
                 }
             } catch (IOException e) {
@@ -1734,9 +1741,9 @@ public class Settings {
                         "Unexpected path canonicalization error.", e);
             }
         }
-        
+
         // Adding FreeMarker links
-        
+
         m = (Map) get(NAME_FREEMARKER_LINKS);
         if (m != null) {
             try {
@@ -1750,7 +1757,7 @@ public class Settings {
         }
 
         // Adding XML renderings
-        
+
         ls = (List) get(NAME_XML_RENDERINGS);
         if (ls != null && ls.size() != 0) {
             try {
@@ -1768,7 +1775,7 @@ public class Settings {
         // B.C.: Don't clean attributes!
         Iterator it = engineAttributes.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry ent = (Map.Entry) it.next(); 
+            Map.Entry ent = (Map.Entry) it.next();
             eng.setAttribute((String) ent.getKey(), ent.getValue());
         }
 
@@ -1783,7 +1790,7 @@ public class Settings {
         // Data settings. These must set last!
 
         // - Session level data
-        
+
         ls = (List) get(NAME_DATA);
         if (ls != null) {
             eng.clearData();
@@ -1800,7 +1807,7 @@ public class Settings {
                     } catch (EvalException e) {
                         throw new SettingException(
                                 "Failed to apply the value of the \""
-                                + NAME_DATA + "\" setting.", e); 
+                                + NAME_DATA + "\" setting.", e);
                     }
                 } else if (o instanceof Fragment) {
                     Fragment fr = (Fragment) o;
@@ -1823,7 +1830,7 @@ public class Settings {
                     } catch (EvalException e) {
                         throw new SettingException(
                                 "Failed to apply the value of the \""
-                                + NAME_DATA + "\" setting.", e); 
+                                + NAME_DATA + "\" setting.", e);
                     }
                 } else if (o instanceof Map) {
                     dataModel.putAll((Map) o);
@@ -1848,9 +1855,9 @@ public class Settings {
                         e);
             }
         }
-        
+
         // - Local data (this must be the very very last)
-        
+
         ls = (List) get(NAME_LOCAL_DATA);
         if (ls != null) {
             eng.clearLocalDataBuilders();
@@ -1863,7 +1870,7 @@ public class Settings {
                             "The value of the \"" + NAME_LOCAL_DATA
                             + "\" setting must be a sequence of TDD function "
                             + "calls, but there is an item of type "
-                            + Interpreter.getTypeName(o) + "."); 
+                            + Interpreter.getTypeName(o) + ".");
                 }
                 FunctionCall fc = (FunctionCall) o;
                 if (fc.getName().equals(FUNCTION_LAYER)) {
@@ -1979,13 +1986,13 @@ public class Settings {
                             + "\" setting must be a sequence of TDD function "
                             + "calls to \"" + FUNCTION_LAYER + "\" or \""
                             + FUNCTION_CASE + "\", but there is a call to "
-                            + StringUtil.jQuote(fc.getName()) + "."); 
+                            + StringUtil.jQuote(fc.getName()) + ".");
                 }
             }
         }
 
         // Processing
-        
+
         if (outputFile == null) {
             int ln = sources.size();
             File[] ss = new File[ln];
@@ -1997,12 +2004,12 @@ public class Settings {
             doProcessing(eng, null, sourceFile, outputFile);
         }
     }
-    
+
     /**
      * Adds a progress listener. The progress listener will be added to the
      * internally used {@link fmpp.Engine} object when you call
      * {@link #execute()}.
-     * 
+     *
      * @see #clearProgressListeners()
      */
     public void addProgressListener(ProgressListener pl) {
@@ -2011,7 +2018,7 @@ public class Settings {
 
     /**
      * Removes all progress listeneres.
-     * 
+     *
      * @see #addProgressListener(ProgressListener)
      */
     public void clearProgressListeners() {
@@ -2021,7 +2028,7 @@ public class Settings {
     /**
      * Sets an engine attribute. The attribute will be set in the internally
      * used {@link fmpp.Engine} object when you call {@link #execute()}.
-     * 
+     *
      * @return The  previous value of the attribute, or <code>null</code> if
      *     there was no attribute with the given name.
      */
@@ -2033,9 +2040,9 @@ public class Settings {
      * Reads an engine attribute.
      *
      * @see #setEngineAttribute(String, Object)
-     *  
+     *
      * @return <code>null</code> if no attribute exists with the given name.
-     */ 
+     */
     public Object getEngineAttribute(String name) {
         return engineAttributes.get(name);
     }
@@ -2043,9 +2050,9 @@ public class Settings {
     /**
      * Removes an engine attribute. It does nothing if the attribute does not
      * exist.
-     * 
+     *
      * @see #setEngineAttribute(String, Object)
-     *  
+     *
      * @return The value of the removed attribute or <code>null</code> if there
      *     was no attribute with the given name.
      */
@@ -2055,7 +2062,7 @@ public class Settings {
 
     /**
      * Removes all engine attributes.
-     * 
+     *
      * @see #setEngineAttribute(String, Object)
      */
     public void clearAttribues() {
@@ -2066,11 +2073,11 @@ public class Settings {
     public void setDontTraverseDirectories(boolean dontTraverseDirs) {
         this.dontTraverseDirs = dontTraverseDirs;
     }
-    
+
     public boolean getDontTraverseDirectories() {
         return dontTraverseDirs;
     }
-    
+
     /**
      * Dumps the current content of this object for debugging purposes.
      */
@@ -2079,7 +2086,7 @@ public class Settings {
     }
 
     /**
-     * Returns 0 for verbose mode, 1 for quiet mode, 2 for really-quiet mode. 
+     * Returns 0 for verbose mode, 1 for quiet mode, 2 for really-quiet mode.
      */
     public static int quietSettingValueToInt(String value, String name)
             throws SettingException {
@@ -2135,9 +2142,9 @@ public class Settings {
     /**
      * Converts legacy dashed setting names to the standard format, as
      * <code>source-root</code> to <code>sourceRoot</code>.
-     * 
+     *
      * @param props the <code>Properties</code> object to convert.
-     * 
+     *
      * @throws SettingException if no setting with the given name exists.
      */
     public void undashNames(Properties props)
@@ -2185,30 +2192,30 @@ public class Settings {
     /**
      * Executes the processing session(s) on the {@link fmpp.Engine} level,
      * using the already initialized <code>Engine</code> object.
-     * 
+     *
      * <p>By overriding this method, you can
      * <ul>
-     *   <li>call <code>Engine.process(...)</code> for multiple times, so you 
+     *   <li>call <code>Engine.process(...)</code> for multiple times, so you
      *       can do multiple processing sessions with the same already
      *       initialized <code>Engine</code> object.
      *   <li>do extra <code>Engine</code> initialization.
      * </ul>
-     *  
+     *
      * <p>The inital implementation of this method (that is, the implementation
      * in the {@link Settings} class) is something like this:
-     * 
+     *
      * <pre>
      * if (outputFile == null) {
      *     eng.process(sources);
      * } else {
      *     eng.process(sourceFile, outputFile);
      * }</pre>
-     * 
+     *
      * <p>Modifying the {@link Settings} object in this method has no effect on
      * the <code>Engine</code> object (which is passed in as argument),
      * since all settings are already applied on it. If you need to modify the
      * <code>Engine</code> object, call its methods directly.
-     * 
+     *
      * <p>An implementation of this method may leak out the initialized
      * <code>Engine</code> object for the caller of {@link #execute()}. Also, it
      * may does not call <code>Engine.proccess(...)</code>, but left it for the
@@ -2222,10 +2229,10 @@ public class Settings {
      *     the processing session uses <code>outputFile</code> setting.
      * @param sourceFile if the session uses <code>outputFile</code> setting,
      *     then it' the 1st parameter to
-     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null. 
+     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null.
      * @param outputFile if the session uses <code>outputFile</code> setting,
      *     then it' the 2nd parameter to
-     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null. 
+     *     {@link fmpp.Engine#process(File, File)}, otherwise it is null.
      */
     protected void doProcessing(
             Engine eng, File[] sources, File sourceFile, File outputFile)
@@ -2239,7 +2246,7 @@ public class Settings {
 
     // -------------------------------------------------------------------------
     // Private
-    
+
     private void addOrSet(Map m, String name, Object value, boolean set)
             throws SettingException {
         SettingDefinition def = (SettingDefinition) defs.get(name);
@@ -2301,7 +2308,7 @@ public class Settings {
                 }
             } else {
                 return; //!
-            } 
+            }
         }
         m.put(name, value);
     }
@@ -2382,7 +2389,7 @@ public class Settings {
         }
         values.putAll(changed);
     }
-    
+
     private Object translateProperty(String name, String value)
             throws SettingException {
         SettingDefinition def = (SettingDefinition) defs.get(name);
@@ -2429,15 +2436,15 @@ public class Settings {
         }
         return sb.toString();
     }
-    
+
     private String findSimilar(String name) {
         String s;
-        
+
         s = (String) cmdLineNames.get(name);
         if (s != null) {
             return s;
         }
-        
+
         String lNameV1 = name.toLowerCase();
         String lNameV2 = lNameV1 + "s";
         String lNameV3 = lNameV1 + "es";
@@ -2477,10 +2484,10 @@ public class Settings {
                 return dName;
             }
         }
-        
+
         return null;
     }
-    
+
     private static void stdDef(
             String name, SettingType type, boolean merge, boolean forceStr) {
         SettingDefinition def = new SettingDefinition(
@@ -2493,7 +2500,7 @@ public class Settings {
         STD_DEFS.put(def.name, def);
         STD_STDCMDL.put(getDashedName(def.name), def.name);
     }
-    
+
     private static String typeName(Object value) {
         if (value instanceof String) {
             return "string";
@@ -2512,7 +2519,7 @@ public class Settings {
             return value.getClass().getName();
         }
     }
-    
+
     /**
      * Backward compatibility hack: renames properties that use
      * pre-FMPP 0.9.0 names of settings.
@@ -2539,7 +2546,7 @@ public class Settings {
                 getDashedName(oldName),
                 getDashedName(newName));
     }
-    
+
     private static void fixOldSettingName_inner(
             Properties props, String oldName, String newName)
             throws SettingException {
@@ -2570,7 +2577,7 @@ public class Settings {
         } finally {
             if (done) {
                 Map newSettings = values;
-                values = savedSettings; 
+                values = savedSettings;
                 savedSettings = new HashMap(values);
                 done = false;
                 try {
@@ -2640,7 +2647,7 @@ public class Settings {
                     in.close();
                 }
                 FirstPhaseEvaluationEnvironment ee
-                        = new FirstPhaseEvaluationEnvironment(this); 
+                        = new FirstPhaseEvaluationEnvironment(this);
                 loaded = Interpreter.evalAsHash(
                         text, ee, false, cfgFile.getAbsolutePath());
             } else {
@@ -2651,9 +2658,9 @@ public class Settings {
                 } finally {
                     in.close();
                 }
-                
+
                 fixVersion08SettingNames(props);
-                
+
                 undashNames(props);
                 trimValues(props);
                 loaded = props;
@@ -2674,7 +2681,7 @@ public class Settings {
                 if (!tddMode) {
                     loaded.remove(getDashedName(NAME_CONFIGURATION_BASE));
                 }
-                
+
                 if (inheritOverride != null) {
                     inherit = inheritOverride;
                 } else {
@@ -2685,7 +2692,7 @@ public class Settings {
                 if (!tddMode) {
                     loaded.remove(getDashedName(NAME_INHERIT_CONFIGURATION));
                 }
-                
+
                 if (inherited) {
                     if (tddMode) {
                         addDefaults(loaded);
@@ -2699,7 +2706,7 @@ public class Settings {
                         addWithStrings((Properties) loaded);
                     }
                 }
-                
+
                 if (inherit != null) {
                     load_inner(inherit, true, null, null);
                 }
@@ -2715,7 +2722,7 @@ public class Settings {
                     e);
         }
     }
-    
+
     private File load_getMetaSetting(Map m, String name, boolean tddMode)
             throws SettingException, IOException {
         Object o = m.get(name);
@@ -3023,7 +3030,7 @@ public class Settings {
             }
         }
     }
-    
+
     private static void loadFreemarkerLinks(Engine eng, Map m)
             throws IOException, SettingException {
         Iterator it = m.entrySet().iterator();
@@ -3044,7 +3051,7 @@ public class Settings {
             }
         }
     }
-    
+
     private void loadXmlCatalogs(
             Engine eng, List ls, Boolean preferPublic, Boolean allowCatalogPI)
             throws InstallationException {
@@ -3062,11 +3069,11 @@ public class Settings {
                 xmlOps.createCatalogResolver(
                         catalogs.toString(), preferPublic, allowCatalogPI));
     }
-    
+
     private static final String MSG_XML_RENDERING_OPT_ERROR
             = "Problem with the options of an XML rendering in "
                     + "the \"" + NAME_XML_RENDERINGS + "\" setting: ";
-    
+
     private void loadXmlRenderings(Engine eng, List ls)
             throws SettingException, InstallationException {
         String s;
@@ -3082,7 +3089,7 @@ public class Settings {
                         + "one of the items is a "
                         + Interpreter.getTypeName(o) + ".");
             }
-            
+
             Map m = (Map) o;
             XmlRenderingConfiguration xrc = new XmlRenderingConfiguration();
 
@@ -3125,7 +3132,7 @@ public class Settings {
                 }
                 xrc.setTemplate((String) o);
             }
-            
+
             o = m.get("xmlns");
             String defaultXmlns;
             Map xmlns;
@@ -3138,7 +3145,7 @@ public class Settings {
                             + Interpreter.getTypeName(o) + ".");
                 }
                 xmlns = (Map) o;
-                    
+
                 o = xmlns.get("D");
                 if (o != null && !(o instanceof String)) {
                     throw new SettingException(
@@ -3152,7 +3159,7 @@ public class Settings {
                 xmlns = null;
                 defaultXmlns = null;
             }
-                
+
             Iterator it2 = m.entrySet().iterator();
             while (it2.hasNext()) {
                 Map.Entry ent = (Map.Entry) it2.next();
@@ -3164,7 +3171,7 @@ public class Settings {
                     if (!(value instanceof List)) {
                         o = new ArrayList(1);
                         ((List) o).add(value);
-                        value = o; 
+                        value = o;
                     }
                     Iterator sourcesIt = ((List) value).iterator();
                     while (sourcesIt.hasNext()) {
@@ -3178,12 +3185,12 @@ public class Settings {
                                     + Interpreter.getTypeName(o) + ".");
                         }
                         xrc.addSourcePathPattern((String) o);
-                    } 
+                    }
                 } else if (name.equals("ifDocumentElementIs")) {
                     if (!(value instanceof List)) {
                         o = new ArrayList(1);
                         ((List) o).add(value);
-                        value = o; 
+                        value = o;
                     }
                     Iterator elementsIt = ((List) value).iterator();
                     while (elementsIt.hasNext()) {
@@ -3199,7 +3206,7 @@ public class Settings {
                         if (cidx == -1) {
                             xrc.addDocumentElement(defaultXmlns, s);
                         } else {
-                            String prefix = s.substring(0, cidx); 
+                            String prefix = s.substring(0, cidx);
                             o = xmlns == null ? null : xmlns.get(prefix);
                             if (o == null) {
                                 throw new SettingException(
@@ -3227,7 +3234,7 @@ public class Settings {
                     if (!(value instanceof List)) {
                         o = new ArrayList(1);
                         ((List) o).add(value);
-                        value = o; 
+                        value = o;
                     }
                     Iterator ldbIt = ((List) value).iterator();
                     while (ldbIt.hasNext()) {
@@ -3318,7 +3325,7 @@ public class Settings {
                 throw new BugException(
                         "Failed to instantiate "
                         + "fmpp.setting.XmlDependentOpsImpl", e);
-            } 
+            }
        }
        return xmlDependentOps;
     }
@@ -3331,7 +3338,7 @@ public class Settings {
         private final SettingType type;
         private final boolean merge;
         private final boolean forceStr;
-        
+
         private SettingDefinition(
                 String name, SettingType type, boolean merge,
                 boolean forceStr) {
@@ -3341,17 +3348,17 @@ public class Settings {
             this.forceStr = forceStr;
         }
     }
-    
+
     private static class DataList extends ArrayList {
-        
+
         private static final long serialVersionUID = 1L;
 
         public DataList(int initialCapacity) {
             super(initialCapacity);
         }
 
-    } 
-    
+    }
+
     private interface SettingType {
         /**
          * Converts an object to the type of the setting.
@@ -3361,15 +3368,15 @@ public class Settings {
          */
         Object convert(Settings settings, Object value)
                 throws SettingException;
- 
+
         /**
          * Converts a string value to the type of the setting. Ther value is
          * already trimmed.
-         */ 
+         */
         Object convertString(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException;
- 
+
         /**
          * Merges two setting values.
          * <p>Warning! Do not modify the value objects! Create new object for
@@ -3510,7 +3517,7 @@ public class Settings {
             ls.addAll(l1);
             return ls;
         }
-        
+
         protected EvaluationEnvironment getEvaluationEnvironment() {
             return null;
         }

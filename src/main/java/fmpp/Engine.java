@@ -1,12 +1,12 @@
 /*
  * Copyright 2014 Attila Szegedi, Daniel Dekany, Jonathan Revusky
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -56,7 +56,7 @@ import freemarker.template.Version;
  * The bare-bone, low-level preprocessor engine. Since FMPP 0.9.0 you should
  * rather use a {@link fmpp.setting.Settings} object instead of directly using
  * this class.
- * 
+ *
  * <p><b>{@link Engine fmpp.Engine} vs {@link fmpp.setting.Settings}</b>:
  * The design of the {@link Engine} object API is driven by the internal
  * architecture of FMPP system. It doesn't consider front-ends, doesn't know
@@ -77,7 +77,7 @@ import freemarker.template.Version;
  * available, plus some extra features (as configuration files). So basically,
  * the introduction of {@code Settings} has degraded {@link Engine} to
  * an internally used object.
- * 
+ *
  * <p><b>Engine parameters:</b>
  * Engine parameters are very similar to "settings" discussed in the
  * FMPP Manual. You will usually find trivial one-to-one correspondence between
@@ -91,7 +91,7 @@ import freemarker.template.Version;
  * an engine parameter from an executing template. Also, you should not change
  * the objects stored as "data" (i.e. the variables that are visible for all
  * templates) while the processing session is executing, even though it's not
- * prevented technically (because it can't be...). 
+ * prevented technically (because it can't be...).
  *
  * <p><b>Life-cycle:</b> The engine object can be used for multiple processing
  * sessions. However, the typical usage is that it is used
@@ -109,44 +109,44 @@ public class Engine {
 
     /** Processing mode: Execute the file as template */
     public static final int PMODE_EXECUTE = 1;
-    
+
     /** Processing mode: Copy the file as-is (binary copy). */
     public static final int PMODE_COPY = 2;
 
     /** Processing mode: Ignore the file. */
     public static final int PMODE_IGNORE = 3;
-    
+
     /** Processing mode: Render XML with an FTL template. */
     public static final int PMODE_RENDER_XML = 4;
-    
+
     /** Used with the "skipUnchnaged" engine parameter: never skip files */
     public static final int SKIP_NONE = 0;
 
-    /** 
+    /**
      * Used with the "skipUnchanged" engine parameter: skip unchanged static
      * files
      */
     public static final int SKIP_STATIC = 1;
-    
+
     /**
      * Used with the "skipUnchanged" engine parameter: skip all unchanged
      * files
      */
     public static final int SKIP_ALL = 2;
-    
+
     /**
      * A commonly used reserved parameter value: {@code "source"}.
-     */ 
+     */
     public static final String PARAMETER_VALUE_SOURCE = "source";
 
     /**
      * A commonly used reserved parameter value: {@code "source"}.
-     */ 
+     */
     public static final String PARAMETER_VALUE_OUTPUT = "output";
 
     /**
      * A commonly used reserved parameter value: {@code "host"}.
-     */ 
+     */
     public static final String PARAMETER_VALUE_HOST = "host";
 
     /**
@@ -154,19 +154,19 @@ public class Engine {
      * JVM level setting.
      */
     public static final String XPATH_ENGINE_DONT_SET = "dontSet";
-    
+
     /**
      * Used as the value of the "xmlEngine" engine parameter: Let FreeMarker
      * choose.
      */
     public static final String XPATH_ENGINE_DEFAULT = "default";
-    
+
     /**
      * Used as the value of the "xmlEngine" engine parameter: Force the usage
      * of Xalan.
      */
     public static final String XPATH_ENGINE_XALAN = "xalan";
-    
+
     /**
      * Used as the value of the "xmlEngine" engine parameter: Force the usage
      * of Jaxen.
@@ -174,9 +174,9 @@ public class Engine {
     public static final String XPATH_ENGINE_JAXEN = "jaxen";
 
     private static final String IGNOREDIR_FILE = "ignoredir.fmpp";
-    
+
     private static final String CREATEDIR_FILE = "createdir.fmpp";
-    
+
     private static final Set STATIC_FILE_EXTS = new HashSet();
     static {
         String[] list = new String[] {
@@ -194,7 +194,7 @@ public class Engine {
 
     private static String cachedVersion;
     private static String cachedBuildInfo;
-    
+
     // Settins
     private File srcRoot, outRoot, dataRoot;
     private boolean dontTraverseDirs;
@@ -223,7 +223,7 @@ public class Engine {
     private Object xmlEntityResolver;
     private boolean validateXml = false;
     private List xmlRendCfgCntrs = new ArrayList();
-    
+
     // Misc
     private Configuration fmCfg;
     private MultiProgressListener progListeners = new MultiProgressListener();
@@ -232,41 +232,41 @@ public class Engine {
     private Map attributes = new HashMap();
     private Boolean chachedXmlSupportAvailable;
     private boolean parametersLocked;
-    
+
     // Session state
     private Map ignoredDirCache = new HashMap();
     private Set processedFiles = new HashSet();
 
     /**
      * Same as {@link #Engine(BeansWrapper) Engine(null)}.
-     * 
+     *
      * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
      */
     public Engine() {
         this(null);
     }
-    
+
     /**
      * Same as
      * {@link #Engine(BeansWrapper, Version) Engine(beansWrapper, null)}.
-     * 
+     *
      * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
      */
     public Engine(BeansWrapper beansWrapper) {
         this(beansWrapper, null);
     }
-        
+
     /**
      * Creates a new FMPP engine instance.
      * Use the setter methods (as {@code setProgressListener}) to configure
-     * the new instance.  
-     * 
+     * the new instance.
+     *
      * @param beansWrapper the FreeMarker beans-wrapper that this instance
      *    will use. Just use {@code null} if you don't know what's this.
      *    If you do know what's this, note that FMPP by default (when this
      *    parameter is {@code null}) uses a {@code BeansWrapper} with
      *    {@code simpleMapWrapper} set to {@code true}.
-     *    
+     *
      * @param fmIncompImprovements Sets the "incompatible improvements" version of FreeMarker. You should set this to
      *    the current FreeMarker version in new projects. See {@link Configuration#Configuration(Version)} for details.
      *    If it's at least {@code 2.3.21} and {@code beansWrapper} is {@code null}, the default will be created using
@@ -275,7 +275,7 @@ public class Engine {
      */
     public Engine(BeansWrapper beansWrapper, Version fmIncompImprovements) {
         fmCfg = fmIncompImprovements != null ? new Configuration(fmIncompImprovements) : new Configuration();
-        
+
         if (beansWrapper == null) {
             if (fmIncompImprovements == null
                     || fmIncompImprovements.intValue() < Configuration.VERSION_2_3_21.intValue()) {
@@ -292,7 +292,7 @@ public class Engine {
         } else {
             fmCfg.setObjectWrapper(beansWrapper);
         }
-        
+
         fmCfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         fmCfg.setTemplateUpdateDelay(Integer.MAX_VALUE - 10000);
         fmCfg.setDefaultEncoding("ISO-8859-1");
@@ -301,7 +301,7 @@ public class Engine {
         fmCfg.setLocalizedLookup(false);
 
         templateEnv = new TemplateEnvironment(this);
-        
+
         clearModeChoosers();
     }
 
@@ -313,7 +313,7 @@ public class Engine {
      *
      * <p>The source root and output root directory must be set (non-null) prior
      * to calling this method.
-     * 
+     *
      * @see #process(File, File)
      *
      * @param sources The list of files to process. All file must be inside
@@ -321,7 +321,7 @@ public class Engine {
      *      appear in the list, except that if you use multiple turns, they
      *      are re-sorted based on the associated turns (the original order
      *      of files is kept inside turns).
-     *    
+     *
      * @throws ProcessingException if {@code Engine.process} has
      *     thrown any exception. The message of this exception holds nothing
      *     interesting (just a static text). Call its {@code getCause()}
@@ -346,8 +346,8 @@ public class Engine {
                 File src;
                 File[] srcs = new File[sources.length];
                 for (int i = 0; i < sources.length; i++) {
-                    src = sources[i].getCanonicalFile(); 
-        
+                    src = sources[i].getCanonicalFile();
+
                     if (!FileUtil.isInsideOrEquals(src, srcRoot)) {
                         throw new IOException(
                                 "The source file ("
@@ -355,10 +355,10 @@ public class Engine {
                                 + ") is not inside the source root ("
                                 + srcRoot.getPath() + ")");
                     }
-    
+
                     srcs[i] = src;
                 }
-                
+
                 for (; currentTurn <= maxTurn; currentTurn++) {
                     for (int i = 0; i < srcs.length; i++) {
                         if (srcs[i] != null) {
@@ -422,19 +422,19 @@ public class Engine {
         ignoredDirCache.put(dir, ign ? Boolean.TRUE : Boolean.FALSE);
         return ign;
     }
-    
+
     /**
      * Hack to processes a single file.
      *
      * <p>If the source root and/or output root directory is not set, they
      * will be set for the time of this method call to the parent diretories of
      * the source and output files respectively.
-     * 
+     *
      * @see #process(File[])
      *
      * @param src the source file (not directory). Can't be null.
      * @param out the output file (not directory). Can't be null.
-     * 
+     *
      * @throws ProcessingException if {@code Engine.process} has
      *     thrown any exception. The message of this exception holds nothing
      *     interesting (just a static text). Call its {@code getCause()}
@@ -461,7 +461,7 @@ public class Engine {
                     throw new IllegalArgumentException(
                             "The output argument can't be null.");
                 }
-    
+
                 src = src.getCanonicalFile();
                 if (!src.exists()) {
                     throw new IOException(
@@ -473,21 +473,21 @@ public class Engine {
                             "Source file can't be a directory: "
                             + src.getPath());
                 }
-    
+
                 out = out.getCanonicalFile();
                 if (out.exists() && out.isDirectory()) {
                     throw new IOException(
                             "The output file can't be a directory.");
                 }
-                
+
                 if (srcRoot == null) {
                     setSourceRoot(src.getParentFile());
                 }
-    
+
                 if (outRoot == null) {
                     setOutputRoot(out.getParentFile());
                 }
-                
+
                 try {
                     setupSession();
                 } catch (IllegalConfigurationException e) {
@@ -501,7 +501,7 @@ public class Engine {
                                 + ") is not inside the source root ("
                                 + srcRoot.getPath() + ")");
                     }
-    
+
                     if (!FileUtil.isInsideOrEquals(out, outRoot)) {
                         throw new IOException(
                                 "The output file ("
@@ -509,7 +509,7 @@ public class Engine {
                                 + ") is not inside the output root ("
                                 + outRoot.getPath() + ")");
                     }
-        
+
                     for (; currentTurn <= maxTurn; currentTurn++) {
                         processFile(src, out, false);
                     }
@@ -572,7 +572,7 @@ public class Engine {
             if (!xpathEngine.equals(XPATH_ENGINE_DONT_SET)) {
                 EngineXmlUtils.setFreeMarkerXPathEngine(xpathEngine);
             }
-            
+
             maxTurn = 1;
             Iterator it = turnChoosers.iterator();
             while (it.hasNext()) {
@@ -582,10 +582,10 @@ public class Engine {
                 }
             }
             currentTurn = 1;
-            
+
             fmCfg.setTemplateLoader(new FmppTemplateLoader(this));
             fmCfg.clearTemplateCache();
-            
+
             fmCfg.clearSharedVariables();
             it = data.entrySet().iterator();
             while (it.hasNext()) {
@@ -601,14 +601,14 @@ public class Engine {
                             e);
                 }
             }
-            
+
             processedFiles.clear();
             ignoredDirCache.clear();
-            
+
             templateEnv.setupForSession();
-            
+
             lockParameters();
-            
+
             done = true;
         } finally {
             if (!done) {
@@ -616,10 +616,10 @@ public class Engine {
             }
         }
     }
-    
+
     private void cleanupSession() {
         unlockParameters();
-        
+
         templateEnv.cleanAfterSession();
 
         processedFiles.clear();
@@ -627,14 +627,14 @@ public class Engine {
         fmCfg.clearTemplateCache();
         fmCfg.clearSharedVariables();
     }
-    
+
     private boolean processDir(File srcDir, File dstDir)
             throws IOException, ProcessingException {
 
         if (isDirMarkedWithIgnoreFile(srcDir)) {
             return true;
         }
-        
+
         String name = srcDir.getName();
         if (ignoreCvsFiles) {
             if (name.equals("CVS")
@@ -663,7 +663,7 @@ public class Engine {
                         PMODE_NONE, null, null);
             }
         }
-        
+
         if (!dontTraverseDirs) {
             File[] dir = srcDir.listFiles();
             for (int i = 0; i < dir.length; i++) {
@@ -677,17 +677,17 @@ public class Engine {
                 }
             }
         }
-        
-        return false;   
+
+        return false;
     }
-    
+
     private boolean processFile(File sf, File df, boolean allowOutFAdj)
             throws IOException, ProcessingException {
         if (isDirMarkedWithIgnoreFile(
                 sf.getParentFile().getCanonicalFile())) {
             return true;
         }
-        
+
         if (sf.getName().equalsIgnoreCase(CREATEDIR_FILE)) {
             File srcDir = sf.getParentFile();
             // Re-check with the comparison rules of the file-system
@@ -708,10 +708,10 @@ public class Engine {
                 return true;
             }
         }
-        
+
         if (currentTurn != getTurn(sf)) {
             return false;
-        }           
+        }
         if (!processedFiles.add(sf)) {
             return true;
         }
@@ -752,7 +752,7 @@ public class Engine {
             // delay the throwing of exc. as if it was happen while processing
             catchedExc = e;
         }
-        
+
         progListeners.notifyProgressEvent(
                 this,
                 ProgressListener.EVENT_BEGIN_FILE_PROCESSING,
@@ -762,7 +762,7 @@ public class Engine {
             if (catchedExc != null) {
                 throw catchedExc;
             }
-            
+
             switch (pmode) {
             case PMODE_EXECUTE:
                 executeFile(sf, df);
@@ -807,7 +807,7 @@ public class Engine {
         }
         return true;
     }
-    
+
     private void executeFile(File sf, File df)
             throws ProcessingException, DataModelBuildingException,
             TemplateException, IOException {
@@ -845,7 +845,7 @@ public class Engine {
             findMatchingXRC: for (xrccIdx = 0; xrccIdx < xrccln; xrccIdx++) {
                 XmlRenderingCfgContainer curXRCC = (XmlRenderingCfgContainer) xmlRendCfgCntrs.get(xrccIdx);
                 curXRC = curXRCC.xmlRenderingCfg;
-    
+
                 // Filter: ifSourceIs
                 {
                     int ln = curXRCC.compiledPathPatterns.length;
@@ -868,7 +868,7 @@ public class Engine {
                     }
                 } // end Filter: ifSourceIs
                 // At this point: we know that "ifSourceIs" doesn't exclude curXRC
-    
+
                 // Filter: ifDocumentElementIs
                 {
                     int ln = curXRC.getDocumentElementLocalNames().size();
@@ -896,7 +896,7 @@ public class Engine {
                             }
                         }
                         // At this point: loadedDoc is non-null
-                        
+
                         List localNames = curXRC.getDocumentElementLocalNames();
                         List namespaces = curXRC.getDocumentElementNamespaces();
                         int i;
@@ -915,11 +915,11 @@ public class Engine {
                     }
                 } // end Filter: ifDocumentElementIs
                 // At this point: we know that "ifDocumentElementIs" doesn't exclude curXRC
-                
+
                 // Nothing has excluded it, so curXRC is matching:
                 break findMatchingXRC;
             }  // findRendering
-            
+
             xrc = xrccIdx != xrccln ? curXRC : null;
         } // end find matching XRC
         if (xrc == null) {
@@ -930,7 +930,7 @@ public class Engine {
                     + "(Check the if... options of the XML rendering "
                     + "configurations)");
         }
-        
+
         if (xrc.getCopy()) {
             File dstDir;
             dstDir = df.getParentFile();
@@ -955,7 +955,7 @@ public class Engine {
                             "Failed to load the XML source file.", e);
                 }
             }
-            
+
             TemplateNodeModel wrappedDoc;
             List args = new ArrayList(2);
             args.add("");
@@ -966,7 +966,7 @@ public class Engine {
                 throw new DataModelBuildingException(
                         "Failed to load the XML source file.", e);
             }
-    
+
             Template template;
             try {
                 template = fmCfg.getTemplate(xrc.getTemplatePath());
@@ -976,12 +976,12 @@ public class Engine {
                         + "rendering configuration: " + xrc.getTemplatePath(),
                         e);
             }
-    
+
             String outEnc = getOutputEncoding();
             if (outputEncoding.equalsIgnoreCase(PARAMETER_VALUE_SOURCE)) {
                 outEnc = template.getEncoding();
             }
-    
+
             FmppOutputWriter out = new FmppFileOutputWriter(this, df, outEnc);
             boolean done = false;
             try {
@@ -997,7 +997,7 @@ public class Engine {
 
     // -------------------------------------------------------------------------
     // Engine parameters
-    
+
     public boolean getStopOnError() {
         return stopOnError;
     }
@@ -1012,9 +1012,9 @@ public class Engine {
      * This can be null. However, it is never null while a processing session is
      * running, since the output root must be specified for successfully start a
      * processing session.
-     * 
+     *
      * <p>The returned {@code File} is always a canonical
-     * {@code File}.</p> 
+     * {@code File}.</p>
      */
     public File getOutputRoot() {
         return outRoot;
@@ -1024,7 +1024,7 @@ public class Engine {
      * Sets the root directory of output files.
      * If it is null, the output directory will be used if the output is a
      * directory, otherwise the parent directory of the output file.
-     * Initially this engine parameter is null.  
+     * Initially this engine parameter is null.
      */
     public void setOutputRoot(File outputRoot)
             throws IOException {
@@ -1033,13 +1033,13 @@ public class Engine {
     }
 
     /**
-     * Returns the source root directory. 
+     * Returns the source root directory.
      * This can be null. However, it is never null while a processing session is
      * runing, since the source root must be specified for successfully start a
      * processing session.
-     * 
+     *
      * <p>The returned {@code File} is always a canonical
-     * {@code File}.</p> 
+     * {@code File}.</p>
      */
     public File getSourceRoot() {
         return srcRoot;
@@ -1066,9 +1066,9 @@ public class Engine {
      * However, it is never null while a processing session is runing, since
      * the source root must be specified for successfully start a processing
      * session.
-     * 
+     *
      * <p>The returned {@code File} is always a canonical
-     * {@code File}.</p> 
+     * {@code File}.</p>
      */
     public File getDataRoot() {
         if (dataRoot == null) {
@@ -1090,9 +1090,9 @@ public class Engine {
             this.dataRoot = null;
         } else {
             this.dataRoot = dataRoot.getCanonicalFile();
-        }    
+        }
     }
-    
+
     /**
      * Adds a FreeMarker link. FreeMarker links are fake files/directories
      * visible in the source root directory. They are visible for the predefined
@@ -1101,13 +1101,13 @@ public class Engine {
      * directory. This is a hack that allows you to
      * {@code <#include ...>} or {@code <#import ...>} files
      * that are outside the source root directory.
-     * 
+     *
      * <p>The link is visible as a file or directory in the source root
      * directory with name {@code @}<i>{@code name}</i>. For example, if the link name
      * is {@code "inc"}, then it can be used as
      * {@code <#include '/@inc/blah.ftl'>} (assuming the link points
      * to a directory that contains file {@code blah.ftl}).
-     * 
+     *
      * <p>In the generic case, a FreeMarker link is associated with a list of
      * files/directories, not just with a single file/directory. For example,
      * if {@code inc} is associated with {@code /home/joe/inc1} and
@@ -1117,14 +1117,14 @@ public class Engine {
      * then {@code /home/joe/inc2/blah.ftl}. You can associate the name with
      * multiple files/directories by calling this method with the same name for
      * multiple times. The earlier you have added a file/directory, the higher
-     * its priority is. 
-     * 
+     * its priority is.
+     *
      * @param name the name of fake entry in the source root directory, minus
      *     the {@code @} prefix. To prevent confusion, the name can't start
      *     with @.
      * @param fileOrDir the file or directory the link will point to. It can be
      *     a outside the source root directory.
-     */    
+     */
     public void addFreemarkerLink(String name, File fileOrDir)
             throws IOException {
         checkParameterLock();
@@ -1153,12 +1153,12 @@ public class Engine {
         }
         dirs.add(fileOrDir);
     }
-    
+
     /**
      * Returns the list of files associated with a FreeMarker link name.
-     * 
+     *
      * @param name the name of the link (do not use the {@code @} preifx)
-     * 
+     *
      * @return the list of canonical files associated with this link, or
      *     {@code null}, if no FreeMarker link with the given name exist.
      */
@@ -1173,18 +1173,18 @@ public class Engine {
      */
     public void clearFreemarkerLinks() {
        checkParameterLock();
-       freemarkerLinks.clear(); 
+       freemarkerLinks.clear();
     }
 
     /**
      * Adds a progress listener to the list of progress listeners.
      * All progress listeners of the list will be invoked on the events of the
      * engine.
-     * 
+     *
      * <p>If you want a local data loader or engine attribute to listen engine
      * events, do <em>not</em> add it with this method. It will be automatically
      * notified about events, they need not be added here.
-     * 
+     *
      * <p>Note that if you try to add the same object for multiple times, the
      * object will added only in the first occasion.
      */
@@ -1202,11 +1202,11 @@ public class Engine {
         checkParameterLock();
         progListeners.clearUserListeners();
     }
- 
+
     /**
      * Sets the class that will be instantiated to create the template specfic
      * variables.
-     * 
+     *
      * @see TemplateDataModelBuilder
      */
     public void setTemplateDataModelBuilder(
@@ -1222,7 +1222,7 @@ public class Engine {
             throws DataModelBuildingException {
 
         checkParameterLock();
-        
+
         Class clazz;
         try {
             clazz = Class.forName(className);
@@ -1267,14 +1267,14 @@ public class Engine {
     public TemplateDataModelBuilder getTemplateDataModelBuilder() {
         return tdmBuilder;
     }
-    
+
     /**
      * Sets the encoding (charset) of textual source files.
      * Note that according to FreeMarker rules, this can be overridden in a
      * template with {@code &lt;#ftl encoding="...">}.
-     * 
+     *
      * <p>Initially the encoding is ISO-8859-1.
-     * 
+     *
      * @param encoding The encoding, or {@code "host"} if the default
      *     encoding ({@code file.encoding} system property) of the host
      *     machine should be used. {@code null} is the same as
@@ -1288,7 +1288,7 @@ public class Engine {
             fmCfg.setDefaultEncoding(encoding);
         }
     }
-    
+
     /**
      * Returns the source encoding used for the template files.
      * This is not {@code null} or {@code "host"}; this is always
@@ -1300,12 +1300,12 @@ public class Engine {
 
     /**
      * Sets the locale (country, language).
-     * 
+     *
      * <p>Initially the locale is {@code en_US}.
-     * 
+     *
      * @param locale The locale, or null if the default locale of the host
      *     machine should be used.
-     */    
+     */
     public void setLocale(Locale locale) {
         checkParameterLock();
         if (locale == null) {
@@ -1314,7 +1314,7 @@ public class Engine {
             fmCfg.setLocale(locale);
         }
     }
-    
+
     /**
      * Sets the locale (country, language).
      *
@@ -1345,7 +1345,7 @@ public class Engine {
      * In the old template syntax {@code #} was not required.
      * The default and recommended value for this engine parameter is
      * {@code false}.
-     */    
+     */
     public void setOldTemplateSyntax(boolean oldSyntax) {
         checkParameterLock();
         fmCfg.setStrictSyntaxMode(!oldSyntax);
@@ -1357,9 +1357,9 @@ public class Engine {
     public boolean getOldTemplateSyntax() {
         return !fmCfg.getStrictSyntaxMode();
     }
-    
+
     /**
-     * Sets the {@code tagSyntax} setting of FreeMarker. 
+     * Sets the {@code tagSyntax} setting of FreeMarker.
      * The recommendend value for new projects is
      * {@link Configuration#AUTO_DETECT_TAG_SYNTAX}, the defalt with
      * FreeMarker 2.3.x is  {@link Configuration#ANGLE_BRACKET_TAG_SYNTAX},
@@ -1377,11 +1377,11 @@ public class Engine {
     public int getTagSyntax() {
         return fmCfg.getTagSyntax();
     }
-    
+
     /**
      * Sets the encoding used for textural output (template generated files).
      * By default it is {@code "source"}.
-     *  
+     *
      * @param outputEncoding The name of encoding. If it is
      *     {@code "source"}, then the encoding of the source (template
      *     file) will be used for the output. {@code null} is the same as
@@ -1398,11 +1398,11 @@ public class Engine {
             this.outputEncoding = outputEncoding;
         }
     }
-    
+
     /**
      * Retruns the output encoding used; It can be {@code "source"}
      * (since that can't be resolved to a concrete charset), but never
-     * {@code null} or {@code "host"}. 
+     * {@code null} or {@code "host"}.
      */
     public String getOutputEncoding() {
         return outputEncoding;
@@ -1411,7 +1411,7 @@ public class Engine {
     /**
      * Sets the charset used for URL escaping. By default it is
      * {@code "output"}.
-     *  
+     *
      * @param urlEscapingCharset The name of charset (encoding) that is used
      *     for URL escaping. If it is {@code "output"}, then the encoding
      *     of the output will be used. {@code null} is the same as
@@ -1432,11 +1432,11 @@ public class Engine {
             fmCfg.setURLEscapingCharset(this.urlEscapingCharset);
         }
     }
-    
+
     /**
      * Retruns the output encoding used; It can be {@code "output"}
      * (since that can't be resolved to a concrete charset), but never
-     * {@code null}. 
+     * {@code null}.
      */
     public String getUrlEscapingCharset() {
         return urlEscapingCharset;
@@ -1447,7 +1447,7 @@ public class Engine {
      * by {@link Configuration#setNumberFormat(String)}.
      * At least on FreeMarker 2.3.21, this is a pattern as {@link java.text.DecimalFormat} defines it,
      * or the reserved values {@code "number"} or {@code "currency"}.
-     */    
+     */
     public void setNumberFormat(String format) {
         checkParameterLock();
         fmCfg.setNumberFormat(format);
@@ -1456,26 +1456,26 @@ public class Engine {
     /**
      * Sets the boolean format used to convert boolean to strings, as defined
      * by {@link Configuration#setBooleanFormat(String)}. Note that it can't be {@code "true,false"}; for that you have
-     * to print the boolean value with <code>${foo?c}</code>. 
+     * to print the boolean value with <code>${foo?c}</code>.
      */
     public void setBooleanFormat(String format) {
         checkParameterLock();
         fmCfg.setBooleanFormat(format);
     }
-    
+
     /**
      * @see #setNumberFormat
      */
     public String getNumberFormat() {
         return fmCfg.getNumberFormat();
-    } 
+    }
 
     /**
      * Sets the format used to convert date values (year + month + day) to
      * strings.
      * See {@link Configuration#setDateFormat(String)} in the FreeMarker API
      * for more information.
-     * 
+     *
      * <p>The default is the format suggested by the underlying Java platform
      * implementation for the current locale.
      */
@@ -1496,7 +1496,7 @@ public class Engine {
      * + millisecond) to strings.
      * See {@link Configuration#setTimeFormat(String)} in the FreeMarker API
      * for more information.
-     * 
+     *
      * <p>The default is the format suggested by the underlying Java platform
      * implementation for the current locale.
      */
@@ -1517,7 +1517,7 @@ public class Engine {
      * hour + minute + second + millisecond) to strings.
      * See {@link Configuration#setDateTimeFormat(String)} in the FreeMarker API
      * for more information.
-     * 
+     *
      * <p>The default is the format suggested by the underlying Java platform
      * implementation for the current locale.
      */
@@ -1534,7 +1534,7 @@ public class Engine {
     }
 
     /**
-     * Sets the time zone used to display date/time/date-time values. 
+     * Sets the time zone used to display date/time/date-time values.
      * See FreeMarker's {@link Configuration#setTimeZone(TimeZone)} for more information.
      */
     public void setTimeZone(TimeZone zone) {
@@ -1554,10 +1554,10 @@ public class Engine {
             throw new RuntimeException("Failed to set timeZone in FreeMarker Configuration", e);
         }
     }
-    
+
     /**
      * Sets the time zone used when dealing with {@link java.sql.Date java.sql.Date} and
-     * {@link java.sql.Time java.sql.Time} values. 
+     * {@link java.sql.Time java.sql.Time} values.
      * See FreeMarker's {@link Configuration#setSQLDateAndTimeTimeZone(TimeZone)} for more information.
      */
     public void setSQLDateAndTimeTimeZone(TimeZone zone) {
@@ -1577,7 +1577,7 @@ public class Engine {
             throw new RuntimeException("Failed to set timeZone in FreeMarker Configuration", e);
         }
     }
-    
+
     /**
      * @see #setTimeZone
      */
@@ -1598,9 +1598,9 @@ public class Engine {
     public void addModeChooser(
             String pattern, int pmode) {
         checkParameterLock();
-        
+
         PModeChooser chooser = new PModeChooser(pattern);
-        
+
         if (pmode == PMODE_EXECUTE  || pmode == PMODE_RENDER_XML
                 || pmode == PMODE_COPY || pmode == PMODE_IGNORE) {
             chooser.pMode = pmode;
@@ -1609,14 +1609,14 @@ public class Engine {
                 "Illegal processing mode was passed to "
                 + "Engine.addProcessingModeChooser: " + pmode);
         }
-        
+
         pModeChoosers.add(chooser);
     }
-    
+
     /**
      * Adds a new entry to the end of path-pattern -&gt; header mapping list of
      * layer 0.
-     * 
+     *
      * @deprecated Use {@link #addHeaderChooser(int, String, String)} instead.
      */
     public void addHeaderChooser(String pattern, String header) {
@@ -1628,7 +1628,7 @@ public class Engine {
      * Adds a new entry to the end of path-pattern -&gt; header mapping list of the
      * given layer. Layers are indexed from 0. The lower the layer index is,
      * the earlier the header occurs in the text.
-     */ 
+     */
     public void addHeaderChooser(int layer, String pattern, String footer) {
         checkParameterLock();
         headerChoosers.addChooser(layer, pattern, footer);
@@ -1637,7 +1637,7 @@ public class Engine {
     /**
      * Adds a new entry to the end of path-pattern -&gt; footer mapping list of
      * layer 0.
-     * 
+     *
      * @deprecated Use {@link #addFooterChooser(int, String, String)} instead.
      */
     public void addFooterChooser(String pattern, String footer) {
@@ -1649,7 +1649,7 @@ public class Engine {
      * Adds a new entry to the end of path-pattern -&gt; footer mapping list of the
      * given layer. Layers are indexed from 0. The lower the layer index is,
      * the later the footer occurs in the text.
-     */ 
+     */
     public void addFooterChooser(int layer, String pattern, String footer) {
         checkParameterLock();
         footerChoosers.addChooser(layer, pattern, footer);
@@ -1708,7 +1708,7 @@ public class Engine {
         checkParameterLock();
         if (csPathCmp != cs) {
             csPathCmp = cs;
-            
+
             // Re-prase re-s in choosers.
             Iterator it;
             it = pModeChoosers.iterator();
@@ -1740,16 +1740,16 @@ public class Engine {
      * Allows some features that are considerd dangerous.
      * These are currently:
      * <ul>
-     *   <li>The source and the output file is the same 
-     * </ul> 
-     */    
+     *   <li>The source and the output file is the same
+     * </ul>
+     */
     public void setExpertMode(boolean expertMode) {
         checkParameterLock();
         this.expertMode = expertMode;
     }
 
     /**
-     * @see #setExpertMode 
+     * @see #setExpertMode
      */
     public boolean getExpertMode() {
         return expertMode;
@@ -1762,7 +1762,7 @@ public class Engine {
      * if "_t" is in the list, then the output file for "example_t.html" will
      * be "example.html". If the file name does not contains dot, then it
      * still works: "example_t" will become to "example".
-     * 
+     *
      * @param postfix the postfix to remove. Can't be null or empty
      * string, and can't contain dot.
      */
@@ -1771,7 +1771,7 @@ public class Engine {
         if (postfix == null || postfix.length() == 0) {
             throw new IllegalArgumentException(
                     "engine parameter \"remove postfix\" can't be empty "
-                    + "string"); 
+                    + "string");
         }
         if (postfix.indexOf(".") != -1) {
             throw new IllegalArgumentException(
@@ -1787,7 +1787,7 @@ public class Engine {
      * be removed from the output file name. For example,
      * if "t" is in the list, then the output file for "example.html.t" will
      * be "example.html". The extension to remove can contain dots (as tar.gz).
-     * 
+     *
      * @param extension the extension to remove without the dot. Can't be
      * null or empty string, and can't start with dot.
      */
@@ -1802,8 +1802,8 @@ public class Engine {
      * extension replacements.
      * If a source file name ends with the old extension, then it will
      * be replaced with the new extension in the output file name.
-     * 
-     * @param oldExtension the old extension without the preceding dot. 
+     *
+     * @param oldExtension the old extension without the preceding dot.
      * @param newExtension the new extension without the preceding dot.
      */
     public void addReplaceExtension(
@@ -1813,7 +1813,7 @@ public class Engine {
         checkExtension("replace extension", newExtension);
         replaceExtensions.add(new String[] {oldExtension, newExtension});
     }
-    
+
     private void checkExtension(String paramName, String extension) {
         if (extension == null || extension.length() == 0) {
             throw new IllegalArgumentException(
@@ -1859,16 +1859,16 @@ public class Engine {
     public boolean getDontTraverseDirectories() {
         return dontTraverseDirs;
     }
-    
+
     /**
      * Sets what source file can be skipped if it was not modified after the
      * last modification time of the output file. Also, if the output is not
      * existing, the source file will be processed. Note that this feature will
      * not work for templates that rename or drop the original output file
      * during the template execution.
-     * 
+     *
      * <p>The initial value of this engine parameter is {@code SKIP_NONE}.
-     * 
+     *
      * @param skipWhat a {@code SKIP_...} contant.
      */
     public void setSkipUnchanged(int skipWhat) {
@@ -1879,12 +1879,12 @@ public class Engine {
     public int getSkipUnchanged() {
         return skipUnchanged;
     }
-    
+
     /**
      * Sets whether for source directories a corresponding output directory
      * will be created even if no file output went into it. Defaults to
      * {@code false}.
-     * 
+     *
      * <p>Notes:
      * <ul>
      *    <li>Even if this is set to {@code true}, if
@@ -1907,7 +1907,7 @@ public class Engine {
     /**
      * Sets if the CVS files inside the source root directory should be
      * ignored or not. This engine parameter is initially true.
-     * 
+     *
      * <p>The CVS files are: {@code **}{@code /.cvsignore},
      * {@code **}{@code /CVS/**} and {@code **}{@code /.#*}
      */
@@ -1923,7 +1923,7 @@ public class Engine {
     /**
      * Sets if the SVN files inside the source root directory should be
      * ignored or not. This engine parameter is initially true.
-     * 
+     *
      * <p>The SVN files are: {@code **}{@code /SVN/**}
      */
     public void setIgnoreSvnFiles(boolean ignoreSvnFiles) {
@@ -1934,7 +1934,7 @@ public class Engine {
     public boolean getIgnoreSvnFiles() {
         return ignoreSvnFiles;
     }
-    
+
     /**
      * Set if well-known temporary files inside the source root directory should
      * be ignored or not. For the list of well-known temporary file patterns,
@@ -1949,7 +1949,7 @@ public class Engine {
     public boolean getIgnoreTemporaryFiles() {
         return ignoreTemporaryFiles;
     }
-    
+
     /**
      * Sets if which XPath engine should be used.
      * @param xpathEngine one of the {@code XPATH_ENGINE_...} constants,
@@ -1959,16 +1959,16 @@ public class Engine {
         checkParameterLock();
         this.xpathEngine = xpathEngine;
     }
-    
+
     public String getXpathEngine() {
         return xpathEngine;
     }
-    
+
     /**
      * Sets the XML entiry resolver used for reading XML documents.
-     * 
+     *
      * The default value is {@code null}.
-     *   
+     *
      * @param xmlEntityResolver it must implement
      *     {@link org.xml.sax.EntityResolver org.xml.sax.EntityResolver} (it was declared as
      *     {@code Object} to prevent linkage errors when XML related
@@ -1985,10 +1985,10 @@ public class Engine {
                         + "The class of the argument was "
                         + xmlEntityResolver.getClass().getName() + ".");
             }
-        } 
+        }
         this.xmlEntityResolver = xmlEntityResolver;
     }
-    
+
     /**
      * Gets the XML entiry resolver used for reading XML documents.
      * @return {@code null} of no resolver is used, or an
@@ -1999,20 +1999,20 @@ public class Engine {
     public Object getXmlEntiryResolver() {
         return xmlEntityResolver;
     }
-    
+
     /**
      * Sets if XML documents should be validated when they are loaded.
-     * Defaults to {@code true}. 
+     * Defaults to {@code true}.
      */
     public void setValidateXml(boolean validateXml) {
         checkParameterLock();
         this.validateXml = validateXml;
     }
-    
+
     public boolean getValidateXml() {
         return validateXml;
     }
-    
+
     /**
      * Adds as XML rendering configuration.
      */
@@ -2025,7 +2025,7 @@ public class Engine {
                     + "be true.");
         }
         xmlRendCfgCntrs.add(new XmlRenderingCfgContainer(xmlRendering));
-        
+
         List ldbs = xmlRendering.getLocalDataBuilders();
         int ln = ldbs.size();
         for (int i = 0; i < ln; i++) {
@@ -2035,7 +2035,7 @@ public class Engine {
             }
         }
     }
-    
+
     /**
      * Removes all XML rendering configurations.
      */
@@ -2046,7 +2046,7 @@ public class Engine {
 
     // -------------------------------------------------------------------------
     // Shared variables
-    
+
     /**
      * Adds a variable that will be visible for all templates when the
      * processing session executes.
@@ -2140,27 +2140,27 @@ public class Engine {
 
     /**
      * Removes all data.
-     * 
+     *
      * @see #addData(String, Object)
      */
     public void clearData() {
         checkParameterLock();
         data.clear();
     }
-    
+
     /**
      * Gets the value of a variable. This method accesses the variables that
      * are visible for all templates. It corresponds to setting {@code data}.
-     * 
+     *
      * <p><em><b>Warning!</b> When the processing session is executing, you must
      * not modify the returned object.</em>
-     * 
+     *
      * @return {@code null} if no such variable exist.
      * Values are returned exactly as they were added, that is, without
      * FreeMarker's wrapping (but note that some variables initially use
      * FreeMarker {@link TemplateModel} types, such as variables created by
      * some of the data loaders).
-     * 
+     *
      * @see #addData(String, Object)
      */
     public Object getData(String name) {
@@ -2171,10 +2171,10 @@ public class Engine {
      * Removes a variable that would be visible for all templates when the
      * processing session executes. I does nothing if there is no variable
      * exists for the given name.
-     * 
+     *
      * @return the removed value, or {@code null} if there was no value
      *     stored for the given name.
-     * 
+     *
      * @see #addData(String, Object)
      */
     public Object removeData(String name) {
@@ -2191,13 +2191,13 @@ public class Engine {
     /**
      * Adds a local data builder. The local data builder will be invoked
      * directly before the execution of templates (if the
-     * {@code pathPattern} matches the source file path). 
-     * 
+     * {@code pathPattern} matches the source file path).
+     *
      * @param layer the index of the layer, stating from 0. 0 is the layer with
      *     the highest priority.
      * @param pathPattern the path pattern of source files where this local
      *     data builder will be used.
-     * @param builder the local data builder object. 
+     * @param builder the local data builder object.
      */
     public void addLocalDataBuilder(
             int layer, String pathPattern, LocalDataBuilder builder) {
@@ -2249,19 +2249,19 @@ public class Engine {
     }
 
     /**
-     * Wraps any object as {@link TemplateModel}. 
+     * Wraps any object as {@link TemplateModel}.
      */
     public TemplateModel wrap(Object obj) throws TemplateModelException {
         return fmCfg.getObjectWrapper().wrap(obj);
     }
-    
+
     /**
      * Returns the {@link TemplateEnvironment}.
-     * 
+     *
      * The template environment is available with this method only when a
      * template execution is in progress, or when a
      * {@link TemplateDataModelBuilder} (deprecated) is running.
-     * 
+     *
      * @throws IllegalStateException if the template environment is not
      *    available.
      */
@@ -2274,14 +2274,14 @@ public class Engine {
                     + "template execution is in progress currently.");
         }
     }
-    
+
     /**
      * Tells if {@link #getTemplateEnvironment()} will throw exception or not.
      */
     public boolean isTemplateEnvironmentAvailable() {
         return templateEnv.isExternallyAccessible();
     }
-    
+
     /**
      * Adds/replaces an engine attribute.
      * Attributes are arbitrary key-value pairs that are associated with the
@@ -2289,10 +2289,10 @@ public class Engine {
      * {@code fmpp.} for its own use. Attributes are not understood by the
      * {@link Engine}, but by data loaders, local data builders, and tools that
      * create them.
-     * 
+     *
      * <p>Attributes can be changed (replaced, removed, ...etc.) while the
-     * processing session is executing.  
-     * 
+     * processing session is executing.
+     *
      * @param name the name of the attribute. To prevent name
      *     clashes, it should follow the naming convention of Java classes, e.g.
      *     {@code "com.example.someproject.something"}.
@@ -2300,7 +2300,7 @@ public class Engine {
      *     {@link ProgressListener}, then it will receive notifications about
      *     the events of the {@link Engine}. If attribute(s) with that value is
      *     (are) removed, then the value object doesn't receive more
-     *     notifications. 
+     *     notifications.
      * @return The  previous value of the attribute, or {@code null} if
      *     there was no attribute with the given name.
      */
@@ -2321,18 +2321,18 @@ public class Engine {
      * Reads an engine attribute.
      *
      * @see #setAttribute(String, Object)
-     *  
+     *
      * @return {@code null} if no attribute exists with the given name.
-     */ 
+     */
     public Object getAttribute(String name) {
         return attributes.get(name);
     }
-    
+
     /**
      * Removes an attribute. It does nothing if the attribute does not exist.
-     * 
+     *
      * @see #setAttribute(String, Object)
-     *  
+     *
      * @return The value of the removed attribute or {@code null} if there
      *     was no attribute with the given name.
      */
@@ -2348,7 +2348,7 @@ public class Engine {
 
     /**
      * Removes all attributes.
-     * 
+     *
      * @see #setAttribute(String, Object)
      */
     public void clearAttribues() {
@@ -2360,7 +2360,7 @@ public class Engine {
      * Returns the FMPP version number string. FMPP version number string
      * follows the {@code major.minor.sub} or {@code major.minor.sub.nightly}
      * format, where each part (separated by dots) is an non-negative integer
-     * number. 
+     * number.
      */
     public static String getVersionNumber() {
         if (cachedVersion == null) {
@@ -2379,7 +2379,7 @@ public class Engine {
         }
         return cachedBuildInfo;
     }
-    
+
     public static String getFreeMarkerVersionNumber() {
         return Configuration.getVersionNumber();
     }
@@ -2405,14 +2405,14 @@ public class Engine {
     /**
      * Checks if XML support is available. It can be quicker than
      * {@link MiscUtil#checkXmlSupportAvailability(String)}, so rather use this.
-     * 
+     *
      * @param requiredForThis a short sentence that describes for human reader
      *     if for what do we need the XML support (e.g.
      *     {@code "Usage of xml data loader."} or
      *     {@code "Set XML entity resolver."}). This sentence is used
      *     in error message of the {@link fmpp.util.InstallationException}.
      *     Can be {@code null}.
-     * 
+     *
      * @throws InstallationException if the XML support is not available.
      */
     public void checkXmlSupportAvailability(String requiredForThis)
@@ -2429,7 +2429,7 @@ public class Engine {
         }
         chachedXmlSupportAvailable = Boolean.TRUE;
     }
-    
+
     // -------------------------------------------------------------------------
     // Package
 
@@ -2457,7 +2457,7 @@ public class Engine {
             String header;
             String footer;
             StringBuffer sb = null;
-            
+
             if (hc != 0) {
                 if (hc == 1) {
                     header = (String) headers.get(0);
@@ -2472,7 +2472,7 @@ public class Engine {
             } else {
                 header = null;
             }
-            
+
             if (fc != 0) {
                 if (fc == 1) {
                     footer = (String) footers.get(0);
@@ -2490,7 +2490,7 @@ public class Engine {
             } else {
                 footer = null;
             }
-            
+
             return new BorderedReader(header, r, footer);
         }
     }
@@ -2515,25 +2515,25 @@ public class Engine {
                     exc);
         }
     }
-    
+
     // -------------------------------------------------------------------------
     // Private
 
-    private static final int MAX_WBLN = 64; 
-    
+    private static final int MAX_WBLN = 64;
+
     /**
      * Moves the header after the {@code <#ftl ...>} if that exists.
      * The returned header should by used instead of the parameter header.
      * The reader's "position" will be increased, but the readen characters
-     * are added to the new header, so they don't lose. 
+     * are added to the new header, so they don't lose.
      */
     private String moveHeaderAfterTheFtlDirective(String header, Reader r)
             throws IOException {
         StringBuffer sb = new StringBuffer(MAX_WBLN);
-        
+
         char[] wb = new char[MAX_WBLN];
-        int wbln; 
-        
+        int wbln;
+
         int mode = 0;
         int submode = 0;
         char quot = ' ';
@@ -2597,7 +2597,7 @@ public class Engine {
                     } else if (submode == 3) {
                         submode = 1;
                     }
-                }                    
+                }
             }
             if (wbln > 0) {
                 sb.append(wb, 0, wbln);
@@ -2616,14 +2616,14 @@ public class Engine {
         fn = applyRemoveExtensionSetting(fn);
         fn = applyRemovePostfixesSetting(fn);
         fn = applyReplaceExtensionsSetting(fn);
-        
+
         if (fn.length() == 0) {
             throw new IOException(
                     "The deduced output file name is empty "
                     + "for this source file: "
                     + FileUtil.getRelativePath(outRoot, f));
         }
-        
+
         return new File(f.getParent(), fn).getCanonicalFile();
     }
 
@@ -2632,7 +2632,7 @@ public class Engine {
         int ln = removeExtensions.size();
         for (int i = 0; i < ln; i++) {
             final String dotExtToRemove = "." + (String) removeExtensions.get(i);
-            final String dotExtToRemoveNormdCase = csPathCmp ? dotExtToRemove : dotExtToRemove.toLowerCase(); 
+            final String dotExtToRemoveNormdCase = csPathCmp ? dotExtToRemove : dotExtToRemove.toLowerCase();
             if (fnNormdCase.endsWith(dotExtToRemoveNormdCase)) {
                 // We only remove one extension:
                 return fn.substring(0, fn.length() - dotExtToRemove.length());
@@ -2654,12 +2654,12 @@ public class Engine {
                 extDotIdx = fn.length();
             }
         }
-        
-        final String fnWithoutExtNormdCase = csPathCmp ? fnWithoutExt : fnWithoutExt.toLowerCase(); 
+
+        final String fnWithoutExtNormdCase = csPathCmp ? fnWithoutExt : fnWithoutExt.toLowerCase();
         final int ln = removePostfixes.size();
         for (int i = 0; i < ln; i++) {
             final String posfixToRemove = (String) removePostfixes.get(i);
-            final String posfixToRemoveNormdCase = csPathCmp ? posfixToRemove : posfixToRemove.toLowerCase();  
+            final String posfixToRemoveNormdCase = csPathCmp ? posfixToRemove : posfixToRemove.toLowerCase();
             if (fnWithoutExtNormdCase.endsWith(posfixToRemoveNormdCase)) {
                 // We only remove one postfix:
                 return fn.substring(0, extDotIdx - posfixToRemove.length()) + fn.substring(extDotIdx);
@@ -2673,7 +2673,7 @@ public class Engine {
         final int ln = replaceExtensions.size();
         for (int i = 0; i < ln; i++) {
             final String[] fromToPair = (String[]) replaceExtensions.get(i);
-            final String replacedExtNormedCase = csPathCmp ? fromToPair[0] : fromToPair[0].toLowerCase(); 
+            final String replacedExtNormedCase = csPathCmp ? fromToPair[0] : fromToPair[0].toLowerCase();
             if (fnNormedCase.endsWith("." + replacedExtNormedCase)) {
                 // We only d one substitution:
                 return fn.substring(0, fn.length() - fromToPair[0].length()) + fromToPair[1];
@@ -2696,7 +2696,7 @@ public class Engine {
         }
         return null;
     }
-    
+
     private String normalizePathForComparison(String fp) {
         if (fp.endsWith("/")) {
             fp = fp.substring(0, fp.length() - 1);
@@ -2709,7 +2709,7 @@ public class Engine {
         }
         return fp;
     }
-    
+
     private int getProcessingMode(File f) throws IOException {
         String fnameCs = f.getName();
         String fpathCs = f.getAbsolutePath();
@@ -2725,7 +2725,7 @@ public class Engine {
             fpathCisLower = fpathCs;
             fpathCisUpper = fpathCs;
         }
-        
+
         int i = fnameCs.lastIndexOf(".");
         String extLower;
         if (i == -1) {
@@ -2733,12 +2733,12 @@ public class Engine {
         } else {
             extLower = fnameCs.substring(i + 1).toLowerCase();
         }
-        
+
         if (extLower.equals("fmpp")) {
             return PMODE_IGNORE;
         }
         if (ignoreCvsFiles) {
-            if (fnameCisLower.equals(".cvsignore")  
+            if (fnameCisLower.equals(".cvsignore")
                     || fpathCisUpper.indexOf("/CVS/") != -1
                     || fpathCisUpper.indexOf(
                             File.separatorChar + "CVS" + File.separatorChar)
@@ -2794,7 +2794,7 @@ public class Engine {
         }
     }
 
-    private static void loadVersionInfo() {    
+    private static void loadVersionInfo() {
         Properties vp = new Properties();
         InputStream ins = Engine.class.getClassLoader()
                 .getResourceAsStream("fmpp/version.properties");
@@ -2820,19 +2820,19 @@ public class Engine {
                         "Version file (<CLASSES>/fmpp/version.properties) "
                         + "is corrupt: version key is missing.");
             }
-                
+
             String d = vp.getProperty("buildInfo");
             if (d == null) {
                 throw new RuntimeException(
                         "Version file (<CLASSES>/fmpp/version.properties) "
                         + "is corrupt: buildInfo key is missing.");
             }
-            
+
             cachedVersion = v;
             cachedBuildInfo = d;
         }
     }
-    
+
     private void lockParameters() {
         parametersLocked = true;
     }
@@ -2840,7 +2840,7 @@ public class Engine {
     private void unlockParameters() {
         parametersLocked = false;
     }
-    
+
     private void checkParameterLock() {
         if (parametersLocked) {
             throw new IllegalStateException(
@@ -2857,11 +2857,11 @@ public class Engine {
             this.pathPattern = pathPattern;
             this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
-        
+
         void recompile() {
             this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
-        
+
         private String pathPattern;
         private Pattern regexpPattern;
     }
@@ -2870,7 +2870,7 @@ public class Engine {
         PModeChooser(String pathPattern) {
             super(pathPattern);
         }
-        
+
         private int pMode;
     }
 
@@ -2884,7 +2884,7 @@ public class Engine {
 
     private class ObjectChooser extends Chooser {
         private final Object value;
-        
+
         ObjectChooser(String pathPattern, Object value) {
             super(pathPattern);
             this.value = value;
@@ -2894,12 +2894,12 @@ public class Engine {
     private class LayeredChooser {
         private List layers = new ArrayList();
         private int usedLayers;
-        
+
         /**
          * @param layer Must be 0 or positive. 0 is the layer with the highest
          * priority. Missing layers are automatically added, but there shouldn't
          * be to much unused layers embedded (as hundreds of them) as that
-         * degrades performance. 
+         * degrades performance.
          */
         private void addChooser(
                 int layer, String pathPattern, Object value) {
@@ -2921,14 +2921,14 @@ public class Engine {
             }
             choosers.add(chooser);
         }
-        
+
         /**
          * @return the list of choosen objects, ordered by ascending layer
          *     index. Possibly an empty list, but never {@code null}.
          */
         private List choose(File f) throws IOException {
             List result = new ArrayList(usedLayers);
-            int ln = layers.size(); 
+            int ln = layers.size();
             for (int i = 0; i < ln; i++) {
                 LinkedList choosers = (LinkedList) layers.get(i);
                 if (choosers != null) {
@@ -2940,9 +2940,9 @@ public class Engine {
             }
             return result;
         }
-        
+
         private void recompile()  {
-            int ln = layers.size(); 
+            int ln = layers.size();
             for (int i = 0; i < ln; i++) {
                 LinkedList choosers = (LinkedList) layers.get(i);
                 Iterator it = choosers.iterator();
@@ -2957,7 +2957,7 @@ public class Engine {
             usedLayers = 0;
         }
     }
-    
+
     private class MultiProgressListener implements ProgressListener {
 
         private ArrayList userListeners = new ArrayList();
@@ -3057,7 +3057,7 @@ public class Engine {
                                         e));
                     }
                     if (closingEvent != Integer.MIN_VALUE) {
-                        break normalLoop; 
+                        break normalLoop;
                     }
                 }
                 doneCounter++;
@@ -3082,12 +3082,12 @@ public class Engine {
                 throw firstException;
             }
         }
-        
+
         private void refreshMergedListeneres() {
             int i;
             int ln;
             Object o;
-            
+
             mergedListeners.clear();
 
             ln = xmlLdbListeners.size();
@@ -3097,7 +3097,7 @@ public class Engine {
                     mergedListeners.add(o);
                 }
             }
-            
+
             ln = ldbListeners.size();
             for (i = 0; i < ln; i++) {
                 o = ldbListeners.get(i);
@@ -3121,7 +3121,7 @@ public class Engine {
                     mergedListeners.add(o);
                 }
             }
-            
+
             mergedNeedsRefresh = false;
         }
 
@@ -3135,17 +3135,17 @@ public class Engine {
             }
         }
     }
-    
+
     private class XmlRenderingCfgContainer {
         final XmlRenderingConfiguration xmlRenderingCfg;
         Pattern[] compiledPathPatterns;
-        
+
         XmlRenderingCfgContainer(
                 XmlRenderingConfiguration xmlRendering) {
             this.xmlRenderingCfg = xmlRendering;
             recompile();
         }
-        
+
         void recompile() {
             List pathPatterns = xmlRenderingCfg.getPathPatterns();
             int ln = pathPatterns.size();
@@ -3157,5 +3157,5 @@ public class Engine {
         }
 
     }
-    
+
 }

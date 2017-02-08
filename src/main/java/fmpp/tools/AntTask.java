@@ -1,12 +1,12 @@
 /*
  * Copyright 2014 Attila Szegedi, Daniel Dekany, Jonathan Revusky
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,9 +46,9 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     private String configuration;
     private boolean hasSourceFileAttr;
     private boolean antTaskFailOnError = true;
-    private Boolean alwaysCreateDirsAltName; 
-    private Boolean sourceRootAltName; 
-    private Boolean outputRootAltName; 
+    private Boolean alwaysCreateDirsAltName;
+    private Boolean sourceRootAltName;
+    private Boolean outputRootAltName;
 
     public void setConfiguration(File outputFile) {
         configuration = outputFile.getAbsolutePath();
@@ -62,12 +62,12 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(
                 Settings.NAME_CONFIGURATION_BASE, f.getAbsolutePath());
     }
-    
+
     public void setInheritConfiguration(File f) {
         initialOps.setProperty(
                 Settings.NAME_INHERIT_CONFIGURATION, f.getAbsolutePath());
     }
-    
+
     public void setOutputFile(File outputFile) {
         initialOps.setProperty(
                 Settings.NAME_OUTPUT_FILE, outputFile.getAbsolutePath());
@@ -76,11 +76,11 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setOutputRoot(File outputRoot) {
         setOutputRoot_common(outputRoot, false);
     }
-    
+
     public void setDestDir(File outputRoot) {
         setOutputRoot_common(outputRoot, true);
     }
-    
+
     public void setOutputRoot_common(File outputRoot, boolean alt) {
         Boolean oAlt = alt ? Boolean.TRUE : Boolean.FALSE;
         if (outputRootAltName != null && outputRootAltName != oAlt) {
@@ -124,7 +124,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(
                 Settings.NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS, fmIcI);
     }
-    
+
     public void setObjectWrapper(String objectWrapper) {
         initialOps.setProperty(
                 Settings.NAME_OBJECT_WRAPPER, objectWrapper);
@@ -184,7 +184,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setAlwaysCreateDirs(boolean copy) {
         setAlwaysCreateDirs_common(copy, true);
     }
-    
+
     public void setAlwaysCreateDirectories(boolean copy) {
         setAlwaysCreateDirs_common(copy, false);
     }
@@ -201,7 +201,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(
                 Settings.NAME_ALWAYS_CREATE_DIRECTORIES, String.valueOf(copy));
     }
-    
+
     public void setLocale(String locale) {
         initialOps.setProperty(Settings.NAME_LOCALE, locale);
     }
@@ -232,7 +232,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setBooleanFormat(String booleanFormat) {
         initialOps.setProperty(Settings.NAME_BOOLEAN_FORMAT, booleanFormat);
     }
-    
+
     public void setDateFormat(String dateFormat) {
         initialOps.setProperty(Settings.NAME_DATE_FORMAT, dateFormat);
     }
@@ -252,11 +252,15 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setSQLDateAndTimeTimeZone(String timeZone) {
         initialOps.setProperty(Settings.NAME_SQL_DATE_AND_TIME_TIME_ZONE, timeZone);
     }
-    
+
     public void setTagSyntax(String tagSyntax) {
         initialOps.setProperty(Settings.NAME_TAG_SYNTAX, tagSyntax);
     }
-    
+
+    public void setOldSyntax(boolean oldSyntax) {
+        initialOps.setProperty(Settings.NAME_OLD_SYNTAX, String.valueOf(oldSyntax));
+    }
+
     public void setOutputEncoding(String outputEncoding) {
         initialOps.setProperty(Settings.NAME_OUTPUT_ENCODING, outputEncoding);
     }
@@ -346,7 +350,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setTemplateData(String templateData) {
         initialOps.setProperty(Settings.NAME_TEMPLATE_DATA, templateData);
     }
-    
+
     public void setDir(File dir) {
         this.dir = dir;
     }
@@ -395,7 +399,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         }
 
         Settings ss;
-        
+
         try {
             boolean singleFileMode;
             boolean quiet;
@@ -483,7 +487,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                         this, quiet || singleFileMode);
                 ss.addProgressListener(antProgressListener);
 
-                // Add more sources 
+                // Add more sources
                 if (!singleFileMode) {
                     File sourceRoot = (File) ss.get(Settings.NAME_SOURCE_ROOT);
                     if (sourceRoot == null) {
@@ -492,7 +496,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                                 + "\" is not set.");
                     }
                     File scannerBase = dir != null ? dir : sourceRoot;
-                    
+
                     String[] scanResults = MiscUtil.add(
                         getDirectoryScanner(scannerBase)
                                 .getIncludedFiles(),
@@ -504,7 +508,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                         sourceFiles[i] = f.getAbsolutePath();
                     }
                     ss.add(Settings.NAME_SOURCES, sourceFiles);
-                    
+
                     scanResults = getDirectoryScanner(scannerBase)
                             .getIncludedDirectories();
                     String[] sourceDirectories = new String[scanResults.length];
@@ -552,7 +556,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                     fileLogger.println(MiscUtil.causeMessages(e));
                     fileLogger.printStackTrace(e);
                 }
-                
+
                 // And now this is for Ant:
                 throw new CausePrinterBuildException(
                     "Failed to initialize FMPP engine.", e);
@@ -563,7 +567,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
             }
         }
     }
-    
+
     /**
      * Used internally (must be public class for technical reasons).
      */
@@ -589,7 +593,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
             return text;
         }
     }
-    
+
     private String antBooleanToTdd(String s) {
         if (s != null) {
             if (s.equals("no")) {
@@ -600,7 +604,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         }
         return s;
     }
-    
+
     private void doAttributeSubstitution(
             String settingName, AntAttributeSubstitution ats) {
         if (initialOps.getProperty(settingName) != null) {
@@ -608,7 +612,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         }
         initialOps.setProperty(settingName, ats.getText());
     }
-    
+
     private CausePrinterBuildException newMultipleDefinitionsException(
             String setting) {
         return new CausePrinterBuildException(
@@ -616,14 +620,14 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                 + "\" and element \"" + setting + "\", nor use the element "
                 + "for multiple times.");
     }
- 
+
     /**
      * The message of this exception is the message given in the constructor
      * plus the cause trace. This is required because Ant only prints the
-     * result of <code>getMessage</code>. 
+     * result of <code>getMessage</code>.
      */
     class CausePrinterBuildException extends BuildException {
-        
+
         private static final long serialVersionUID = 1L;
 
         public CausePrinterBuildException(String message) {
