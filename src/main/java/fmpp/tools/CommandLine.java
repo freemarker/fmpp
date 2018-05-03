@@ -314,7 +314,7 @@ public class CommandLine {
             ap.addOption(null,
                     cln(Settings.NAME_INHERIT_CONFIGURATION) + " FILE")
                     .desc("Inherits options from a configuration file. "
-                            + "The options in the primary configuration "                            + "file (-C) has higher precednece.");
+                            + "The options in the primary configuration "                            + "file (-C) has higher precedence.");
             ap.addOption("M SEQ", cln(Settings.NAME_MODES))
                     .desc("The list of TDD function calls that choose the file "
                             + "processing mode, e.g.:\n"
@@ -334,11 +334,11 @@ public class CommandLine {
                             + "header(\"<#include \\\"/css.ftl\\\">\", *.css)'"
                             );
             ap.addOption("D TDD", cln(Settings.NAME_DATA))
-                    .desc("Creates shared data that all template will see. "
+                    .desc("Creates shared data that all templates will see. "
                             + "<TDD> is the Textual Data Definition, e.g.:\n"
                             + "-D \"properties(style.properties), "                            + "onLine:true\"\n"
                             + "Note that paths like \"style.properties\" are "
-                            + "relatve to the data root directory.");
+                            + "relative to the data root directory.");
             Version maxFMVer = Configuration.getVersion();
             Version defFMVer = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
             ap.addOption(null, cln(Settings.NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS) + "=VER")
@@ -491,7 +491,7 @@ public class CommandLine {
                             + "Use \"none\" (-L none) to disable logging. "
                             + "The default is \"none\".");
             od = ap.addOption(null, cln(Settings.NAME_APPEND_LOG_FILE))
-                    .desc("If the log file already exists, it will be "                            + "continuted, instead of restarting it.");
+                    .desc("If the log file already exists, it will be "                            + "continued, instead of restarting it.");
             if (impliedAppendLogFile) {
                 setAsDefault(od);
             }
