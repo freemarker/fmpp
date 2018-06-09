@@ -39,7 +39,7 @@
   <filter token="TIMESTAMP" value="${timeStamp}" />
 
   <property name="freemarkerDocs.path"
-            value="${freemarkerReleases.path}/freemarker-${dependency.freemarker.version}/documentation/_html"
+            value="${freemarkerReleases.path}/apache-freemarker-${dependency.freemarker.version}-bin/documentation/_html"
   />
   <available file="${freemarkerDocs.path}" type="dir" property="freemarkerDocs.available" />
   <property name="dist.dir" value="build/dist/fmpp_${version}" />
