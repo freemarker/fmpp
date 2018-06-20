@@ -234,6 +234,7 @@ public class Engine {
     private boolean parametersLocked;
     
     // Session state
+    private File of = null;
     private Map ignoredDirCache = new HashMap();
     private Set processedFiles = new HashSet();
 
@@ -790,14 +791,14 @@ public class Engine {
                     this,
                     ProgressListener.EVENT_END_FILE_PROCESSING,
                     sf, pmode,
-                    e, null);
+                    e, of);
         }
         if (catchedExc == null) {
             progListeners.notifyProgressEvent(
                     this,
                     ProgressListener.EVENT_END_FILE_PROCESSING,
                     sf, pmode,
-                    null, null);
+                    null, of);
         } else {
             // OutOfMemoryError-s can cause Java applications to enter an
             // inconsistent state, so it's better stop the session.
@@ -826,6 +827,7 @@ public class Engine {
             templateEnv.execute(template, out, sf, null, null, null);
             done = true;
         } finally {
+            of = out.getOutputFile();
             out.close(!done);
         }
     }
