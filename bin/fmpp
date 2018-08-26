@@ -36,36 +36,42 @@ case "`uname`" in
 esac
 
 if [ -z "$FMPP_HOME" ] ; then
-  # try to find FMPP
-  if [ -d /opt/fmpp ] ; then 
-    FMPP_HOME=/opt/fmpp
-  elif [ -d "${HOME}/opt/fmpp" ] ; then 
-    FMPP_HOME="${HOME}/opt/fmpp"
-  else
-    ## resolve links - $0 may be a link to FMPP's home
-    PRG="$0"
-    progname=`basename "$0"`
-    saveddir=`pwd`
+  # Try to detect FMPP_HOME:
+  
+  ## resolve links - $0 may be a link to FMPP's home
+  PRG="$0"
+  progname=`basename "$0"`
+  saveddir=`pwd`
 
-    # need this for relative symlinks
-    cd `dirname "$PRG"`
+  # need this for relative symlinks
+  cd `dirname "$PRG"`
 
-    while [ -h "$PRG" ] ; do
-      ls=`ls -ld "$PRG"`
-      link=`expr "$ls" : '.*-> \(.*\)$'`
-      if expr "$link" : '.*/.*' > /dev/null; then
-        PRG="$link"
-      else
-        PRG=`dirname "$PRG"`"/$link"
-      fi
-    done
+  while [ -h "$PRG" ] ; do
+    ls=`ls -ld "$PRG"`
+    link=`expr "$ls" : '.*-> \(.*\)$'`
+    if expr "$link" : '.*/.*' > /dev/null; then
+      PRG="$link"
+    else
+      PRG=`dirname "$PRG"`"/$link"
+    fi
+  done
 
-    FMPP_HOME=`dirname "$PRG"`/..
+  FMPP_HOME=`dirname "$PRG"`/..
 
-    cd "$saveddir"
+  cd "$saveddir"
 
-    # make it fully qualified
-    FMPP_HOME=`cd "$FMPP_HOME" && pwd`
+  # make it fully qualified
+  FMPP_HOME=`cd "$FMPP_HOME" && pwd`
+    
+  if ! [ -f "$FMPP_HOME/lib/fmpp.jar" ]; then
+    # Standard fallback directories:
+    if [ -f "${HOME}/opt/fmpp/lib/fmpp.jar" ] ; then 
+      FMPP_HOME="${HOME}/opt/fmpp"
+    elif [ -f /opt/fmpp/lib/fmpp.jar ] ; then 
+      FMPP_HOME=/opt/fmpp
+    elif [ -f /usr/lib/fmpp/lib/fmpp.jar ] ; then 
+      FMPP_HOME=/usr/lib/fmpp
+    fi
   fi
 fi
 
@@ -87,10 +93,13 @@ else
     FMPP_LIB="${ANT_HOME}/lib"
   else
     echo "Can't find lib/fmpp.jar. Please either:"
-    echo "  - set the FMPP_HOME correctly, so that FMPP_HOME/lib/fmpp.jar exists."
-    echo "    The current FMPP_HOME was: ${FMPP_HOME}"
-    echo "  - set the ANT_HOME correctly, and copy jar-s required for"
-    echo "    FMPP into the ANT_HOME/lib directory."
+    echo "- Ensure that FMPP_HOME is correct, so that \$FMPP_HOME/lib/fmpp.jar exists."
+    echo "  FMPP_HOME is set automatically if you put FMPP to a standard location:"
+    echo "  \"<dir of this script>/../\", \"~/opt/fmpp/\", \"/opt/fmpp/\", \"/usr/lib/fmpp/\"."
+    echo "  For other locations set and export the FMPP_HOME environment variable."
+    echo "  The attempted FMPP_HOME was: ${FMPP_HOME}"
+    echo "- If you are also using FMPP with Apache Ant, set ANT_HOME correctly, and"
+    echo "  copy the jar-s coming with FMPP into the \$ANT_HOME/lib directory."
     exit 1
   fi
 fi
