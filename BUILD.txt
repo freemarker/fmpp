@@ -21,11 +21,16 @@ Preparation (needed only once):
    is filled properly.
 2. Go to http://nodejs.org/ and install node.js (tried with v0.10.32)
 3. Go to the FMPP project directory and issue `npm install`
-   Possible problems an solutions:
-   - "Error: ENOENT, stat <someDirectoryHere>": create that directory manually,
-     then retry.
-   - If the system doesn't find `npm`: Open a new terminal (command window) so
-     that it pick up the "path" environment variable changes. Adjust it if necessary.
+
+Possible node.js related problems and solutions:
+* "Error: ENOENT, stat <someDirectoryHere>": create that directory manually,
+  then retry.
+* If the system doesn't find `npm`: Open a new terminal (command window) so
+  that it pick up the "path" environment variable changes. Adjust it if
+  necessary.
+* If the build has once worked, but now keeps failing due to some missing
+  modules, or anything strange, delete the "node_modules" directory, and
+  issue `npm install` to recreate it.
 
 To build the docs: `ant docs`
 The output will be be in `build/docs`!
