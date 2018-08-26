@@ -485,12 +485,10 @@ public class Interpreter {
             return "hash";
         } else if (value instanceof FunctionCall) {
             return "function call";
+        } else if (value == null) {
+            return "null";
         } else {
-            if (value != null) {
-                return value.getClass().getName();
-            } else {
-                return "null";
-            }
+            return value.getClass().getName();
         }
     }
 
@@ -714,17 +712,22 @@ public class Interpreter {
                                 }
                             }
                         }
-                    } else if (o1 instanceof Map) {
-                        map.putAll((Map) o1);
                     } else {
-                        throw newError(
-                                "This expression should be either a string "                                + "or a hash, but it is a(n) "
-                                + getTypeName(o1) + ".", keyP);
+                        try {
+                            map.putAll(TddUtil.convertToDataMap(o1));
+                        } catch (TypeNotConvertableToMapException e) {
+                            throw newError(
+                                    "This expression should be either a string "
+                                    + "or a hash, but it is a(n) "
+                                    + getTypeName(o1) + ".", keyP);
+                        } catch (RuntimeException e) {
+                            throw newWrappedError(e);
+                        }
                     }
                 } else {
-                    if (o1 instanceof Map) {
-                        map.putAll((Map) o1);
-                    } else {
+                    try {
+                        map.putAll(TddUtil.convertToDataMap(o1));
+                    } catch (TypeNotConvertableToMapException e) {
                         if (keyFunc == o1) {
                             throw newError(
                                     "You can't use the function here, "
@@ -738,6 +741,8 @@ public class Interpreter {
                                     + ", so it can't be merged into the hash.",
                                     keyP);
                         }
+                    } catch (RuntimeException e) {
+                        throw newWrappedError(e);
                     }
                 }
             }

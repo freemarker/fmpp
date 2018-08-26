@@ -31,4 +31,13 @@ public class JSONNullNode extends JSONNode {
         return DEFAULT_NODE_NAME;
     }
 
+    /**
+     * Returns the plain Java object wrapped into this node.
+     * 
+     * @since 0.9.16
+     */
+    public Object getAdaptedObject(Class<?> hint) {
+        return null;
+    }
+    
 }

@@ -43,4 +43,13 @@ public class JSONStringNode extends JSONNode implements TemplateScalarModel {
         return DEFAULT_NODE_NAME;
     }
     
+    /**
+     * Returns the plain Java object wrapped into this node.
+     * 
+     * @since 0.9.16
+     */
+    public String getAdaptedObject(Class<?> hint) {
+        return value;
+    }
+    
 }

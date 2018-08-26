@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import fmpp.util.StringUtil;
+import freemarker.template.AdapterTemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateNodeModel;
 
@@ -12,7 +13,7 @@ import freemarker.template.TemplateNodeModel;
  * Node in a hierarchy of JSON values. See http://www.json.org/ for JSON types; each has its own subclass.
  * JSON "object" and "array" values are the non-leafs in the tree.
  */
-public abstract class JSONNode implements TemplateNodeModel, Serializable {
+public abstract class JSONNode implements TemplateNodeModel, AdapterTemplateModel, Serializable {
     
     private static final long serialVersionUID = 1L;
 
@@ -81,6 +82,7 @@ public abstract class JSONNode implements TemplateNodeModel, Serializable {
      * @param nodeName Same as the similar parameter of {@link #JSONNode(JSONNode, String)}.
      * @throws TemplateModelException If {@code obj} can't be wrapped into JSON node.
      */
+    @SuppressWarnings("unchecked")
     protected static JSONNode wrap(Object obj, JSONNode parentNode, String nodeName, boolean wrapNullAsJSONNullNode)
             throws TemplateModelException {
         if (obj == null) {
@@ -97,10 +99,11 @@ public abstract class JSONNode implements TemplateNodeModel, Serializable {
             return new JSONBooleanNode(parentNode, nodeName, ((Boolean) obj).booleanValue());
         }
         if (obj instanceof List) {
-            return new JSONArrayNode(parentNode, nodeName, (List) obj);
+            return new JSONArrayNode(parentNode, nodeName, (List<Object>) obj);
         }
         if (obj instanceof Map) {
-            return new JSONObjectNode(parentNode, nodeName, (Map) obj);
+            // Let's hope it has String keys... 
+            return new JSONObjectNode(parentNode, nodeName, (Map<String, Object>) obj);
         }
         throw new TemplateModelException("Can't warp an object of this class as JSON node: "
                 + obj.getClass().getName());

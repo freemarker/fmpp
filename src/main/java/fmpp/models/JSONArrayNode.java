@@ -36,15 +36,20 @@ public class JSONArrayNode extends JSONNode implements TemplateSequenceModel {
         protected String getDefaultNodeName() {
             return null;
         }
+
+        public Object getAdaptedObject(Class<?> arg0) {
+            return null;
+        }
         
     };
     
     /** Stores the array elements with plain Java types */
-    private final List/*<Object>*/ elements;
+    private final List<Object> elements;
     
     /** Stores the array elements with FTL type; filled lazily. */
     private transient JSONNode[] wrappedElements;
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public JSONArrayNode(JSONNode parentNode, String nodeName, List/*<Object>*/ elements) {
         super(parentNode, nodeName);
         this.elements = elements;
@@ -109,6 +114,15 @@ public class JSONArrayNode extends JSONNode implements TemplateSequenceModel {
 
     protected String getDefaultNodeName() {
         return DEFAULT_NODE_NAME;
+    }
+    
+    /**
+     * Returns the plain Java object wrapped into this node.
+     * 
+     * @since 0.9.16
+     */
+    public List<Object> getAdaptedObject(Class<?> hint) {
+        return elements;
     }
     
 }

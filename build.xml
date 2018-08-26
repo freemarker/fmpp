@@ -82,8 +82,8 @@
            encoding="utf-8"
            deprecation="off"
            debug="on"
-           source="1.4"
-           target="1.4"
+           source="1.5"
+           target="1.5"
     >
       <classpath refid="classpath.path" />
     </javac>
@@ -320,8 +320,8 @@
            encoding="utf-8"
            deprecation="on"
            debug="on"
-           source="1.4"
-           target="1.4"
+           source="1.5"
+           target="1.5"
     >
       <classpath refid="testClasspath.path" />
     </javac>

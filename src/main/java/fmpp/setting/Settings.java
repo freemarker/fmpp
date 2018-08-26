@@ -48,6 +48,8 @@ import fmpp.tdd.EvaluationEnvironment;
 import fmpp.tdd.Fragment;
 import fmpp.tdd.FunctionCall;
 import fmpp.tdd.Interpreter;
+import fmpp.tdd.TddUtil;
+import fmpp.tdd.TypeNotConvertableToMapException;
 import fmpp.util.BugException;
 import fmpp.util.InstallationException;
 import fmpp.util.MiscUtil;
@@ -1809,9 +1811,9 @@ public class Settings {
                                     fr,
                                     new DataLoaderEvaluationEnvironment(eng),
                                     false);
-                        if (o instanceof Map) {
-                            dataModel.putAll((Map) o);
-                        } else {
+                        try {
+                            dataModel.putAll(TddUtil.convertToDataMap(o));
+                        } catch (TypeNotConvertableToMapException e) {
                             if (o != null) {
                                 throw new SettingException(
                                         "The value of the \""
@@ -1825,11 +1827,13 @@ public class Settings {
                                 "Failed to apply the value of the \""
                                 + NAME_DATA + "\" setting.", e); 
                     }
-                } else if (o instanceof Map) {
-                    dataModel.putAll((Map) o);
                 } else {
-                    throw new BugException("Delayed step call can't be "
-                            + o.getClass().getName());
+                    try {
+                        dataModel.putAll(TddUtil.convertToDataMap(o));
+                    } catch (TypeNotConvertableToMapException e) {
+                        throw new BugException("Delayed step call can't be "
+                                + o.getClass().getName());
+                    }
                 }
             }
             eng.addData(dataModel);
