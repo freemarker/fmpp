@@ -257,6 +257,9 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(Settings.NAME_TAG_SYNTAX, tagSyntax);
     }
 
+    /**
+     * @since 0.9.16
+     */
     public void setInterpolationSyntax(String interpolationSyntax) {
         initialOps.setProperty(Settings.NAME_INTERPOLATION_SYNTAX, interpolationSyntax);
     }

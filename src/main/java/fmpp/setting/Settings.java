@@ -127,6 +127,7 @@ public class Settings {
     public static final String NAME_TIME_ZONE = "timeZone";
     public static final String NAME_SQL_DATE_AND_TIME_TIME_ZONE = "sqlDateAndTimeTimeZone";
     public static final String NAME_TAG_SYNTAX = "tagSyntax";
+    /* @since 0.9.16 */
     public static final String NAME_INTERPOLATION_SYNTAX = "interpolationSyntax";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
@@ -167,8 +168,11 @@ public class Settings {
     public static final String VALUE_TAG_SYNTAX_ANGLE_BRACKET = "angleBracket";
     public static final String VALUE_TAG_SYNTAX_SQUARE_BRACKET = "squareBracket";
     public static final String VALUE_TAG_SYNTAX_AUTO_DETECT = "autoDetect";
+    /* @since 0.9.16 */
     public static final String VALUE_INTERPOLATION_SYNTAX_LEGACY = "legacy";
+    /* @since 0.9.16 */
     public static final String VALUE_INTERPOLATION_SYNTAX_DOLLAR = "dollar";
+    /* @since 0.9.16 */
     public static final String VALUE_INTERPOLATION_SYNTAX_SQUARE_BRACKET = "squareBracket";
     public static final String VALUE_NONE = "none";
     public static final String VALUE_REALLY_QUIET = "reallyQuiet";
