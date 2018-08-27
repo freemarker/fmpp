@@ -1360,11 +1360,9 @@ public class Engine {
     
     /**
      * Sets the {@code tagSyntax} setting of FreeMarker. 
-     * The recommendend value for new projects is
+     * The recommended value for new projects is
      * {@link Configuration#AUTO_DETECT_TAG_SYNTAX}, the defalt with
-     * FreeMarker 2.3.x is  {@link Configuration#ANGLE_BRACKET_TAG_SYNTAX},
-     * the default with FreeMarker 2.4 and later is
-     * {@link Configuration#AUTO_DETECT_TAG_SYNTAX}.
+     * FreeMarker 2.3.x is  {@link Configuration#ANGLE_BRACKET_TAG_SYNTAX}.
      */
     public void setTagSyntax(int tagSyntax) {
         checkParameterLock();

@@ -118,7 +118,7 @@ public class TestSuite {
                 }
             }
             System.out.println("");
-            System.out.println("Look into build/testsuite/ for more details.");
+            System.out.println("Look into build/test-output/ for more details.");
             System.exit(-1);
         } else {
             System.out.println("*** TEST SUITE SUCCESSFULL ***");

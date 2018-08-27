@@ -109,8 +109,7 @@ public class Settings {
     public static final String NAME_OBJECT_WRAPPER = "objectWrapper";
     public static final String NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS = "freemarkerIncompatibleImprovements";
     public static final String NAME_FREEMARKER_LINKS = "freemarkerLinks";
-    public static final String NAME_INHERIT_CONFIGURATION
-            = "inheritConfiguration";
+    public static final String NAME_INHERIT_CONFIGURATION = "inheritConfiguration";
     public static final String NAME_MODES = "modes";
     public static final String NAME_BORDERS = "borders";
     public static final String NAME_DATA = "data";
@@ -136,12 +135,10 @@ public class Settings {
     public static final String OLD_NAME_REMOVE_POSTFIX = "removePostfix";
     public static final String NAME_REPLACE_EXTENSIONS = "replaceExtensions";
     public static final String OLD_NAME_REPLACE_EXTENSION = "replaceExtension";
-    public static final String NAME_ALWAYS_CREATE_DIRECTORIES
-            = "alwaysCreateDirectories";
+    public static final String NAME_ALWAYS_CREATE_DIRECTORIES = "alwaysCreateDirectories";
     public static final String NAME_IGNORE_CVS_FILES = "ignoreCvsFiles";
     public static final String NAME_IGNORE_SVN_FILES = "ignoreSvnFiles";
-    public static final String NAME_IGNORE_TEMPORARY_FILES
-            = "ignoreTemporaryFiles";
+    public static final String NAME_IGNORE_TEMPORARY_FILES = "ignoreTemporaryFiles";
     public static final String NAME_EXPERT = "expert";
     public static final String NAME_LOG_FILE = "logFile";
     public static final String NAME_APPEND_LOG_FILE = "appendLogFile";
@@ -167,9 +164,8 @@ public class Settings {
     public static final String VALUE_OBJECTWRAPPER_SHARED_BEANS_WRAPPER
             = "shared";
     public static final String VALUE_TAG_SYNTAX_ANGLE_BRACKET = "angleBracket";
-    public static final String VALUE_TAG_SYNTAX_SQUARE_BRACKET
-            = "squareBracket";
-    public static final String VALUE_TAG_SYNTAX_AUTO_DETECT =    "autoDetect";
+    public static final String VALUE_TAG_SYNTAX_SQUARE_BRACKET = "squareBracket";
+    public static final String VALUE_TAG_SYNTAX_AUTO_DETECT = "autoDetect";
     public static final String VALUE_NONE = "none";
     public static final String VALUE_REALLY_QUIET = "reallyQuiet";
     public static final String VALUE_XML_CATALOG_PREFER_PUBLIC = "public";
@@ -773,8 +769,8 @@ public class Settings {
     // -------------------------------------------------------------------------
     // Standard defs
 
-    private static final Map STD_DEFS = new HashMap();
-    private static final Map STD_STDCMDL = new HashMap();
+    private static final Map<String, SettingDefinition> STD_DEFS = new HashMap<String, SettingDefinition>();
+    private static final Map<String, String> STD_DEFS_CMDL_NAMES = new HashMap<String, String>();
     static {
         stdDef(NAME_SKIP_UNCHANGED, TYPE_STRING, false, true);
         stdDef(NAME_TURNS, TYPE_SEQUENCE, true, false);
@@ -843,9 +839,9 @@ public class Settings {
     // State
     
     private File baseDir;
-    private Map defs;
-    private Map values = new HashMap();
-    private Map cmdLineNames;
+    private Map<String, SettingDefinition> defs;
+    private Map<String, Object> values = new HashMap<String, Object>();
+    private Map<String, String> defsCmdlNames;
     private XmlDependentOps xmlDependentOps;
     private List progressListeners = new ArrayList();
     private Map engineAttributes = new HashMap();
@@ -876,17 +872,17 @@ public class Settings {
                     + baseDir.getPath(), e);
         }
         defs = STD_DEFS;
-        cmdLineNames = STD_STDCMDL;
+        defsCmdlNames = STD_DEFS_CMDL_NAMES;
     }
     
     /**
-     * Defines a new setting. No setting with the same name already exists.
+     * Defines a new setting. No setting with the same name can already exists.
      * @param name the name of the setting
      * @param type the type of the setting
      * @param merge specifies if when you add a new setting value, and the
      *     setting has already set, then the new and old value will be merged,
      *     or the new value will replace old value. Note that only a few
-     *     setting type supports merging, such as list and map.
+     *     setting types support merging, such as list and map.
      * @param forceStr specifies if when parsing string values with TDD
      *     interpreter, it should be done with the "force strings" option or
      *     not.
@@ -903,11 +899,11 @@ public class Settings {
         SettingDefinition def
                 = new SettingDefinition(name, type, merge, forceStr);
         if (defs == STD_DEFS) {
-            defs = new HashMap(STD_DEFS);
-            cmdLineNames = new HashMap(STD_STDCMDL);
+            defs = new HashMap<String, SettingDefinition>(STD_DEFS);
+            defsCmdlNames = new HashMap<String, String>(STD_DEFS_CMDL_NAMES);
         }
         defs.put(def.name, def);
-        cmdLineNames.put(getDashedName(name), name);
+        defsCmdlNames.put(getDashedName(name), name);
     }
 
     /**
@@ -952,7 +948,7 @@ public class Settings {
      */
     public void addWithString(String name, String value)
             throws SettingException {
-        addOrSet(values, name, translateProperty(name, value), false);
+        addOrSet(values, name, convertStringValue(name, value), false);
     }
 
     /**
@@ -960,22 +956,22 @@ public class Settings {
      */
     public void addDefaultWithString(String name, String value)
             throws SettingException {
-        addOrSetDefault(values, name, translateProperty(name, value), false);
+        addOrSetDefault(values, name, convertStringValue(name, value), false);
     }
 
     /**
      * Adds all name-value pairs stored in the map with
-     * {@link #add(String, Object)}. 
+     * {@link #add(String, Object)}. Thus, all keys must be {@link String}-s. 
      */
-    public void add(Map settingMap) throws SettingException {
+    public void add(Map/*<String, Object>*/ settingMap) throws SettingException {
         addOrSet(settingMap, false);
     }
     
     /**
      * Adds all entries stored in the map with
-     * {@link #addDefault(String, Object)}. 
+     * {@link #addDefault(String, Object)}. Thus, all keys must be {@link String}-s.
      */
-    public void addDefaults(Map settingMap) throws SettingException {
+    public void addDefaults(Map/*<String, Object>*/ settingMap) throws SettingException {
         addOrSetDefaults(settingMap, false);
     }
 
@@ -1044,7 +1040,7 @@ public class Settings {
      */
     public void setWithString(String name, String value)
             throws SettingException {
-        addOrSet(values, name, translateProperty(name, value), true);
+        addOrSet(values, name, convertStringValue(name, value), true);
     }
 
     /**
@@ -1052,22 +1048,22 @@ public class Settings {
      */
     public void setDefaultWithString(String name, String value)
             throws SettingException {
-        addOrSetDefault(values, name, translateProperty(name, value), true);
+        addOrSetDefault(values, name, convertStringValue(name, value), true);
     }
 
     /**
      * Sets all name-value pairs stored in the map with
-     * {@link #set(String, Object)}. 
+     * {@link #set(String, Object)}. Thus, all keys must be {@link String}-s. 
      */
-    public void set(Map settingMap) throws SettingException {
+    public void set(Map/*<String, Object>*/ settingMap) throws SettingException {
         addOrSet(settingMap, true);
     }
     
     /**
      * Sets all name-value pairs stored in the map with
-     * {@link #setDefault(String, Object)}. 
+     * {@link #setDefault(String, Object)}. Thus, all keys must be {@link String}-s.
      */
-    public void setDefaults(Map settingMap) throws SettingException {
+    public void setDefaults(Map/*<String, Object>*/ settingMap) throws SettingException {
         addOrSetDefaults(settingMap, true);
     }
 
@@ -2149,7 +2145,7 @@ public class Settings {
         Enumeration en = props.propertyNames();
         while (en.hasMoreElements()) {
             String name = (String) en.nextElement();
-            String convertedName = (String) cmdLineNames.get(name);
+            String convertedName = (String) defsCmdlNames.get(name);
             if (convertedName == null || convertedName.equals(name)) {
                 if (!defs.containsKey(name)) {
                     throw newUnknownSettingException(name);
@@ -2253,7 +2249,7 @@ public class Settings {
         try {
             value = def.type.convert(this, value);
         } catch (SettingException e) {
-            // addjust message
+            // adjust message
             throw new SettingException(
                     "Problem with the value of setting "
                     + StringUtil.jQuote(name) + ": " + e.getMessage(),
@@ -2265,7 +2261,7 @@ public class Settings {
                 try {
                     value = def.type.merge(this, oldValue, value);
                 } catch (SettingException e) {
-                    // addjust message
+                    // adjust message
                     throw new SettingException(
                             "Problem with the value of setting "
                             + StringUtil.jQuote(name) + ": " + e.getMessage(),
@@ -2285,7 +2281,7 @@ public class Settings {
         try {
             value = def.type.convert(this, value);
         } catch (SettingException e) {
-            // addjust message
+            // adjust message
             throw new SettingException(
                     "Problem with the value of setting "
                     + StringUtil.jQuote(name) + ": " + e.getMessage(),
@@ -2297,7 +2293,7 @@ public class Settings {
                 try {
                     value = def.type.merge(this, value, oldValue);
                 } catch (SettingException e) {
-                    // addjust message
+                    // adjust message
                     throw new SettingException(
                             "Problem with the value of setting "
                             + StringUtil.jQuote(name) + ": " + e.getMessage(),
@@ -2313,17 +2309,17 @@ public class Settings {
     private void addOrSetWithString(
             Map m, String name, String value, boolean set)
             throws SettingException {
-        addOrSet(m, name, translateProperty(name, value), set);
+        addOrSet(m, name, convertStringValue(name, value), set);
     }
 
     private void addOrSetDefaultWithString(
             Map m, String name, String value, boolean set)
             throws SettingException {
-        addOrSetDefault(m, name, translateProperty(name, value), set);
+        addOrSetDefault(m, name, convertStringValue(name, value), set);
     }
 
     private void addOrSet(Map settingMap, boolean set) throws SettingException {
-        Map changed = new HashMap();
+        Map<String, Object> changed = new HashMap<String, Object>();
         Iterator it = settingMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry ent = (Map.Entry) it.next();
@@ -2340,7 +2336,7 @@ public class Settings {
 
     private void addOrSetDefaults(Map settingMap, boolean set)
             throws SettingException {
-        Map changed = new HashMap();
+        Map<String, Object> changed = new HashMap<String, Object>();
         Iterator it = settingMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry ent = (Map.Entry) it.next();
@@ -2357,7 +2353,7 @@ public class Settings {
 
     private void addOrSetWithStrings(Properties props, boolean set)
             throws SettingException {
-        Map changed = new HashMap();
+        Map<String, Object> changed = new HashMap<String, Object>();
         Enumeration en = props.propertyNames();
         while (en.hasMoreElements()) {
             String name = (String) en.nextElement();
@@ -2373,7 +2369,7 @@ public class Settings {
 
     private void addOrSetDefaultsWithStrings(Properties props, boolean set)
             throws SettingException {
-        Map changed = new HashMap();
+        Map<String, Object> changed = new HashMap<String, Object>();
         Enumeration en = props.propertyNames();
         while (en.hasMoreElements()) {
             String name = (String) en.nextElement();
@@ -2387,7 +2383,7 @@ public class Settings {
         values.putAll(changed);
     }
     
-    private Object translateProperty(String name, String value)
+    private Object convertStringValue(String name, String value)
             throws SettingException {
         SettingDefinition def = (SettingDefinition) defs.get(name);
         if (def == null) {
@@ -2396,7 +2392,7 @@ public class Settings {
         try {
             return def.type.convertString(this, value, def.forceStr);
         } catch (SettingException e) {
-            // addjust message
+            // adjust message
             throw new SettingException(
                     "Problem with the value of setting "
                     + StringUtil.jQuote(name) + ": " + e.getMessage(),
@@ -2437,7 +2433,7 @@ public class Settings {
     private String findSimilar(String name) {
         String s;
         
-        s = (String) cmdLineNames.get(name);
+        s = (String) defsCmdlNames.get(name);
         if (s != null) {
             return s;
         }
@@ -2469,7 +2465,7 @@ public class Settings {
                 return dName;
             }
         }
-        it = cmdLineNames.keySet().iterator();
+        it = defsCmdlNames.keySet().iterator();
         while (it.hasNext()) {
             String dName = (String) it.next();
             String lName = dName.toLowerCase();
@@ -2495,7 +2491,7 @@ public class Settings {
                     + " is already defined.");
         }
         STD_DEFS.put(def.name, def);
-        STD_STDCMDL.put(getDashedName(def.name), def.name);
+        STD_DEFS_CMDL_NAMES.put(getDashedName(def.name), def.name);
     }
     
     private static String typeName(Object value) {
