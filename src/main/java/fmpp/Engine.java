@@ -299,6 +299,7 @@ public class Engine {
         fmCfg.setLocale(Locale.US);
         fmCfg.setNumberFormat("0.############");
         fmCfg.setLocalizedLookup(false);
+        fmCfg.setAPIBuiltinEnabled(true); // Because there's pp.loadData('eval', ...) anyway.
 
         templateEnv = new TemplateEnvironment(this);
         
