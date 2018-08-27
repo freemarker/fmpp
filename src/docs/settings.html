@@ -904,11 +904,17 @@ freemarkerLinks: {
 
 
 <@sect title="Template syntax" anchor="templateSyntax">
-<@setting name="tagSyntax" type="string" default='ex:<@c>angleBracket</@c> with FreeMarker 2.3.x, <@c>autoDetect</@c> with later versions' merging=false />
+<@setting name="tagSyntax" type="string" default='ex:<@c>angleBracket</@c>' merging=false />
 
-<p>The <@s>tagSyntax</@s> setting determines the syntax of the templates (angle bracket syntax like <@c>&lt;#include "foo"></@c> VS square bracket syntax like <@c>[#include "foo"]</@c>) that has no <@c>ftl</@c> directive in it. If the template uses <@c>ftl</@c> directive (like it starts with <@c>&lt;#ftl></@c> or <@c>[#ftl]</@c>), then the syntax of the <@c>ftl</@c> tag determines the syntax of the template, and the <@s>tagSyntax</@s> setting is ignored.</p>
+<p>The <@s>tagSyntax</@s> setting determines the syntax of tags in the templates (angle bracket syntax like <@c>&lt;#include "foo"></@c> VS square bracket syntax like <@c>[#include "foo"]</@c>) that has no <@c>ftl</@c> directive in it. If the template uses <@c>ftl</@c> directive (like it starts with <@c>&lt;#ftl></@c> or <@c>[#ftl]</@c>), then the syntax of the <@c>ftl</@c> tag determines the syntax of the template, and the <@s>tagSyntax</@s> setting is ignored.</p>
 
 <p>The possible values of this setting are <@c>angleBracket</@c>, <@c>squareBracket</@c> and <@c>autoDetect</@c>. The recommended value is <@c>autoDetect</@c>, which will auto-detect the syntax of each template independently, by choosing the syntax of the first FreeMarker tag in the template. For example when it finds a <@c>[@</@c> in the template, it will choose square bracket syntax.</p>
+
+<@setting name="interpolationSyntax" type="string" default='ex:<@c>legacy</@c>' merging=false />
+
+<p>The <@s>interpolationSyntax</@> setting determines the syntax of the interpolations (where you insert a value, like <@c><#noparse>${</#noparse><@r>name</@>}</@>) in templates.
+
+<p>The possible values of this setting are <@c>legacy</@c> (like <@c><#noparse>${</#noparse><@r>expression</@>}</@> and the deprecated <@c><#noparse>#{</#noparse><@r>numericExpression</@>}</@>), <@c>dollar</@c> (means <@c><#noparse>${</#noparse><@r>expression</@>}</@> only), and <@c>squareBracket</@c> (like <@c>[=<@r>expression</@>]</@>. The recommended value is <@c>dollar</@c>, unless the <@c><#noparse>${</#noparse></@> pattern clashes with the static parts that you need to generate (like when you generate JSP or shell script), in which case use <@c>squareBracket</@c>. The default is <@c>legacy</@c> (as far as that's the default of FreeMarker).</p>
 
 </@sect>
 

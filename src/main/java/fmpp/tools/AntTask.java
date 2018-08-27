@@ -256,6 +256,10 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setTagSyntax(String tagSyntax) {
         initialOps.setProperty(Settings.NAME_TAG_SYNTAX, tagSyntax);
     }
+
+    public void setInterpolationSyntax(String interpolationSyntax) {
+        initialOps.setProperty(Settings.NAME_INTERPOLATION_SYNTAX, interpolationSyntax);
+    }
     
     public void setOutputEncoding(String outputEncoding) {
         initialOps.setProperty(Settings.NAME_OUTPUT_ENCODING, outputEncoding);

@@ -1377,6 +1377,28 @@ public class Engine {
     }
     
     /**
+     * Sets the {@code interpolationSyntax} setting of FreeMarker. 
+     * Possible values: {@link Configuration#LEGACY_INTERPOLATION_SYNTAX} (default),
+     * {@link Configuration#DOLLAR_INTERPOLATION_SYNTAX},
+     * {@link Configuration#SQUARE_BRACKET_INTERPOLATION_SYNTAX}.
+     * 
+     * @since 0.9.16
+     */
+    public void setInterpolationSyntax(int interpolationSyntax) {
+        checkParameterLock();
+        fmCfg.setInterpolationSyntax(interpolationSyntax);
+    }
+
+    /**
+     * @see #setInterpolationSyntax(int)
+     * 
+     * @since 0.9.16
+     */
+    public int getInterpolationSyntax() {
+        return fmCfg.getInterpolationSyntax();
+    }
+    
+    /**
      * Sets the encoding used for textural output (template generated files).
      * By default it is {@code "source"}.
      *  

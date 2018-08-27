@@ -127,6 +127,7 @@ public class Settings {
     public static final String NAME_TIME_ZONE = "timeZone";
     public static final String NAME_SQL_DATE_AND_TIME_TIME_ZONE = "sqlDateAndTimeTimeZone";
     public static final String NAME_TAG_SYNTAX = "tagSyntax";
+    public static final String NAME_INTERPOLATION_SYNTAX = "interpolationSyntax";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
     public static final String NAME_REMOVE_EXTENSIONS = "removeExtensions";
@@ -166,6 +167,9 @@ public class Settings {
     public static final String VALUE_TAG_SYNTAX_ANGLE_BRACKET = "angleBracket";
     public static final String VALUE_TAG_SYNTAX_SQUARE_BRACKET = "squareBracket";
     public static final String VALUE_TAG_SYNTAX_AUTO_DETECT = "autoDetect";
+    public static final String VALUE_INTERPOLATION_SYNTAX_LEGACY = "legacy";
+    public static final String VALUE_INTERPOLATION_SYNTAX_DOLLAR = "dollar";
+    public static final String VALUE_INTERPOLATION_SYNTAX_SQUARE_BRACKET = "squareBracket";
     public static final String VALUE_NONE = "none";
     public static final String VALUE_REALLY_QUIET = "reallyQuiet";
     public static final String VALUE_XML_CATALOG_PREFER_PUBLIC = "public";
@@ -801,6 +805,7 @@ public class Settings {
         stdDef(NAME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_SQL_DATE_AND_TIME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_TAG_SYNTAX, TYPE_STRING, false, true);
+        stdDef(NAME_INTERPOLATION_SYNTAX, TYPE_STRING, false, true);
         stdDef(NAME_CASE_SENSITIVE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_STOP_ON_ERROR, TYPE_BOOLEAN, false, false);
         stdDef(NAME_REMOVE_EXTENSIONS, TYPE_SEQUENCE, true, true);
@@ -1322,6 +1327,25 @@ public class Settings {
                         + "\"" + VALUE_TAG_SYNTAX_ANGLE_BRACKET
                         + "\", \"" + VALUE_TAG_SYNTAX_SQUARE_BRACKET
                         + "\", \"" + VALUE_TAG_SYNTAX_AUTO_DETECT
+                        + "\". Value " + StringUtil.jQuote(s) + " is invalid.");
+            }
+        }
+
+        s = (String) get(NAME_INTERPOLATION_SYNTAX);
+        if (s != null) {
+            if (s.equals(VALUE_INTERPOLATION_SYNTAX_LEGACY)) {
+                eng.setInterpolationSyntax(Configuration.LEGACY_INTERPOLATION_SYNTAX);
+            } else if (s.equals(VALUE_INTERPOLATION_SYNTAX_DOLLAR)) {
+                eng.setInterpolationSyntax(Configuration.DOLLAR_INTERPOLATION_SYNTAX);
+            } else if (s.equals(VALUE_INTERPOLATION_SYNTAX_SQUARE_BRACKET)) {
+                eng.setInterpolationSyntax(Configuration.SQUARE_BRACKET_INTERPOLATION_SYNTAX);
+            } else {
+                throw new SettingException("The value of the "
+                        + StringUtil.jQuote(NAME_INTERPOLATION_SYNTAX)
+                        + " setting should be one of "
+                        + "\"" + VALUE_INTERPOLATION_SYNTAX_LEGACY
+                        + "\", \"" + VALUE_INTERPOLATION_SYNTAX_DOLLAR
+                        + "\", \"" + VALUE_INTERPOLATION_SYNTAX_SQUARE_BRACKET
                         + "\". Value " + StringUtil.jQuote(s) + " is invalid.");
             }
         }

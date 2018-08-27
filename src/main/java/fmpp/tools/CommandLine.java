@@ -426,6 +426,12 @@ public class CommandLine {
                             + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT + ". The default is "
                             + Settings.VALUE_TAG_SYNTAX_ANGLE_BRACKET + ". The recommended "
                             + "value is " + Settings.VALUE_TAG_SYNTAX_AUTO_DETECT + ".");
+            ap.addOption(null, cln(Settings.NAME_INTERPOLATION_SYNTAX) + "=WHAT")
+                .desc("Sets the interpolation syntax of the templates. Possible values are: "
+                        + Settings.VALUE_INTERPOLATION_SYNTAX_LEGACY + " (like ${exp} or #{exp}), "
+                        + Settings.VALUE_INTERPOLATION_SYNTAX_DOLLAR + " (${exp} only), "
+                        + Settings.VALUE_INTERPOLATION_SYNTAX_SQUARE_BRACKET + " (like [=exp]). "
+                        + "The default is " + Settings.VALUE_INTERPOLATION_SYNTAX_LEGACY + ".");
             ap.addOption(null, cln(Settings.NAME_CASE_SENSITIVE))
                     .propertyValue("true")
                     .desc("Upper- and lower-case letters are considered as "
