@@ -152,7 +152,7 @@ modes: [
 
 <p>With these settings you can insert a header before templates, and insert a footer after templates (templates = files processed in "execute" processing mode). The insertion of header and footer happens only in the memory of the computer, and does not modify the source files. This can be used to add common headers and footers to the templates without actually typing them again and again. Also, you can change the header/footer of many templates at once.</p>
 
-<p>The intent of headers and footers is not to show something at the top and bottom of pages. Rather it is to insert FTL directives that import or include commonly used macros, or to place the page inside a directive block, as <@c>&lt;#escape <@r>...</@r>><@r>...</@r>&lt;/#escape></@c>. For concrete examples please see <@example 'border' />.</p>
+<p>The intent of headers and footers is not to show something at the top and bottom of pages. Rather it is to insert FTL directives that import or include commonly used macros, or to place the page inside a block, as <@c>&lt;@myLayout><@r>...</@r>&lt;/myLayout></@c>. For concrete examples please see <@example 'border' />.</p>
 
 <@note>Unfortunately the inserted header displace the error locations (column, row) in the error messages (I can't fix it in FMPP; FreeMarker improvements are needed to address this). However, if the header doesn't contain line-break, then this unwanted effect is limited to the first line of the template. So it's strongly recommended to not use line-break in headers.</@note>
 
@@ -161,7 +161,7 @@ modes: [
 <p>There is a single setting to build both sequences at once: <@s>borders</@s>. You give a sequence of <@c>header</@>, <@c> footer</@> and <@c>border</@> functions in it. The first argument to <@c>header</@> and <@c> footer</@> functions is the text of header and footer respectively, and the further arguments are the path patterns of virtual paths in the source file system. If you omit the path patterns, that's the same as if you give <@c>**</@c> (i.e. match all files). <@c>border</@> is convenience function: <@c>border(<@r>a</@>, <@r>b</@>, <@r>paths...</@>)</@> is equivalent with <@c>header(<@r>a</@>, <@r>paths...</@>), footer(<@r>b</@>, <@r>paths...</@>)</@>. Example:</p>
 <@prg><#noparse>
 header("<#import '/lib/css.ftl' as css>", **/*.css)
-border("<#escape x as x?html>", "</#escape>", **/*.html, **/*.htm)
+border("<#import '/lib/page.ftl' as p><@p.myLayout>", "</@p.myLayout>", **/*.html, **/*.htm)
 </#noparse></@prg>
 <p>This build these sequences:</p>
 <ul>
@@ -169,15 +169,15 @@ border("<#escape x as x?html>", "</#escape>", **/*.html, **/*.htm)
   <table border=1 cellspacing=0 cellpadding=4>
     <tr><th>Path pattern<th>Header
     <tr><td><@c>**/*.css</@><td><@c>&lt;#import '/lib/css.ftl' as c></@>
-    <tr><td><@c>**/*.html</@><td><@c>&lt;#escape x as x?html></@>
-    <tr><td><@c>**/*.htm</@><td><@c>&lt;#escape x as x?html></@>
+    <tr><td><@c>**/*.html</@><td><@c>&lt;#import '/lib/page.ftl' as p>&lt;@p.myLayout></@>
+    <tr><td><@c>**/*.htm</@><td><@c>&lt;#import '/lib/page.ftl' as p>&lt;@p.myLayout></@>
   </table>
   </li>
   <li>Footer chooser sequence:
   <table border=1 cellspacing=0 cellpadding=4>
     <tr><th>Path pattern<th>Footer
-    <tr><td><@c>**/*.html</@><td><@c>&lt;/#escape></@>
-    <tr><td><@c>**/*.htm</@><td><@c>&lt;/#escape></@>
+    <tr><td><@c>**/*.html</@><td><@c>&lt;/@p.myLayout></@>
+    <tr><td><@c>**/*.htm</@><td><@c>&lt;/@p.myLayout></@>
   </table>
   </li>
 </ul>
@@ -190,10 +190,10 @@ header("<#import '/lib/common.ftl' as c>", **/*.css, **/*.html, **/*.htm),
 layer()
 # The 2nd layer starts here
 header("<#import '/lib/css.ftl' as css>", **/*.css),
-border("<#escape x as x?html>", "</#escape>", **/*.html, **/*.htm)
+border("<#import '/lib/page.ftl' as p><@p.myLayout>", "</@p.myLayout>", **/*.html, **/*.htm)
 </#noparse></@prg>
 
-<p>Here we have two independent header chooser sequences, so both CSS and HTLM files will import <@c>lib/common.ftl</@c>, and in additional CSS files will import <@c>lib/css.ftl</@c>, and HTML files will use an escape block. You can have any number of layers.</p>
+<p>Here we have two independent header chooser sequences, so both CSS and HTLM files will import <@c>lib/common.ftl</@c>, and additionally CSS files will import <@c>lib/css.ftl</@c>, and HTML files will import <@c>lib/page.ftl</@c> have the <@c>@p.myLayout</@> block. You can have any number of layers.</p>
 
 <p>A header chosen from an earlier layer will be used earlier in the template file than headers chosen from later layers. A footer chosen from an earlier layer will be used later in the template file than footers chosen  from later layers. For example:</p>
 
@@ -902,7 +902,7 @@ freemarkerLinks: {
 <@sect title='Activating fixes' anchor="freemarkerIncompatibleImprovements">
 <@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default="" merging=false since='0.9.15' />
  
-<p>Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> is usually a good compromise. New projects should use the maximum, which is the version of the FreeMarker used. If this setting is not set then FreeMarker chooses the this version itself, which as of this writing will be <@c>2.3.0</@c>.</p>
+<p>Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> is usually a good compromise. New projects should definitely use the maximum, which is the version of the FreeMarker used (<@c>fmpp --version</@> will print that, also, the current FMPP version was built with FreeMarker ${pp.freemarkerVersion}). If this setting is not set then FreeMarker chooses the this version itself, which as of this writing will be <@c>2.3.0</@c>.</p>
 
 <p>See <@a href="freemarker/api/freemarker/template/Configuration.html#Configuration-freemarker.template.Version-"><@c>Configuration(Version)</@c> in the FreeMarker API</@a> for what fixes/improvements are activated.</p>
 
