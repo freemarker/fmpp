@@ -224,21 +224,21 @@ L1(L2{L3[content]L3}L2)L1
 <p>Initially the name of the output file is the same as the name of the source file. These two settings allow you to change the output filename somewhat, be removing parts of source file name.
 
 <p>The precise meaning of the settings:</p>
-<ul>
-  <li><@s>removeExtensions</@s>: If the source file name ends with an exension in this sequence, then it will be removed from the output file name. For example, if <@c>t</@> is in the sequence (note that there is no dot before the <@c>t</@c>), then the output file for <@c>example.html.t</@> will be <@c>example.html</@>. The extension to remove can contain dots (as <@c>tar.gz</@>).</li>
+<ol>
+  <li><@s>removeExtensions</@s>: If the source file name ends with an exension in this sequence, then it will be removed from the output file name. For example, if <@c>ftl</@> is in the sequence (note that there is no dot before the <@c>ftl</@c>), then the output file for <@c>example.html.ftl</@> will be <@c>example.html</@>. The extension to remove can contain dots (as <@c>tar.gz</@>).</li>
   
   <li><@s>removePostfixes</@s>: If the source file name before the first dot ends with a string in this sequence, then it will be removed from the output file name. For example, if <@c>_t</@> is in the sequence, then the output file for <@c>example_t.html</@> will be <@c>example.html</@>. If the file name does not contains dot, then it still works: <@c>example_t</@> will become to <@c>example</@c>.</li>
   
   <li><@s>replaceExtensions</@s>: This sequence is used to replace the file extensions with another extensions. For example, if the sequence is this:<br>
-  <@c>ftl, html, xftl, xml</@><br>
-  then the <@c>ftl</@> extension will be replaced with <@c>html</@> (i.e. the output file name for source file <@c>foo.ftl</@> will be <@c>foo.html</@>), and the <@c>xftl</@> extension will be replaced with <@c>xml</@>. The 1st, 3rd, 5th, etc. sequence elements are the old extensions, and the 2nd, 4th, 6th, etc. sequence elements are the new extensions, so <@c>html</@> extension will not be replaced with <@c>xftl</@>. Also, only one extension replacement will occur for the same file name, so in the case of<br>
+  <@c>ftlh, html, ftlx, xml</@><br>
+  then the <@c>ftlh</@> extension will be replaced with <@c>html</@> (i.e. the output file name for source file <@c>foo.ftlh</@> will be <@c>foo.html</@>), and the <@c>ftlx</@> extension will be replaced with <@c>xml</@>. The 1st, 3rd, 5th, etc. sequence elements are the extensions to replace, and the 2nd, 4th, 6th, etc. sequence elements are the new extensions (so <@c>html</@> extension will not be replaced with <@c>ftlx</@>). Also, only one extension replacement will occur for the same file name, so in the case of<br>
   <@c>x, y, y, z</@><br>
   <@c>x</@> will not become to <@c>z</@>.</li>
 
-</ul>
-<p>The settings are applied in the order as they appear above. Each setting is applied only once on the same file name.
+</ol>
+<p>These settings are applied in the order as they are listed above. Each setting is applied only once on the same file name.
 
-<p>Note that output file name deduction is only apply to files, not to directories.</p>
+<p>Note that output file name deduction only applies to files, not to directories.</p>
 
 </@sect>
 
@@ -254,7 +254,7 @@ L1(L2{L3[content]L3}L2)L1
 </ul>
 <p>If the output does not exist, the source file will be always processed.<p>
 
-<p>This feature will not work for templates that rename or drop the original output file during the template execution, since FMPP will believe in the next processing session that the output file for those files is missing, and thus it will process them again.</p>
+<p>This feature will not work for templates that rename or drop the original output file during the template execution, because in the next processing session FMPP will believe that the output files for those files are missing, and thus it will process them again.</p>
 
 </@sect>
 
@@ -264,7 +264,7 @@ L1(L2{L3[content]L3}L2)L1
 
 <p>When FMPP has to process multiple files in the same processing session (for example, when you process a whole directory), then the order in which the files will be processed, is undefined. This is a problem in certain use cases, where it must be ensured that certain files will be processed later than others. For example, if a page contains the alphabetic index of keywords occur in other pages, then that page must be processed for the last, because the information is collected during the processing of the other pages. This is what turns are about: to guarantee the order of the processing of files.</p>
 
-<p>The processing session is divided up into, so called, turns. Turns are identified with the turn number, which is simply the order of the turn. The session starts with turn 1, then comes turn 2, and then comes turn 3, ...etc. FMPP puts all files that will be processed into exactly one of the turns, based on the turn chooser sequence.</p>
+<p>The processing session is divided up into, so called, turns. Turns are identified with the turn number, which is simply the order of the turn. The session starts with turn 1, then comes turn 2, and then comes turn 3, etc. FMPP puts all files that will be processed into exactly one of the turns, based on the turn chooser sequence.</p>
 
 <p>The turn chooser sequence is a sequence of path-pattern -> turn-number pairs. For each source file, the <@a href="overview.html#virtualPath">virtual path</@a> of the source file is compared with these <@a href="pathpattern.html">path patterns</@a>, and the first pattern of the sequence that matches determines the turn in which the file will be processed. If there is no matching pattern in the sequence for the file, then the file will be processed in turn 1.</p>
 
@@ -372,7 +372,7 @@ localData: [
 ]
 </@prg>
 
-<p>The rule is that the first <@c>case(<@r>...</@r>)</@c> where one of the path patterns matches the source file path, will specify the local data (given as the last parameter), and the further <@c>case(<@r>...</@r>)</@c>-s are ignored. There can be any number of <@c>case(<@r>...</@r>)</@c>-s listed (note that <@c>localData</@c> is a sequence), and a <@c>case(<@r>...</@r>)</@c> can have any number of path patterns (but 0).</p> 
+<p>The rule is that the first <@c>case(<@r>...</@r>)</@c> where one of the path patterns matches the source file path will specify the local data (specified as the last argument), and the further <@c>case(<@r>...</@r>)</@c>-s are ignored. There can be any number of <@c>case(<@r>...</@r>)</@c>-s listed (note that <@c>localData</@c> is a sequence), and a <@c>case(<@r>...</@r>)</@c> can have any number of path patterns (but 0).</p> 
 
 <p>Tricky example: do the same as earlier, but don't override the color if the file name starts with <@c>foo</@c>:</p>
 
@@ -384,7 +384,7 @@ localData: [
 ]
 </@prg>
 
-<p>Assume you want to set variable <@c>author</@c> to <@c>Joe</@c> for all files where the file name contains <@c>_j.</@c>, and to <@c>Amy</@c> for all files contains <@c>_a.</@c>. But, you want to do this independently of the <@c>bgColor</@c> business. In this case you have to use layers:</p>
+<p>Assume that you want to set variable <@c>author</@c> to <@c>Joe</@c> for all files where the file name contains <@c>_j.</@c>, and to <@c>Amy</@c> for all files contains <@c>_a.</@c>. But, you want to do this independently of setting <@c>bgColor</@c>. In this case you have to use layers:</p>
 
 <@prg>
 localData: [
@@ -399,11 +399,11 @@ localData: [
 ]
 </@prg>
 
-<p>The rule is that layers are separated with a <@c>layer()</@c> function call. You can have any number of layers. The <@c>case(<@r>...</@r>)</@c>-list of each layer will be searched for the first match independently. If more layers put the same variable into the data model, the higher layer (earlier layer) wins (hence "layers"). Layers are calculated starting with the lowest layer. Note that to ease setting merging, layers that doesn't contain any <@c>case(<@r>...</@r>)</@c>-s are removed automatically.</p>
+<p>The rule is that layers are separated with a <@c>layer()</@c> function call. You can have any number of layers. The <@c>case(<@r>...</@r>)</@c>-list of each layer will be searched for the first match independently. If more layers put the same variable into the data model, the higher layer (earlier layer) wins (hence "layers"). Layers are calculated starting with the lowest layer. Empty layers are allowed (can be practical when you are using setting merging).</p>
 
 <p>The last parameter of the case can be:</p>
 <ul>
-  <li>Arbitrary TDD hash (as in the examples above). This behaves as the value of the <@s>data</@s> setting, so you can use any number of key-value pairs, and invoke data loaders. The value of hash is calculated at most once per processing session, when it is first needed. For the subsequent file processings where the same <@c>case(<@r>...</@r>)</@c> is choosen, the calculated value is reused, so the data loaders don't re-load the external resources. If the <@c>case(<@r>...</@r>)</@c> is never chosen during the session, the value of the TDD hash is not calculated at all.</li>
+  <li>An arbitrary TDD hash (as in the examples above). This behaves as the value of the <@s>data</@s> setting, so you can use any number of key-value pairs, and invoke data loaders. The value of hash is calculated at most once per processing session, when it is first needed. For the subsequent file processings where the same <@c>case(<@r>...</@r>)</@c> is choosen, the calculated value is reused, so the data loaders don't re-load the external resources. If the <@c>case(<@r>...</@r>)</@c> is never chosen during the session, the value of the TDD hash is not calculated at all.</li>
   
   <li>A TDD function call. The supported functions are:
     <ul>
@@ -421,7 +421,7 @@ localData: [
   <li>A string. In this case the string will be interpreted as BeanShell script that must evaluate to an object that implements <@c>fmpp.LocalDataBuilder</@c>. This let Java programmers to implement custom local data strategies. See <@a href="api/index.html">the API documentation</@a> for more information. (The predefined strategies above are also implemented with this interface internally.)</li>
 </ul>
 
-<p>Finally, let see an example of the usage of the <@c>bsh</@c> function: It will execute a BeanShell script file for each HTML to add local data. For example, the script file for source file <@c>foo/bar.html</@c> should be <@c>foo/bar.html.bsh</@c>. If there is no script for the HTML file, it will not consider that as an error.</p>
+<p>Here's an example of using of the <@c>bsh</@c> function: It will execute a BeanShell script file for each HTML to add local data. For example, the script file for source file <@c>foo/bar.html</@c> should be <@c>foo/bar.html.bsh</@c>. If there is no script for the HTML file, it will not consider that as an error.</p>
 
 <@prg>
 modes: ignore(**/*.bsh)
@@ -544,14 +544,14 @@ return res;
 </@sect>
 
 <@sect title="Boolean format">
-<@setting name="booleanFormat" type="string" default="true,false" merging=false />
+<@setting name="booleanFormat" type="string" default="true,false" merging=false since='0.9.15' />
 
-<p>This setting specifies how boolean values will be converted to text or from text inside FreeMarker templates (not in <@a href="dataloader.html">data loaders</@a>). Note that by default doing something like <@c>${'$'}{myBoolean}</@c> is an error, because FreeMarker denies using <@c>"true,false"</@c> for implicit boolean to text conversion; write <@c>${'$'}{myBoolean?c}</@c> where you want <@c>true</@> and <@c>false</@> as is in the output.</p>
+<p>This setting specifies how boolean values will be converted to text or from text inside FreeMarker templates (not in <@a href="dataloader.html">data loaders</@a>). However, confusingly enough, when this is <@c>true,false</@> (the default) then something like <@c>${'$'}{myBoolean}</@c> is an error, because FreeMarker denies using <@c>"true,false"</@c> for implicit boolean to text conversion. So to utilize this setting, set it to something different, like <@c>Y,N</@c>, and then it will work as expected. Where you want to print <@c>true</@>/<@c>false</@>, write <@c>${'$'}{myBoolean?c}</@c> (note the <@c>?c</@>), which will always print <@c>true</@>/<@c>false</@>, regardless of the <@s>booleanFormat</@> setting.</p>
 
 <p>This setting directly correspond to the FreeMarker setting with similar name, so find the full documentation there:
 <@fma "ref_directive_setting.html#topic_date_format_settings">FreeMarker settings</@fma>.</p>
 
-<p>Example: <@c>"Yes,No"</@> means that <@c>${'$'}{myBoolean?c}</@c> will print <@c>Yes</@c> or <@c>No</@c>.
+<p>Example: <@c>"Yes,No"</@> means that <@c>${'$'}{myBoolean}</@c> will print <@c>Yes</@c> or <@c>No</@c>.
 
 </@sect>
 
@@ -561,7 +561,7 @@ return res;
 <@setting name="timeFormat" type="string" default="" merging=false />
 <@setting name="datetimeFormat" type="string" default="" merging=false />
 <@setting name="timeZone" type="string" default="" merging=false />
-<@setting name="sqlDateAndTimeTimeZone" type="string" default="" merging=false />
+<@setting name="sqlDateAndTimeTimeZone" type="string" default="" merging=false since='0.9.15' />
 
 <p>These settings specify how date/time/date-time values will be converted to text or from text inside FreeMarker templates (not in <@a href="dataloader.html">data loaders</@a>, unless said otherwise).</p>
 
@@ -878,7 +878,7 @@ freemarkerLinks: {
 
 
 <@sect title='Activating fixes' anchor="freemarkerIncompatibleImprovements">
-<@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default="" merging=false />
+<@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default="" merging=false since='0.9.15' />
  
 <p>Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> is usually a good compromise. New projects should use the maximum, which is the version of the FreeMarker used. If this setting is not set then FreeMarker chooses the this version itself, which as of this writing will be <@c>2.3.0</@c>.</p>
 
@@ -910,7 +910,7 @@ freemarkerLinks: {
 
 <p>The possible values of this setting are <@c>angleBracket</@c>, <@c>squareBracket</@c> and <@c>autoDetect</@c>. The recommended value is <@c>autoDetect</@c>, which will auto-detect the syntax of each template independently, by choosing the syntax of the first FreeMarker tag in the template. For example when it finds a <@c>[@</@c> in the template, it will choose square bracket syntax.</p>
 
-<@setting name="interpolationSyntax" type="string" default='ex:<@c>legacy</@c>' merging=false />
+<@setting name="interpolationSyntax" type="string" default='ex:<@c>legacy</@c>' merging=false since="0.9.16" />
 
 <p>The <@s>interpolationSyntax</@> setting determines the syntax of the interpolations (where you insert a value, like <@c><#noparse>${</#noparse><@r>name</@>}</@>) in templates.
 

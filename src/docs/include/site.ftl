@@ -128,7 +128,7 @@
   </#if>
 </#macro>
 
-<#macro setting name type default merging clShort='' deprecated='' antAltAtt=''>
+<#macro setting name type default merging clShort='' deprecated='' antAltAtt='' since=''>
   <#if !stdSettings[name]??>
     <#stop 'No such standard setting exists: ${name}'>
   </#if>
@@ -169,6 +169,9 @@
     </#if>
     <#if antAltAtt != ''>
       <em>Ant task attribute name alternative: </em><code>${antAltAtt}</code><br><#lt>
+    </#if>
+    <#if since != ''>
+      <em>Since: FMPP ${since}<br><#lt>
     </#if>
   </p>
 </#macro>

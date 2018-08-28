@@ -1,18 +1,20 @@
 <@page title="Path Patterns" keywords="Path Pattern">
 
-<p>Probably you have already used commands like <@c>dir *.txt</@> (or <@c>ls *.txt</@> on UN*X). This lists all files in the current directory where the name of the file ends with <@c>.txt</@>. The <@c>*.txt</@> stuff is called a path pattern.</p>
+<p>Probably you have already used commands like <@c>dir *.txt</@> (or <@c>ls *.txt</@> on UN*X). This lists all files in the current directory where the name of the file ends with <@c>.txt</@>. The <@c>*.txt</@> is called path patterns in FMPP (elsewhere it's often called a glob).</p>
 
-<p>With FMPP you also use path patterns to select certain files, say, in the <@s>modes</@s> setting, to tell FMPP which files to copy as is, and which files to execute as template. A path pattern looks like a path, but it can contain some special parts:</p>
+<p>With FMPP you also use path patterns to select certain files, say, in the <@s>modes</@s> setting, to tell FMPP which files to copy as is, and which files to execute as template. A path pattern looks like a file or directory path, but it can contain these special parts:</p>
 <ul>
-  <li><@c>*</@c>: matches zero or more characers, except slash (<@c>/</@>). For example <@c>a*c</@> matches to <@c>abc</@>, <@c>axyzc</@> and <@c>ac</@>, but not <@c>a/c</@>.
-  <li><@c>?</@c>: matches exactly one characer, except slash (<@c>/</@>). For example <@c>a?c</@> matches to <@c>abc</@>, but not <@c>axyzc</@> or <@c>ac</@> or <@c>a/c</@>.
-  <li><@c>**</@c>: This matches zero or more directories of the path. For example <@c>a/**/c</@> matches to <@c>a/b/c</@>, <@c>a/b/xyz/c</@> and <@c>a/c</@>. Another example: <@c>**/*.gif</@> matches to <@c>foo.gif</@>, <@c>a/foo.gif</@> and , <@c>a/b/foo.gif</@>. Also, if you use <@c>**</@c> at the end of the pattern, then it match with all file names as well. Thus, <@c>foo/**</@c> will match all files inside <@c>foo</@c>, such as <@c>foo/bar.txt</@c> or <@c>foo/sub/bar.txt</@c>. Furthermore, if the pattern ends with <@c>/</@c>, then it is considered as shorthand for <@c>/**</@c>, so <@c>foo/</@c> is the same as <@c>foo/**</@c>. 
+  <li><@c>*</@c>: Matches zero or more characters, except slash (<@c>/</@>). For example <@c>a*c</@> matches to <@c>abc</@>, <@c>axyzc</@> and <@c>ac</@>, but not <@c>a/c</@>.
+  <li><@c>?</@c>: Matches exactly one character, except slash (<@c>/</@>). For example <@c>a?c</@> matches to <@c>abc</@>, but not <@c>axyzc</@> or <@c>ac</@> or <@c>a/c</@>.
+  <li><@c>**</@c>: Matches zero or more directories of the path. For example <@c>a/**/c</@> matches to <@c>a/b/c</@>, <@c>a/b/xyz/c</@> and <@c>a/c</@>. Another example: <@c>**/*.gif</@> matches <@c>foo.gif</@>, <@c>a/foo.gif</@>, and <@c>a/b/foo.gif</@>. Also, if you use <@c>**</@c> at the end of the pattern, then it match all file names as well. Thus, <@c>foo/**</@c> matches all files inside <@c>foo</@c>, like <@c>foo/bar.txt</@c>, or <@c>foo/sub/bar.txt</@c>. Furthermore, if the pattern ends with <@c>/</@c>, then it's considered as shorthand for <@c>/**</@c>, so <@c>foo/</@c> is the same as <@c>foo/**</@c>. 
 </ul>
 
-<p>If your operating system use something else instead of <@c>/</@> (as <@c>\</@> on Windows), FMPP will internally convert the native paths to UN*X format, so do not worry about this.  Just use slash in the patterns. (Or, in fact, you can even use the native "slash" in patterns, just it is not a good practice in general.)</p>
+<p>It's important that path patterns like <@c>*.gif</@> will only match files directly in the "current directory", but not inside its subdirectories! If you want to match all files with <@c>gif</@> file extension (and thus in the sub-subdirectories as well), always use <@c>**/*.gif</@> instead.
 
-<p>Note that pattern as <@c>*.gif</@> will match only the GIF files in the current directory. If you want to match all GIF files of the subdirectories (and sub-subdirectories, etc.) as well, use <@c>**/*.gif</@>.
+<p>The meaning of "current directory" in FMPP depends on the concrete situation where you use the path. In most cases where you will use path patterns (as with the <@s>modes</@s> setting) it will be the source root directory.
 
-<p>The meaning of "current directory" in FMPP depends on the concrete situation where you use the path. In most cases where you will use path patterns (as with the <@s>modes</@s> setting) it will be the source root directory. Also, the meaning of "root directory" is depends on where you use the path. That is, absolute path <@c>/foo.txt</@c> maybe means <@c>foo.txt</@c> in the source root directory (this is the typical), or in the output root directory, or in the real root directory of the file system, etc.</p>
+<p>Also, the meaning of "root directory" (a path starting with <@c>/</@>) depends on where you use the path. That is, an absolute path like <@c>/foo.txt</@c> maybe means <@c>foo.txt</@c> in the source root directory (this is the typical case), or in the output root directory, or in the real root directory of the file system, etc.</p>
+
+<p>Even if your operating system uses something else instead of <@c>/</@> (like <@c>\</@> on Windows), you should always use <@c>/</@> in path patterns. FMPP takes care of the conversion to/from the native paths format, so patterns that use <@c>/</@> will always work. (You can use the native "slash" in path patterns as well, but it makes your project less portable.)</p>
 
 </@page>

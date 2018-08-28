@@ -2896,7 +2896,7 @@ public class Settings {
             FunctionCall f = (FunctionCall) obj;
             if (!f.getName().equals("turn")) {
                 throw new SettingException(
-                        "Only \"turn\" function allowed here, not "
+                        "Only \"turn\" function is allowed here, not "
                         + StringUtil.jQuote(f.getName()));
             }
 

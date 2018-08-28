@@ -263,7 +263,7 @@ public class FileUtil {
      * In additional to standard UN*X path meta characters (<code>*</code>,
      * <code>?</code>) it understands <code>**</code>, that is the same as
      * in Ant. It assumes that the paths what you will later match
-     * with the pattern are always starting with slash (they are absoulte paths
+     * with the pattern are always starting with slash (they are absolute paths
      * to an imaginary base).
      */
     public static String pathPatternToPerl5Regex(String text) {
