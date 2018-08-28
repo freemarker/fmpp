@@ -264,6 +264,13 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(Settings.NAME_INTERPOLATION_SYNTAX, interpolationSyntax);
     }
     
+    /**
+     * @since 0.9.16
+     */
+    public void addConfiguredOutputFormats(AntAttributeSubstitution ats) {
+        doAttributeSubstitution(Settings.NAME_OUTPUT_FORMATS, ats);
+    }
+    
     public void setOutputEncoding(String outputEncoding) {
         initialOps.setProperty(Settings.NAME_OUTPUT_ENCODING, outputEncoding);
     }

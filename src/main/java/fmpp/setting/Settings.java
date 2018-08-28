@@ -129,6 +129,7 @@ public class Settings {
     public static final String NAME_TAG_SYNTAX = "tagSyntax";
     /* @since 0.9.16 */
     public static final String NAME_INTERPOLATION_SYNTAX = "interpolationSyntax";
+    public static final String NAME_OUTPUT_FORMATS = "outputFormats";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
     public static final String NAME_REMOVE_EXTENSIONS = "removeExtensions";
@@ -810,6 +811,7 @@ public class Settings {
         stdDef(NAME_SQL_DATE_AND_TIME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_TAG_SYNTAX, TYPE_STRING, false, true);
         stdDef(NAME_INTERPOLATION_SYNTAX, TYPE_STRING, false, true);
+        stdDef(NAME_OUTPUT_FORMATS, TYPE_SEQUENCE, true, false);
         stdDef(NAME_CASE_SENSITIVE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_STOP_ON_ERROR, TYPE_BOOLEAN, false, false);
         stdDef(NAME_REMOVE_EXTENSIONS, TYPE_SEQUENCE, true, true);
@@ -1374,6 +1376,17 @@ public class Settings {
             eng.setXpathEngine(s);
         }
 
+        ls = (List) get(NAME_OUTPUT_FORMATS);
+        if (ls != null) {
+            try {
+                loadOutputFormatChoosers(eng, ls);
+            } catch (SettingException e) {
+                throw new SettingException(
+                        "Failed to apply the value of the \"" + NAME_OUTPUT_FORMATS + "\" setting.",
+                        e);
+            }
+        }
+        
         b = (Boolean) get(NAME_STOP_ON_ERROR);
         if (b != null) {
             eng.setStopOnError(b.booleanValue());
@@ -2779,6 +2792,49 @@ public class Settings {
             }
         } else {
             return null;
+        }
+    }
+    
+    private static void loadOutputFormatChoosers(Engine eng, List ls)
+            throws SettingException {
+        eng.clearOutputFormatChoosers();
+        for (Object it : ls) {
+            if (!(it instanceof FunctionCall)) {
+                throw new SettingException(
+                        "All sequence items must be case(...) function calls, but "
+                        + "one of them is a(n) " + typeName(it) + ".");
+            }
+            FunctionCall f = (FunctionCall) it;
+            if (!f.getName().equals("case")) {
+                throw new SettingException(
+                        "Only \"case\" function is allowed here, not "
+                        + StringUtil.jQuote(f.getName()));
+            }
+
+            List params = f.getParams();
+
+            if (params.size() < 2) {
+                throw new SettingException(
+                        "\"case\" function call needs at least "
+                        + "two parameters (path patterns and output format name), but it has " + params.size()
+                        + " parameter(s).");
+            }
+            for (Object param : params) {
+                if (!(param instanceof String)) {
+                    throw new SettingException(
+                            "The arguments to the \"case\" function call must be strings (path patterns and output "
+                            + "format name), but one of them is a(n) " + typeName(param) + ".");
+                }
+            }
+            
+            String outputFormatName = (String) params.get(params.size() - 1);
+            for (int i = 0; i < params.size() -1; i++) {
+                try {
+                    eng.addOutputFormatChooser((String) params.get(i), outputFormatName);
+                } catch (IllegalArgumentException e) {
+                    throw new SettingException("FMPP Engine has rejected the value.", e);
+                }
+            }
         }
     }
 

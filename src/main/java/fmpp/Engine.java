@@ -34,6 +34,7 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import fmpp.setting.Settings;
 import fmpp.util.BorderedReader;
 import fmpp.util.BugException;
 import fmpp.util.ExceptionCC;
@@ -41,6 +42,11 @@ import fmpp.util.FileUtil;
 import fmpp.util.InstallationException;
 import fmpp.util.MiscUtil;
 import fmpp.util.StringUtil;
+import freemarker.cache.TemplateConfigurationFactory;
+import freemarker.cache.TemplateConfigurationFactoryException;
+import freemarker.core.OutputFormat;
+import freemarker.core.TemplateConfiguration;
+import freemarker.core.UnregisteredOutputFormatException;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
@@ -205,6 +211,7 @@ public class Engine {
     private TemplateDataModelBuilder tdmBuilder;
     private String outputEncoding = PARAMETER_VALUE_SOURCE;
     private String urlEscapingCharset = PARAMETER_VALUE_OUTPUT;
+    private List<OutputFormatChooser> outputFormatChoosers = new ArrayList<OutputFormatChooser>();
     private LinkedList pModeChoosers = new LinkedList();
     private LayeredChooser headerChoosers = new LayeredChooser();
     private LayeredChooser footerChoosers = new LayeredChooser();
@@ -602,6 +609,9 @@ public class Engine {
                             e);
                 }
             }
+            
+            templateConfigurationFactory.setupBeforeInjection();
+            fmCfg.setTemplateConfigurations(templateConfigurationFactory);
             
             processedFiles.clear();
             ignoredDirCache.clear();
@@ -1607,6 +1617,16 @@ public class Engine {
     }
 
     /**
+     * Adds a new entry to the end of path-pattern -&gt; turn-number mapping list.
+     * 
+     * @since 0.9.16
+     */
+    public void addOutputFormatChooser(String pattern, String outputFormatName) {
+        checkParameterLock();
+        outputFormatChoosers.add(new OutputFormatChooser(pattern, outputFormatName));
+    }
+    
+    /**
      * Adds a new entry to the end of path-pattern -&gt; processing-mode
      * mapping list.
      * @param pattern a path pattern as "*.txt" or
@@ -1686,6 +1706,17 @@ public class Engine {
         turnChoosers.add(chooser);
     }
 
+    /**
+     * Removes all output format choosers. This is the initial state after
+     * the instantiation of {@link Engine} (i.e. no output format choosers).
+     * 
+     * @since 0.9.16
+     */
+    public void clearOutputFormatChoosers() {
+        checkParameterLock();
+        outputFormatChoosers.clear();
+    }
+    
     /**
      * Removes all processing mode choosers. This is the initial state after
      * the instantiation of {@link Engine} (i.e. no processing mode
@@ -2703,15 +2734,20 @@ public class Engine {
         return fn;
     }
 
-    private Chooser findChooser(LinkedList choosers, File f)
+    private Chooser findChooser(List choosers, File f)
             throws IOException {
         String fp = FileUtil.getRelativePath(srcRoot, f);
-        fp = normalizePathForComparison(FileUtil.pathToUnixStyle(fp));
+        String unixStylePath = FileUtil.pathToUnixStyle(fp);
+        return findChooser(choosers, unixStylePath);
+    }
+
+    private Chooser findChooser(List choosers, String unixStylePath) {
+        String normalizedPath = normalizePathForComparison(unixStylePath);
 
         Iterator it = choosers.iterator();
         while (it.hasNext()) {
             Chooser c = (Chooser) it.next();
-            if (c.regexpPattern.matcher(fp).matches()) {
+            if (c.regexpPattern.matcher(normalizedPath).matches()) {
                 return c;
             }
         }
@@ -2885,6 +2921,17 @@ public class Engine {
         
         private String pathPattern;
         private Pattern regexpPattern;
+    }
+    
+    private class OutputFormatChooser extends Chooser {
+        private final String outputFormatName;
+        /** Filled late, to ensure output format names are already registered */
+        private TemplateConfiguration templateConfiguration;
+
+        public OutputFormatChooser(String pathPattern, String outputFormatName) {
+            super(pathPattern);
+            this.outputFormatName = outputFormatName;
+        }
     }
 
     private class PModeChooser extends Chooser {
@@ -3177,6 +3224,52 @@ public class Engine {
             }
         }
 
+    }
+    
+    private final FMPPTemplateConfigurationFactory templateConfigurationFactory
+            = new FMPPTemplateConfigurationFactory();
+    private class FMPPTemplateConfigurationFactory extends TemplateConfigurationFactory {
+
+        @Override
+        public TemplateConfiguration get(String name, Object source)
+                throws IOException, TemplateConfigurationFactoryException {
+            OutputFormatChooser chooser = (OutputFormatChooser) findChooser(outputFormatChoosers, name);
+            if (chooser != null) {
+                if (chooser.templateConfiguration == null) {
+                    throw new IllegalStateException("Uninitialized OutputFormatChooser.templateConfiguration");
+                }
+                return chooser.templateConfiguration;
+            }
+            return null;
+        }
+
+        @Override
+        protected void setConfigurationOfChildren(Configuration cfg) {
+            for (OutputFormatChooser chooser : outputFormatChoosers) {
+                // Causes NPE if you have forgotten to call setupBeforeInjection().
+                chooser.templateConfiguration.setParentConfiguration(cfg);
+            }
+        }
+        
+        /**
+         * Call this late to ensure that custom named {@link OutputFormat}-s are already registered in the
+         * {@link Configuration} (though as of 0.9.16 there's not setting to do that).
+         */
+        void setupBeforeInjection() throws IllegalConfigurationException {
+            for (OutputFormatChooser chooser : outputFormatChoosers) {
+                TemplateConfiguration templateConfiguration = new TemplateConfiguration();
+                try {
+                    templateConfiguration.setOutputFormat(fmCfg.getOutputFormat(chooser.outputFormatName));
+                } catch (UnregisteredOutputFormatException e) {
+                    throw new IllegalConfigurationException(
+                            "Unknown output format name " + StringUtil.jQuote(chooser.outputFormatName)
+                            + " in the \"" + Settings.NAME_OUTPUT_FORMATS + "\" setting.",
+                            e);
+                }
+                chooser.templateConfiguration = templateConfiguration;
+            }
+        }
+        
     }
     
 }

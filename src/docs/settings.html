@@ -445,6 +445,28 @@ return res;
 
 </@sect>
 
+<@sect title="Auto-escaping">
+<@setting name="outputFormats" type="sequence (of case function calls)" default="[]" merging=true since="0.9.16" />
+
+<p>Output formats is a FreeMarker template language feature that's mainly used for auto-escaping. Auto-escaping means that in values printed with interpolations (with <@c>${'$'}{<@r>expression</@>}</@>, not with <@c>&lt;@directive /></@>, nor with static text), the parts that have special meaning in the output format (like <@c>&amp;</@> and <@c>&lt;</@> have in HTML) are replaced with an escaped form (with <@c>&amp;amp;</@c>, <@c>&amp;lt;</@c> in the recent example). What will be escaped and how depends on the output format, like <@c>HTML</@>, <@c>XML</@>, <@c>RTF</@>, etc. See the <@fma href="dgui_misc_autoescaping.html">related section in the FreeMarker documentation</@> for more details.</p>
+
+<p>Before you read any further, note that if you set the <@s>freemarkerIncompatibleImprovements</@s> setting to at least 2.3.24, then template files with <@c>ftlh</@> file extension will have <@c>HTML</@> output format, and template files with <@c>ftlx</@> file extension will have <@c>XML</@> output format. If using those file extensions is OK (they can be removed/replaced in the output file names using the <@s>removeExtensions</@>/<@s>replaceExtensions</@> settings), then you need not use the <@c>outputFormats</@> setting described here.</p>
+
+With the <@c>outputFormats</@> setting you can associate <@a href="pathpattern.html">path patterns</@> (such as file extensions) to output formats. Thus you don't have to specify the output format inside the template. Example:</p>
+
+<@prg>
+outputFormats: [
+  case(legacy/, undefined)
+  case(**/*.xsd, **/*.wsdl, XML)
+  case(**, HTML)
+]
+</@prg>
+
+<p>With this all templates inside the <@c>legacy</@> directory will have <@c>undefined</@> output format, also, template files that have <@c>xsd</@> or <@c>wsdl</@> file extension will have <@c>XML</@> output format, and lastly, all other templates will have <@c>HTML</@> output format. The output format is decided by the first matching <@c>case(...)</@>. For example, <@c>legacy/example.xsd</@> will have <@c>undefined</@> output format, despite that it matches <@c>**/*.xsd</@>.</p>
+
+<p>The <@c>case</@> function has 2 or more arguments. The last argument is the name of the output format (see them <@fma href="dgui_misc_autoescaping.html">in the FreeMarker documentation</@>). The arguments before that are the <@a href="pathpattern.html">path patterns</@> that will be matched against the <@a href="overview.html#virtualPath">virtual path</@a> of the template.</p>
+
+</@sect>
 
 <@sect title="Locale">
 <@setting name="locale" type="string (locale)" default="en_US" clShort="A" merging=false />
