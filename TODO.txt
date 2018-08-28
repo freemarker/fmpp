@@ -1,19 +1,19 @@
-﻿Before next release
--------------------
+﻿Next release
+------------
 
-- Add IcI to examples
-- Somehow promote the usage of DOW with 2.3.22
-- Setting to enable ?api
-- Cygwin issue (can't convert empty path)
-- Cygwin ncurses needed
-- Check: Progress logger's path shorting doesn't account for terminal width?
+- Add recommendedDefaults setting
+  - If 0.9.16, then these setting defaults change:
+    - Sets freemarkerIncompatibleImprovements
+    - objectWrapper defaults to DefaultObjectWrapper
+    - removeExtensions: ftl, ftlh, ftlx
+    - TODO What else?
+  - Add it to examples
+  
+- pp.log should use FM 2.3.22 DirectiveCallPlace to report correct position
+
 
 Roadmap
 -------
-
-- Update to FM 2.3.25
-  - FM outputFormat setting
-  - templateConfigurations setting
 
 - Use mountable vfs-es, at least for sources. This would deprecate
   freemarerLinks, and would work not only for #include but for pp too.
@@ -43,7 +43,6 @@ Side-band
 These are the things that aren't on the road map and usually can be fixed in any order.
 
 RFE-s:
-- TDD should allow merging in a JSONObjectNode as a Map. (Should add some interface that contains `toMap()`.)
 - EVENT_END_FILE_PROCESSING event should get the output file as its parameter. (Or,
   maybe an event object that thus can be later extended?)
 - Option fort this: Don't overwrite the output file if its content haven't changed.
@@ -67,7 +66,10 @@ High:
 - Excel and Calc data loader
 - sql(...) data-loader. See below in the Drafts section...
 - Add logging via SLF4J as a possible ProgressListener.
-- pp.log should use FM 2.3.22 DirectiveCallPlace to report correct position
+- Support FreeMarker settings:
+  - registered_custom_output_formats
+  - custom_number_formats
+  - custom_date_formats
 - TDD inheritance deep-merging:
   - Idea for the solution: "merging hash" type should be introduced. In TDD
      a merging hash should be constructed with ~ prefix (~exp) when exp is a hash.
@@ -107,6 +109,9 @@ Low:
 - GUI front-end
 - Add add(...) data-loader for string and sequence concatenation, and arithmetical addition.
 - Add bsh(...) data loader: Evaluates a BSH file.
+- Cygwin issue (can't convert empty path)
+- Cygwin ncurses needed
+- Check: Progress logger's path shorting doesn't account for terminal width?
 
 Lowest:
 - DB schema data source
