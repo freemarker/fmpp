@@ -171,7 +171,7 @@
       <em>Ant task attribute name alternative: </em><code>${antAltAtt}</code><br><#lt>
     </#if>
     <#if since != ''>
-      <em>Since: FMPP ${since}<br><#lt>
+      <em>Since: FMPP ${since}</em><br><#lt>
     </#if>
   </p>
 </#macro>
