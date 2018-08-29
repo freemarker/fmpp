@@ -57,6 +57,7 @@ import fmpp.util.StringUtil;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Version;
+import freemarker.template.utility.NullArgumentException;
 
 /**
  * Stores FMPP settings, loads configuration files, provides other setting
@@ -198,25 +199,26 @@ public class Settings {
 
     /**
      * Any object.
-     * <p>Input type: <code>Object</code>.
+     * <p>Input type: <code>Object</code>. Known bug: {@code null} value is allowed (incorrectly), but in effect
+     *    removes (un-sets) the value.
      * <p>Output type: <code>Object</code>.
      * <p>String input: any value, stored as is.
      * <p>Merging: not supported.
      */
     public static final SettingType TYPE_ANY = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             return value;
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             return value;
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             throw new SettingException(
                     "Settings of type \"any\" can't be merged.");
@@ -234,7 +236,7 @@ public class Settings {
      */
     public static final SettingType TYPE_STRING = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof String) {
                 return value;
@@ -246,13 +248,13 @@ public class Settings {
                     + typeName(value) + ".");
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             return value;
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             throw new SettingException(
                     "Settings of type \"string\" can't be merged.");
@@ -262,7 +264,7 @@ public class Settings {
     /**
      * Integer setting type.
      * <p>Input type: <code>Number</code> that can be converted to
-     *      <code>Integer</code> without lost.
+     *      <code>Integer</code> without loss.
      * <p>Output type: <code>Integer</code>.
      * <p>String input: any value, that can be parsed to <code>Integer</code>
      *      by <code>Integer.parseInt</code> after trimming. In additional,
@@ -271,7 +273,7 @@ public class Settings {
      */
     public static final SettingType TYPE_INTEGER = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof Integer) {
                 return value;
@@ -283,7 +285,7 @@ public class Settings {
                     if (d < Integer.MAX_VALUE && d > Integer.MIN_VALUE) {
                         throw new SettingException(
                             "The setting value should be an integer number, "
-                            + "but now it was a fraction number.");
+                            + "but now it wasn't a whole number.");
                     } else {
                         throw new SettingException(
                             "The setting value should be an integer number, "
@@ -298,7 +300,7 @@ public class Settings {
                     + "it was a " + typeName(value) + ".");
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             try {
@@ -313,7 +315,7 @@ public class Settings {
             }
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             throw new SettingException(
                     "Settings of type \"integer\" can't be merged.");
@@ -332,7 +334,7 @@ public class Settings {
      */
     public static final SettingType TYPE_BOOLEAN = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof Boolean) {
                 return value;
@@ -342,7 +344,7 @@ public class Settings {
                     + "it was a " + typeName(value) + ".");
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             value = value.trim().toLowerCase();
@@ -355,7 +357,7 @@ public class Settings {
             throw new SettingException("Not a valid boolean: " + value);
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             throw new SettingException(
                     "Settings of type \"boolean\" can't be merged.");
@@ -452,7 +454,7 @@ public class Settings {
      */
     public static final SettingType TYPE_HASH = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof Map) {
                 return value;
@@ -464,7 +466,7 @@ public class Settings {
                     + "was a " + typeName(value) + ".");
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             try {
@@ -478,7 +480,7 @@ public class Settings {
             }
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             Map m1 = (Map) defValue;
             Map m2 = (Map) value;
@@ -500,7 +502,7 @@ public class Settings {
     public static final SettingType TYPE_CFG_RELATIVE_PATH
             = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof String) {
                 File f = new File((String) value);
@@ -521,13 +523,13 @@ public class Settings {
             }
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             return convert(settings, value.trim());
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             throw new SettingException(
                     "Settings of type \"path\" can't be merged.");
@@ -547,17 +549,17 @@ public class Settings {
      */
     public static final SettingType TYPE_CFG_RELATIVE_PATHS
             = new SequenceSettingType() {
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             return convertList(settings, (List) super.convert(settings, value));
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             return convertList(
                     settings,
-                    (List) super.convertString(settings, value, forceStr));
+                    (List) super.parse(settings, value, forceStr));
         }
         
         private List convertList(Settings settings, List ls)
@@ -593,7 +595,7 @@ public class Settings {
     /**
      * "Unresolved configuration relative paths" setting type.
      * <p>Input type: Same as for {@link #TYPE_SEQUENCE}, but all list items
-     *     must be string or {@link FileWithConfigurationBase}.
+     *     must be strings or {@link FileWithConfigurationBase}-s.
      * <p>Output type: Same as for {@link #TYPE_SEQUENCE}, but all list items
      *     are {@link FileWithConfigurationBase}-s.
      * <p>String input: Same as for {@link #TYPE_SEQUENCE}, but all sequence
@@ -603,17 +605,17 @@ public class Settings {
      */
     public static final SettingType TYPE_UNRESOLVED_CFG_RELATIVE_PATHS
             = new SequenceSettingType() {
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             return convertList(settings, (List) super.convert(settings, value));
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             return convertList(
                     settings,
-                    (List) super.convertString(settings, value, forceStr));
+                    (List) super.parse(settings, value, forceStr));
         }
         
         private List convertList(Settings settings, List ls)
@@ -660,7 +662,7 @@ public class Settings {
      */  
     public static final SettingType TYPE_DATA_MODEL = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof Dictionary) {
                 value = MiscUtil.dictionaryToMap((Dictionary) value);
@@ -680,7 +682,7 @@ public class Settings {
                     + typeName(value) + ".");
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             List ls = new DataList(1);
@@ -688,7 +690,7 @@ public class Settings {
             return ls;
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             DataList l1 = (DataList) defValue;
             DataList l2 = (DataList) value;
@@ -714,7 +716,7 @@ public class Settings {
     public static final SettingType TYPE_HASH_OF_SEQUENCE_OF_CFG_RELATIVE_PATHS
             = new SettingType() {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             Map mapVal = (Map) TYPE_HASH.convert(settings, value);
             Iterator it = mapVal.entrySet().iterator();
@@ -735,7 +737,7 @@ public class Settings {
             return mapVal;
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             try {
@@ -750,7 +752,7 @@ public class Settings {
             }
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             Map mDef = (Map) defValue;
             Map mPri = (Map) value;
@@ -776,7 +778,7 @@ public class Settings {
     };
     
     // -------------------------------------------------------------------------
-    // Standard defs
+    // Standard setting definitions
 
     private static final Map<String, SettingDefinition> STD_DEFS = new HashMap<String, SettingDefinition>();
     private static final Map<String, String> STD_DEFS_CMDL_NAMES = new HashMap<String, String>();
@@ -928,46 +930,51 @@ public class Settings {
     }
 
     /**
-     * Returns if the given name is the name of a standard setting. 
+     * Returns names of the standard (not user-defined) settings. 
      */
-    public static Iterator getStandardSettingNames() {
+    public static Iterator/*<String>*/ getStandardSettingNames() {
         return Collections.unmodifiableSet(STD_DEFS.keySet()).iterator();
     }
 
     /**
-     * Adds a setting value. If a setting value already exists, it will be
+     * Adds a setting value. Adding means that if a setting value already exists, it will be
      * either replaced or merged with the new value, depending on the
      * definition of the setting. When merging, the new value has higher
-     * priority than the old value.
+     * priority than the old value. (With lists, higher priority means being
+     * earlier in the list.)
+     * 
+     * @see #set(String, Object)
      */
     public void add(String name, Object value) throws SettingException {
-        addOrSet(values, name, value, false);
+        modify(values, name, value, ModificationOperation.ADD, ModificationPrecendence.NORMAL);
     }
 
     /**
-     * Adds a setting value with low priority. If a setting value already
+     * Adds a setting value with low priority. Adding means that if a setting value already
      * exists, it will be either kept (and thus the method call has no effect)
      * or merged with the new value, depending on the definition of the setting.
-     * When merging, the new value has lower priorty than the old value.
+     * When merging, the new value has lower priority than the old value. (With
+     * lists, lower priority means being later in the list.)
+     * 
+     * @see #setDefault(String, boolean)
      */
     public void addDefault(String name, Object value) throws SettingException {
-        addOrSetDefault(values, name, value, false);
+        modify(values, name, value, ModificationOperation.ADD, ModificationPrecendence.DEFAULT_VALUE);
     }
 
     /**
-     * Same as {@link #add(String, Object)}, but uses string value. 
+     * Same as {@link #add(String, Object)}, but uses string value that will be interpreted by
+     * {@link SettingType#parse}. Used when the value comes from a strings-only source. 
      */
-    public void addWithString(String name, String value)
-            throws SettingException {
-        addOrSet(values, name, convertStringValue(name, value), false);
+    public void addWithString(String name, String value) throws SettingException {
+        add(name, parseSettingValue(name, value));
     }
 
     /**
      * Same as {@link #addDefault(String, Object)}, but uses string value. 
      */
-    public void addDefaultWithString(String name, String value)
-            throws SettingException {
-        addOrSetDefault(values, name, convertStringValue(name, value), false);
+    public void addDefaultWithString(String name, String value) throws SettingException {
+        addDefault(name, parseSettingValue(name, value));
     }
 
     /**
@@ -975,7 +982,7 @@ public class Settings {
      * {@link #add(String, Object)}. Thus, all keys must be {@link String}-s. 
      */
     public void add(Map/*<String, Object>*/ settingMap) throws SettingException {
-        addOrSet(settingMap, false);
+        modify(settingMap, ModificationOperation.ADD, ModificationPrecendence.NORMAL);
     }
     
     /**
@@ -983,7 +990,7 @@ public class Settings {
      * {@link #addDefault(String, Object)}. Thus, all keys must be {@link String}-s.
      */
     public void addDefaults(Map/*<String, Object>*/ settingMap) throws SettingException {
-        addOrSetDefaults(settingMap, false);
+        modify(settingMap, ModificationOperation.ADD, ModificationPrecendence.DEFAULT_VALUE);
     }
 
     /**
@@ -991,108 +998,122 @@ public class Settings {
      * so the values are strings. 
      */
     public void addWithStrings(Properties props) throws SettingException {
-        addOrSetWithStrings(props, false);
+        modifyWithStrings(props, ModificationOperation.ADD, ModificationPrecendence.NORMAL);
     }
     
     /**
      * Same as {@link #addDefaults(Map)}, but uses a <code>Properties</code>
      * object, so the values are strings. 
      */
-    public void addDefaultsWithStrings(Properties props)
-            throws SettingException {
-        addOrSetDefaultsWithStrings(props, false);
+    public void addDefaultsWithStrings(Properties props) throws SettingException {
+        modifyWithStrings(props, ModificationOperation.ADD, ModificationPrecendence.DEFAULT_VALUE);
     }
 
     /**
      * Sets the value of a setting. If the setting value already exists, it will
      * be replaced (never merged).
+     * 
+     * @param name
+     *            The name of the setting. It's validated if a setting with this name is defined, otherwise it throws
+     *            {@link SettingException}
+     * @param value
+     *            Not {@code null}; use {@link #remove(String)} to un-set a value. (Known bug: if the type is
+     *            {@code #TYPE_ANY}, {@code null} will not cause error, and in effect un-set the value.)
+     *             
+     * @throws SettingException
+     *             If the setting name or value is not valid.
      */
     public void set(String name, Object value) throws SettingException {
-        addOrSet(values, name, value, true);
+        modify(values, name, value, ModificationOperation.SET, ModificationPrecendence.NORMAL);
     }
 
     /**
-     * Convenience method for setting a <code>Boolean</code> value.
+     * Convenience method for setting a {@link Boolean} value.
      */
     public void set(String name, boolean value) throws SettingException {
         set(name, value ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
-     * Convenience method for setting an <code>Integer</code> value.
+     * Convenience method for setting an {@link Integer} value.
      */
     public void set(String name, int value) throws SettingException {
         set(name, new Integer(value));
     }
 
     /**
-     * Sets the value of a setting if the value doesn't exists yet.
+     * Sets the value of a setting if the value wasn't set yet. (The name is misleading, as if the setting value is
+     * removed later, it will not get the default value.) See {@link #set(String, Object)} for the parameters and thrown
+     * exception.
      */
     public void setDefault(String name, Object value) throws SettingException {
-        addOrSetDefault(values, name, value, true);
+        modify(values, name, value, ModificationOperation.SET, ModificationPrecendence.DEFAULT_VALUE);
     }
 
     /**
-     * Convenience method for setting a <code>Boolean</code> value.
+     * Convenience method for setting a {@link Boolean} value; see {@link #setDefault(String, Object)}.
      */
     public void setDefault(String name, boolean value) throws SettingException {
         setDefault(name, value ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
-     * Convenience method for setting an <code>Integer</code> value.
+     * Convenience method for setting an {@link Integer} value; see {@link #setDefault(String, Object)}.
      */
     public void setDefault(String name, int value) throws SettingException {
         setDefault(name, new Integer(value));
     }
 
     /**
-     * Same as {@link #set(String, Object)}, but uses string value.
+     * Same as {@link #set(String, Object)}, but uses string value that will be parsed with
+     * {@link SettingType#parse}. Used when the value comes from a strings-only source. 
      */
     public void setWithString(String name, String value)
             throws SettingException {
-        addOrSet(values, name, convertStringValue(name, value), true);
+        set(name, parseSettingValue(name, value));
     }
 
     /**
-     * Same as {@link #setDefault(String, Object)}, but uses string value.
+     * Same as {@link #setDefault(String, Object)}, but uses a string value that will be parsed with
+     * {@link SettingType#parse}.
      */
-    public void setDefaultWithString(String name, String value)
-            throws SettingException {
-        addOrSetDefault(values, name, convertStringValue(name, value), true);
+    public void setDefaultWithString(String name, String value) throws SettingException {
+        setDefault(name, parseSettingValue(name, value));
     }
 
     /**
-     * Sets all name-value pairs stored in the map with
-     * {@link #set(String, Object)}. Thus, all keys must be {@link String}-s. 
+     * Calls {@link #set(String, Object)} for each name-value pair of the {@link Map}. The change is atomic; if a
+     * {@link SettingException} occurs, no setting values are changed.
+     * 
+     * @param settingValues
+     *            Maps setting names ({@link String}-s) to setting values (non-{@code null} {@link Object}-s).
      */
-    public void set(Map/*<String, Object>*/ settingMap) throws SettingException {
-        addOrSet(settingMap, true);
+    public void set(Map/*<String, Object>*/ settingValues) throws SettingException {
+        modify(settingValues, ModificationOperation.SET, ModificationPrecendence.NORMAL);
     }
     
     /**
-     * Sets all name-value pairs stored in the map with
-     * {@link #setDefault(String, Object)}. Thus, all keys must be {@link String}-s.
+     * Similar to {@link #set(Map)}, but calls {@link #setDefault(String, Object)} instead of
+     * {@link #set(String, Object)}.
      */
-    public void setDefaults(Map/*<String, Object>*/ settingMap) throws SettingException {
-        addOrSetDefaults(settingMap, true);
+    public void setDefaults(Map/*<String, Object>*/ settingValues) throws SettingException {
+        modify(settingValues, ModificationOperation.SET, ModificationPrecendence.DEFAULT_VALUE);
     }
 
     /**
-     * Same as {@link #set(Map)}, but uses a <code>Properties</code> object,
-     * so the values are strings. 
+     * Calls {@link #setWithString(String, String)} for each name-value pair of the {@link Properties}. The change is
+     * atomic; if a {@link SettingException} occurs, no setting values are changed.
      */
     public void setWithStrings(Properties props) throws SettingException {
-        addOrSetWithStrings(props, true);
+        modifyWithStrings(props, ModificationOperation.SET, ModificationPrecendence.NORMAL);
     }
     
     /**
-     * Same as {@link #setDefaults(Map)}, but uses a <code>Properties</code>
-     * object, so the values are strings. 
+     * Similar to {@link #setWithStrings(Properties)}, but calls {@link #setDefaultWithString(String, String)} instead
+     * of {@link #setWithString(String, String)}.
      */
-    public void setDefaultsWithStrings(Properties props)
-            throws SettingException {
-        addOrSetDefaultsWithStrings(props, true);
+    public void setDefaultsWithStrings(Properties props) throws SettingException {
+        modifyWithStrings(props, ModificationOperation.SET, ModificationPrecendence.DEFAULT_VALUE);
     }
     
     /**
@@ -1132,18 +1153,21 @@ public class Settings {
 
     /**
      * Gets the current value of a setting.
-     * @param name the name of the setting.
-     * @return The value of the setting, or <code>null</code> if the setting
-     *     is not set. Do not modify the returned object!
+     * 
+     * @param name
+     *            The name of the setting. The name won't be validated.
+     * 
+     * @return The value of the setting. {@code null} if the setting is not set.
      */
     public Object get(String name) {
         return values.get(name);
     }
     
     /**
-     * Removes a setting value.
-     * @return the removed value, or <code>null</code> if there was no
-     *     value stored for the setting.
+     * Removes a setting value; after this {@link #get(String)} will return {@code null}.
+     * @return the removed value, or {@code null} if there was no value stored for the setting.
+     *
+     * @see #set(String, Object)
      */
     public Object remove(String name) {
         return values.remove(name);
@@ -1152,19 +1176,19 @@ public class Settings {
     /**
      * Lists the names of settings that were set. 
      */
-    public Iterator getNames() {
+    public Iterator/*<String>*/ getNames() {
         return values.keySet().iterator();
     }
 
     /**
      * Executes a processing session based on the setting values.
      * For each call of this method, a new {@link fmpp.Engine} object will be
-     * internaly created, and initialized based on the setting values, and then
+     * internally created, and initialized based on the setting values, and then
      * its <code>process</code> method will be called. The method automatically
      * chooses between bulk and single-file processing, based on the presence of
      * the "outputFile" setting.
      * 
-     * <p>Settings will go throught semantical checks that are not done when
+     * <p>Settings will go through semantical checks that are not done when
      * you call other methods. For example, it will be checked if setting
      * "modes" contains valid mode setter function calls, if "sourceRoot" and
      * "outputRoot" are defined for bulk mode, if exactly 1 "sources" is defined
@@ -1206,7 +1230,7 @@ public class Settings {
                 try {
                     fmIcI = new Version(s);
                 } catch (Exception e) {
-                    throw new SettingException("Failed to apply the value of the "
+                    throw new SettingException("Failed to parse the value of the "
                             + StringUtil.jQuote(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS)
                             + " setting.", e);
                 }
@@ -1876,7 +1900,7 @@ public class Settings {
             eng.addData(dataModel);
         }
 
-        // - Templat data (deprecated)
+        // - Template data (deprecated)
 
         s = (String) get(NAME_TEMPLATE_DATA);
         if (s != null) {
@@ -2281,12 +2305,21 @@ public class Settings {
     // -------------------------------------------------------------------------
     // Private
     
-    private void addOrSet(Map m, String name, Object value, boolean set)
+    private enum ModificationOperation { ADD, SET };
+    private enum ModificationPrecendence { NORMAL, DEFAULT_VALUE }
+    
+    private void modify(Map m, String name, Object value, ModificationOperation modOp, ModificationPrecendence modPrec)
             throws SettingException {
         SettingDefinition def = (SettingDefinition) defs.get(name);
         if (def == null) {
             throw newUnknownSettingException(name);
         }
+        
+        // For backward compatibility we keep the TYPE_ANY bug that allows null value.
+        if (def.type != TYPE_ANY) {
+            NullArgumentException.check("value", value);
+        }
+        
         try {
             value = def.type.convert(this, value);
         } catch (SettingException e) {
@@ -2296,43 +2329,16 @@ public class Settings {
                     + StringUtil.jQuote(name) + ": " + e.getMessage(),
                     e.getCause());
         }
-        if (!set && def.merge) {
-            Object oldValue = m.get(name);
-            if (oldValue != null) {
-                try {
-                    value = def.type.merge(this, oldValue, value);
-                } catch (SettingException e) {
-                    // adjust message
-                    throw new SettingException(
-                            "Problem with the value of setting "
-                            + StringUtil.jQuote(name) + ": " + e.getMessage(),
-                            e.getCause());
-                }
-            }
-        }
-        m.put(name, value);
-    }
-
-    private void addOrSetDefault(Map m, String name, Object value, boolean set)
-            throws SettingException {
-        SettingDefinition def = (SettingDefinition) defs.get(name);
-        if (def == null) {
-            throw newUnknownSettingException(name);
-        }
-        try {
-            value = def.type.convert(this, value);
-        } catch (SettingException e) {
-            // adjust message
-            throw new SettingException(
-                    "Problem with the value of setting "
-                    + StringUtil.jQuote(name) + ": " + e.getMessage(),
-                    e.getCause());
-        }
+        
         Object oldValue = m.get(name);
         if (oldValue != null) {
-            if (!set && def.merge) {
+            if (modOp == ModificationOperation.ADD && def.merge) {
                 try {
-                    value = def.type.merge(this, value, oldValue);
+                    if (modPrec == ModificationPrecendence.DEFAULT_VALUE) {
+                        value = def.type.merge(this, value, oldValue);
+                    } else {
+                        value = def.type.merge(this, oldValue, value);
+                    }
                 } catch (SettingException e) {
                     // adjust message
                     throw new SettingException(
@@ -2340,98 +2346,57 @@ public class Settings {
                             + StringUtil.jQuote(name) + ": " + e.getMessage(),
                             e.getCause());
                 }
-            } else {
+            } else if (modPrec == ModificationPrecendence.DEFAULT_VALUE) {
                 return; //!
             } 
         }
+        
         m.put(name, value);
     }
 
-    private void addOrSetWithString(
-            Map m, String name, String value, boolean set)
+    private void modify(Map<String, Object> settingMap, ModificationOperation modOp, ModificationPrecendence modPrec)
             throws SettingException {
-        addOrSet(m, name, convertStringValue(name, value), set);
-    }
-
-    private void addOrSetDefaultWithString(
-            Map m, String name, String value, boolean set)
-            throws SettingException {
-        addOrSetDefault(m, name, convertStringValue(name, value), set);
-    }
-
-    private void addOrSet(Map settingMap, boolean set) throws SettingException {
-        Map<String, Object> changed = new HashMap<String, Object>();
-        Iterator it = settingMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry ent = (Map.Entry) it.next();
-            String name = (String) ent.getKey();
+        Map<String, Object> transaction = new HashMap<String, Object>();
+        for (Map.Entry<String, Object> ent : settingMap.entrySet()) {
+            String name = ent.getKey();
             Object value = ent.getValue();
+            
             Object oldValue = values.get(name);
             if (oldValue != null) {
-                changed.put(name, oldValue);
+                transaction.put(name, oldValue); // For later merging
             }
-            addOrSet(changed, name, value, set);
+            
+            modify(transaction, name, value, modOp, modPrec);            
         }
-        values.putAll(changed);
+        values.putAll(transaction);
     }
 
-    private void addOrSetDefaults(Map settingMap, boolean set)
+    private void modifyWithStrings(Properties props, ModificationOperation modOp, ModificationPrecendence modPrec)
             throws SettingException {
-        Map<String, Object> changed = new HashMap<String, Object>();
-        Iterator it = settingMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry ent = (Map.Entry) it.next();
-            String name = (String) ent.getKey();
-            Object value = ent.getValue();
-            Object oldValue = values.get(name);
-            if (oldValue != null) {
-                changed.put(name, oldValue);
-            }
-            addOrSetDefault(changed, name, value, set);
-        }
-        values.putAll(changed);
-    }
-
-    private void addOrSetWithStrings(Properties props, boolean set)
-            throws SettingException {
-        Map<String, Object> changed = new HashMap<String, Object>();
+        Map<String, Object> transaction = new HashMap<String, Object>();
         Enumeration en = props.propertyNames();
         while (en.hasMoreElements()) {
             String name = (String) en.nextElement();
             String value = props.getProperty(name);
+            
             Object oldValue = values.get(name);
             if (oldValue != null) {
-                changed.put(name, oldValue);
+                transaction.put(name, oldValue); // For later merging
             }
-            addOrSetWithString(changed, name, value, set);
+            
+            modify(transaction, name, parseSettingValue(name, value), modOp, modPrec);            
         }
-        values.putAll(changed);
-    }
-
-    private void addOrSetDefaultsWithStrings(Properties props, boolean set)
-            throws SettingException {
-        Map<String, Object> changed = new HashMap<String, Object>();
-        Enumeration en = props.propertyNames();
-        while (en.hasMoreElements()) {
-            String name = (String) en.nextElement();
-            String value = props.getProperty(name);
-            Object oldValue = values.get(name);
-            if (oldValue != null) {
-                changed.put(name, oldValue);
-            }
-            addOrSetDefaultWithString(changed, name, value, set);
-        }
-        values.putAll(changed);
+        values.putAll(transaction);
     }
     
-    private Object convertStringValue(String name, String value)
+    private Object parseSettingValue(String name, String value)
             throws SettingException {
         SettingDefinition def = (SettingDefinition) defs.get(name);
         if (def == null) {
             throw newUnknownSettingException(name);
         }
         try {
-            return def.type.convertString(this, value, def.forceStr);
+            return def.type.parse(this, value, def.forceStr);
         } catch (SettingException e) {
             // adjust message
             throw new SettingException(
@@ -2442,7 +2407,7 @@ public class Settings {
     }
 
     private SettingException newUnknownSettingException(String name) {
-        String s = findSimilar(name);
+        String s = findSimilarName(name);
         if (s == null) {
             return new SettingException("Unknown setting "
                     + StringUtil.jQuote(name) + ".");
@@ -2455,11 +2420,11 @@ public class Settings {
 
     /**
      * Converts mixed-case setting name to dashed form,
-     * as <tt>sourceRoot</tt> to <tt>source-root</tt>.
+     * like <tt>sourceRoot</tt> to <tt>source-root</tt>.
      */
     public static String getDashedName(String name) {
         int ln = name.length();
-        StringBuffer sb = new StringBuffer(ln + 4);
+        StringBuilder sb = new StringBuilder(ln + 4);
         for (int i = 0; i < ln; i++) {
             char c = name.charAt(i);
             if (Character.isUpperCase(c)) {
@@ -2471,7 +2436,7 @@ public class Settings {
         return sb.toString();
     }
     
-    private String findSimilar(String name) {
+    private String findSimilarName(String name) {
         String s;
         
         s = (String) defsCmdlNames.get(name);
@@ -3410,6 +3375,40 @@ public class Settings {
     // -------------------------------------------------------------------------
     // Public classes
 
+    /**
+     * Represents the type of the value of a setting.
+     * 
+     * @since 0.9.16 (before that it was private)
+     */
+    protected static abstract class SettingType {
+        
+        // To limit visibility
+        private SettingType() { }
+        
+        /**
+         * Converts an object to the type of the setting.
+         * Shouldn't accept a {@code null} value.
+         * Must not modify the value object!
+         * Must accept values that were earlier returned by this method.
+         */
+        protected abstract Object convert(Settings settings, Object value) throws SettingException;
+    
+        /**
+         * Converts a string value to the type of the setting.
+         */ 
+        protected abstract Object parse(Settings settings, String value, boolean forceStr) throws SettingException;
+    
+        /**
+         * Merges two setting values.
+         * Shouldn't accept a {@code null} value.
+         * Must not modify the value objects; create new object for the merged value.
+         * Both value parameter holds already converted (via {@link #convert(Settings, Object)}
+         * or {@link #parse(Settings, String, boolean)}) values.
+         */
+        protected abstract Object merge(Settings settings, Object defValue, Object value) throws SettingException;
+        
+    }
+
     private static class SettingDefinition {
         private final String name;
         private final SettingType type;
@@ -3436,34 +3435,6 @@ public class Settings {
 
     } 
     
-    private interface SettingType {
-        /**
-         * Converts an object to the type of the setting.
-         * Warning! Do not modify the value object!
-         * The method must accept values that were earlier returned by this
-         * method.
-         */
-        Object convert(Settings settings, Object value)
-                throws SettingException;
- 
-        /**
-         * Converts a string value to the type of the setting. Ther value is
-         * already trimmed.
-         */ 
-        Object convertString(
-                Settings settings, String value, boolean forceStr)
-                throws SettingException;
- 
-        /**
-         * Merges two setting values.
-         * <p>Warning! Do not modify the value objects! Create new object for
-         * the merged value.
-         * <p>Both value parameter hold already <code>conver</code>-ed values.
-         */
-        Object merge(Settings settings, Object defValue, Object value)
-                throws SettingException;
-    }
-
     private static class FirstPhaseEvaluationEnvironment
             implements EvaluationEnvironment {
         private int hashKeyLevel;
@@ -3490,7 +3461,7 @@ public class Settings {
                 hashKeyLevel++;
                 if (hashKeyLevel == 1) {
                     if (!settings.defs.containsKey(name)) {
-                        String similar = settings.findSimilar(name);
+                        String similar = settings.findSimilarName(name);
                         throw new SettingException(
                                 "No setting with name "
                                 + StringUtil.jQuote(name) + " exists."
@@ -3541,9 +3512,9 @@ public class Settings {
         }
     }
 
-    private static class SequenceSettingType implements SettingType {
+    private static class SequenceSettingType extends SettingType {
 
-        public Object convert(Settings settings, Object value)
+        protected Object convert(Settings settings, Object value)
                 throws SettingException {
             if (value instanceof List) {
                 return value;
@@ -3564,7 +3535,7 @@ public class Settings {
             return ls;
         }
 
-        public Object convertString(
+        protected Object parse(
                 Settings settings, String value, boolean forceStr)
                 throws SettingException {
             List ls;
@@ -3585,7 +3556,7 @@ public class Settings {
             return ls;
         }
 
-        public Object merge(Settings settings, Object defValue, Object value)
+        protected Object merge(Settings settings, Object defValue, Object value)
                 throws SettingException {
             List l1 = (List) defValue;
             List l2 = (List) value;
@@ -3598,5 +3569,6 @@ public class Settings {
         protected EvaluationEnvironment getEvaluationEnvironment() {
             return null;
         }
-    }
+    }    
+    
 }
