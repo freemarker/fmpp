@@ -1,8 +1,6 @@
 ﻿Next release
 ------------
 
-- Rename outputFormats to outputFormatsByPath, add outputFormat.
-
 - recommendedDefaults=0.9.16 should also change:
   - removeExtensions: ftl, ftlh, ftlx
   - Map html, xml etc. to an outputFormat

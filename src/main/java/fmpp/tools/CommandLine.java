@@ -315,11 +315,17 @@ public class CommandLine {
                     cln(Settings.NAME_INHERIT_CONFIGURATION) + " FILE")
                     .desc("Inherits options from a configuration file. "
                             + "The options in the primary configuration "                            + "file (-C) has higher precedence.");
-            ap.addOption(null, cln(Settings.NAME_OUTPUT_FORMATS) + "=SEQ")
-            .desc("List of case(...)-s that choose the "
-                    + "template output format (auto-escaping), e.g.:\n"
-                    + "--output-formats=\"case(**/*.xsl, **/*.wsdl, XML), case(**, HTML)\"\n"
-                    + "By default empty.");
+            ap.addOption(null, cln(Settings.NAME_OUTPUT_FORMAT) + "=NAME")
+                    .desc("Sets the output format (auto-escaping) of templates, "
+                            + "like \"HTML\", \"XML\", \"RTF\", etc. "
+                            + "By default \"unspecified\". "
+                            + "The --" + cln(Settings.NAME_OUTPUT_FORMATS_BY_PATH)
+                            + " option overrides this for matching paths.");
+            ap.addOption(null, cln(Settings.NAME_OUTPUT_FORMATS_BY_PATH) + "=SEQ")
+                    .desc("List of case(...)-s that choose the "
+                            + "template output format (auto-escaping), e.g.:\n"
+                            + "--output-formats=\"case(**/*.xsl, **/*.wsdl, XML), case(*.htm*, HTML)\"\n"
+                            + "By default empty.");
             ap.addOption("M SEQ", cln(Settings.NAME_MODES))
                     .desc("The list of TDD function calls that choose the file "
                             + "processing mode, e.g.:\n"

@@ -268,12 +268,19 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     public void setInterpolationSyntax(String interpolationSyntax) {
         initialOps.setProperty(Settings.NAME_INTERPOLATION_SYNTAX, interpolationSyntax);
     }
+
+    /**
+     * @since 0.9.16
+     */
+    public void setFormat(String outputFormat) {
+        initialOps.setProperty(Settings.NAME_OUTPUT_FORMAT, outputFormat);
+    }
     
     /**
      * @since 0.9.16
      */
-    public void addConfiguredOutputFormats(AntAttributeSubstitution ats) {
-        doAttributeSubstitution(Settings.NAME_OUTPUT_FORMATS, ats);
+    public void addConfiguredOutputFormatsByPath(AntAttributeSubstitution ats) {
+        doAttributeSubstitution(Settings.NAME_OUTPUT_FORMATS_BY_PATH, ats);
     }
     
     public void setOutputEncoding(String outputEncoding) {

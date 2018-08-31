@@ -54,6 +54,8 @@ import fmpp.util.BugException;
 import fmpp.util.InstallationException;
 import fmpp.util.MiscUtil;
 import fmpp.util.StringUtil;
+import freemarker.core.OutputFormat;
+import freemarker.core.UnregisteredOutputFormatException;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.template.Configuration;
 import freemarker.template.Version;
@@ -132,7 +134,8 @@ public class Settings {
     public static final String NAME_TAG_SYNTAX = "tagSyntax";
     /* @since 0.9.16 */
     public static final String NAME_INTERPOLATION_SYNTAX = "interpolationSyntax";
-    public static final String NAME_OUTPUT_FORMATS = "outputFormats";
+    public static final String NAME_OUTPUT_FORMAT = "outputFormat";
+    public static final String NAME_OUTPUT_FORMATS_BY_PATH = "outputFormatsByPath";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
     public static final String NAME_REMOVE_EXTENSIONS = "removeExtensions";
@@ -816,7 +819,8 @@ public class Settings {
         stdDef(NAME_SQL_DATE_AND_TIME_TIME_ZONE, TYPE_STRING, false, true);
         stdDef(NAME_TAG_SYNTAX, TYPE_STRING, false, true);
         stdDef(NAME_INTERPOLATION_SYNTAX, TYPE_STRING, false, true);
-        stdDef(NAME_OUTPUT_FORMATS, TYPE_SEQUENCE, true, false);
+        stdDef(NAME_OUTPUT_FORMAT, TYPE_STRING, false, false);
+        stdDef(NAME_OUTPUT_FORMATS_BY_PATH, TYPE_SEQUENCE, true, false);
         stdDef(NAME_CASE_SENSITIVE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_STOP_ON_ERROR, TYPE_BOOLEAN, false, false);
         stdDef(NAME_REMOVE_EXTENSIONS, TYPE_SEQUENCE, true, true);
@@ -1423,13 +1427,25 @@ public class Settings {
             eng.setXpathEngine(s);
         }
 
-        ls = (List) get(NAME_OUTPUT_FORMATS);
+        s = (String) get(NAME_OUTPUT_FORMAT);
+        if (s != null) {
+            OutputFormat outputFormat;
+            try {
+                outputFormat = eng.getOutputFormat(s);
+            } catch (UnregisteredOutputFormatException e) {
+                throw new SettingException(
+                        "Unknown output format name, " + StringUtil.jQuote(s) + ".", e);
+            }
+            eng.setOutputFormat(outputFormat);
+        }
+        
+        ls = (List) get(NAME_OUTPUT_FORMATS_BY_PATH);
         if (ls != null) {
             try {
                 loadOutputFormatChoosers(eng, ls);
             } catch (SettingException e) {
                 throw new SettingException(
-                        "Failed to apply the value of the \"" + NAME_OUTPUT_FORMATS + "\" setting.",
+                        "Failed to apply the value of the \"" + NAME_OUTPUT_FORMATS_BY_PATH + "\" setting.",
                         e);
             }
         }
@@ -2816,10 +2832,17 @@ public class Settings {
             }
             
             String outputFormatName = (String) params.get(params.size() - 1);
+            OutputFormat outputFormat;
+            try {
+                outputFormat = eng.getOutputFormat(outputFormatName);
+            } catch (UnregisteredOutputFormatException e) {
+                throw new SettingException(
+                        "Unknown output format name, " + StringUtil.jQuote(outputFormatName) + ".", e);
+            }
             for (int i = 0; i < params.size() -1; i++) {
                 try {
-                    eng.addOutputFormatChooser((String) params.get(i), outputFormatName);
-                } catch (IllegalArgumentException e) {
+                    eng.addOutputFormatChooser((String) params.get(i), outputFormat);
+                } catch (Exception e) {
                     throw new SettingException("FMPP Engine has rejected the value.", e);
                 }
             }

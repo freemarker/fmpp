@@ -1,0 +1,4 @@
+sourceRoot: src
+outputRoot: out
+outputFormat: HTML
+outputFormatsByPath: [ case(**/*.x, **/*.y, XML), case(**/*.u, undefined), case(*.r, RTF) ]

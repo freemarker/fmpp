@@ -1,3 +1,0 @@
-sourceRoot: src
-outputRoot: out
-outputFormats: [ case(**/*.x, **/*.y, XML), case(**/*.u, undefined), case(*.r, RTF), case(**, HTML) ]

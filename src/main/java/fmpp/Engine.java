@@ -46,6 +46,7 @@ import freemarker.cache.TemplateConfigurationFactory;
 import freemarker.cache.TemplateConfigurationFactoryException;
 import freemarker.core.OutputFormat;
 import freemarker.core.TemplateConfiguration;
+import freemarker.core.UndefinedOutputFormat;
 import freemarker.core.UnregisteredOutputFormatException;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
@@ -712,7 +713,6 @@ public class Engine {
                 }
             }
             
-            templateConfigurationFactory.setupBeforeInjection();
             fmCfg.setTemplateConfigurations(templateConfigurationFactory);
             
             processedFiles.clear();
@@ -1726,13 +1726,47 @@ public class Engine {
     }
 
     /**
-     * Adds a new entry to the end of path-pattern -&gt; turn-number mapping list.
+     * Sets the {@link OutputFormat} used in templates when there's no more specific one chosen by path pattern.
+     * 
+     * @param outputFormat Not {@code null}; use {@link UndefinedOutputFormat#INSTANCE} instead.
      * 
      * @since 0.9.16
      */
-    public void addOutputFormatChooser(String pattern, String outputFormatName) {
+    public void setOutputFormat(OutputFormat outputFormat) {
+        fmCfg.setOutputFormat(outputFormat);
+    }
+    
+    /**
+     * Getter pair of {@link #setOutputFormat(OutputFormat)}.
+     * 
+     * @return Not {@code null}.
+     * 
+     * @since 0.9.16
+     */
+    public OutputFormat getOutputFormat() {
+        return fmCfg.getOutputFormat();
+    }
+    
+    /**
+     * Adds a new entry to the end of path-pattern -&gt; output-format mapping list. This corresponds to the
+     * {@code outputFormatsByPath} setting in the {@link Settings} API.
+     * 
+     * @since 0.9.16
+     */
+    public void addOutputFormatChooser(String pathPattern, OutputFormat outputFormat) {
         checkParameterLock();
-        outputFormatChoosers.add(new OutputFormatChooser(pattern, outputFormatName));
+        outputFormatChoosers.add(new OutputFormatChooser(pathPattern, outputFormat));
+    }
+    
+    /**
+     * Resolves an FreeMarker "output format" name to an {@link OutputFormat} object.
+     * 
+     * @see Configuration#getOutputFormat(String)
+     * 
+     * @since 0.9.16
+     */
+    public OutputFormat getOutputFormat(String name) throws UnregisteredOutputFormatException {
+        return fmCfg.getOutputFormat(name);
     }
     
     /**
@@ -1816,8 +1850,8 @@ public class Engine {
     }
 
     /**
-     * Removes all output format choosers. This is the initial state after
-     * the instantiation of {@link Engine} (i.e. no output format choosers).
+     * Removes all output format choosers.
+     * This corresponds to the {@code outputFormatsByPath} setting in the {@link Settings} API.
      * 
      * @since 0.9.16
      */
@@ -3072,13 +3106,13 @@ public class Engine {
     }
     
     private class OutputFormatChooser extends Chooser {
-        private final String outputFormatName;
-        /** Filled late, to ensure output format names are already registered */
-        private TemplateConfiguration templateConfiguration;
+        private final TemplateConfiguration templateConfiguration;
 
-        public OutputFormatChooser(String pathPattern, String outputFormatName) {
+        public OutputFormatChooser(String pathPattern, OutputFormat outputFormat) {
             super(pathPattern);
-            this.outputFormatName = outputFormatName;
+            TemplateConfiguration templateConfiguration = new TemplateConfiguration();
+            templateConfiguration.setOutputFormat(outputFormat);
+            this.templateConfiguration = templateConfiguration;
         }
     }
 
@@ -3398,26 +3432,6 @@ public class Engine {
                 chooser.templateConfiguration.setParentConfiguration(cfg);
             }
         }
-        
-        /**
-         * Call this late to ensure that custom named {@link OutputFormat}-s are already registered in the
-         * {@link Configuration} (though as of 0.9.16 there's not setting to do that).
-         */
-        void setupBeforeInjection() throws IllegalConfigurationException {
-            for (OutputFormatChooser chooser : outputFormatChoosers) {
-                TemplateConfiguration templateConfiguration = new TemplateConfiguration();
-                try {
-                    templateConfiguration.setOutputFormat(fmCfg.getOutputFormat(chooser.outputFormatName));
-                } catch (UnregisteredOutputFormatException e) {
-                    throw new IllegalConfigurationException(
-                            "Unknown output format name " + StringUtil.jQuote(chooser.outputFormatName)
-                            + " in the \"" + Settings.NAME_OUTPUT_FORMATS + "\" setting.",
-                            e);
-                }
-                chooser.templateConfiguration = templateConfiguration;
-            }
-        }
-        
     }
     
 }
