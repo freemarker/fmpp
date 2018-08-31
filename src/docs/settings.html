@@ -899,10 +899,29 @@ freemarkerLinks: {
 </@sect>
 
 
-<@sect title='Activating fixes' anchor="freemarkerIncompatibleImprovements">
-<@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default="" merging=false since='0.9.15' />
+<@sect title='Activating fixes/improvements' anchor="freemarkerIncompatibleImprovements">
+<@setting name="recommendedDefaults" type="string (version number)" default="0.9.15" merging=false since='0.9.16' />
+
+<p>Influences the default value of other settings. The setting value defaults will be those recommended as of the specified FMPP version.</p>
+
+<p>When you start a new project, set this to the current FMPP version (${pp.version} currently). In older projects changing this
+setting can break things:
+
+<ul>
+  <li>0.9.15: This is the baseline (and the default)</li>
+  <li>0.9.16: The following defaults change (compared to 0.9.15):
+    <ul>
+      <li><@s>freemarkerIncompatibleImprovements</@> to 2.3.28</li>
+      <li><@s>objectWrapper</@> to a <@c>freemarker.template.DefaultObjectWrapper</@c>, if <@s>freemarkerIncompatibleImprovements</@> is at least 2.3.21. There are more details, but it's highly technical, so if you care, <@a href="api/fmpp/Engine.html#Engine-freemarker.template.Version-freemarker.template.Version-freemarker.ext.beans.BeansWrapper-">see the JavaDoc of the <@c>fmpp.Engine</@c> constructor</@a>.</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The lowest allowed value is 0.9.15, and the highest allowed is the version of the FMPP release that you are using.
+
+<@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default={ '0.9.15': '2.3.0', '0.9.16': '2.3.28' } merging=false since='0.9.15' />
  
-<p>Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> is usually a good compromise. New projects should definitely use the maximum, which is the version of the FreeMarker used (<@c>fmpp --version</@> will print that, also, the current FMPP version was built with FreeMarker ${pp.freemarkerVersion}). If this setting is not set then FreeMarker chooses the this version itself, which as of this writing will be <@c>2.3.0</@c>.</p>
+<p>Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> is usually a good compromise. New projects should definitely use the maximum, which is the version of the FreeMarker used (<@c>fmpp --version</@> will print that, also, the current FMPP version was built with FreeMarker ${pp.freemarkerVersion}). If this setting is not set then we use the default coming from FreeMarker itself, which as of this writing will be <@c>2.3.0</@c>.</p>
 
 <p>See <@a href="freemarker/api/freemarker/template/Configuration.html#Configuration-freemarker.template.Version-"><@c>Configuration(Version)</@c> in the FreeMarker API</@a> for what fixes/improvements are activated.</p>
 
@@ -912,15 +931,21 @@ freemarkerLinks: {
 
 
 <@sect title="Object wrapping" anchor="objectWrapping">
-<@setting name="objectWrapper" type="string (BeanShell expression)" default='"b = new BeansWrapperBuilder(freemarkerIncompatibleImprovements); b.setSimpleMapWrapper(true); return b.build();"' merging=false />
+<@setting name="objectWrapper" type="string (BeanShell expression)"
+    default={
+        '0.9.15': '"b = new BeansWrapperBuilder(freemarkerIncompatibleImprovements); b.setSimpleMapWrapper(true); return b.build();"',
+        '0.9.16': '"b = new DefaultObjectWrapper(freemarkerIncompatibleImprovements); ...; return b.build(); /* See fmpp.Engine constructor JavaDocs */"'
+    }
+    merging=false
+/>
 
 <p>The <@s>objectWrapper</@s> setting is for FreeMarker "experts" who want to use a customized <@c>ObjectWrapper</@c>. The value of the setting is a BeanShell expression that must result in an object whose class extends the <@c>freemarker.ext.beans.BeansWrapper</@c> class. The value can be a simple expression like <@c>"new com.example.MyWrapper()"</@c>, or multiple instructions ending with a <@c>return</@c> statement.</p>
 
-<p>The <@c>freemarker.template.ObjectWrapper</@c>, <@c>freemarker.ext.beans.BeansWrapper</@c>, and <@c>freemarker.ext.beans.BeansWrapperBuilder</@c> classes are automatically imported, so you don't have to use full-qualified class name for them. Also, a non-<@c>null</@c> <@c>freemarkerIncompatibleImprovements</@c> value is exposed, which corresponds to the effective value of the similarly named FMPP setting.</p>
+<p>The <@c>freemarker.template.ObjectWrapper</@c>, <@c>freemarker.template.DefaultObjectWrapper</@c>, <@c>freemarker.template.DefaultObjectWrapperBuilder</@c>, <@c>freemarker.ext.beans.BeansWrapper</@c>, and <@c>freemarker.ext.beans.BeansWrapperBuilder</@c> classes are automatically imported, so you don't have to use full-qualified class name for them. Also, a non-<@c>null</@c> <@c>freemarkerIncompatibleImprovements</@c> value is exposed, which corresponds to the effective value of the similarly named FMPP setting.</p>
 
 <p>The <@c>ObjectWrapper</@c> is created before other setting values (or the <@c>fmpp.Engine</@c> instance for that mater), so the BeanShell expression has no access to any setting values, except to <@s>freemarkerIncompatibleImprovements</@s>, as it was shown.</p>
 
-<p>A subtle detail regarding the default value: The default value shown is actually only used when <@s>freemarkerIncompatibleImprovements</@s> is at least <@c>2.3.21</@>. Otherwise the default is created directly with old-style <@c>new BeansWrapper()</@>. See the FreeMarker API for the otherwise very subtle difference.</p>
+<p>The default value shown is actually only used when <@s>freemarkerIncompatibleImprovements</@s> is at least <@c>2.3.21</@>. For more information please consult <@a href="api/fmpp/Engine.html#Engine-freemarker.template.Version-freemarker.template.Version-freemarker.ext.beans.BeansWrapper-">the JavaDoc of the <@c>fmpp.Engine</@c> constructor</@a>.</p>
 
 </@sect>
 

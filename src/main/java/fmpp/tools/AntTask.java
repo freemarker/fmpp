@@ -120,6 +120,11 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
                 Settings.NAME_SOURCE_ROOT, sourceRoot.getAbsolutePath());
     }
 
+    public void setRecommendedDefaults(String recommendedDefaults) {
+        initialOps.setProperty(
+                Settings.NAME_RECOMMENDED_DEFAULTS, recommendedDefaults);
+    }
+
     public void setFreemarkerIncompatibleImprovements(String fmIcI) {
         initialOps.setProperty(
                 Settings.NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS, fmIcI);

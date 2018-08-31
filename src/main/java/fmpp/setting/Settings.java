@@ -108,6 +108,8 @@ public class Settings {
     public static final String NAME_OUTPUT_FILE = "outputFile";
     public static final String NAME_DATA_ROOT = "dataRoot";
     public static final String NAME_OBJECT_WRAPPER = "objectWrapper";
+    /* @since 0.9.16 */
+    public static final String NAME_RECOMMENDED_DEFAULTS = "recommendedDefaults";
     public static final String NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS = "freemarkerIncompatibleImprovements";
     public static final String NAME_FREEMARKER_LINKS = "freemarkerLinks";
     public static final String NAME_INHERIT_CONFIGURATION = "inheritConfiguration";
@@ -791,6 +793,7 @@ public class Settings {
         stdDef(NAME_OUTPUT_FILE, TYPE_CFG_RELATIVE_PATH, false, true);
         stdDef(NAME_DATA_ROOT, TYPE_CFG_RELATIVE_PATH, false, true);
         stdDef(NAME_OBJECT_WRAPPER, TYPE_STRING, false, true);
+        stdDef(NAME_RECOMMENDED_DEFAULTS, TYPE_STRING, false, true);
         stdDef(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS, TYPE_STRING, false, true);
         stdDef(NAME_FREEMARKER_LINKS,
                 TYPE_HASH_OF_SEQUENCE_OF_CFG_RELATIVE_PATHS, true, true);
@@ -1223,6 +1226,23 @@ public class Settings {
      *     the engine are catched and wrapped by this exeption.
      */
     public void execute() throws SettingException, ProcessingException {
+        final Version recommendedDefaults;
+        {
+            String s = (String) get(NAME_RECOMMENDED_DEFAULTS);
+            if (s != null) {
+                try {
+                    recommendedDefaults = new Version(s);
+                } catch (Exception e) {
+                    throw new SettingException("Failed to parse the value of the "
+                            + StringUtil.jQuote(NAME_RECOMMENDED_DEFAULTS) + " setting.",
+                            e);
+                }
+            } else {
+                // While passing null to the Engine constructor does the same, we will need this value earlier.
+                recommendedDefaults = Engine.DEFAULT_RECOMMENDED_DEFAULTS;
+            }
+        }
+        
         final Version fmIcI;
         {
             String s = (String) get(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS);
@@ -1231,11 +1251,12 @@ public class Settings {
                     fmIcI = new Version(s);
                 } catch (Exception e) {
                     throw new SettingException("Failed to parse the value of the "
-                            + StringUtil.jQuote(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS)
-                            + " setting.", e);
+                            + StringUtil.jQuote(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS) + " setting.",
+                            e);
                 }
             } else {
-                fmIcI = null;
+                // While passing null to the Engine constructor does the same, we will need this value earlier.
+                fmIcI = Engine.getDefaultFreemarkerIncompatibleImprovements(recommendedDefaults);
             }
         }
         
@@ -1247,10 +1268,11 @@ public class Settings {
                 bsh.Interpreter intp = new bsh.Interpreter();
                 try {
                     intp.eval("import freemarker.template.ObjectWrapper;");
+                    intp.eval("import freemarker.template.DefaultObjectWrapper;");
+                    intp.eval("import freemarker.template.DefaultObjectWrapperBuilder;");
                     intp.eval("import freemarker.ext.beans.BeansWrapper;");
                     intp.eval("import freemarker.ext.beans.BeansWrapperBuilder;");
-                    intp.set(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS,
-                            fmIcI != null ? fmIcI : Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+                    intp.set(NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS, fmIcI);
                     bres = intp.eval(s);
                 } catch (EvalError e) {
                     throw new SettingException("Failed to apply the value of the "
@@ -1277,11 +1299,12 @@ public class Settings {
                 }
                 ow = (BeansWrapper) bres;
             } else {
+                // Let the Engine create it.
                 ow = null;
             }
         }
         
-        final Engine eng = new Engine(ow, fmIcI);
+        final Engine eng = new Engine(recommendedDefaults, fmIcI, ow);
         
         String s;
         Boolean b;

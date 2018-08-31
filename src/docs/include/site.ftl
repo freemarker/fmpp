@@ -140,16 +140,25 @@
       <em class="warning">Deprecated!</em> <@deprecated?interpret /><br>
     </#if>
     <em>Type:</em> ${type}<br>
-    <em>Default:</em> <#rt>
-    <#if default != ''>
-      <#if default?starts_with('ex:')>
-        <@default[3..(default?length - 1)]?interpret /><br><#lt>
-      <#else>
-        <@c>${default}</@><br><#lt>
-      </#if>
-    <#else>
-      No default value<br><#lt>
+    <#if !default?is_hash>
+      <#local default = { '': default }>
     </#if>
+    <#list default as fromRecommendedDefault, defaultValue>
+      <em>Default<#rt>
+      <#if fromRecommendedDefault != ''>
+        from <@s>recommendedDefaults</@> ${fromRecommendedDefault}<#rt>
+      </#if>
+      :</em><#lt>
+      <#if defaultValue != ''>
+        <#if defaultValue?starts_with('ex:')>
+          <@defaultValue[3..]?interpret /><br><#lt>
+        <#else>
+          <@c>${defaultValue}</@><br><#lt>
+        </#if>
+      <#else>
+        No default value<br><#lt>
+      </#if>
+    </#list>
     <#if !(type?starts_with('string') || type?starts_with('integer') || type?starts_with('boolean'))>
       <#if !(type?starts_with('sequence') || type?starts_with('hash'))>
         <#stop "Unknown setting type: ${type}">

@@ -50,6 +50,9 @@ import freemarker.core.UnregisteredOutputFormatException;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.ObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
@@ -178,7 +181,20 @@ public class Engine {
      * of Jaxen.
      */
     public static final String XPATH_ENGINE_JAXEN = "jaxen";
+    
+    public static final Version VERSION_0_9_15 = new Version(0, 9, 15);
 
+    public static final Version VERSION_0_9_16 = new Version(0, 9, 16);
+
+    /**
+     * The default value of the {@code recommendDefaults} setting, when {@code null} is passed for it to the
+     * {@link Engine} constructor. This was exposed as sometimes you need this information earlier than calling the
+     * {@link Engine} constructor.
+     * 
+     * @since 0.9.16
+     */
+    public static final Version DEFAULT_RECOMMENDED_DEFAULTS = VERSION_0_9_15;
+    
     private static final String IGNOREDIR_FILE = "ignoredir.fmpp";
     
     private static final String CREATEDIR_FILE = "createdir.fmpp";
@@ -201,7 +217,8 @@ public class Engine {
     private static Version cachedVersion;
     private static String cachedBuildInfo;
     
-    // Settins
+    // Settings
+    private final Version recommendedDefaults;
     private File srcRoot, outRoot, dataRoot;
     private boolean dontTraverseDirs;
     private Map freemarkerLinks = new HashMap();
@@ -245,60 +262,91 @@ public class Engine {
     private Set processedFiles = new HashSet();
 
     /**
-     * Same as {@link #Engine(BeansWrapper) Engine(null)}.
+     * Same as {@link #Engine(Version) Engine((Version) null)}.
      * 
-     * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
+     * @deprecated Use {@link #Engine(Version)} instead.
      */
     public Engine() {
         this((Version) null);
     }
+
+    /**
+     * Same as {@link #Engine(Version, Version, BeansWrapper) Engine(recommendedDefaults, null, null)}.
+     */
+    public Engine(Version recommendedDefaults) {
+        this(recommendedDefaults, null, null);
+    }
     
     /**
-     * Same as
-     * {@link #Engine(BeansWrapper, Version) Engine(beansWrapper, null)}.
+     * Same as {@link #Engine(Version, Version, BeansWrapper) Engine(null, objectWrapper, null)}.
      * 
-     * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
+     * @deprecated Use {@link #Engine(Version, Version, BeansWrapper)} instead.
      */
-    public Engine(BeansWrapper beansWrapper) {
-        this(beansWrapper, null);
+    public Engine(BeansWrapper objectWrapper) {
+        this(objectWrapper, null);
     }
-        
+
     /**
-     * Creates a new FMPP engine instance.
-     * Use the setter methods (as {@code setProgressListener}) to configure
-     * the new instance.  
+     * Same as {@link #Engine(Version, Version, BeansWrapper) Engine(null, objectWrapper, fmIncompImprovements)}.
      * 
-     * @param beansWrapper the FreeMarker beans-wrapper that this instance
-     *    will use. Just use {@code null} if you don't know what's this.
-     *    If you do know what's this, note that FMPP by default (when this
-     *    parameter is {@code null}) uses a {@code BeansWrapper} with
-     *    {@code simpleMapWrapper} set to {@code true}.
-     *    
-     * @param fmIncompImprovements Sets the "incompatible improvements" version of FreeMarker. You should set this to
-     *    the current FreeMarker version in new projects. See {@link Configuration#Configuration(Version)} for details.
-     *    If it's at least {@code 2.3.21} and {@code beansWrapper} is {@code null}, the default will be created using
-     *    {@link BeansWrapperBuilder} instead of {@code new BeansWrapper()}, which means that that the resulting
-     *    {@link BeansWrapper} will be a shared singleton with read-only settings.
+     * @deprecated Use {@link #Engine(Version, Version, BeansWrapper)} instead.
      */
-    public Engine(BeansWrapper beansWrapper, Version fmIncompImprovements) {
-        fmCfg = fmIncompImprovements != null ? new Configuration(fmIncompImprovements) : new Configuration();
-        
-        if (beansWrapper == null) {
-            if (fmIncompImprovements == null
-                    || fmIncompImprovements.intValue() < Configuration.VERSION_2_3_21.intValue()) {
-                // The old (deprecated) way:
-                BeansWrapper bw = fmIncompImprovements != null
-                        ? new BeansWrapper(fmIncompImprovements) : new BeansWrapper();
-                bw.setSimpleMapWrapper(true);
-                fmCfg.setObjectWrapper(bw);
-            } else {
-                BeansWrapperBuilder bwb = new BeansWrapperBuilder(fmIncompImprovements);
-                bwb.setSimpleMapWrapper(true);
-                fmCfg.setObjectWrapper(bwb.build());
-            }
-        } else {
-            fmCfg.setObjectWrapper(beansWrapper);
+    public Engine(BeansWrapper objectWrapper, Version fmIncompImprovements) {
+        this(null, fmIncompImprovements, objectWrapper);
+    }
+    
+    /**
+     * Creates a new FMPP engine instance. Use the setter methods (as {@code setProgressListener}) to configure the new
+     * instance.
+     * 
+     * @param recommendedDefaults
+     *            Instructs the engine to use the setting value defaults recommended as of the specified FMPP version.
+     *            When you start a new project, set this to the current FMPP version. In older projects changing this
+     *            setting can break things (check documentation). If {@code null}, then it defaults to the lowest
+     *            allowed value, 0.9.15. (That's the lowest allowed because this setting was added in 0.9.16.)
+     * @param fmIncompImprovements
+     *            Sets the "incompatible improvements" version of FreeMarker. You should set this to the current
+     *            FreeMarker version in new projects. See {@link Configuration#Configuration(Version)} for details.
+     *            If this is {@code null} and the {@code recommendedDefaults} argument is 0.9.16, then
+     *            "incompatible improvements" defaults to 2.3.28. If this is {@code null} and
+     *            {@code recommendedDefaults} is 0.9.15 (the lowest possible value) then the default is chosen by
+     *            FreeMarker (to 2.3.0 for maximum backward compatibility, at least currently). 
+     * @param objectWrapper
+     *            The FreeMarker {@link ObjectWrapper} that this instance will use. Just use {@code null} if you don't
+     *            know what's this. When this parameter is {@code null}, FMPP chooses the default, considering
+     *            FreeMarker best practices and backward compatibility concerns. So it's somewhat complex, and depends
+     *            on both the {@code recommendedDefaults} and the {@code fmIncompImprovements} arguments.
+     *            If {@code recommendedDefaults} is at least 0.9.16, and {@code fmIncompImprovements} is either
+     *            {@code null} or at least 2.3.22, then FMPP creates a {@link DefaultObjectWrapper} with its
+     *            {@code incompatibleImprovements} setting set to FreeMarker {@code incompatibleImprovements}, 
+     *            its {@code forceLegacyNonListCollections} setting set to {@code false}, its
+     *            {@code iterableSupport} setting to {@code true}, and its {@code treatDefaultMethodsAsBeanMembers}
+     *            setting set to {@code true}.
+     *            Otherwise, FMPP creates a {@code BeansWrapper} (not a {@link DefaultObjectWrapper}) with
+     *            its {@code simpleMapWrapper} setting set  to {@code true}, and also, if the
+     *            FreeMarker {@code incompatibleImprovements} will be at least {@code 2.3.21}, it's created using
+     *            {@link BeansWrapperBuilder} instead of {@code new BeansWrapper()}, which means that that the resulting
+     *            {@link BeansWrapper} will be a shared singleton with read-only settings.
+     *            
+     * @since 0.9.16
+     */
+    public Engine(Version recommendedDefaults, Version fmIncompImprovements, BeansWrapper objectWrapper) {
+        if (recommendedDefaults == null) {
+            recommendedDefaults = DEFAULT_RECOMMENDED_DEFAULTS;
         }
+        validateRecommendedDefaults(recommendedDefaults);
+        this.recommendedDefaults = recommendedDefaults;
+
+        if (fmIncompImprovements == null) {
+            fmIncompImprovements = getDefaultFreemarkerIncompatibleImprovements(recommendedDefaults);
+        }
+        
+        fmCfg = new Configuration(fmIncompImprovements);
+
+        if (objectWrapper == null) {
+            objectWrapper = createDefaultObjectWrapper(recommendedDefaults, fmIncompImprovements);
+        }
+        fmCfg.setObjectWrapper(objectWrapper);
         
         fmCfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         fmCfg.setTemplateUpdateDelay(Integer.MAX_VALUE - 10000);
@@ -311,6 +359,72 @@ public class Engine {
         templateEnv = new TemplateEnvironment(this);
         
         clearModeChoosers();
+    }
+
+    /**
+     * Check if the {@code recommendedDefaults} is in the supported range.
+     * 
+     * @param recommendedDefaults
+     *            The version to validate. If {@code null}, the method returns without doing anything.
+     * 
+     * @throws IllegalArgumentException
+     *             If the specified version is out of the valid range
+     * 
+     * @since 0.9.16
+     */
+    public static void validateRecommendedDefaults(Version recommendedDefaults) {
+        if (recommendedDefaults == null) {
+            return;
+        }
+        if (recommendedDefaults.intValue() < VERSION_0_9_15.intValue()) {
+            throw new IllegalArgumentException("\"recommendedDefaults\" setting value \"" + recommendedDefaults
+                    + "\" is lower than the allowed minimum, \"" + VERSION_0_9_15 + "\".");
+        }
+        if (recommendedDefaults.intValue() > getVersion().intValue()) {
+            throw new IllegalArgumentException("\"recommendedDefaults\" setting value \"" + recommendedDefaults
+                    + "\" is higher than the current FMPP version, \"" + getVersion() + "\".");
+        }
+    }
+
+    /**
+     * The default value of the {@code objectWrapper} setting, when {@code null} is passed for it
+     * to the {@link Engine} constructor.
+     */
+    private static BeansWrapper createDefaultObjectWrapper(Version recommendedDefaults, Version fmIncompImprovements) {
+        BeansWrapper objectWrapper;
+        if (recommendedDefaults.intValue() >= VERSION_0_9_16.intValue()
+                && fmIncompImprovements.intValue() >= Configuration.VERSION_2_3_21.intValue()) {
+            DefaultObjectWrapperBuilder dowb = new DefaultObjectWrapperBuilder(fmIncompImprovements);
+            dowb.setForceLegacyNonListCollections(false);
+            dowb.setIterableSupport(true);
+            objectWrapper = dowb.build();
+        } else {
+            if (fmIncompImprovements == null
+                    || fmIncompImprovements.intValue() < Configuration.VERSION_2_3_21.intValue()) {
+                // The old (deprecated) way:
+                BeansWrapper bw = fmIncompImprovements != null
+                        ? new BeansWrapper(fmIncompImprovements) : new BeansWrapper();
+                bw.setSimpleMapWrapper(true);
+                objectWrapper = bw;
+            } else {
+                BeansWrapperBuilder bwb = new BeansWrapperBuilder(fmIncompImprovements);
+                bwb.setSimpleMapWrapper(true);
+                objectWrapper = bwb.build();
+            }
+        }
+        return objectWrapper;
+    }
+
+    /**
+     * The default value of the {@code freemarkerIncompatibleImprovements} setting, when {@code null} is passed for it
+     * to the {@link Engine} constructor. This was exposed as sometimes you need this information earlier than calling
+     * the {@link Engine} constructor.
+     * 
+     * @since 0.9.16
+     */
+    public static Version getDefaultFreemarkerIncompatibleImprovements(Version fmppRecommendedDefaults) {
+        return fmppRecommendedDefaults.intValue() >= VERSION_0_9_16.intValue()
+                ? Configuration.VERSION_2_3_28 : Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
     }
 
     // -------------------------------------------------------------------------
@@ -1009,6 +1123,13 @@ public class Engine {
     // -------------------------------------------------------------------------
     // Engine parameters
     
+    /**
+     * See the similarly named constructor parameter of {@link #Engine(Version, Version, BeansWrapper)}.
+     */
+    public Version getRecommendedDefaults() {
+        return recommendedDefaults;
+    }
+
     public boolean getStopOnError() {
         return stopOnError;
     }
@@ -2516,6 +2637,13 @@ public class Engine {
     
     // -------------------------------------------------------------------------
     // Package
+    
+    /**
+     * Returns the FreeMarker {@link Configuration}; it shouldn't be modified. This was added for testing.
+     */
+    Configuration getFreemarkerConfiguration() {
+        return fmCfg;
+    }
 
     void sendWarning(File srcFile, String message) {
         try {

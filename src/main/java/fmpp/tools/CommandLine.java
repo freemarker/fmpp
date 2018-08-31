@@ -344,16 +344,21 @@ public class CommandLine {
                             + "-D \"properties(style.properties), "                            + "onLine:true\"\n"
                             + "Note that paths like \"style.properties\" are "
                             + "relative to the data root directory.");
+            ap.addOption(null, cln(Settings.NAME_RECOMMENDED_DEFAULTS) + "=VER")
+                    .desc("Use the setting value defaults recommended as of FMPP version <VER>. When you start "
+                            + "a new project, set this to the current FMPP version (" + Engine.getVersion() + "). "
+                            + "In older projects changing this setting can break things (check documentation). "
+                            + "The default is 0.9.15, because this setting was added in 0.9.16.");
             Version maxFMVer = Configuration.getVersion();
-            Version defFMVer = Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
             ap.addOption(null, cln(Settings.NAME_FREEMARKER_INCOMPATIBLE_IMPROVEMENTS) + "=VER")
-                    .desc("Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and "
+                    .desc("Enables the FreeMarker fixes/improvements that aren't 100% backward compatible, and "
                             + "were implemented in FreeMarker version <VER>. "
-                            + "In older projects using the highest available 2.3.x is usually a good "
-                            + "compromise. New projects should use the maximum, which is currently \""
-                            + maxFMVer.getMajor() + "." + maxFMVer.getMinor() + "." + maxFMVer.getMicro() + "\". "
-                            + "The default is \""
-                            + defFMVer.getMajor() + "." + defFMVer.getMinor() + "." + defFMVer.getMicro() + "\".");
+                            + "In older projects using the highest available 2.3.x is usually a good compromise, "
+                            + "but check FreeMarker documentation. New projects should use the maximum (in this "
+                            + "installation \"" + maxFMVer.getMajor() + "." + maxFMVer.getMinor() + "."
+                            + maxFMVer.getMicro() + "\". The default depends on the "
+                            + cln(Settings.NAME_RECOMMENDED_DEFAULTS) + " setting; usually you just set that, and not "
+                            + "directly this setting.");
             ap.addOption(null, cln(Settings.NAME_OBJECT_WRAPPER) + "=BSH")
                     .desc("Specifies the ObjectWrapper to use with a BeanShell "
                             + "expression that must evaluate to an object "
