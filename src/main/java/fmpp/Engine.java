@@ -198,7 +198,7 @@ public class Engine {
         }
     }
 
-    private static String cachedVersion;
+    private static Version cachedVersion;
     private static String cachedBuildInfo;
     
     // Settins
@@ -250,7 +250,7 @@ public class Engine {
      * @deprecated Use {@link #Engine(BeansWrapper, Version)} instead.
      */
     public Engine() {
-        this(null);
+        this((Version) null);
     }
     
     /**
@@ -2409,12 +2409,22 @@ public class Engine {
     }
 
     /**
-     * Returns the FMPP version number string. FMPP version number string
-     * follows the {@code major.minor.sub} or {@code major.minor.sub.nightly}
-     * format, where each part (separated by dots) is an non-negative integer
-     * number. 
+     * Returns the FMPP version number string. FMPP version number string follows the {@code major.minor.sub} or
+     * {@code major.minor.sub.nightly} format, where each part (separated by dots) is an non-negative integer number.
+     * 
+     * @deprecated Use {@link #getVersion()} instead. If you have need a {@link String}, it has a proper
+     *             {@link Version#toString()}.
      */
     public static String getVersionNumber() {
+        return getVersion().toString();
+    }
+    
+    /**
+     * Returns the FMPP version number.
+     * 
+     * @since 0.9.16
+     */
+    public static Version getVersion() {
         if (cachedVersion == null) {
             loadVersionInfo();
         }
@@ -2432,10 +2442,32 @@ public class Engine {
         return cachedBuildInfo;
     }
     
+    /**
+     * @deprecated Use {@link #getFreeMarkerVersion()} instead. If you have need a {@link String}, it has a proper
+     *             {@link Version#toString()}.
+     */
     public static String getFreeMarkerVersionNumber() {
         return Configuration.getVersionNumber();
     }
 
+    /**
+     * Returns the FreeMarker version used.
+     * 
+     * @since 0.9.16
+     */
+    public static Version getFreeMarkerVersion() {
+        return Configuration.getVersion();
+    }
+    
+    /**
+     * Returns the FreeMarker "incompatible improvements" setting. This can only be set in the constructor.
+     * 
+     * @since 0.9.16
+     */
+    public Version getFreemarkerIncomplatibleImprovements() {
+        return fmCfg.getIncompatibleImprovements();
+    }
+    
     /**
      * Quickly tells if XML support is available.
      */
@@ -2885,7 +2917,7 @@ public class Engine {
                         + "is corrupt: buildInfo key is missing.");
             }
             
-            cachedVersion = v;
+            cachedVersion = new Version(v);
             cachedBuildInfo = d;
         }
     }

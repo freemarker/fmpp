@@ -19,6 +19,9 @@
         <li>The distribution now contains Apache FreeMarker 2.3.28 (note that its owner has changed to the Apache Software Foundation)</li>
       </ul>
     </li>
+    <li><@nbca/> In the unlikely case someone calls <@c>new Engine(null)</@> (with literal <@c>null</@>), that will now be a Java compilation error when the <@c>java</@> file is recompiled, as now it's ambiguous,
+    and should be rewritten to <@c>new Engine((Version) null)</@>. Binaries (<@c>class</@> files) are not affected by this.</li>
+    <li>Some minor API additions, code cleanups, and documentation cleanups.
   </ul>
 </@sect>
 

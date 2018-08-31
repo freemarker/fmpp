@@ -139,7 +139,7 @@ public class LoggerProgressListener implements ProgressListener {
             println("PROCESSING SESSION STARTED: " + new Date());
             String fmppVersion, freemarkerVersion;
             try {
-                fmppVersion = Engine.getVersionNumber();
+                fmppVersion = Engine.getVersion().toString();
             } catch (Throwable e) {
                 fmppVersion = "??? (" + e + ")";
             }

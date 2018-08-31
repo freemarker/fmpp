@@ -171,7 +171,7 @@ public class TemplateEnvironment {
         
         // constants
         ppHash.put("slash", File.separator);
-        ppHash.put("version", Engine.getVersionNumber());
+        ppHash.put("version", Engine.getVersion().toString());
         ppHash.put("freemarkerVersion", Engine.getFreeMarkerVersionNumber());
         
         // live variables

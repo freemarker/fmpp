@@ -657,11 +657,9 @@ public class CommandLine {
             }
 
             if (ops.containsKey(OPTION_VERSION)) {
-                p("FMPP version " + Engine.getVersionNumber()
-                        + ", build " + Engine.getBuildInfo());
-                p("Currently using FreeMarker version "
-                        + Engine.getFreeMarkerVersionNumber());
-                p("For the latest version visit: "                        + "http://fmpp.sourceforge.net/");
+                p("FMPP version " + Engine.getVersion() + ", build " + Engine.getBuildInfo());
+                p("Currently using FreeMarker version " + Engine.getFreeMarkerVersion());
+                p("For the latest version visit: http://fmpp.sourceforge.net/");
                 throw FinishedException.INSTANCE;
             }
 
