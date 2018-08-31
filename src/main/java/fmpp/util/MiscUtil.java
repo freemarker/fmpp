@@ -19,11 +19,9 @@ package fmpp.util;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -218,33 +216,22 @@ public class MiscUtil {
     /**
      * Checks if the list contains the given object (exactly the same instance).
      */
-    public static boolean listContainsObject(List list, Object o) {
-        if (list instanceof ArrayList) {
-            int ln = list.size();
-            int i = 0;
-            while (i < ln && list.get(i) != o) {
-                i++;
+    public static boolean listContainsObject(List<?> list, Object o) {
+        for (Object it : list) {
+            if (it == o) {
+                return true;
             }
-            return i < ln;
-        } else {
-            Iterator it = list.iterator();
-            while (it.hasNext()) {
-                if (it.next() == o) {
-                    return true;
-                }
-            }
-            return false;
         }
+        return false;
     }
 
     /**
      * Checks if the map contains the given object (exactly the same instance)
      * as value.
      */
-    public static boolean mapContainsObject(Map map, Object o) {
-        Iterator it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            if (((Map.Entry) it.next()).getValue() == o) {
+    public static boolean mapContainsObject(Map<?, ?> map, Object o) {
+        for (Object it : map.values()) {
+            if (it == o) {
                 return true;
             }
         }
@@ -254,30 +241,17 @@ public class MiscUtil {
     /**
      * Returns the first index of the given object (exactly the same instance)
      * in the list.
-     * @return the index of the first occurance, or -1 if not found.
+     * @return the index of the first occurrence, or -1 if not found.
      */
     public static int findObject(List list, Object o) {
-        if (list instanceof ArrayList) {
-            int ln = list.size();
-            int i = 0;
-            while (i < ln) {
-                if (list.get(i) == o) {
-                    return i;
-                }
-                i++;
+        int i = 0;
+        for (Object it : list) {
+            if (it == o) {
+                return i;
             }
-            return -1;
-        } else {
-            int i = 0;
-            Iterator it = list.iterator();
-            while (it.hasNext()) {
-                if (it.next() == o) {
-                    return i;
-                }
-                i++;
-            }
-            return -1;
+            i++;
         }
+        return -1;
     }
 
     private static final String MSG_XML_NOT_AVAIL

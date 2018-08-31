@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -61,6 +60,7 @@ import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateNodeModel;
 import freemarker.template.Version;
+import freemarker.template.utility.NullArgumentException;
 
 /**
  * The bare-bone, low-level preprocessor engine. Since FMPP 0.9.0 you should
@@ -188,7 +188,7 @@ public class Engine {
     
     private static final String CREATEDIR_FILE = "createdir.fmpp";
     
-    private static final Set STATIC_FILE_EXTS = new HashSet();
+    private static final Set<String> STATIC_FILE_EXTS = new HashSet<String>();
     static {
         String[] list = new String[] {
                 "jpg", "jpeg", "gif", "png", "swf", "bmp", "pcx", "tga", "tiff",
@@ -210,23 +210,23 @@ public class Engine {
     private final Version recommendedDefaults;
     private File srcRoot, outRoot, dataRoot;
     private boolean dontTraverseDirs;
-    private Map freemarkerLinks = new HashMap();
+    private Map<String, List<File>> freemarkerLinks = new HashMap<String, List<File>>();
     private boolean stopOnError = true;
-    private Map data = new HashMap();
+    private Map<String, Object> data = new HashMap<String, Object>();
     private LayeredChooser localDataBuilders = new LayeredChooser();
     private TemplateDataModelBuilder tdmBuilder;
     private String outputEncoding = PARAMETER_VALUE_SOURCE;
     private String urlEscapingCharset = PARAMETER_VALUE_OUTPUT;
     private List<OutputFormatChooser> outputFormatChoosers = new ArrayList<OutputFormatChooser>();
-    private LinkedList pModeChoosers = new LinkedList();
+    private List<PModeChooser> pModeChoosers = new ArrayList<PModeChooser>();
     private LayeredChooser headerChoosers = new LayeredChooser();
     private LayeredChooser footerChoosers = new LayeredChooser();
-    private LinkedList turnChoosers = new LinkedList();
+    private List<TurnChooser> turnChoosers = new ArrayList<TurnChooser>();
     private boolean csPathCmp = false;
     private boolean expertMode = false;
-    private ArrayList removeExtensions = new ArrayList();
-    private ArrayList removePostfixes = new ArrayList();
-    private ArrayList replaceExtensions = new ArrayList();
+    private List<String> removeExtensions = new ArrayList<String>();
+    private List<String> removePostfixes = new ArrayList<String>();
+    private List<String[]> replaceExtensions = new ArrayList<String[]>();
     private int skipUnchanged;
     private boolean alwaysCrateDirs = false;
     private boolean ignoreCvsFiles = true;
@@ -235,20 +235,20 @@ public class Engine {
     private String xpathEngine = XPATH_ENGINE_DONT_SET;
     private Object xmlEntityResolver;
     private boolean validateXml = false;
-    private List xmlRendCfgCntrs = new ArrayList();
+    private List<XmlRenderingCfgContainer> xmlRendCfgCntrs = new ArrayList<XmlRenderingCfgContainer>();
     
     // Misc
     private Configuration fmCfg;
     private MultiProgressListener progListeners = new MultiProgressListener();
     private TemplateEnvironment templateEnv;
     private int maxTurn, currentTurn;
-    private Map attributes = new HashMap();
+    private Map<String, Object> attributes = new HashMap<String, Object>();
     private Boolean chachedXmlSupportAvailable;
     private boolean parametersLocked;
     
     // Session state
-    private Map ignoredDirCache = new HashMap();
-    private Set processedFiles = new HashSet();
+    private Map<File, Boolean> ignoredDirCache = new HashMap<File, Boolean>();
+    private Set<File> processedFiles = new HashSet<File>();
 
     /**
      * Same as {@link #Engine(Version) Engine((Version) null)}.
@@ -518,7 +518,7 @@ public class Engine {
     private boolean isDirMarkedWithIgnoreFile(File dir)
             throws IOException {
         boolean ign;
-        Boolean ignore = (Boolean) ignoredDirCache.get(dir);
+        Boolean ignore = ignoredDirCache.get(dir);
         if (ignore != null) {
             return ignore.booleanValue();
         }
@@ -538,7 +538,7 @@ public class Engine {
      * Hack to processes a single file.
      *
      * <p>If the source root and/or output root directory is not set, they
-     * will be set for the time of this method call to the parent diretories of
+     * will be set for the time of this method call to the parent directories of
      * the source and output files respectively.
      * 
      * @see #process(File[])
@@ -685,30 +685,25 @@ public class Engine {
             }
             
             maxTurn = 1;
-            Iterator it = turnChoosers.iterator();
-            while (it.hasNext()) {
-                int t = ((TurnChooser) it.next()).turn;
-                if (t > maxTurn) {
-                    maxTurn = t;
+            for (TurnChooser turnChooser : turnChoosers) {
+                int turn = turnChooser.turn;
+                if (turn > maxTurn) {
+                    maxTurn = turn;
                 }
             }
+            
             currentTurn = 1;
             
             fmCfg.setTemplateLoader(new FmppTemplateLoader(this));
             fmCfg.clearTemplateCache();
             
             fmCfg.clearSharedVariables();
-            it = data.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry ent = (Map.Entry) it.next();
+            for (Map.Entry<String, Object> ent : data.entrySet()) {
                 try {
-                    fmCfg.setSharedVariable(
-                            (String) ent.getKey(), ent.getValue());
+                    fmCfg.setSharedVariable(ent.getKey(), ent.getValue());
                 } catch (TemplateModelException e) {
                     throw new IllegalConfigurationException(
-                            "Failed to convert data "
-                            + StringUtil.jQuote((String) ent.getKey())
-                            + " to FreeMarker variable.",
+                            "Failed to convert data " + StringUtil.jQuote(ent.getKey()) + " to FreeMarker variable.",
                             e);
                 }
             }
@@ -956,7 +951,7 @@ public class Engine {
             int xrccIdx;
             XmlRenderingConfiguration curXRC = null;
             findMatchingXRC: for (xrccIdx = 0; xrccIdx < xrccln; xrccIdx++) {
-                XmlRenderingCfgContainer curXRCC = (XmlRenderingCfgContainer) xmlRendCfgCntrs.get(xrccIdx);
+                XmlRenderingCfgContainer curXRCC = xmlRendCfgCntrs.get(xrccIdx);
                 curXRC = curXRCC.xmlRenderingCfg;
     
                 // Filter: ifSourceIs
@@ -1070,7 +1065,7 @@ public class Engine {
             }
             
             TemplateNodeModel wrappedDoc;
-            List args = new ArrayList(2);
+            List<Object> args = new ArrayList<Object>(2);
             args.add("");
             args.add(xrc.getXmlDataLoaderOptions());
             try {
@@ -1155,7 +1150,7 @@ public class Engine {
     /**
      * Returns the source root directory. 
      * This can be null. However, it is never null while a processing session is
-     * runing, since the source root must be specified for successfully start a
+     * running, since the source root must be specified for successfully start a
      * processing session.
      * 
      * <p>The returned {@code File} is always a canonical
@@ -1172,11 +1167,7 @@ public class Engine {
      */
     public void setSourceRoot(File srcRoot) throws IOException {
         checkParameterLock();
-        if (srcRoot != null) {
-            this.srcRoot = srcRoot.getCanonicalFile();
-        } else {
-            this.srcRoot = null;
-        }
+        this.srcRoot = srcRoot != null ? srcRoot.getCanonicalFile() : null;
     }
 
     /**
@@ -1191,11 +1182,7 @@ public class Engine {
      * {@code File}.</p> 
      */
     public File getDataRoot() {
-        if (dataRoot == null) {
-            return srcRoot;
-        } else {
-            return dataRoot;
-        }
+        return dataRoot != null ? dataRoot : srcRoot;
     }
 
     /**
@@ -1206,11 +1193,7 @@ public class Engine {
     public void setDataRoot(File dataRoot)
             throws IOException {
         checkParameterLock();
-        if (dataRoot == null) {
-            this.dataRoot = null;
-        } else {
-            this.dataRoot = dataRoot.getCanonicalFile();
-        }    
+        this.dataRoot = dataRoot != null ? dataRoot.getCanonicalFile() : null;
     }
     
     /**
@@ -1245,30 +1228,23 @@ public class Engine {
      * @param fileOrDir the file or directory the link will point to. It can be
      *     a outside the source root directory.
      */    
-    public void addFreemarkerLink(String name, File fileOrDir)
-            throws IOException {
+    public void addFreemarkerLink(String name, File fileOrDir) throws IOException {
         checkParameterLock();
-        if (name == null) {
-            throw new IllegalArgumentException("The \"name\" argument to the "
-                    + "\"Engine.addIncludeDirectory\" method can't be null.");
-        }
+        NullArgumentException.check("name", name);
         if (name.startsWith("@")) {
-            throw new IllegalArgumentException("The \"name\" argument to the "
-                    + "\"Engine.addIncludeDirectory\" method can't start with "
-                    + "@. The @ prefix is used only when you refer to a "
+            throw new IllegalArgumentException("The \"name\" argument can't start "
+                    + "with @. The @ prefix is used only when you refer to a "
                     + "FreeMarker link. It is not part of the link name. "
                     + "For example, if the link name is \"foo\", then you can "
                     + "refer to it as <#include '/@foo/something.ftl'>.");
         }
-        if (fileOrDir == null) {
-            throw new IllegalArgumentException("The \"fileOrDir\" argument to "
-                    + "the \"Engine.addIncludeDirectory\" method can't be "
-                    + "null.");
-        }
+        
+        NullArgumentException.check("fileOrDir", fileOrDir);
+        
         fileOrDir = fileOrDir.getCanonicalFile();
-        List dirs = (List) freemarkerLinks.get(name);
+        List<File> dirs = freemarkerLinks.get(name);
         if (dirs == null) {
-            dirs = new ArrayList();
+            dirs = new ArrayList<File>();
             freemarkerLinks.put(name, dirs);
         }
         dirs.add(fileOrDir);
@@ -1277,13 +1253,13 @@ public class Engine {
     /**
      * Returns the list of files associated with a FreeMarker link name.
      * 
-     * @param name the name of the link (do not use the {@code @} preifx)
+     * @param name the name of the link (do not use the {@code @} prefix)
      * 
-     * @return the list of canonical files associated with this link, or
+     * @return the list of canonical {@link File}-s associated with this link, or
      *     {@code null}, if no FreeMarker link with the given name exist.
      */
-    public List getFreemarkerLink(String name) {
-        return (List) freemarkerLinks.get(name);
+    public List/*<File>*/ getFreemarkerLink(String name) {
+        return freemarkerLinks.get(name);
     }
 
     /**
@@ -1328,22 +1304,25 @@ public class Engine {
      * variables.
      * 
      * @see TemplateDataModelBuilder
+     * 
+     * @deprecated Use {@link #addLocalDataBuilder(int, String, LocalDataBuilder)} instead
      */
-    public void setTemplateDataModelBuilder(
-            TemplateDataModelBuilder tdmBuilder) {
+    public void setTemplateDataModelBuilder(TemplateDataModelBuilder tdmBuilder) {
         checkParameterLock();
         this.tdmBuilder = tdmBuilder;
     }
 
     /**
      * @see #setTemplateDataModelBuilder(TemplateDataModelBuilder)
+     * 
+     * @deprecated Use {@link #addLocalDataBuilder(int, String, LocalDataBuilder)} instead
      */
     public void setTemplateDataModelBuilder(String className)
             throws DataModelBuildingException {
 
         checkParameterLock();
         
-        Class clazz;
+        Class<?> clazz;
         try {
             clazz = Class.forName(className);
         } catch (ClassNotFoundException exc) {
@@ -1904,19 +1883,15 @@ public class Engine {
         if (csPathCmp != cs) {
             csPathCmp = cs;
             
-            // Re-prase re-s in choosers.
-            Iterator it;
-            it = pModeChoosers.iterator();
-            while (it.hasNext()) {
-                ((Chooser) it.next()).recompile();
+            // Re-parse re-s in choosers.
+            for (PModeChooser chooser : pModeChoosers) {
+                chooser.recompile();
             }
-            it = turnChoosers.iterator();
-            while (it.hasNext()) {
-                ((Chooser) it.next()).recompile();
+            for (TurnChooser chooser : turnChoosers) {
+                chooser.recompile();
             }
-            it = xmlRendCfgCntrs.iterator();
-            while (it.hasNext()) {
-                ((XmlRenderingCfgContainer) it.next()).recompile();
+            for (XmlRenderingCfgContainer xmlRendCfgCntr : xmlRendCfgCntrs) {
+                xmlRendCfgCntr.recompile();
             }
             headerChoosers.recompile();
             footerChoosers.recompile();
@@ -1932,7 +1907,7 @@ public class Engine {
     }
 
     /**
-     * Allows some features that are considerd dangerous.
+     * Allows some features that are considered dangerous.
      * These are currently:
      * <ul>
      *   <li>The source and the output file is the same 
@@ -2328,7 +2303,7 @@ public class Engine {
      * The name of the variable will be the key of the map entry,
      * and its value will be the value of the map entry.
      */
-    public void addData(Map map) {
+    public void addData(Map/*<String, ?>*/ map) {
         checkParameterLock();
         data.putAll(map);
     }
@@ -2865,7 +2840,7 @@ public class Engine {
         final String fnNormdCase = csPathCmp ? fn : fn.toLowerCase();
         int ln = removeExtensions.size();
         for (int i = 0; i < ln; i++) {
-            final String dotExtToRemove = "." + (String) removeExtensions.get(i);
+            final String dotExtToRemove = "." + removeExtensions.get(i);
             final String dotExtToRemoveNormdCase = csPathCmp ? dotExtToRemove : dotExtToRemove.toLowerCase(); 
             if (fnNormdCase.endsWith(dotExtToRemoveNormdCase)) {
                 // We only remove one extension:
@@ -2892,7 +2867,7 @@ public class Engine {
         final String fnWithoutExtNormdCase = csPathCmp ? fnWithoutExt : fnWithoutExt.toLowerCase(); 
         final int ln = removePostfixes.size();
         for (int i = 0; i < ln; i++) {
-            final String posfixToRemove = (String) removePostfixes.get(i);
+            final String posfixToRemove = removePostfixes.get(i);
             final String posfixToRemoveNormdCase = csPathCmp ? posfixToRemove : posfixToRemove.toLowerCase();  
             if (fnWithoutExtNormdCase.endsWith(posfixToRemoveNormdCase)) {
                 // We only remove one postfix:
@@ -2906,7 +2881,7 @@ public class Engine {
         final String fnNormedCase = csPathCmp ? fn : fn.toLowerCase();
         final int ln = replaceExtensions.size();
         for (int i = 0; i < ln; i++) {
-            final String[] fromToPair = (String[]) replaceExtensions.get(i);
+            final String[] fromToPair = replaceExtensions.get(i);
             final String replacedExtNormedCase = csPathCmp ? fromToPair[0] : fromToPair[0].toLowerCase(); 
             if (fnNormedCase.endsWith("." + replacedExtNormedCase)) {
                 // We only d one substitution:
@@ -2916,21 +2891,19 @@ public class Engine {
         return fn;
     }
 
-    private Chooser findChooser(List choosers, File f)
+    private <T extends Chooser> T findChooser(List<T> choosers, File f)
             throws IOException {
         String fp = FileUtil.getRelativePath(srcRoot, f);
         String unixStylePath = FileUtil.pathToUnixStyle(fp);
         return findChooser(choosers, unixStylePath);
     }
 
-    private Chooser findChooser(List choosers, String unixStylePath) {
+    private <T extends Chooser> T findChooser(List<T> choosers, String unixStylePath) {
         String normalizedPath = normalizePathForComparison(unixStylePath);
-
-        Iterator it = choosers.iterator();
-        while (it.hasNext()) {
-            Chooser c = (Chooser) it.next();
-            if (c.regexpPattern.matcher(normalizedPath).matches()) {
-                return c;
+        
+        for (T chooser : choosers) {
+            if (chooser.regexpPattern.matcher(normalizedPath).matches()) {
+                return chooser;
             }
         }
         return null;
@@ -3010,7 +2983,7 @@ public class Engine {
             }
         }
 
-        PModeChooser pmc = (PModeChooser) findChooser(pModeChoosers, f);
+        PModeChooser pmc = findChooser(pModeChoosers, f);
         if (pmc == null) {
             if (STATIC_FILE_EXTS.contains(extLower)) {
                 return PMODE_COPY;
@@ -3025,12 +2998,8 @@ public class Engine {
     }
 
     private int getTurn(File f) throws IOException {
-        TurnChooser tc = (TurnChooser) findChooser(turnChoosers, f);
-        if (tc == null) {
-            return 1;
-        } else {
-            return tc.turn;
-        }
+        TurnChooser tc = findChooser(turnChoosers, f);
+        return tc != null ? tc.turn : 1;
     }
 
     private static void loadVersionInfo() {    
@@ -3092,6 +3061,9 @@ public class Engine {
     // Classes
 
     private class Chooser {
+        private final String pathPattern;
+        Pattern regexpPattern;
+        
         private Chooser(String pathPattern) {
             this.pathPattern = pathPattern;
             this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
@@ -3100,9 +3072,6 @@ public class Engine {
         void recompile() {
             this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
-        
-        private String pathPattern;
-        private Pattern regexpPattern;
     }
     
     private class OutputFormatChooser extends Chooser {
@@ -3142,7 +3111,7 @@ public class Engine {
     }
 
     private class LayeredChooser {
-        private List layers = new ArrayList();
+        private List<List<ObjectChooser>> layers = new ArrayList<List<ObjectChooser>>();
         private int usedLayers;
         
         /**
@@ -3163,9 +3132,9 @@ public class Engine {
                 layers.add(null);
                 max++;
             }
-            LinkedList choosers = (LinkedList) layers.get(layer);
+            List<ObjectChooser> choosers = layers.get(layer);
             if (choosers == null) {
-                choosers = new LinkedList();
+                choosers = new ArrayList<ObjectChooser>();
                 layers.set(layer, choosers);
                 usedLayers++;
             }
@@ -3173,16 +3142,14 @@ public class Engine {
         }
         
         /**
-         * @return the list of choosen objects, ordered by ascending layer
+         * @return the list of chosen objects, ordered by ascending layer
          *     index. Possibly an empty list, but never {@code null}.
          */
-        private List choose(File f) throws IOException {
-            List result = new ArrayList(usedLayers);
-            int ln = layers.size(); 
-            for (int i = 0; i < ln; i++) {
-                LinkedList choosers = (LinkedList) layers.get(i);
+        private List<Object> choose(File f) throws IOException {
+            List<Object> result = new ArrayList<Object>(usedLayers);
+            for (List<ObjectChooser> choosers : layers) {
                 if (choosers != null) {
-                    ObjectChooser c = (ObjectChooser) findChooser(choosers, f);
+                    ObjectChooser c = findChooser(choosers, f);
                     if (c != null) {
                         result.add(c.value);
                     }
@@ -3192,12 +3159,9 @@ public class Engine {
         }
         
         private void recompile()  {
-            int ln = layers.size(); 
-            for (int i = 0; i < ln; i++) {
-                LinkedList choosers = (LinkedList) layers.get(i);
-                Iterator it = choosers.iterator();
-                while (it.hasNext()) {
-                    ((Chooser) it.next()).recompile();
+            for (List<ObjectChooser> choosers : layers) {
+                for (ObjectChooser choser : choosers) {
+                    choser.recompile();
                 }
             }
         }
@@ -3210,12 +3174,12 @@ public class Engine {
     
     private class MultiProgressListener implements ProgressListener {
 
-        private ArrayList userListeners = new ArrayList();
-        private ArrayList attrListeners = new ArrayList();
-        private ArrayList ldbListeners = new ArrayList();
-        private ArrayList xmlLdbListeners = new ArrayList();
+        private List<ProgressListener> userListeners = new ArrayList<ProgressListener>();
+        private List<ProgressListener> attrListeners = new ArrayList<ProgressListener>();
+        private List<ProgressListener> ldbListeners = new ArrayList<ProgressListener>();
+        private List<ProgressListener> xmlLdbListeners = new ArrayList<ProgressListener>();
         private boolean mergedNeedsRefresh = true;
-        private ArrayList mergedListeners = new ArrayList();
+        private List<ProgressListener> mergedListeners = new ArrayList<ProgressListener>();
 
         void addUserListener(ProgressListener listener) {
             if (!MiscUtil.listContainsObject(userListeners, listener)) {
@@ -3284,9 +3248,9 @@ public class Engine {
             int doneCounter = 0;
             int closingEvent = getClosingEvent(event);
             ProcessingException firstException = null;
-            Iterator it = mergedListeners.iterator();
+            Iterator<ProgressListener> it = mergedListeners.iterator();
             normalLoop: while (it.hasNext()) {
-                ProgressListener lr = (ProgressListener) it.next();
+                ProgressListener lr = it.next();
                 try {
                     lr.notifyProgressEvent(
                             engine,
@@ -3316,7 +3280,7 @@ public class Engine {
                 if (closingEvent != Integer.MIN_VALUE) {
                     it = mergedListeners.iterator();
                     while (it.hasNext() && doneCounter != 0) {
-                        ProgressListener lr = (ProgressListener) it.next();
+                        ProgressListener lr = it.next();
                         try {
                             lr.notifyProgressEvent(
                                     engine,
@@ -3334,39 +3298,27 @@ public class Engine {
         }
         
         private void refreshMergedListeneres() {
-            int i;
-            int ln;
-            Object o;
-            
             mergedListeners.clear();
 
-            ln = xmlLdbListeners.size();
-            for (i = 0; i < ln; i++) {
-                o = xmlLdbListeners.get(i);
+            for (ProgressListener o : xmlLdbListeners) {
                 if (!MiscUtil.listContainsObject(mergedListeners, o)) {
                     mergedListeners.add(o);
                 }
             }
             
-            ln = ldbListeners.size();
-            for (i = 0; i < ln; i++) {
-                o = ldbListeners.get(i);
+            for (ProgressListener o : ldbListeners) {
                 if (!MiscUtil.listContainsObject(mergedListeners, o)) {
                     mergedListeners.add(o);
                 }
             }
 
-            ln = attrListeners.size();
-            for (i = 0; i < ln; i++) {
-                o = attrListeners.get(i);
+            for (ProgressListener o : attrListeners) {
                 if (!MiscUtil.listContainsObject(mergedListeners, o)) {
                     mergedListeners.add(o);
                 }
             }
 
-            ln = userListeners.size();
-            for (i = 0; i < ln; i++) {
-                o = userListeners.get(i);
+            for (ProgressListener o : userListeners) {
                 if (!MiscUtil.listContainsObject(mergedListeners, o)) {
                     mergedListeners.add(o);
                 }
@@ -3415,7 +3367,7 @@ public class Engine {
         @Override
         public TemplateConfiguration get(String name, Object source)
                 throws IOException, TemplateConfigurationFactoryException {
-            OutputFormatChooser chooser = (OutputFormatChooser) findChooser(outputFormatChoosers, name);
+            OutputFormatChooser chooser = findChooser(outputFormatChoosers, name);
             if (chooser != null) {
                 if (chooser.templateConfiguration == null) {
                     throw new IllegalStateException("Uninitialized OutputFormatChooser.templateConfiguration");
