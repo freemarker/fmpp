@@ -901,11 +901,9 @@ freemarkerLinks: {
 
 <@sect title='Activating fixes/improvements' anchor="freemarkerIncompatibleImprovements">
 <@setting name="recommendedDefaults" type="string (version number)" default="0.9.15" merging=false since='0.9.16' />
+<@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default={ '0.9.15': '2.3.0', '0.9.16': '2.3.28' } merging=false since='0.9.15' />
 
-<p>Influences the default value of other settings. The setting value defaults will be those recommended as of the specified FMPP version.</p>
-
-<p>When you start a new project, set this to the current FMPP version (${pp.version} currently). In older projects changing this
-setting can break things:
+<p><@s>recommendedDefaults</@> influences the default value of other settings. The setting value defaults will be those recommended as of the specified FMPP version. When you start a new project, set it to the current FMPP version (${pp.version} currently). In older projects changing this setting can break things, so check how the defaults change:
 
 <ul>
   <li>0.9.15: This is the baseline (and the default)</li>
@@ -917,15 +915,11 @@ setting can break things:
   </li>
 </ul>
 
-<p>The lowest allowed value is 0.9.15, and the highest allowed is the version of the FMPP release that you are using.
+<p>The lowest allowed <@s>recommendedDefaults</@> value is 0.9.15, and the highest allowed is the version of the FMPP release that you are using.
 
-<@setting name="freemarkerIncompatibleImprovements" type="string (version number)" default={ '0.9.15': '2.3.0', '0.9.16': '2.3.28' } merging=false since='0.9.15' />
- 
-<p>Enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> is usually a good compromise. New projects should definitely use the maximum, which is the version of the FreeMarker used (<@c>fmpp --version</@> will print that, also, the current FMPP version was built with FreeMarker ${pp.freemarkerVersion}). If this setting is not set then we use the default coming from FreeMarker itself, which as of this writing will be <@c>2.3.0</@c>.</p>
+<p><@s>freemarkerIncompatibleImprovements</@> enables the FreeMarker fixes/improvements that are not 100% backward compatible, and were implemented in the FreeMarker version given in this setting. In older projects using the highest available <@c>2.3.<@r>x</@r></@c> usually works fine, but check what changes <@a href="freemarker/api/freemarker/template/Configuration.html#Configuration-freemarker.template.Version-">in the documentation</@>. New projects should definitely use the maximum, which is the version of the FreeMarker used (<@c>fmpp --version</@> will print that, also, the current FMPP version was built with FreeMarker ${pp.freemarkerVersion}). See <@a href="freemarker/api/freemarker/template/Configuration.html#Configuration-freemarker.template.Version-"><@c>Configuration(Version)</@c> in the FreeMarker API</@a> for more information, such as what fixes/improvements are activated.</p>
 
-<p>See <@a href="freemarker/api/freemarker/template/Configuration.html#Configuration-freemarker.template.Version-"><@c>Configuration(Version)</@c> in the FreeMarker API</@a> for what fixes/improvements are activated.</p>
-
-<p>The format of the setting value is <@c><@r>major</@>.<@r>minor</@r>.<@r>micro</@r></@c>, where each part is a positive integer without padding 0-s</p>
+<p>The format of both these settings is <@c><@r>major</@>.<@r>minor</@r>.<@r>micro</@r></@c>, where each part is a positive integer without padding 0-s.</p>
 
 </@sect>
 
