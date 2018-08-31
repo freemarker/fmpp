@@ -67,49 +67,37 @@ import freemarker.template.Version;
  * this class.
  * 
  * <p><b>{@link Engine fmpp.Engine} vs {@link fmpp.setting.Settings}</b>:
- * The design of the {@link Engine} object API is driven by the internal
- * architecture of FMPP system. It doesn't consider front-ends, doesn't know
- * configuration files or similar high-level stuff. {@code Settings}
- * wraps the Engine object, and implements end-user (front-end) centric
+ * The design of the {@link Engine} API is driven by the internal
+ * architecture of FMPP. It doesn't consider front-ends, doesn't know
+ * configuration files or similar high-level concepts. {@link Settings}
+ * wraps the {@link Engine} object, and implements end-user (front-end) centric
  * concepts, as the settings and configuration files described in the FMPP
- * Manual. The API of {@link Engine} is more natural and convenient
- * than the API of a {@code Map}-like object as a
- * {@code Settings} object. But {@code Settings} are far easier
- * to use if you want FMPP behave as described in the FMPP Manual from the
- * viewpoint of end-user. In principle, if FMPP is used embedded in a way
- * that the end-user will never face FMPP (doesn't use the FMPP Manual,
- * etc.), using the {@link Engine} object directly can be a good
- * solution. But, since the Java programmers get know FMPP through the
- * higher-level concepts (they try it with the command-line tool, etc.), I
- * say, just use {@code Settings} always. The resource usage overhead
- * is negligible, and all capabilities of the {@link Engine} will be
- * available, plus some extra features (as configuration files). So basically,
- * the introduction of {@code Settings} has degraded {@link Engine} to
- * an internally used object.
+ * Manual. For a programmer, the API of {@link Engine} is more straightforward
+ * than the API of {@code Settings} object. But {@code Settings} is better
+ * if you want FMPP behave similarly as described in the FMPP Manual from the
+ * viewpoint of end-user, or if you need some of its extra features, like
+ * configuration files.
  * 
  * <p><b>Engine parameters:</b>
- * Engine parameters are very similar to "settings" discussed in the
+ * {@link Engine} parameters are very similar to "settings" discussed in the
  * FMPP Manual. You will usually find trivial one-to-one correspondence between
- * settings and engine parameters, but not always. Settings use the
- * front-end/end-user's viewpoint, and are mostly built on the top of engine
- * parameters, while engine parameters use FMPP system implementation driven
- * approach.
- * <br>The value of engine parameters can't be set while a processing session is
- * executing. An attempt to do so will result in
- * {@link java.lang.IllegalStateException}. Thus, for example, you can't change
- * an engine parameter from an executing template. Also, you should not change
- * the objects stored as "data" (i.e. the variables that are visible for all
- * templates) while the processing session is executing, even though it's not
- * prevented technically (because it can't be...). 
+ * settings and {@link Engine} parameters, but not always, as {@link Settings} is
+ * a higher level API that adds some new concepts. 
+ * The value of {@link Engine} parameters can't be set while a processing session is
+ * executing; attempting that will cause {@link java.lang.IllegalStateException}.
+ * Thus, for example, you can't change an {@link Engine} parameter from an executing
+ * template. Also, you should not change the objects stored as "data" (i.e. the
+ * variables that are visible for all templates) while the processing session is
+ * executing, even though it's not prevented technically. 
  *
- * <p><b>Life-cycle:</b> The engine object can be used for multiple processing
- * sessions. However, the typical usage is that it is used
+ * <p><b>Life-cycle:</b> The same {@link Engine} object can be used for multiple
+ * processing sessions. However, the typical usage is that it's used
  * only for a single processing session. The state of the engine object possibly
  * changes during sessions because of the engine attributes (see
- * {@link #setAttribute(String, Object)}), and because plugged long-lived
- * objects as local data builders and progress listeners can maintain state
- * through multiple sessions. These objects should behave so that the output
- * files of a session is not influenced by earlier sessions.
+ * {@link #setAttribute(String, Object)}), and because long-lived objects as local
+ * data builders and progress listeners can maintain state through multiple sessions.
+ * These objects should behave so that the output of a session is not influenced
+ * by earlier sessions.
  */
 public class Engine {
 
