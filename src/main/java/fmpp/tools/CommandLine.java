@@ -914,7 +914,7 @@ public class CommandLine {
         } catch (FinishedException e) {
             exitCode = 0;
         } catch (Throwable e) {
-            pe("INTERNAL ERROR:");
+            pl("INTERNAL ERROR:");
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
