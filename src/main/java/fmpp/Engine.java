@@ -300,6 +300,7 @@ public class Engine {
      *            allowed value, 0.9.15. (That's the lowest allowed because this setting was added in 0.9.16.)
      *            <p>The defaults change as follows:
      *            <ul>
+     *                <!-- ATTENTION! If you update this, update it in docs/settings.html as well. -->
      *                <li>0.9.15: This is the baseline (and the default)</li>
      *                <li>0.9.16: The following defaults change (compared to 0.9.15):
      *                  <ul>
@@ -310,12 +311,12 @@ public class Engine {
      *                        to {@code true}, thus, templates with common file extensions like {@code html},
      *                        {@code xml} etc. will have auto-escaping.
      *                    <li>{@code objectWrapper} to a {@link freemarker.template.DefaultObjectWrapper}, if
-     *                        {@code freemarkerIncompatibleImprovements</@> is at least 2.3.21} There are more details,
+     *                        {@code freemarkerIncompatibleImprovements} is at least 2.3.21} There are more details,
      *                        but see that at the {@code objectWrapper} parameter.
      *                  </ul>
      *                </li>
+     *                <!-- ATTENTION! If you update this, update it in docs/settings.html as well. -->
      *             </ul>
-     *            
      * @param freemarkerIncompatibleImprovements
      *            Sets the "incompatible improvements" version of FreeMarker. You should set this to the current
      *            FreeMarker version in new projects. See {@link Configuration#Configuration(Version)} for details.
@@ -1748,6 +1749,7 @@ public class Engine {
      * @since 0.9.16
      */
     public void setMapCommonExtensionsToOutputFormats(boolean mapCommonExtensionsToOutputFormats) {
+        checkParameterLock();
         this.mapCommonExtensionsToOutputFormats = mapCommonExtensionsToOutputFormats;
     }
 
