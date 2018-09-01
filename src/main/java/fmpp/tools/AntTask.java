@@ -272,7 +272,7 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     /**
      * @since 0.9.16
      */
-    public void setFormat(String outputFormat) {
+    public void setOutputFormat(String outputFormat) {
         initialOps.setProperty(Settings.NAME_OUTPUT_FORMAT, outputFormat);
     }
     

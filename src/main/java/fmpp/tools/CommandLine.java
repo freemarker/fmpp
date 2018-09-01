@@ -324,7 +324,7 @@ public class CommandLine {
             ap.addOption(null, cln(Settings.NAME_OUTPUT_FORMATS_BY_PATH) + "=SEQ")
                     .desc("List of case(...)-s that choose the "
                             + "template output format (auto-escaping), e.g.:\n"
-                            + "--output-formats=\"case(**/*.xsl, **/*.wsdl, XML), case(*.htm*, HTML)\"\n"
+                            + "--output-formats=\"case(**/*.xsl, **/*.wsdl, XML), case(**/*.htm*, HTML)\"\n"
                             + "By default empty.");
             ap.addOption("M SEQ", cln(Settings.NAME_MODES))
                     .desc("The list of TDD function calls that choose the file "
@@ -340,8 +340,8 @@ public class CommandLine {
             ap.addOption(null, cln(Settings.NAME_BORDERS) + "=SEQ")
                     .desc("The list of TDD function calls that choose header "
                             + "and footer for templates, e.g.:\n"
-                            + "-M 'border(\"<#escape x as x?html>\", "
-                            + "\"</#escape>\", *.htm, *.html), "
+                            + "-M 'border(\"<#import \"/lib/utils.ftlh\" as u><@u.myLayout>\", "
+                            + "\"</@u.myLayout>\", *.htm, *.html), "
                             + "header(\"<#include \\\"/css.ftl\\\">\", *.css)'"
                             );
             ap.addOption("D TDD", cln(Settings.NAME_DATA))

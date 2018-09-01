@@ -338,7 +338,7 @@ public class Engine {
         fmCfg.setObjectWrapper(objectWrapper);
         
         fmCfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        fmCfg.setTemplateUpdateDelay(Integer.MAX_VALUE - 10000);
+        fmCfg.setTemplateUpdateDelayMilliseconds(Integer.MAX_VALUE - 10000);
         fmCfg.setDefaultEncoding("ISO-8859-1");
         fmCfg.setLocale(Locale.US);
         fmCfg.setNumberFormat("0.############");
