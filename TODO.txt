@@ -3,11 +3,12 @@
 
 - recommendedDefaults=0.9.16 should also change:
   - removeExtensions: ftl, ftlh, ftlx
-  - Map html, xml etc. to an outputFormat
   - Extend Engine.STATIC_FILE_EXTS
-- Add recommendedDefaults to examples and tests cases
+- Add recommendedDefaults to examples and tests cases. Remove usages of #escape, ?html, etc.
   
 - pp.log should use FM 2.3.22 DirectiveCallPlace to report correct position
+
+- Test new settings with Ant task
 
 
 Roadmap

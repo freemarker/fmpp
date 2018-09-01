@@ -320,7 +320,17 @@ public class CommandLine {
                             + "like \"HTML\", \"XML\", \"RTF\", etc. "
                             + "By default \"unspecified\". "
                             + "The --" + cln(Settings.NAME_OUTPUT_FORMATS_BY_PATH)
+                            + " and --" + cln(Settings.NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS)
                             + " option overrides this for matching paths.");
+            ap.addOption(null, cln(Settings.NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS))
+                    .propertyValue("true")
+                    .desc("Should templates with a common file extensions (\"html\", \"htm\", \"xml\", etc.) be "
+                            + "mapped to an output format (auto-escaping). Has lower priority than --"
+                            + cln(Settings.NAME_OUTPUT_FORMATS_BY_PATH) + ". Enabled by default if --"
+                            + cln(Settings.NAME_RECOMMENDED_DEFAULTS) + " is at least 0.9.16.");
+            ap.addOption(null, "dont-" + cln(Settings.NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS))
+                    .property(Settings.NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS, "false")
+                    .desc("Opposite of --" + cln(Settings.NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS) + ".");
             ap.addOption(null, cln(Settings.NAME_OUTPUT_FORMATS_BY_PATH) + "=SEQ")
                     .desc("List of case(...)-s that choose the "
                             + "template output format (auto-escaping), e.g.:\n"

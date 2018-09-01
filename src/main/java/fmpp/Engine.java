@@ -43,10 +43,14 @@ import fmpp.util.MiscUtil;
 import fmpp.util.StringUtil;
 import freemarker.cache.TemplateConfigurationFactory;
 import freemarker.cache.TemplateConfigurationFactoryException;
+import freemarker.core.HTMLOutputFormat;
 import freemarker.core.OutputFormat;
+import freemarker.core.RTFOutputFormat;
 import freemarker.core.TemplateConfiguration;
 import freemarker.core.UndefinedOutputFormat;
 import freemarker.core.UnregisteredOutputFormatException;
+import freemarker.core.XHTMLOutputFormat;
+import freemarker.core.XMLOutputFormat;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;
 import freemarker.template.Configuration;
@@ -217,6 +221,7 @@ public class Engine {
     private TemplateDataModelBuilder tdmBuilder;
     private String outputEncoding = PARAMETER_VALUE_SOURCE;
     private String urlEscapingCharset = PARAMETER_VALUE_OUTPUT;
+    private boolean mapCommonExtensionsToOutputFormats;
     private List<OutputFormatChooser> outputFormatChoosers = new ArrayList<OutputFormatChooser>();
     private List<PModeChooser> pModeChoosers = new ArrayList<PModeChooser>();
     private LayeredChooser headerChoosers = new LayeredChooser();
@@ -280,8 +285,8 @@ public class Engine {
      * 
      * @deprecated Use {@link #Engine(Version, Version, BeansWrapper)} instead.
      */
-    public Engine(BeansWrapper objectWrapper, Version fmIncompImprovements) {
-        this(null, fmIncompImprovements, objectWrapper);
+    public Engine(BeansWrapper objectWrapper, Version freemarkerIncompatibleImprovements) {
+        this(null, freemarkerIncompatibleImprovements, objectWrapper);
     }
     
     /**
@@ -291,9 +296,27 @@ public class Engine {
      * @param recommendedDefaults
      *            Instructs the engine to use the setting value defaults recommended as of the specified FMPP version.
      *            When you start a new project, set this to the current FMPP version. In older projects changing this
-     *            setting can break things (check documentation). If {@code null}, then it defaults to the lowest
+     *            setting can break things (check what changes below). If {@code null}, then it defaults to the lowest
      *            allowed value, 0.9.15. (That's the lowest allowed because this setting was added in 0.9.16.)
-     * @param fmIncompImprovements
+     *            <p>The defaults change as follows:
+     *            <ul>
+     *                <li>0.9.15: This is the baseline (and the default)</li>
+     *                <li>0.9.16: The following defaults change (compared to 0.9.15):
+     *                  <ul>
+     *                    <li>{@code freemarkerIncompatibleImprovements} to 2.3.28, thus, among many things, templates
+     *                        with {@code ftlh} and {@code ftlx} file extensions will use {@code HTML} and {@code XML}
+     *                        auto-escaping respectively.</li>
+     *                    <li>{@link #setMapCommonExtensionsToOutputFormats(boolean) mapCommonExtensionsToOutputFormats}
+     *                        to {@code true}, thus, templates with common file extensions like {@code html},
+     *                        {@code xml} etc. will have auto-escaping.
+     *                    <li>{@code objectWrapper} to a {@link freemarker.template.DefaultObjectWrapper}, if
+     *                        {@code freemarkerIncompatibleImprovements</@> is at least 2.3.21} There are more details,
+     *                        but see that at the {@code objectWrapper} parameter.
+     *                  </ul>
+     *                </li>
+     *             </ul>
+     *            
+     * @param freemarkerIncompatibleImprovements
      *            Sets the "incompatible improvements" version of FreeMarker. You should set this to the current
      *            FreeMarker version in new projects. See {@link Configuration#Configuration(Version)} for details.
      *            If this is {@code null} and the {@code recommendedDefaults} argument is 0.9.16, then
@@ -319,21 +342,21 @@ public class Engine {
      *            
      * @since 0.9.16
      */
-    public Engine(Version recommendedDefaults, Version fmIncompImprovements, BeansWrapper objectWrapper) {
+    public Engine(Version recommendedDefaults, Version freemarkerIncompatibleImprovements, BeansWrapper objectWrapper) {
         if (recommendedDefaults == null) {
             recommendedDefaults = DEFAULT_RECOMMENDED_DEFAULTS;
         }
         validateRecommendedDefaults(recommendedDefaults);
         this.recommendedDefaults = recommendedDefaults;
 
-        if (fmIncompImprovements == null) {
-            fmIncompImprovements = getDefaultFreemarkerIncompatibleImprovements(recommendedDefaults);
+        if (freemarkerIncompatibleImprovements == null) {
+            freemarkerIncompatibleImprovements = getDefaultFreemarkerIncompatibleImprovements(recommendedDefaults);
         }
         
-        fmCfg = new Configuration(fmIncompImprovements);
+        fmCfg = new Configuration(freemarkerIncompatibleImprovements);
 
         if (objectWrapper == null) {
-            objectWrapper = createDefaultObjectWrapper(recommendedDefaults, fmIncompImprovements);
+            objectWrapper = createDefaultObjectWrapper(recommendedDefaults, freemarkerIncompatibleImprovements);
         }
         fmCfg.setObjectWrapper(objectWrapper);
         
@@ -344,10 +367,12 @@ public class Engine {
         fmCfg.setNumberFormat("0.############");
         fmCfg.setLocalizedLookup(false);
         fmCfg.setAPIBuiltinEnabled(true); // Because there's pp.loadData('eval', ...) anyway.
+        
+        if (recommendedDefaultsGE0916(recommendedDefaults)) {
+            mapCommonExtensionsToOutputFormats = true;
+        }
 
         templateEnv = new TemplateEnvironment(this);
-        
-        clearModeChoosers();
     }
 
     /**
@@ -381,7 +406,7 @@ public class Engine {
      */
     private static BeansWrapper createDefaultObjectWrapper(Version recommendedDefaults, Version fmIncompImprovements) {
         BeansWrapper objectWrapper;
-        if (recommendedDefaults.intValue() >= VERSION_0_9_16.intValue()
+        if (recommendedDefaultsGE0916(recommendedDefaults)
                 && fmIncompImprovements.intValue() >= Configuration.VERSION_2_3_21.intValue()) {
             DefaultObjectWrapperBuilder dowb = new DefaultObjectWrapperBuilder(fmIncompImprovements);
             dowb.setForceLegacyNonListCollections(false);
@@ -412,7 +437,7 @@ public class Engine {
      * @since 0.9.16
      */
     public static Version getDefaultFreemarkerIncompatibleImprovements(Version fmppRecommendedDefaults) {
-        return fmppRecommendedDefaults.intValue() >= VERSION_0_9_16.intValue()
+        return recommendedDefaultsGE0916(fmppRecommendedDefaults)
                 ? Configuration.VERSION_2_3_28 : Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS;
     }
 
@@ -708,7 +733,9 @@ public class Engine {
                 }
             }
             
-            fmCfg.setTemplateConfigurations(templateConfigurationFactory);
+            // Note: We recreate the TemplateConfigurationFactory, as things like registered OutputFormats could have
+            // changed.
+            fmCfg.setTemplateConfigurations(new FMPPTemplateConfigurationFactory());
             
             processedFiles.clear();
             ignoredDirCache.clear();
@@ -1704,6 +1731,35 @@ public class Engine {
         return fmCfg.getTimeZone();
     }
 
+    /**
+     * Sets if some very commonly used file extensions (see below) should be automatically associated with a FreeMarker
+     * {@link OutputFormat}, for the purpose of auto-escaping. This defaults to {@code true} if
+     * {@link #getRecommendedDefaults()} is at least 0.9.16, otherwise it defaults to {@code false}.
+     * 
+     * <p>The list of common file extensions are (case-insensitive):
+     * <ul>
+     *   <li>HTML output format: {@code html}, {@code htm}</li>
+     *   <li>XHTML output format: {@code xhtml}, {@code xhtm}, {@code xht}</li>
+     *   <li>XML output format: {@code xml}, {@code xsd}, {@code xsl}, {@code xslt}, {@code svg}, {@code wsdl},
+     *       {@code dita}, {@code ditamap}</li>
+     *   <li>RTF output format: {@code rtf}</li>
+     * </ul>
+     * 
+     * @since 0.9.16
+     */
+    public void setMapCommonExtensionsToOutputFormats(boolean mapCommonExtensionsToOutputFormats) {
+        this.mapCommonExtensionsToOutputFormats = mapCommonExtensionsToOutputFormats;
+    }
+
+    /**
+     * Getter pair of {@link #setMapCommonExtensionsToOutputFormats(boolean)}.
+     * 
+     * @since 0.9.16
+     */
+    public boolean getMapCommonExtensionsToOutputFormats() {
+        return mapCommonExtensionsToOutputFormats;
+    }
+    
     /**
      * Sets the {@link OutputFormat} used in templates when there's no more specific one chosen by path pattern.
      * 
@@ -3056,6 +3112,10 @@ public class Engine {
                 + "changed while the processing session is runing.");
         }
     }
+    
+    private static boolean recommendedDefaultsGE0916(Version recommendedDefaults) {
+        return recommendedDefaults.intValue() >= VERSION_0_9_16.intValue();
+    }
 
     // -------------------------------------------------------------------------
     // Classes
@@ -3068,7 +3128,7 @@ public class Engine {
             this.pathPattern = pathPattern;
             this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
-        
+
         void recompile() {
             this.regexpPattern = pathPatternToRegexpPattern(pathPattern);
         }
@@ -3359,11 +3419,60 @@ public class Engine {
         }
 
     }
-    
-    private final FMPPTemplateConfigurationFactory templateConfigurationFactory
-            = new FMPPTemplateConfigurationFactory();
-    private class FMPPTemplateConfigurationFactory extends TemplateConfigurationFactory {
 
+    private static final Map<String, OutputFormat> COMMON_EXTENSIONS_TO_OUTPUT_FORMATS
+            = new HashMap<String, OutputFormat>();
+    static {
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("html", HTMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("htm", HTMLOutputFormat.INSTANCE);
+        
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xhtml", XHTMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xhtm", XHTMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xht", XHTMLOutputFormat.INSTANCE);
+        
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xml", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xsd", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xsl", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("xslt", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("svg", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("wsdl", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("dita", XMLOutputFormat.INSTANCE);
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("ditamap", XMLOutputFormat.INSTANCE);
+        
+        COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.put("rtf", RTFOutputFormat.INSTANCE);
+    }
+    
+    private class FMPPTemplateConfigurationFactory extends TemplateConfigurationFactory {
+        // TC-s used for associateCommonExtensionsToOutputFormats:
+        private final TemplateConfiguration htmlTC;
+        private final TemplateConfiguration xhtmlTC;
+        private final TemplateConfiguration xmlTC;
+        private final TemplateConfiguration rtfTC;
+        
+        /**
+         * Don't invoke until {@link #fmCfg} is configured.
+         */
+        FMPPTemplateConfigurationFactory() {
+            try {
+                // We get the OutputFormats by name, rather than using HTMLOutputFormat.INSTANCE and such, because
+                // FreeMarker supports redefining these output formats with custom implementations.
+                
+                htmlTC = new TemplateConfiguration();
+                htmlTC.setOutputFormat(fmCfg.getOutputFormat("HTML"));
+                
+                xhtmlTC = new TemplateConfiguration();
+                xhtmlTC.setOutputFormat(fmCfg.getOutputFormat("XHTML"));
+
+                xmlTC = new TemplateConfiguration();
+                xmlTC.setOutputFormat(fmCfg.getOutputFormat("XML"));
+
+                rtfTC = new TemplateConfiguration();
+                rtfTC.setOutputFormat(fmCfg.getOutputFormat("RTF"));
+            } catch (UnregisteredOutputFormatException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        
         @Override
         public TemplateConfiguration get(String name, Object source)
                 throws IOException, TemplateConfigurationFactoryException {
@@ -3374,6 +3483,25 @@ public class Engine {
                 }
                 return chooser.templateConfiguration;
             }
+            
+            if (mapCommonExtensionsToOutputFormats) {
+                String ext = FileUtil.getFileExtension(name);
+                if (ext != null) {
+                    OutputFormat of = COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.get(ext.toLowerCase());
+                    if (of == HTMLOutputFormat.INSTANCE) { 
+                        return htmlTC;
+                    }
+                    if (of == XHTMLOutputFormat.INSTANCE) { 
+                        return xhtmlTC;
+                    }
+                    if (of == XMLOutputFormat.INSTANCE) { 
+                        return xmlTC;
+                    }
+                    if (of == RTFOutputFormat.INSTANCE) { 
+                        return rtfTC;
+                    }
+                }
+            }
             return null;
         }
 
@@ -3383,7 +3511,12 @@ public class Engine {
                 // Causes NPE if you have forgotten to call setupBeforeInjection().
                 chooser.templateConfiguration.setParentConfiguration(cfg);
             }
+            htmlTC.setParentConfiguration(cfg);
+            xhtmlTC.setParentConfiguration(cfg);
+            xmlTC.setParentConfiguration(cfg);
+            rtfTC.setParentConfiguration(cfg);
         }
+        
     }
     
 }

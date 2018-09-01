@@ -1,0 +1,9 @@
+${.incompatibleImprovements}
+
+<#assign map = pp.loadData('eval', 'm = new HashMap(); m.put("k", "v"); return m;')>
+${map.k}
+<#attempt>
+  ${map('k')}
+<#recover>
+  Not a pure BeansWrapper
+</#attempt>

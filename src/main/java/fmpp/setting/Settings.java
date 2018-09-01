@@ -136,6 +136,7 @@ public class Settings {
     public static final String NAME_INTERPOLATION_SYNTAX = "interpolationSyntax";
     public static final String NAME_OUTPUT_FORMAT = "outputFormat";
     public static final String NAME_OUTPUT_FORMATS_BY_PATH = "outputFormatsByPath";
+    public static final String NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS = "mapCommonExtensionsToOutputFormats";
     public static final String NAME_CASE_SENSITIVE = "caseSensitive";
     public static final String NAME_STOP_ON_ERROR = "stopOnError";
     public static final String NAME_REMOVE_EXTENSIONS = "removeExtensions";
@@ -821,6 +822,7 @@ public class Settings {
         stdDef(NAME_INTERPOLATION_SYNTAX, TYPE_STRING, false, true);
         stdDef(NAME_OUTPUT_FORMAT, TYPE_STRING, false, false);
         stdDef(NAME_OUTPUT_FORMATS_BY_PATH, TYPE_SEQUENCE, true, false);
+        stdDef(NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS, TYPE_BOOLEAN, false, false);
         stdDef(NAME_CASE_SENSITIVE, TYPE_BOOLEAN, false, false);
         stdDef(NAME_STOP_ON_ERROR, TYPE_BOOLEAN, false, false);
         stdDef(NAME_REMOVE_EXTENSIONS, TYPE_SEQUENCE, true, true);
@@ -1448,6 +1450,11 @@ public class Settings {
                         "Failed to apply the value of the \"" + NAME_OUTPUT_FORMATS_BY_PATH + "\" setting.",
                         e);
             }
+        }
+
+        b = (Boolean) get(NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS);
+        if (b != null) {
+            eng.setMapCommonExtensionsToOutputFormats(b.booleanValue());
         }
         
         b = (Boolean) get(NAME_STOP_ON_ERROR);
@@ -2808,30 +2815,30 @@ public class Settings {
                         "All sequence items must be case(...) function calls, but "
                         + "one of them is a(n) " + typeName(it) + ".");
             }
-            FunctionCall f = (FunctionCall) it;
-            if (!f.getName().equals("case")) {
+            FunctionCall caseCall = (FunctionCall) it;
+            if (!caseCall.getName().equals("case")) {
                 throw new SettingException(
                         "Only \"case\" function is allowed here, not "
-                        + StringUtil.jQuote(f.getName()));
+                        + StringUtil.jQuote(caseCall.getName()));
             }
 
-            List params = f.getParams();
+            List caseParams = caseCall.getParams();
 
-            if (params.size() < 2) {
+            if (caseParams.size() < 2) {
                 throw new SettingException(
                         "\"case\" function call needs at least "
-                        + "two parameters (path patterns and output format name), but it has " + params.size()
+                        + "two parameters (path patterns and output format name), but it has " + caseParams.size()
                         + " parameter(s).");
             }
-            for (Object param : params) {
-                if (!(param instanceof String)) {
+            for (Object caseParam : caseParams) {
+                if (!(caseParam instanceof String)) {
                     throw new SettingException(
                             "The arguments to the \"case\" function call must be strings (path patterns and output "
-                            + "format name), but one of them is a(n) " + typeName(param) + ".");
+                            + "format name), but one of them is a(n) " + typeName(caseParam) + ".");
                 }
             }
             
-            String outputFormatName = (String) params.get(params.size() - 1);
+            String outputFormatName = (String) caseParams.get(caseParams.size() - 1);
             OutputFormat outputFormat;
             try {
                 outputFormat = eng.getOutputFormat(outputFormatName);
@@ -2839,9 +2846,9 @@ public class Settings {
                 throw new SettingException(
                         "Unknown output format name, " + StringUtil.jQuote(outputFormatName) + ".", e);
             }
-            for (int i = 0; i < params.size() -1; i++) {
+            for (Object caseParam : caseParams) {
                 try {
-                    eng.addOutputFormatChooser((String) params.get(i), outputFormat);
+                    eng.addOutputFormatChooser((String) caseParam, outputFormat);
                 } catch (Exception e) {
                     throw new SettingException("FMPP Engine has rejected the value.", e);
                 }

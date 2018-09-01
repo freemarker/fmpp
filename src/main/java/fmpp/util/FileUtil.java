@@ -258,6 +258,20 @@ public class FileUtil {
     }
 
     /**
+     * Returns the part of the name after the last dot, or if there's no dot, {@code null}.
+     * @param name The file name or path. If {@code null}, {@code null} is returned.
+     * @since 0.9.16
+     */
+    public static String getFileExtension(String name) {
+        if (name == null) {
+            return null;
+        }
+        
+        int dotIdx = name.lastIndexOf('.');
+        return dotIdx != -1 ? name.substring(dotIdx + 1) : null; 
+    }
+
+    /**
      * Converts UN*X style path to regular expression (originally, for Perl 5 dialect, but also works for Java's
      * dialect).
      * In additional to standard UN*X path meta characters (<code>*</code>,

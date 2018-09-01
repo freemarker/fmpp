@@ -1,0 +1,4 @@
+2.3.28
+
+v
+  Not a pure BeansWrapper

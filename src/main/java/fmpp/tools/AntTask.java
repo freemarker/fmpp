@@ -283,6 +283,13 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         doAttributeSubstitution(Settings.NAME_OUTPUT_FORMATS_BY_PATH, ats);
     }
     
+    /**
+     * @since 0.9.16
+     */
+    public void setMapCommonExtensionsToOutputFormats(String value) {
+        initialOps.setProperty(Settings.NAME_MAP_COMMON_EXTENSIONS_TO_OUTPUT_FORMATS, value);
+    }
+    
     public void setOutputEncoding(String outputEncoding) {
         initialOps.setProperty(Settings.NAME_OUTPUT_ENCODING, outputEncoding);
     }

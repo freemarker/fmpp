@@ -449,6 +449,7 @@ return res;
 
 <@setting name="outputFormat" type="string" default='"undefined"' merging=false since="0.9.16" />
 <@setting name="outputFormatsByPath" type="sequence (of case function calls)" default="[]" merging=true since="0.9.16" />
+<@setting name="mapCommonExtensionsToOutputFormats" type="boolean" default={'0.9.15': 'false', '0.9.16': 'true'} merging=false since="0.9.16" />
 
 <p>Auto-escaping means that in values printed with interpolations (with <@c>${'$'}{<@r>expression</@>}</@>, not with <@c>&lt;@directive /></@>, nor with static text), the parts that have special meaning in the output format (like <@c>&amp;</@> and <@c>&lt;</@> have if the output format is HTML) are replaced with an escaped form (with <@c>&amp;amp;</@c>, <@c>&amp;lt;</@c> in this case).
 What patterns will be escaped and how depends on the output format, like <@c>HTML</@>, <@c>XML</@>, <@c>RTF</@>, etc.
@@ -461,8 +462,10 @@ What patterns will be escaped and how depends on the output format, like <@c>HTM
 
   <li>Otherwise, if an entry in <@s>outputFormatsByPath</@> matches the template file path (see later), then the output format specified there is used.</li>
   
-  <li>Otherwise, if the <@s>outputFormat</@> setting is set, then the output format specified there is used.</li>
+  <li>Otherwise, if <@s>mapCommonExtensionsToOutputFormats</@> is <@c>true</@> (if <@s>recommendedDefaults</@> is at least 0.9.16 then that's true by default), and the template file extension (the part of the file name after the last dot) is one of the common extensions (see them later), then the output format associated with that extension is used.</li>
   
+  <li>Otherwise, if the <@s>outputFormat</@> setting is set, then the output format specified there is used.</li>
+
   <li>Otherwise, the output format will be the one called <@c>"undefined"</@>, which doesn't do automatic escaping.
 </ol>
 
@@ -477,11 +480,22 @@ outputFormatsByPath: [
 ]
 </@prg>
 
-<p>With this all templates inside the <@c>legacy</@> directory will have <@c>undefined</@> output format, and template files that have <@c>xfoo</@> or <@c>xbar</@> file extension will have <@c>XML</@> output format. The output format is decided by the first matching <@c>case(...)</@>, so for example <@c>legacy/example.xfoo</@> will have <@c>undefined</@> output format, despite that it matches <@c>**/*.xfoo</@>. If there's no match in <@s>outputFormatsByPath</@>, then in this example the output format will be <@c>HTML</@></p>
+<p>With this all templates inside the <@c>legacy</@> directory will have <@c>undefined</@> output format, and template files that have <@c>xfoo</@> or <@c>xbar</@> file extension will have <@c>XML</@> output format. The output format is decided by the first matching <@c>case(...)</@>, so for example <@c>legacy/example.xfoo</@> will have <@c>undefined</@> output format, despite that it matches <@c>**/*.xfoo</@>. If there's no match in <@s>outputFormatsByPath</@>, and we assume for simplicity that <@s>mapCommonExtensionsToOutputFormats</@> is <@c>false</@>, then the output format will be <@c>HTML</@> according the <@s>outputFormat</@> setting.</p>
 
 <p>The <@c>case</@> function in <@s>outputFormatsByPath</@> has 2 or more arguments. The last argument is the name of the output format. The arguments before that are the <@a href="pathpattern.html">path patterns</@> that will be matched against the <@a href="overview.html#virtualPath">virtual path</@a> of the template, in logical <q>or</q> relation.</p>
 
 <p>The valid output format names can be found in the <@fma href="dgui_misc_autoescaping.html">FreeMarker documentation</@>.
+
+<p>The common extension used by <@s>mapCommonExtensionsToOutputFormats</@> are the following (in this format: <q>Associated output format: case-insensitive file extensions</q>):</p>
+<ul>
+  <#-- ATTENTION: If you edit this, also update the fmpp.Engine#setMapCommonExtensionsToOutputFormats API JavaDoc! -->
+  <li>HTML output format: <@c>html</@>, <@c>htm</@></li>
+  <li>XHTML output format: <@c>xhtml</@>, <@c>xhtm</@>, <@c>xht</@></li>
+  <li>XML output format: <@c>xml</@>, <@c>xsd</@>, <@c>xsl</@>, <@c>xslt</@>, <@c>svg</@>, <@c>wsdl</@>,
+      <@c>dita</@>, <@c>ditamap</@></li>
+  <li>RTF output format: <@c>rtf</@></li>
+  <#-- ATTENTION: If you edit this, also update the fmpp.Engine#setMapCommonExtensionsToOutputFormats API JavaDoc! -->
+</ul>
 
 </@sect>
 
@@ -923,13 +937,16 @@ freemarkerLinks: {
 <p><@s>recommendedDefaults</@> influences the default value of other settings. The setting value defaults will be those recommended as of the specified FMPP version. When you start a new project, set it to the current FMPP version (${pp.version} currently). In older projects changing this setting can break things, so check how the defaults change:
 
 <ul>
+  <#-- ATTENTION: If you edit this, also update the fmpp.Engine#Engine API JavaDoc! -->
   <li>0.9.15: This is the baseline (and the default)</li>
   <li>0.9.16: The following defaults change (compared to 0.9.15):
     <ul>
-      <li><@s>freemarkerIncompatibleImprovements</@> to 2.3.28</li>
+      <li><@s>freemarkerIncompatibleImprovements</@> to 2.3.28, thus, among many things, templates with <@c>ftlh</@> and <@c>ftlx</@> file extensions will use <@c>HTML</@> and <@c>XML</@> auto-escaping respectively.</li>
+      <li><@s>mapCommonExtensionsToOutputFormats</@> to <@c>true</@>, thus, templates with common file extensions like <@c>html</@>, <@c>xml</@> etc. will have auto-escaping (legacy escaping, like <@c>#escape</@>, or <@c>?html</@> will fail in them).
       <li><@s>objectWrapper</@> to a <@c>freemarker.template.DefaultObjectWrapper</@c>, if <@s>freemarkerIncompatibleImprovements</@> is at least 2.3.21. There are more details, but it's highly technical, so if you care, <@a href="api/fmpp/Engine.html#Engine-freemarker.template.Version-freemarker.template.Version-freemarker.ext.beans.BeansWrapper-">see the JavaDoc of the <@c>fmpp.Engine</@c> constructor</@a>.</li>
     </ul>
   </li>
+  <#-- ATTENTION: If you edit this, also update the fmpp.Engine#Engine API JavaDoc! -->
 </ul>
 
 <p>The lowest allowed <@s>recommendedDefaults</@> value is 0.9.15, and the highest allowed is the version of the FMPP release that you are using.
