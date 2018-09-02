@@ -1,12 +1,11 @@
-<#escape x as x?html>
 <@pp.dropOutputFile />
 <#assign pages = foos?chunk(5)>
 <#assign entryIndex = 0>
 <#list pages as page>
-  <@pp.changeOutputFile name="result${page_index+1}.html" />
+  <@pp.changeOutputFile name="result${page?counter}.html" />
   <html>
   <head>
-     <title>Results - page ${page_index+1} of ${pages?size}</title>
+     <title>Results - page ${page?counter} of ${pages?size}</title>
   </head>
   <body>
     <h1>Results</h1>
@@ -18,29 +17,27 @@
 
     <hr>
     Pages:&nbsp;&nbsp;
-    <#if page_index != 0>
-      <a href="result${page_index}.html">&lt;&lt;</a>&nbsp;
+    <#if page?index != 0>
+      <a href="result${page?index}.html">&lt;&lt;</a>&nbsp;
     <#else>
       <font color="#808080">&lt;&lt;</font>&nbsp;
     </#if>
-    <#list 0..pages?size-1 as i>
-      <#if i != page_index>
+    <#list 0 ..< pages?size as i>
+      <#if i != page?index>
         <a href="result${i+1}.html">${i+1}</a>
       <#else>
         <b>${i+1}</b>
       </#if>
-      <#if i_has_next>|</#if>
+      <#sep>|</#sep>
     </#list>
-    <#if page_index != pages?size-1>
-      &nbsp;<a href="result${page_index+2}.html">>></a>
-    <#else>
+    <#if page?is_last>
       &nbsp;<font color="#808080">>></font>
+    <#else>
+      &nbsp;<a href="result${page?counter + 1}.html">>></a>
     </#if>
   </body>
   </html>
-</#list>
-
-<#if pages?size == 0>
+<#else>
   <@pp.changeOutputFile name="result1.html" />
   <html>
   <head>
@@ -51,6 +48,4 @@
     <p>Sorry, no foos available.</p>
   </body>
   </html>
-</#if>
-
-</#escape>
+</#list>

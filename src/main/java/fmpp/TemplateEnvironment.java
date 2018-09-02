@@ -440,7 +440,7 @@ public class TemplateEnvironment {
     }
 
     /**
-     * Convets a file object to a source root relative UN*X style path.
+     * Converts a file object to a source root relative UN*X style path.
      */
     public String toSourceRootRelativePath(File f) throws IOException {
         return FileUtil.pathToUnixStyle(

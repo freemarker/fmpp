@@ -1,7 +1,6 @@
 <@pp.dropOutputFile />
 <#list prodXml.products.product as p>
 <@pp.changeOutputFile name="product_${p.@id}.html" />
-<#escape x as x?html>
 <html>
 <head>
   <title>${p.name}</title>
@@ -32,5 +31,4 @@
 <a href="index.html">Back...</a>
 
 </body>
-</#escape>
 </#list>

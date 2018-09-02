@@ -1,9 +1,7 @@
-<#escape x as x?html>
-
 <p>System properties:
 <ul>
-<#list props?keys?sort as k>
-  <li>${k} = ${props[k]}
+<#list props as k, v>
+  <li>${k} = ${v}
 </#list>
 </ul>
 
@@ -13,5 +11,3 @@
   <li>${f}
 </#list>
 </ul>
-
-</#escape>

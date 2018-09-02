@@ -1,14 +1,15 @@
+recommendedDefaults: 0.9.16
 sourceRoot: src
 outputRoot: out
 logFile: log.fmpp
 borders: [
     border(
-        "<#include '/include/test.ftl'><#escape x as x?html>"
-        "</#escape>"
+        "<#import '/lib/layout.ftlh' as layout><@layout.page>"
+        "</@layout.page>"
         *.html
     )
     border(
-        "<@pp.renameOutputFile name=pp.outputFileName+'.html'/><pre><@html_escape><#noparse>"
+        "<@pp.renameOutputFile name = pp.outputFileName + '.html' /><pre><@html_escape><#noparse>"
         "</#noparse></@></pre>"
         *.c
     )

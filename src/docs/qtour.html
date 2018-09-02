@@ -13,6 +13,7 @@
 <p>Also, you will find <@c>config.fmpp</@c> in the <@c>qtour_step1</@c> directory. This file contains the settings for FMPP, and now contains this:</p>
 
 <@prg>
+recommendedDefaults: ${pp.version}
 sourceRoot: src
 outputRoot: out
 </@prg>
@@ -66,6 +67,7 @@ textColor: #000000
 <p>The two <@c>${"$"}{<@r>...</@>}</@>-s are instructions to FreeMarker that insert the value of a variable. When I'm saying that FMPP exposes data for the templates, then it simply means that it creates variables for the templates, based on some data source. We tell FMPP to load data from <@c>data/style.tdd</@c> file before it starts to process the files, in the <@c>config.tdd</@c> of the <@c>qtour_step2</@c> directory:</p>
 
 <@prg>
+recommendedDefaults: ${pp.version}
 sourceRoot: src
 outputRoot: out
 data: tdd(data/style.tdd)
@@ -84,6 +86,7 @@ data: tdd(data/style.tdd)
 <p>You can use any number of data sources, not only a single file. In <@example 'qtour_step3'/> I have added one more data source: <@c>data/birds.csv</@c>. CSV is a primitive format often used to exchange data among spread sheet applications and other applications. <@c>bird.csv</@c> stores a table with "name", "description" and "favoriteFood" columns. I want to use the content of this table in the generated HTML pages later, so let load this table into variable <@c>birds</@c>, in <@c>config.fmpp</@c>:</p>
 
 <@prg>
+recommendedDefaults: ${pp.version}
 sourceRoot: src
 outputRoot: out
 data: {
@@ -111,7 +114,7 @@ data: {
   <ul>
     <li>Arctic-tern: Flies very long distances all years.
         Favorite food: sardine
-    <li>House-sparrow: Don't you say you don't know it...
+    <li>House-sparrow: Everybody knowns it.
         Favorite food: sunflower
     <li>Sakeret: Great hunter of the sky.
         Favorite food: pigeon

@@ -1,14 +1,15 @@
+recommendedDefaults: 0.9.16
 sourceRoot: src
 outputRoot: out
 logFile: log.fmpp
 xmlRenderings: [
     {
         ifDocumentElementIs: product
-        template: renderer/product.html
+        template: renderer/product.ftlh
     }
     {
         ifDocumentElementIs: book
-        template: renderer/book.html
+        template: renderer/book.ftlh
         index: {
             element: [part, chapter]
             attribute: ppFile

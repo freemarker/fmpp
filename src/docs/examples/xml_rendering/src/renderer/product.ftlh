@@ -1,7 +1,6 @@
 <#--
 Renders a "product" XML to a HTML files.
 -->
-<#escape x as x?html>
 <@pp.renameOutputFile extension="html" />
 <#assign prod = pp.doc.product>
 <html>
@@ -17,4 +16,3 @@ Renders a "product" XML to a HTML files.
   <a href="index.html">Back...</a>
 </body>
 </html>
-</#escape>

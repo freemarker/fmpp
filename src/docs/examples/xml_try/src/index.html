@@ -21,9 +21,9 @@
 
 </body>
 
-<#function showXmlSource s>
-  <#return s?xml?xml?replace(" ", r"&nbsp;")?replace('\n', '&amp;#xA;')?replace('\r', '&amp;#xD;')>
-</#function>
+<#macro showXmlSource s>
+  ${s?replace(' ', '\xA0')?replace('\n', '&#xA;')?replace('\r', '&#xD;')}<#t>
+</#macro>
 
 <#--
 Prints an XML node tree as colored HTML.
@@ -47,14 +47,14 @@ Prints an XML node tree as colored HTML.
             <#if att?node_namespace?? && att?node_namespace != ''>
                 <font color=blue size="-1">'${att?node_namespace}'</font>:<#t>
             </#if>
-            ${att?node_name}="${showXmlSource(att)}"<#t>
+            ${att?node_name}="<@showXmlSource att />"<#t>
         </#list>
         ></font></tt><#lt>
     <#elseif type == 'text'>
-        <li><tt>"${showXmlSource(node)}"</tt><#lt>
+        <li><tt>"<@showXmlSource node />"</tt><#lt>
     <#elseif type == 'pi'>
         <#local nodeName = node?node_name>
-        <li><tt><font color=brown>&lt;?${nodeName?substring(4)} ${showXmlSource(node)}?></font></tt><#lt>
+        <li><tt><font color=brown>&lt;?${nodeName?substring(4)} <@showXmlSource node />?></font></tt><#lt>
     <#elseif type == 'comment'>
         <li><tt><font color=green>&lt;!-- ${node} --></font></tt><#lt>
     <#else>

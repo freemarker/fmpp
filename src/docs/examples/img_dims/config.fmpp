@@ -1,4 +1,5 @@
+recommendedDefaults: 0.9.16
 sourceRoot: src
 outputRoot: out
 logFile: log.fmpp
-data: {h:htmlUtils()}
+data: { h: htmlUtils() }

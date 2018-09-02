@@ -1,5 +1,3 @@
-<#escape x as x?html>
-
 <#macro page title>
   <#if !pp.s.contents??>
     <@pp.set hash=pp.s key="contents" value=pp.newWritableSequence() />
@@ -13,5 +11,3 @@
     <#nested>
   </body>
 </#macro>
-
-</#escape>

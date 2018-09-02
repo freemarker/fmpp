@@ -2,7 +2,7 @@
 Renders a "book" XML to multiple HTML files.
 This is a rather complex stuff... check the product.html first.
 -->
-<#escape x as x?html>
+
 <@pp.dropOutputFile />
 
 <#-- Calculating the prefix of output file names -->
@@ -151,5 +151,3 @@ This is a rather complex stuff... check the product.html first.
     <a href="${prefix}index.html">ToC</a> | <a href="index.html">Home</a>
   </#if>
 </#macro>
-
-</#escape>
