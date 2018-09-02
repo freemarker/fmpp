@@ -232,6 +232,7 @@ public class Engine {
     private List<String> removeExtensions = new ArrayList<String>();
     private List<String> removePostfixes = new ArrayList<String>();
     private List<String[]> replaceExtensions = new ArrayList<String[]>();
+    private boolean removeFreemarkerExtensions;
     private int skipUnchanged;
     private boolean alwaysCrateDirs = false;
     private boolean ignoreCvsFiles = true;
@@ -310,6 +311,9 @@ public class Engine {
      *                    <li>{@link #setMapCommonExtensionsToOutputFormats(boolean) mapCommonExtensionsToOutputFormats}
      *                        to {@code true}, thus, templates with common file extensions like {@code html},
      *                        {@code xml} etc. will have auto-escaping.
+     *                    <li>{@link #setRemoveFreemarkerExtensions(boolean) removeFreemarkerExtensions} to
+     *                        {@code true}, thus, the {@code ftl}, {@code ftlh}, and {@code ftlx} file extensions are
+     *                        automatically removed from the output file name.
      *                    <li>{@code objectWrapper} to a {@link freemarker.template.DefaultObjectWrapper}, if
      *                        {@code freemarkerIncompatibleImprovements} is at least 2.3.21} There are more details,
      *                        but see that at the {@code objectWrapper} parameter.
@@ -371,6 +375,7 @@ public class Engine {
         
         if (recommendedDefaultsGE0916(recommendedDefaults)) {
             mapCommonExtensionsToOutputFormats = true;
+            removeFreemarkerExtensions = true;
         }
 
         templateEnv = new TemplateEnvironment(this);
@@ -2072,6 +2077,26 @@ public class Engine {
     }
 
     /**
+     * Sets if the standard FreeMarker file extensions ({@code ftl}, {@code ftlh}, {@code ftlx}) should be removed from
+     * the output file name. Defaults to {@code true} if {@link #getRecommendedDefaults()} is at least 0.9.16.
+     * 
+     * @since 0.9.16
+     */
+    public void setRemoveFreemarkerExtensions(boolean removeFreemarkerExtensions) {
+        checkParameterLock();
+        this.removeFreemarkerExtensions = removeFreemarkerExtensions;
+    }
+    
+    /**
+     * Getter pair of {@link #setRemoveFreemarkerExtensions(boolean)}.
+     * 
+     * @since 0.9.16
+     */
+    public boolean getRemoveFreemarkerExtensions() {
+        return removeFreemarkerExtensions;
+    }
+
+    /**
      * Sets the {@link Engine} should automatically process the files and
      * directories inside a directory whose processing was asked through the
      * public {@link Engine} API. Defaults to {@code true}. It is set to
@@ -2883,6 +2908,15 @@ public class Engine {
         fn = applyRemoveExtensionSetting(fn);
         fn = applyRemovePostfixesSetting(fn);
         fn = applyReplaceExtensionsSetting(fn);
+        if (removeFreemarkerExtensions) {
+            // Standard FreeMarker file extensions are always case insensitive.
+            String fnLC = fn.toLowerCase(); 
+            if (fnLC.endsWith(".ftl")) {
+                fn = fn.substring(0, fn.length() - 4);
+            } else if (fnLC.endsWith(".ftlh") || fnLC.endsWith(".ftlx")) {
+                fn = fn.substring(0, fn.length() - 5);
+            }
+        }
         
         if (fn.length() == 0) {
             throw new IOException(

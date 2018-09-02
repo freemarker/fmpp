@@ -362,6 +362,13 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
         initialOps.setProperty(
                 Settings.OLD_NAME_REMOVE_POSTFIX, removePostfix);
     }
+    
+    /**
+     * @since 0.9.16
+     */
+    public void setRemoveFreemarkerExtensions(String value) {
+        initialOps.setProperty(Settings.NAME_REMOVE_FREEMARKER_EXTENSIONS, value);
+    }
 
     public void setSourceEncoding(String sourceEncoding) {
         initialOps.setProperty(Settings.NAME_SOURCE_ENCODING, sourceEncoding);

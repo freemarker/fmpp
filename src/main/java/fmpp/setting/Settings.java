@@ -145,6 +145,7 @@ public class Settings {
     public static final String OLD_NAME_REMOVE_POSTFIX = "removePostfix";
     public static final String NAME_REPLACE_EXTENSIONS = "replaceExtensions";
     public static final String OLD_NAME_REPLACE_EXTENSION = "replaceExtension";
+    public static final String NAME_REMOVE_FREEMARKER_EXTENSIONS = "removeFreemarkerExtensions";
     public static final String NAME_ALWAYS_CREATE_DIRECTORIES = "alwaysCreateDirectories";
     public static final String NAME_IGNORE_CVS_FILES = "ignoreCvsFiles";
     public static final String NAME_IGNORE_SVN_FILES = "ignoreSvnFiles";
@@ -828,6 +829,7 @@ public class Settings {
         stdDef(NAME_REMOVE_EXTENSIONS, TYPE_SEQUENCE, true, true);
         stdDef(NAME_REMOVE_POSTFIXES, TYPE_SEQUENCE, true, true);
         stdDef(NAME_REPLACE_EXTENSIONS, TYPE_SEQUENCE, true, true);
+        stdDef(NAME_REMOVE_FREEMARKER_EXTENSIONS, TYPE_BOOLEAN, false, false);
         stdDef(NAME_ALWAYS_CREATE_DIRECTORIES, TYPE_BOOLEAN, false, false);
         stdDef(NAME_IGNORE_CVS_FILES, TYPE_BOOLEAN, false, false);
         stdDef(NAME_IGNORE_SVN_FILES, TYPE_BOOLEAN, false, false);
@@ -1614,7 +1616,12 @@ public class Settings {
                         e);
             }
         }
-            
+
+        b = (Boolean) get(NAME_REMOVE_FREEMARKER_EXTENSIONS);
+        if (b != null) {
+            eng.setRemoveFreemarkerExtensions(b.booleanValue());
+        }
+        
         s = (String) get(NAME_SKIP_UNCHANGED);
         if (s != null) {
             if (s.equalsIgnoreCase("none")) {

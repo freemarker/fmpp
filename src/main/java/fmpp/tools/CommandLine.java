@@ -516,6 +516,15 @@ public class CommandLine {
                             + "will be removed from the output file name.");
             ap.addOption(null, cln(Settings.OLD_NAME_REMOVE_POSTFIX) + "=L")
                     .hide();
+            ap.addOption(null, cln(Settings.NAME_REMOVE_FREEMARKER_EXTENSIONS))
+                    .propertyValue("true")
+                    .desc("Remove \"ftl\", \"ftlh\", and \"ftlx\" file extensions from the output file name. "
+                            + "(This is applied last among the settings that tranform the output file name.) "
+                            + "Enabled by default if --" + cln(Settings.NAME_RECOMMENDED_DEFAULTS)
+                            + " is at least 0.9.16.");
+            ap.addOption(null, "dont-" + cln(Settings.NAME_REMOVE_FREEMARKER_EXTENSIONS))
+                    .property(Settings.NAME_REMOVE_FREEMARKER_EXTENSIONS, "false")
+                    .desc("Opposite of --" + cln(Settings.NAME_REMOVE_FREEMARKER_EXTENSIONS) + ".");
             ap.addOption("L FILE", cln(Settings.NAME_LOG_FILE))
                     .implied("none")
                     .desc("Sets the log file. "

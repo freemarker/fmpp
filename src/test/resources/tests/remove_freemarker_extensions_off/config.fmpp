@@ -1,0 +1,3 @@
+inheritConfiguration: ../remove_freemarker_extensions/config.fmpp
+outputRoot: out
+removeFreemarkerExtensions: false

@@ -1,0 +1,4 @@
+sourceRoot: src
+outputRoot: dst
+replaceExtensions: [ ftlh, html, ftlx, xml ]
+removeFreemarkerExtensions
