@@ -110,15 +110,33 @@ To read text files, FMPP uses the source encoding. This is be default ISO-8859-1
 <p>Then, the processing mode is chosen with a sequence of <@a href="pathpattern.html">path patterns</@>, which is defined by the <@s>modes</@s> setting. The first path pattern in the sequence that matches the <@a href="overview.html#virtualPath">virtual path</@a> of the file, chooses the processing mode. If no matching path were found, then FMPP chooses the processing mode automatically:</p>
 <ul>
   <li>If the file extension after converting to lowercase is <@c>xml</@c> and the <@s>xmlRenderings</@s> is not an empty sequence, then it chooses the "renderXml" mode.
-  <li>If the file extension after converting to lowercase is one of: <#list [
-                "jpg", "jpeg", "gif", "png", "swf", "bmp", "pcx", "tga", "tiff",
-                "ico",
-                "zip", "gz", "tgz", "jar", "ace", "bz", "bz2", "tar", "arj",
-                "rar", "lha", "cab", "lzh", "taz", "tz", "arc",
-                "exe", "com", "msi", "class", "dll",
-                "doc", "xls", "pdf", "ps", "chm",
-                "avi", "wav", "mp3", "mpeg", "mpg", "wma", "mov", "fli"]?sort as ext
-      ><@c>${ext}</@><#if ext_has_next>, </#if></#list>, then it chooses the "copy" processing mode.
+  <li>If the file extension after converting to lowercase is known by FMPP as belonging to a binary format, then it chooses the "copy" processing mode. The list of these file extensions is hard-coded into FMPP.
+      <#assign binaryExtsV1 = [
+          "jpg", "jpeg", "gif", "png", "swf", "bmp", "pcx", "tga", "tiff", "ico",
+          "zip", "gz", "tgz", "jar", "ace", "bz", "bz2", "tar", "arj",
+          "rar", "lha", "cab", "lzh", "taz", "tz", "arc",
+          "exe", "com", "msi", "class", "dll",
+          "doc", "xls", "pdf", "ps", "chm",
+          "avi", "wav", "mp3", "mpeg", "mpg", "wma", "mov", "fli"
+      ]>
+      <#assign binaryExtsV2Added = [
+          "webp", "svgz", "tif",
+          "7z", "xz", "txz", "tbz2", "tb2", "z",
+          "deb", "pkg", "rpm", "apk",
+          "iso", "bin", "dmg", "vcd",
+          "sys",
+          "docx", "dotx", "docm", "dot", "odt", "ott", "oth", "odm", 
+          "xlsx", "xlsm", "xltx", "xltm", "xlw", "xlt", "ods", "ots",
+          "ppt", "pps", "pot", "pptx", "pptm", "potx", "potm", "odp", "odg", "otp",
+          "odg", "otg",
+          "mkv", "mp4", "m4v", "m4a", "webm", "mpa", "cda", "aif", "h264", "wma", "wmv", "3gp", "3g2",
+          "ogg", "oga", "mogg", "acc", "flac", "aiff",
+          "flv", "swf",
+          "fnt", "ttf", "otf", "woff", "woff2", "eot",
+          "der"
+      ]>
+      If the <@s>recommendedDefaults</@> setting is 0.9.15 (the minimum), then the list is this: <#list binaryExtsV1?sort as ext><@c>${ext}</@><#sep>, </#list>.
+      If the <@s>recommendedDefaults</@> setting is 0.9.16 or greater, then the list is this: <#list (binaryExtsV1 + binaryExtsV2Added)?sort as ext><@c>${ext}</@><#sep>, </#list>.
   <li>Otherwise it chooses the "execute" processing mode.
 </ul>
 <p>The <@s>modes</@s> setting is a list of TDD functions, where the function name is either <@c>execute</@>, <@c>copy</@>, <@c>renderXml</@c>, or <@c>ignore</@>. The arguments to the functions are one or more path patterns of virtual paths in the source file system. For example this (in a configuration file):</p>

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -192,19 +193,34 @@ public class Engine {
     
     private static final String CREATEDIR_FILE = "createdir.fmpp";
     
-    private static final Set<String> STATIC_FILE_EXTS = new HashSet<String>();
+    private static final Set<String> STATIC_FILE_EXTS_V1;
+    private static final Set<String> STATIC_FILE_EXTS_V2;
     static {
-        String[] list = new String[] {
-                "jpg", "jpeg", "gif", "png", "swf", "bmp", "pcx", "tga", "tiff",
-                "ico",
+        STATIC_FILE_EXTS_V1 = new HashSet<String>(); 
+        STATIC_FILE_EXTS_V1.addAll(Arrays.asList(
+                "jpg", "jpeg", "gif", "png", "swf", "bmp", "pcx", "tga", "tiff", "ico",
                 "zip", "gz", "tgz", "jar", "ace", "bz", "bz2", "tar", "arj",
                 "rar", "lha", "cab", "lzh", "taz", "tz", "arc",
                 "exe", "com", "msi", "class", "dll",
                 "doc", "xls", "pdf", "ps", "chm",
-                "avi", "wav", "mp3", "mpeg", "mpg", "wma", "mov", "fli"};
-        for (int i = 0; i < list.length; i++) {
-            STATIC_FILE_EXTS.add(list[i]);
-        }
+                "avi", "wav", "mp3", "mpeg", "mpg", "wma", "mov", "fli"));
+        
+        STATIC_FILE_EXTS_V2 = new HashSet<String>(STATIC_FILE_EXTS_V1);
+        STATIC_FILE_EXTS_V2.addAll(Arrays.asList(
+                "webp", "svgz", "tif",
+                "7z", "xz", "txz", "tbz2", "tb2", "z",
+                "deb", "pkg", "rpm", "apk",
+                "iso", "bin", "dmg", "vcd",
+                "sys",
+                "docx", "dotx", "docm", "dot", "odt", "ott", "oth", "odm", 
+                "xlsx", "xlsm", "xltx", "xltm", "xlw", "xlt", "ods", "ots",
+                "ppt", "pps", "pot", "pptx", "pptm", "potx", "potm", "odp", "odg", "otp",
+                "odg", "otg",
+                "mkv", "mp4", "m4v", "m4a", "webm", "mpa", "cda", "aif", "h264", "wma", "wmv", "3gp", "3g2",
+                "ogg", "oga", "mogg", "acc", "flac", "aiff",
+                "flv", "swf",
+                "fnt", "ttf", "otf", "woff", "woff2", "eot",
+                "der"));
     }
 
     private static Version cachedVersion;
@@ -314,6 +330,8 @@ public class Engine {
      *                    <li>{@link #setRemoveFreemarkerExtensions(boolean) removeFreemarkerExtensions} to
      *                        {@code true}, thus, the {@code ftl}, {@code ftlh}, and {@code ftlx} file extensions are
      *                        automatically removed from the output file name.
+     *                    <li>The list of file extensions that are treated as binary files is extended (see them under
+     *                        "Settings" / "Processing mode choosing" in the FMPP Manual)
      *                    <li>{@code objectWrapper} to a {@link freemarker.template.DefaultObjectWrapper}, if
      *                        {@code freemarkerIncompatibleImprovements} is at least 2.3.21} There are more details,
      *                        but see that at the {@code objectWrapper} parameter.
@@ -3077,7 +3095,8 @@ public class Engine {
 
         PModeChooser pmc = findChooser(pModeChoosers, f);
         if (pmc == null) {
-            if (STATIC_FILE_EXTS.contains(extLower)) {
+            if ((recommendedDefaultsGE0916(recommendedDefaults) ? STATIC_FILE_EXTS_V2 : STATIC_FILE_EXTS_V1)
+                    .contains(extLower)) {
                 return PMODE_COPY;
             } else if (xmlRendCfgCntrs.size() != 0 && extLower.equals("xml")) {
                 return PMODE_RENDER_XML;

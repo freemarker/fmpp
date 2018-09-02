@@ -1,9 +1,8 @@
 ﻿Next release
 ------------
 
-- recommendedDefaults=0.9.16 should also change:
-  - Extend Engine.STATIC_FILE_EXTS
 - Add recommendedDefaults to examples and tests cases. Remove usages of #escape, ?html, etc.
+- Use modern #list features in examples (no ..._has_next, etc.)
   
 - pp.log should use FM 2.3.22 DirectiveCallPlace to report correct position
 
