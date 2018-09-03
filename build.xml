@@ -136,6 +136,7 @@
     <copy todir="build/docs/examples" includeEmptyDirs="true">
       <fileset dir="src/docs/examples">
         <exclude name="*/out/" />
+        <exclude name="*/log.fmpp" />
       </fileset>
     </copy>
   </target>
@@ -263,6 +264,7 @@
         <exclude name="build/" />
         <exclude name="build.properties" />
         <exclude name="node_modules/" />
+        <exclude name="package-lock.json" />
         <exclude name="**/.*/" />
         <exclude name="README.*" />
       </fileset>
