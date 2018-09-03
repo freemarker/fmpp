@@ -279,6 +279,13 @@ public class AntTask extends org.apache.tools.ant.taskdefs.MatchingTask {
     /**
      * @since 0.9.16
      */
+    public void setOutputFormatsByPath(String outputFormatsByPath) {
+        initialOps.setProperty(Settings.NAME_OUTPUT_FORMATS_BY_PATH, outputFormatsByPath);
+    }
+
+    /**
+     * @since 0.9.16
+     */
     public void addConfiguredOutputFormatsByPath(AntAttributeSubstitution ats) {
         doAttributeSubstitution(Settings.NAME_OUTPUT_FORMATS_BY_PATH, ats);
     }

@@ -27,7 +27,7 @@
 
 <p>There is no parameter that directly corresponds to the <@s>sources</@s> setting. The sources are chosen with nested <@c>&lt;fileset></@c>-style parameters and nested elements (as <@c>include</@c> and <@c>exclude</@c>). However, if you use the <@s>outputFile</@s> setting, you can't use <@c>&lt;fileset></@c>-style stuff, and <@s>sources</@s> will be specified with the  <@c>sourceFile</@c> parameter.
 
-<p>Alternatively, the <@s>data</@s>, <@s>localData</@s>, <@s>borders</@s>, <@s>modes</@s>, <@s>turns</@s>, <@s>xmlRenderings</@s> and <@s>freemarkerLinks</@s> settings can be specified with nested elements instead of parameters. For example, this is equivalent with the above example:</p>
+<p>Alternatively, the <@s>data</@s>, <@s>localData</@s>, <@s>borders</@s>, <@s>modes</@s>, <@s>turns</@s>, <@s>xmlRenderings</@s>, <@s>outputFormatsByPath</@> and <@s>freemarkerLinks</@s> settings can be specified with nested elements instead of parameters. For example, this is equivalent with the above example:</p>
 
 <@prg><#noparse>
 <project name="FMPP test" default="build">
@@ -109,7 +109,7 @@
 
 <p>The FMPP task accepts the following nested elements:
 <ul>
-  <li>Elements for attribute substitution: Using these elements is the same as if you were use the attributes (parameters) with the same name, and with the same value as the nested text (or CDATA section) of the elements. Ant property values (<@c>$${"{foo}"}</@c>) are not expanded by default, but you can override this with a <@c>expandProperties="yes"</@c> attribute. Note that you etiher give a certain setting with attribute, or with element, but not both.
+  <li>Elements for attribute substitution: Using these elements is the same as if you were use the attributes (parameters) with the same name, and with the same value as the nested text (or CDATA section) of the elements. Ant property values (<@c>$${"{foo}"}</@c>) are not expanded by default, but you can override this with a <@c>expandProperties="yes"</@c> attribute. Note that you either give a certain setting with attribute, or with element, but not both.
     <ul>
       <li><@c>data</@c>
       <li><@c>localData</@c>
@@ -117,6 +117,7 @@
       <li><@c>modes</@c>
       <li><@c>turns</@c>
       <li><@c>xmlRenderings</@c>
+      <li><@c>outputFormatsByPath</@c>
       <li><@c>freemarkerLinks</@c>
     </ul>
   <li><@c>&lt;fileset></@c>-style elements (see the Ant documentation for more details):
