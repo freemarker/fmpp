@@ -92,4 +92,6 @@ Making a release
 
 * Upload the generated site.
 
-4. Make the announcements where appropriate
+4. Tag the release on Git (vX.Y.Z)
+
+5. Make the announcements where appropriate
