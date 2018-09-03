@@ -102,15 +102,23 @@
   
   <p><@a href="versions.html">Change log (version history)...</@a></p>
   
-  <p>FMPP is a Java application so it <strong>requires Java to be installed</strong> on your machine (version 1.4 or later).</p>
+  <p>FMPP is a Java application so it <strong>requires Java to be installed</strong> on your machine (version 5 or later).</p>
 
-  <p>The FMPP <strong>Ant task</strong> (ignore if you don't know what Ant is) requires Ant 1.5.1 or later.</p>
+  <p>The FMPP <strong>Apache Ant task</strong> (optional, seldom used nowadays) requires Ant 1.5.1 or later.</p>
   
 <#else>
   <p>To download the latest release, please visit the FMPP website: <@url href=fmppWebsite /></p>
 </#if>
   
   <p>For <@e>text editor and IDE plug-ins</@e> and other FreeMarker template-related tools, please visit the FreeMarker homepage: <@url href=freemarkerWebsite /></p>
+</@sect>
+
+<@sect title="Project history and status">
+
+  <p>FMPP was mostly written in 2003 (so it predates Java generics, Maven-like dependency management, etc.), by a single guy (me), to automate some tasks at work. The code/design of my 15+ year younger myself (and of the era maybe) is funny/WTF at places, but it works, doesn't cut any corners, and was used quite heavily by many.
+  
+  <p>The project is in maintenance mode, but check the <@a href="versions.html">version history</@> to see if it's still maintained. If you hit some blocker problem, it's likely that I will fix it and do a release.
+  
 </@sect>
 
 <@sect title="Contact">
