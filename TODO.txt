@@ -1,11 +1,7 @@
-﻿Next release
-------------
-
-- Test new settings with Ant task
-
-
-Roadmap
+﻿Roadmap
 -------
+
+- Switch build to Maven
 
 - Use mountable vfs-es, at least for sources. This would deprecate
   freemarerLinks, and would work not only for #include but for pp too.
@@ -51,6 +47,10 @@ Tooling (most efficient places for contributions!):
   (This actually belongs to the FreeMarker project.)
 
 High:
+- Replace ImageInfo with with javax.imageio (or, use both?). It's important not
+  to use ImageIO.read, but ImageIO.getImageReadersBySuffix, as we only want to
+  read the file headers. See also:
+  https://stackoverflow.com/questions/672916/how-to-get-image-height-and-width-using-java
 - Inserting env vars into the config file (not just into the dataModel part)
 - emptyOutputRootAfterCheckingIfExists=<rootRelativePath> // "." for no check
 - Allow UN*X tools to be invoked as FreeMarker transforms
@@ -62,6 +62,9 @@ High:
   - registered_custom_output_formats
   - custom_number_formats
   - custom_date_formats
+- Most existing exposed FreeMarker settings could have a "sByPath" variation,
+  like outputFormat has outputFormatsByPath. Especially interpolationSyntax
+  and tagSyntax.
 - TDD inheritance deep-merging:
   - Idea for the solution: "merging hash" type should be introduced. In TDD
      a merging hash should be constructed with ~ prefix (~exp) when exp is a hash.
