@@ -1769,6 +1769,9 @@ public class Engine {
      *   <li>RTF output format: {@code rtf}</li>
      * </ul>
      * 
+     * <p>Furthermore, the {@code .ftl} ending (case-insensitive) is ignored when this setting is applied, so
+     * {@code example.rtf.ftl} will be mapped to RTF output format.
+     * 
      * @since 0.9.16
      */
     public void setMapCommonExtensionsToOutputFormats(boolean mapCommonExtensionsToOutputFormats) {
@@ -3540,20 +3543,28 @@ public class Engine {
             }
             
             if (mapCommonExtensionsToOutputFormats) {
-                String ext = FileUtil.getFileExtension(name);
+                String ext = FileUtil.getLowerCaseFileExtension(name);
                 if (ext != null) {
-                    OutputFormat of = COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.get(ext.toLowerCase());
-                    if (of == HTMLOutputFormat.INSTANCE) { 
-                        return htmlTC;
+                    // If it's an *.ftl file, use the file extension before it instead
+                    if (ext.equals("ftl")) {
+                        ext = FileUtil.getLowerCaseFileExtension(
+                                name.substring(0, name.length() - 1 /* dot */ - ext.length()));
                     }
-                    if (of == XHTMLOutputFormat.INSTANCE) { 
-                        return xhtmlTC;
-                    }
-                    if (of == XMLOutputFormat.INSTANCE) { 
-                        return xmlTC;
-                    }
-                    if (of == RTFOutputFormat.INSTANCE) { 
-                        return rtfTC;
+                    
+                    if (ext != null) {
+                        OutputFormat of = COMMON_EXTENSIONS_TO_OUTPUT_FORMATS.get(ext);
+                        if (of == HTMLOutputFormat.INSTANCE) { 
+                            return htmlTC;
+                        }
+                        if (of == XHTMLOutputFormat.INSTANCE) { 
+                            return xhtmlTC;
+                        }
+                        if (of == XMLOutputFormat.INSTANCE) { 
+                            return xmlTC;
+                        }
+                        if (of == RTFOutputFormat.INSTANCE) { 
+                            return rtfTC;
+                        }
                     }
                 }
             }

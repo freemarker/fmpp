@@ -270,6 +270,15 @@ public class FileUtil {
         int dotIdx = name.lastIndexOf('.');
         return dotIdx != -1 ? name.substring(dotIdx + 1) : null; 
     }
+    
+    /**
+     * Same as {@link #getFileExtension(String)}, but also converts the result to lower case. 
+     * @since 0.9.16
+     */
+    public static String getLowerCaseFileExtension(String name) {
+        String ext = getFileExtension(name);
+        return ext != null ? ext.toLowerCase() : null;
+    }
 
     /**
      * Converts UN*X style path to regular expression (originally, for Perl 5 dialect, but also works for Java's

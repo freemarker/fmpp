@@ -1,0 +1,5 @@
+sourceRoot: src
+outputRoot: out
+removeFreemarkerExtensions
+mapCommonExtensionsToOutputFormats
+freemarkerIncompatibleImprovements: 2.3.28

@@ -483,7 +483,7 @@ What patterns will be escaped and how depends on the output format, like <@c>HTM
 
   <li>Otherwise, if an entry in <@s>outputFormatsByPath</@> matches the template file path (see later), then the output format specified there is used.</li>
   
-  <li>Otherwise, if <@s>mapCommonExtensionsToOutputFormats</@> is <@c>true</@> (if <@s>recommendedDefaults</@> is at least 0.9.16 then that's true by default), and the template file extension (the part of the file name after the last dot) is one of the common extensions (see them later), then the output format associated with that extension is used.</li>
+  <li>Otherwise, if <@s>mapCommonExtensionsToOutputFormats</@> is <@c>true</@> (if <@s>recommendedDefaults</@> is at least 0.9.16 then that's true by default), and the template file extension (the part of the file name after the last dot, always case-insensitive) is one of the common extensions (see them later), then the output format associated with that extension is used. Furthermore, if the file name ends with <@c>.ftl</@> (always case-insensitive), then we ignore that ending, so for example for <@c>example.rtf.ftl</@> we check if <@c>rtf</@> is a common extension, not if <@c>ftl</@> is one.</li>
   
   <li>Otherwise, if the <@s>outputFormat</@> setting is set, then the output format specified there is used.</li>
 
