@@ -60,9 +60,9 @@ class EngineXmlUtils {
         return o instanceof EntityResolver;
     }
     
-    static Object loadXmlFile(
-            Engine eng, File xmlFile, boolean validate) throws Exception {
-        return XmlDataLoader.loadXmlFile(eng, xmlFile, true, validate);
+    static Document loadXmlFile(
+            Engine eng, File xmlFile, boolean xincludeAware, boolean validate) throws Exception {
+        return XmlDataLoader.loadXmlFile(eng, xmlFile, true, xincludeAware, validate);
     }
 
     static boolean documentElementEquals(

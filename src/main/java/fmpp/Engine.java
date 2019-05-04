@@ -994,8 +994,8 @@ public class Engine {
             TemplateException, IOException, InstallationException,
             GenericProcessingException {
         final XmlRenderingConfiguration xrc;
-        Object loadedDoc = null;  // this is an org.w3c.Document
         boolean isLoadedDocumentValidated = false;
+        Document loadedDoc = null;
         {
             String sfPathForComparison = null;
             int xrccln = xmlRendCfgCntrs.size();
