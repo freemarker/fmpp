@@ -34,6 +34,9 @@ import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.w3c.dom.Document;
+
+import fmpp.dataloaders.XmlDataLoader;
 import fmpp.setting.Settings;
 import fmpp.util.BorderedReader;
 import fmpp.util.BugException;
@@ -994,8 +997,9 @@ public class Engine {
             TemplateException, IOException, InstallationException,
             GenericProcessingException {
         final XmlRenderingConfiguration xrc;
-        boolean isLoadedDocumentValidated = false;
         Document loadedDoc = null;
+        boolean isLoadedDocValidated = false;
+        boolean isLoadedDocXIncludeAware = false;
         {
             String sfPathForComparison = null;
             int xrccln = xmlRendCfgCntrs.size();
@@ -1032,20 +1036,25 @@ public class Engine {
                 {
                     int ln = curXRC.getDocumentElementLocalNames().size();
                     if (ln != 0) {
-                        if (loadedDoc == null) {
-                            Object o = curXRC.getXmlDataLoaderOptions().get("validate");
-                            if (o == null) {
-                                o = getValidateXml() ? Boolean.TRUE : Boolean.FALSE;
-                            }
-                            isLoadedDocumentValidated = Boolean.TRUE.equals(o);
+                        // To check this condition, we must load the XML Document now. But if this won't be a match, and
+                        // a later matching XRC will have different XML loading options, we might can't reuse the
+                        // Document loaded here. Difference in "xincludeAware" is a problem, as the xinclude element can
+                        // be the document element (the top element). A difference in the "validate" option is not a
+                        // problem, until we have to start the actual "rendering".
+                        boolean curXRCXIncludeAware = getXRCXIncludeAwareOption(curXRC);
+                        if (loadedDoc == null || curXRCXIncludeAware != isLoadedDocXIncludeAware) {
+                            boolean curXRCValidate = getXRCValidateOption(curXRC);
+                            
                             loadXml: while (true) {
                                 try {
                                     loadedDoc = EngineXmlUtils.loadXmlFile(
-                                            this, sf, isLoadedDocumentValidated);
+                                            this, sf, curXRCXIncludeAware, curXRCValidate);
+                                    isLoadedDocValidated = curXRCValidate;
+                                    isLoadedDocXIncludeAware = curXRCXIncludeAware;
                                 } catch (Exception e) {
-                                    if (isLoadedDocumentValidated) {
-                                        isLoadedDocumentValidated = false;
-                                        // Retry without validation:
+                                    if (curXRCValidate) {
+                                        curXRCValidate = false;
+                                        // Retry without validation, as this might won't be the matching XRC anyway.
                                         continue loadXml;
                                     }
                                     throw new DataModelBuildingException(
@@ -1098,17 +1107,15 @@ public class Engine {
             }
             FileUtil.copyFile(sf, df);
         } else {
-            Object xmlDLValidateOpt = xrc.getXmlDataLoaderOptions().get("validate");
-            if (xmlDLValidateOpt == null) {
-                xmlDLValidateOpt = Boolean.valueOf(getValidateXml());
-            }
-            boolean doctMustBeValidated = Boolean.TRUE.equals(xmlDLValidateOpt);
-            if (isLoadedDocumentValidated != doctMustBeValidated) {
+            boolean xrcValidate = getXRCValidateOption(xrc);
+            boolean xrcXIncludeAware = getXRCXIncludeAwareOption(xrc);
+            
+            if (isLoadedDocValidated != xrcValidate || isLoadedDocXIncludeAware != xrcXIncludeAware) {
                 loadedDoc = null;
             }
             if (loadedDoc == null) {
                 try {
-                    loadedDoc = EngineXmlUtils.loadXmlFile(this, sf, doctMustBeValidated);
+                    loadedDoc = EngineXmlUtils.loadXmlFile(this, sf, xrcXIncludeAware, xrcValidate);
                 } catch (Exception e) {
                     throw new DataModelBuildingException(
                             "Failed to load the XML source file.", e);
@@ -1152,6 +1159,16 @@ public class Engine {
                 out.close(!done);
             }
         }
+    }
+
+    private boolean getXRCXIncludeAwareOption(final XmlRenderingConfiguration xrc) {
+        return Boolean.TRUE.equals(
+                xrc.getXmlDataLoaderOptions().get(XmlDataLoader.OPTION_XINCLUDE_AWARE));
+    }
+
+    private boolean getXRCValidateOption(final XmlRenderingConfiguration xrc) {
+        Object valueAsObj = xrc.getXmlDataLoaderOptions().get(XmlDataLoader.OPTION_VALIDATE);
+        return Boolean.TRUE.equals(valueAsObj != null ? valueAsObj : getValidateXml());
     }
 
     // -------------------------------------------------------------------------

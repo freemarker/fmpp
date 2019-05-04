@@ -266,6 +266,10 @@ public class XmlDataLoader implements DataLoader {
         return OPTION_NAMES.contains(optionName);
     }
 
+    /**
+     * Same as {@link #loadXmlFile(Engine, File, boolean, boolean, boolean)}, but {@code xincludeAware} will be
+     * {@code false}.
+     */
     public static Document loadXmlFile(
             Engine engine, File xmlFile,
             boolean namespaceAware, boolean validate)

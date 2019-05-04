@@ -16,6 +16,8 @@ xmlRenderings: [
     }
     {ifDocumentElementIs:[g, h], template:renderer/test6.ftl}
     {ifSourceIs:[**g*, **f*], template:renderer/test5.ftl}
+    {ifDocumentElementIs:xincludetest1, template:renderer/xincludetest.ftl, xincludeAware: true}
+    {ifDocumentElementIs:xincludetest2, template:renderer/xincludetest.ftl}
     {ifDocumentElementIs:copyMe, copy}
 ]
 xmlCatalogFiles: dtds/catalog.xml
