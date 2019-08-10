@@ -1,13 +1,13 @@
-# Points to the rt.jar of Java 1.4 (if you target that minimum version).
+# Points to the rt.jar of Java 1.5 (if you target that minimum version).
 # Can be commented out, but for building releases it definitely should be set.
-bootclasspath.path=C:/Program Files (x86)/Java/j2re1.4.0_04/lib/rt.jar
+bootclasspath.path=C:/Program Files (x86)/Java/jdk1.5.0_16/jre/lib/rt.jar
 
 # Points to the ant.jar of Ant 1.5 (if you target that minimum version).
 # Can be commented out, but for building releases it definitely should be set.
-ant.jar.path=C:/Program Files (x86)/jars/ant-1.5.jar
+ant.jar.path=c:/Program Files/ant/lib/ant.jar
 
 # Must be the same as the version number of lib/freemarker.jar
-dependency.freemarker.version=2.3.22
+dependency.freemarker.version=2.3.28
 dependency.bsh.version=2.0b4
 dependency.xmlResolver.version=1.2
 dependency.imageinfo.version=1.9
@@ -16,14 +16,14 @@ dependency.imageinfo.version=1.9
 # For Maven dist:
 
 # Points to the Maven 3 executable:
-mvnCommand=C:/Program Files (x86)/maven3/bin/mvn.bat
+mvnCommand=C:/Program Files/maven/bin/mvn.cmd
 
 # ----------------------------------------------------------------------------
 # For documentation building:
 
 # The directory that contains extracted FreeMarker releases in directories
-# named as freemarker-${version} . Only needed for copying the FreeMarker
-# documentation into the distribution archive:
-freemarkerReleases.path=C:/Users/En/Downloads
+# named as apache-freemarker-${version}-bin. Only needed for copying the
+# FreeMarker documentation into the distribution archive:
+freemarkerReleases.path=C:/Users/me/Downloads
 # Path to the node.js executable:
 nodeJsCommand=C:/Program Files/nodejs/node.exe
